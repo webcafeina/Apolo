@@ -4,6 +4,48 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-06 (tarde y noche) · Entrega 2: el Estudio
+
+- El cliente eligió en tres preguntas, las tres como se recomendaban:
+  - original contra resultado, no A contra B;
+  - niveles en secciones plegables;
+  - presets como ficheros JSON compartidos con la CLI.
+- **Núcleo**:
+  - `orientacion.rs`: enderezar, ADR 0012, que pidió el cliente al cerrar la mañana;
+  - `vista.rs`: los píxeles RGBA para enseñar;
+  - `presets.rs`: `…/Apolo/presets/*.json`;
+  - `cwebp::leer_desde`: opciones encima de un preset;
+  - el prefijo `-apolo_` para las opciones propias.
+- **`crates/servicio`**: el Estudio sin ventana, con las imágenes abiertas, la vista previa con
+  generaciones, exportar y los presets.
+- **`crates/dev`** (`apolo-dev`): el servicio por HTTP.
+- **`src-tauri`**: las mismas órdenes, el protocolo `apolo://` para los píxeles, el diálogo de
+  abrir y guardar, y arrastrar y soltar. ADR 0013.
+- **Interfaz**:
+  - comparador en canvas, con deslizador, lado a lado, zoom con la rueda y arrastre;
+  - panel pintado desde un esquema de 36 controles, con explicación de cada uno;
+  - barra con el peso, el ahorro, el PSNR y la orden cwebp, para copiar y para pegar;
+  - aviso de foto girada;
+  - Ajustes con los presets guardados.
+- **CLI**: `-apolo_preset <nombre>` y `apolo presets`.
+- **Verificado**:
+  - 14 pruebas de Playwright en claro y oscuro;
+  - pruebas de servicio, orientación y presets;
+  - `-apolo_preset` da el mismo fichero que las opciones escritas a mano;
+  - capturas miradas en los dos temas.
+- **Fallos que salieron por el camino**:
+  - el contador de generación global (al recargar se cancelaba todo);
+  - la tabla de la prueba de orientación, con la 6 y la 8 cambiadas;
+  - `-apolo_enderezar` en la CLI no leía el EXIF;
+  - el damero asomaba por el borde;
+  - Playwright esperaba diez minutos por un 405.
+
+  Cuatro trampas nuevas.
+- **No verificado**: la ventana de Tauri, que no compila aquí. Lo dice CI y lo tiene que abrir el
+  cliente.
+
+---
+
 ## 2026-10-06 (tarde) · Entrega 1: el mismo fichero que cwebp
 
 - Se leyó `examples/cwebp.c` y los lectores de `imageio/` de libwebp 1.6.0 enteros, y se portaron:

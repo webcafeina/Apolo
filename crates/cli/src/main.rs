@@ -1,7 +1,8 @@
 //! `apolo`, la línea de comandos de Apolo.
 //!
-//! Misma lógica y mismos presets que la ventana. En la entrega 1 llega
-//! `apolo webp`, que acepta las opciones de `cwebp` tal cual (ADR 0002).
+//! Misma lógica y mismos presets que la ventana. `apolo webp` acepta las
+//! opciones de `cwebp` tal cual (ADR 0002), más las propias de Apolo con el
+//! prefijo `-apolo_`.
 
 use std::process::ExitCode;
 
@@ -29,6 +30,9 @@ enum Accion {
     /// Lista los motores que lleva dentro esta compilación
     Motores,
 
+    /// Lista los presets guardados y dónde están
+    Presets,
+
     /// Codifica a WebP con las opciones de cwebp (apolo webp -longhelp)
     #[command(disable_help_flag = true)]
     Webp {
@@ -52,6 +56,26 @@ fn main() -> ExitCode {
         Some(Accion::Motores) => {
             for m in apolo_nucleo::motores() {
                 println!("{}\t{}", m.nombre, m.version);
+            }
+            ExitCode::SUCCESS
+        }
+        Some(Accion::Presets) => {
+            let Some(carpeta) = apolo_nucleo::presets::carpeta() else {
+                eprintln!("No se encuentra la carpeta de configuración");
+                return ExitCode::FAILURE;
+            };
+            println!("Presets en {}:", carpeta.display());
+            let lista = apolo_nucleo::presets::listar(&carpeta);
+            if lista.is_empty() {
+                println!("  (ninguno: se guardan desde el Estudio, o a mano como JSON)");
+            }
+            for p in lista {
+                println!(
+                    "  {:<24} apolo webp -apolo_preset {:?} {}",
+                    p.nombre,
+                    p.nombre,
+                    apolo_nucleo::cwebp::escribir_apolo(&p.webp).join(" ")
+                );
             }
             ExitCode::SUCCESS
         }

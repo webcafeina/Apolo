@@ -41,3 +41,28 @@ describe("i18n", () => {
     expect(vacios).toEqual([]);
   });
 });
+
+describe("i18n de los controles", () => {
+  it("cada control tiene etiqueta, explicación y sus valores", async () => {
+    const { CONTROLES } = await import("../estudio/opciones");
+    const faltan: string[] = [];
+    for (const c of CONTROLES) {
+      for (const k of [`opcion.${c.clave}`, `opcion.${c.clave}Ayuda`]) if (typeof buscar(es, k) !== "string") faltan.push(k);
+      if (c.porQue && typeof buscar(es, c.porQue) !== "string") faltan.push(c.porQue);
+      if (c.tipo === "lista")
+        for (const v of c.valores) if (typeof buscar(es, `valor.${c.clave}.${v}`) !== "string") faltan.push(`valor.${c.clave}.${v}`);
+    }
+    expect(faltan).toEqual([]);
+  });
+
+  it("los presets de cwebp, los niveles y los formatos tienen nombre", () => {
+    const claves = [
+      ...["default", "photo", "picture", "drawing", "icon", "text"].map((p) => `presetCwebp.${p}`),
+      ...["basico", "avanzado", "experto"].map((n) => `nivel.${n}`),
+      ...["avif", "jxl", "mozjpeg", "oxipng", "qoi"].map((f) => `formato.${f}`),
+      ...["deslizador", "ladoALado"].map((m) => `comparador.${m}`),
+      ...["x", "y", "ancho", "alto", "exif", "icc", "xmp"].map((k) => `panel.${k}`),
+    ];
+    expect(claves.filter((k) => typeof buscar(es, k) !== "string")).toEqual([]);
+  });
+});

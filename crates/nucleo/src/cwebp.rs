@@ -116,20 +116,36 @@ fn strtod(v: &str) -> Option<f32> {
     s[..i].parse::<f64>().ok().map(|x| x as f32)
 }
 
+/// Opción propia de Apolo para enderezar (ADR 0012). No existe en cwebp.
+pub const ENDEREZAR: &str = "-apolo_enderezar";
+
 /// Lee los argumentos de cwebp (sin el nombre del programa).
 pub fn leer<S: AsRef<str>>(args: &[S]) -> Result<OrdenCwebp, ErrorOrden> {
+    leer_desde(&OpcionesWebp::default(), args)
+}
+
+/// Lee los argumentos de cwebp **encima** de unas opciones de partida (un
+/// preset guardado), como si cwebp ya las tuviera puestas.
+pub fn leer_desde<S: AsRef<str>>(
+    base: &OpcionesWebp,
+    args: &[S],
+) -> Result<OrdenCwebp, ErrorOrden> {
     let args: Vec<&str> = args.iter().map(|a| a.as_ref()).collect();
     let mut o = OrdenCwebp::default();
-    let mut c = config_base(None);
-    let mut preset = None;
+    let mut c = base.a_config_sin_normalizar();
+    let mut preset = base.preset;
     let mut nivel_sin_perdida = 6;
     let mut usar_nivel: i32 = -1; // -1 sin decir, 0 no, 1 sí
-    let mut recorte = None;
-    let mut redim = (0, 0);
-    let mut modo = ModoRedimension::Siempre;
-    let mut mezclar = None;
-    let mut conservar_alfa = true;
-    let mut metadatos = Conservar::NINGUNO;
+    let mut recorte = base.recorte;
+    let mut redim = base
+        .redimension
+        .map(|r| (r.ancho, r.alto))
+        .unwrap_or((0, 0));
+    let mut modo = base.modo_redimension;
+    let mut mezclar = base.mezclar_alfa;
+    let mut conservar_alfa = !base.sin_alfa;
+    let mut metadatos = base.metadatos;
+    let mut enderezar = base.enderezar;
 
     let n = args.len();
     let mut i = 0;
@@ -350,6 +366,7 @@ pub fn leer<S: AsRef<str>>(args: &[S]) -> Result<OrdenCwebp, ErrorOrden> {
                 }
             }
             "-v" => o.detalle = true,
+            ENDEREZAR => enderezar = true,
             "--" => {
                 if hay(1) {
                     o.entrada = Some(args[i + 1].to_string());
@@ -387,6 +404,7 @@ pub fn leer<S: AsRef<str>>(args: &[S]) -> Result<OrdenCwebp, ErrorOrden> {
     op.mezclar_alfa = mezclar;
     op.sin_alfa = !conservar_alfa;
     op.metadatos = metadatos;
+    op.enderezar = enderezar;
     o.opciones = op;
     Ok(o)
 }
@@ -401,11 +419,28 @@ pub fn ejecutar(o: &OrdenCwebp, datos: &[u8], progreso: Option<Progreso>) -> Res
             datos,
             Lectura {
                 conservar_alfa: !op.sin_alfa,
-                metadatos: op.metadatos.alguno(),
+                // Para enderezar hay que leer el EXIF aunque no se copie. Es
+                // una opción de Apolo: no afecta a la equivalencia con cwebp.
+                metadatos: op.metadatos.alguno() || op.enderezar,
             },
         )?,
     };
     webp::codificar(&img, op, o.extras, progreso)
+}
+
+/// Si la orden cwebp de `escribir` da exactamente el mismo fichero que Apolo
+/// con estas opciones. Deja de darlo con las opciones propias de Apolo.
+pub fn es_equivalente(op: &OpcionesWebp) -> bool {
+    !op.enderezar
+}
+
+/// La orden de `apolo webp`: la de cwebp más las opciones propias de Apolo.
+pub fn escribir_apolo(op: &OpcionesWebp) -> Vec<String> {
+    let mut a = escribir(op);
+    if op.enderezar {
+        a.push(ENDEREZAR.into());
+    }
+    a
 }
 
 /// La orden cwebp más corta que da estas opciones (sin entrada ni salida).

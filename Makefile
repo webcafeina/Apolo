@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 export PATH := $(HOME)/.cargo/bin:$(HOME)/.local/bin:$(PATH)
 
-.PHONY: ayuda comprobar rust interfaz contraste tokens cli app dev equivalencia
+.PHONY: ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -12,12 +12,15 @@ ayuda:
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
 	@echo "make app        compila la aplicación (necesita libwebkit2gtk-4.1-dev en Linux)"
 	@echo "make dev        la aplicación con recarga en caliente"
+	@echo "make dev-web    el Estudio en el navegador, sin ventana (http://127.0.0.1:5173)"
+	@echo "make e2e        las pruebas de la interfaz con Playwright, contra apolo-dev"
+	@echo "make capturas   capturas del Estudio en claro y oscuro (frontend/capturas/)"
 
 comprobar: interfaz rust
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
-RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-nucleo -p apolo-tema -p apolo-cli)
+RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev)
 
 rust:
 	cargo fmt --all --check
@@ -45,6 +48,22 @@ app:
 dev:
 	pnpm install --frozen-lockfile
 	pnpm tauri dev
+
+# El Estudio sin ventana: apolo-dev (el mismo servicio que la aplicación, por
+# HTTP) y Vite, que le reenvía /api y /pixeles. ADR 0013.
+dev-web:
+	cargo build -p apolo-dev
+	pnpm -C frontend install --frozen-lockfile
+	trap 'kill 0' EXIT; target/debug/apolo-dev & pnpm -C frontend exec vite --host 127.0.0.1
+
+e2e:
+	cargo build -p apolo-dev
+	pnpm -C frontend install --frozen-lockfile
+	pnpm -C frontend exec playwright test
+
+capturas:
+	cargo build -p apolo-dev
+	CAPTURAS=1 pnpm -C frontend exec playwright test capturas
 
 # La prueba de la ADR 0002 contra el cwebp oficial de Google, de la misma
 # versión que la libwebp enlazada. El binario se descarga una vez y se

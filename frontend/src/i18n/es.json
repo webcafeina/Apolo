@@ -1,7 +1,8 @@
 {
   "app": {
     "nombre": "Apolo",
-    "lema": "Optimiza imágenes con los motores de Squoosh"
+    "lema": "Optimiza imágenes con los motores de Squoosh",
+    "sinServicio": "No se puede hablar con el motor de Apolo."
   },
   "nav": {
     "estudio": "Estudio",
@@ -10,17 +11,203 @@
   },
   "estudio": {
     "soltar": "Arrastra una imagen aquí",
-    "soltarDetalle": "JPEG, PNG, GIF, WebP, AVIF, JPEG XL, TIFF, BMP o QOI",
-    "pronto": "El comparador llega en la entrega 2."
+    "soltarDetalle": "PNG, JPEG, WebP, TIFF, GIF, BMP, QOI o PNM",
+    "abrir": "Abrir una imagen…",
+    "abrirOtra": "Abrir otra…",
+    "conAlfa": "con transparencia",
+    "exportar": "Exportar…",
+    "exportado": "Guardado: {{nombre}}",
+    "presetGuardado": "Preset «{{nombre}}» guardado.",
+    "avisoOrientacion": "Esta foto lleva una orientación en sus metadatos: sin enderezarla, el resultado sale girado, igual que con cwebp.",
+    "enderezar": "Enderezar"
+  },
+  "comparador": {
+    "etiqueta": "Comparación del original y el resultado",
+    "original": "Original",
+    "resultado": "Resultado",
+    "codificando": "Codificando",
+    "modo": "Cómo comparar",
+    "deslizador": "Deslizador",
+    "ladoALado": "Lado a lado",
+    "otraProporcion": "El resultado tiene otra proporción: se ven lado a lado.",
+    "zoom": "Zoom",
+    "acercar": "Acercar",
+    "alejar": "Alejar",
+    "ajustar": "Ajustar"
+  },
+  "orden": {
+    "copiar": "Copiar",
+    "copiada": "Copiada",
+    "editar": "Pegar orden…",
+    "pegar": "Pega una orden de cwebp",
+    "cargar": "Cargar",
+    "cancelar": "Cancelar",
+    "noEquivalente": "Con extras de Apolo",
+    "noEquivalenteAyuda": "Hay opciones que cwebp no tiene (enderezar): esta orden no da exactamente el mismo fichero."
+  },
+  "panel": {
+    "etiqueta": "Ajustes de la compresión",
+    "formato": "Formato",
+    "pronto": "pronto",
+    "partida": "Partir de",
+    "elegir": "Elegir…",
+    "presetsCwebp": "Presets de cwebp",
+    "presetsGuardados": "Guardados",
+    "nombrePreset": "Nombre del preset",
+    "guardar": "Guardar",
+    "soloApolo": "Apolo",
+    "elegirNivel": "Elegir nivel…",
+    "ancho": "Ancho",
+    "alto": "Alto",
+    "x": "Izquierda",
+    "y": "Arriba",
+    "minimo": "Mínima",
+    "maximo": "Máxima",
+    "colorFondo": "Color de fondo",
+    "exif": "EXIF",
+    "icc": "Perfil ICC",
+    "xmp": "XMP"
+  },
+  "formato": {
+    "avif": "AVIF",
+    "jxl": "JPEG XL",
+    "mozjpeg": "MozJPEG",
+    "oxipng": "PNG (OxiPNG)",
+    "qoi": "QOI"
+  },
+  "presetCwebp": {
+    "default": "Por defecto",
+    "photo": "Foto",
+    "picture": "Retrato o interior",
+    "drawing": "Dibujo",
+    "icon": "Icono",
+    "text": "Texto"
+  },
+  "nivel": {
+    "basico": "Básico",
+    "avanzado": "Avanzado",
+    "experto": "Experto"
+  },
+  "porQue": {
+    "soloSinPerdida": "Solo cuenta sin pérdida.",
+    "soloConPerdida": "Solo cuenta con pérdida.",
+    "sinAlfa": "La imagen no tiene transparencia, o se descarta.",
+    "sinRedimension": "Solo cuenta al redimensionar."
+  },
+  "opcion": {
+    "calidad": "Calidad",
+    "calidadAyuda": "Más alta, más fiel y más pesada. En torno a 75–85 suele ser invisible a simple vista.",
+    "esfuerzo": "Esfuerzo",
+    "esfuerzoAyuda": "Sin pérdida la imagen sale idéntica siempre: más esfuerzo, más lento y algo más pequeño.",
+    "sinPerdida": "Sin pérdida",
+    "sinPerdidaAyuda": "Cada píxel sale exacto. Para capturas, gráficos y logotipos; en fotos pesa mucho más.",
+    "redimension": "Redimensionar",
+    "redimensionAyuda": "Cambia el tamaño antes de comprimir. Un lado a 0 mantiene la proporción.",
+    "recorte": "Recortar",
+    "recorteAyuda": "Se queda con un rectángulo de la imagen, antes de redimensionar.",
+    "enderezar": "Enderezar según EXIF",
+    "enderezarAyuda": "Gira la foto como dice su orientación EXIF. cwebp no lo hace: con esto encendido, la orden cwebp ya no da el mismo fichero.",
+    "nivelSinPerdida": "Nivel sin pérdida",
+    "nivelSinPerdidaAyuda": "Atajo que fija método y esfuerzo a la vez, de 0 (rápido) a 9 (lento y más pequeño).",
+    "metodo": "Método",
+    "metodoAyuda": "Cuánto busca el compresor la mejor forma de cada bloque. 6 es lo más pequeño y lo más lento.",
+    "casiSinPerdida": "Casi sin pérdida",
+    "casiSinPerdidaAyuda": "Retoca un poco los píxeles para que pese menos sin que se note. 100 es apagado; 60 ya ahorra bastante.",
+    "tamanoObjetivo": "Tamaño objetivo (bytes)",
+    "tamanoObjetivoAyuda": "Busca la calidad que da este peso. 0 es apagado. Hace varias pasadas: más lento.",
+    "yuvNitido": "Color más nítido",
+    "yuvNitidoAyuda": "Conversión de color más cuidadosa: bordes de color más limpios (texto rojo, líneas finas), algo más lenta.",
+    "autofiltro": "Filtro automático",
+    "autofiltroAyuda": "Ajusta solo la fuerza del filtro de desbloqueo para cada imagen.",
+    "calidadAlfa": "Calidad de la transparencia",
+    "calidadAlfaAyuda": "Por debajo de 100, el borde transparente se simplifica y pesa menos.",
+    "exacto": "Conservar color oculto",
+    "exactoAyuda": "Guarda el color bajo los píxeles totalmente transparentes. Normalmente se tira, porque no se ve.",
+    "mezclarAlfa": "Fondo para la transparencia",
+    "mezclarAlfaAyuda": "Mezcla la transparencia con este color, como si la imagen estuviera encima.",
+    "sinAlfa": "Quitar transparencia",
+    "sinAlfaAyuda": "Descarta el canal alfa entero.",
+    "modoRedimension": "Cuándo redimensionar",
+    "modoRedimensionAyuda": "Solo reducir evita agrandar imágenes que ya son pequeñas.",
+    "metadatos": "Metadatos que copiar",
+    "metadatosAyuda": "EXIF lleva la cámara, la fecha y a veces la ubicación; ICC, el perfil de color; XMP, derechos y edición.",
+    "segmentos": "Segmentos",
+    "segmentosAyuda": "En cuántas zonas reparte la imagen para comprimir distinto cada una.",
+    "sns": "Modelado del ruido",
+    "snsAyuda": "Cuánto se aprovecha de que el ojo ve peor el detalle en zonas con textura.",
+    "fuerzaFiltro": "Fuerza del filtro",
+    "fuerzaFiltroAyuda": "Suaviza los bordes de los bloques. Más alto, menos cuadros y más suave.",
+    "nitidezFiltro": "Nitidez del filtro",
+    "nitidezFiltroAyuda": "0 suaviza más; 7, menos.",
+    "filtroFuerte": "Filtro fuerte",
+    "filtroFuerteAyuda": "Filtro más agresivo que el simple. Viene encendido.",
+    "psnrObjetivo": "PSNR objetivo (dB)",
+    "psnrObjetivoAyuda": "Busca la calidad que da esta fidelidad medida. 0 es apagado; 42 es muy bueno.",
+    "pasadas": "Pasadas",
+    "pasadasAyuda": "Vueltas de análisis cuando hay tamaño o PSNR objetivo.",
+    "rangoCalidad": "Rango de calidad",
+    "rangoCalidadAyuda": "Límites para la calidad cuando se busca un tamaño o un PSNR.",
+    "limiteParticion": "Límite de partición",
+    "limiteParticionAyuda": "Solo para imágenes enormes que no caben en el formato: baja la calidad lo justo.",
+    "pista": "Tipo de imagen",
+    "pistaAyuda": "Una pista para el modo sin pérdida.",
+    "compresionAlfa": "Compresión de la transparencia",
+    "compresionAlfaAyuda": "Sin comprimir solo tiene sentido para comparar.",
+    "filtradoAlfa": "Filtro de la transparencia",
+    "filtradoAlfaAyuda": "Mejor busca el filtro que más ahorra en el canal alfa.",
+    "emularJpeg": "Parecerse a un JPEG",
+    "emularJpegAyuda": "Ajusta la calidad para que el peso se parezca al de un JPEG de la misma calidad. Experimental.",
+    "preprocesado": "Preprocesado",
+    "preprocesadoAyuda": "Suavizado previo por segmentos o tramado. Experimental.",
+    "hilos": "Varios hilos",
+    "hilosAyuda": "Usa más núcleos del procesador. El resultado es el mismo.",
+    "pocaMemoria": "Poca memoria",
+    "pocaMemoriaAyuda": "Para imágenes enormes: usa menos memoria y tarda más."
+  },
+  "valor": {
+    "nivel": {
+      "rapido": "rápido",
+      "medio": "intermedio",
+      "lento": "lento y pequeño"
+    },
+    "modoRedimension": {
+      "siempre": "Siempre",
+      "solo_reducir": "Solo reducir",
+      "solo_ampliar": "Solo ampliar"
+    },
+    "pista": {
+      "ninguna": "Sin pista",
+      "photo": "Foto",
+      "picture": "Retrato o interior",
+      "graph": "Gráfico"
+    },
+    "compresionAlfa": {
+      "0": "Sin comprimir",
+      "1": "Sin pérdida"
+    },
+    "filtradoAlfa": {
+      "none": "Ninguno",
+      "fast": "Rápido",
+      "best": "Mejor"
+    },
+    "preprocesado": {
+      "0": "Ninguno",
+      "1": "Suavizado por segmentos",
+      "2": "Tramado",
+      "3": "Los dos"
+    }
   },
   "lotes": {
     "soltar": "Arrastra carpetas o imágenes aquí",
     "pronto": "Los lotes llegan en la entrega 3."
   },
   "ajustes": {
+    "presets": "Presets guardados",
+    "presetsDonde": "Cada preset es un fichero JSON en esta carpeta. La línea de comandos los usa igual, y se comparten copiando el fichero.",
+    "sinPresets": "Todavía no hay ninguno. Se guardan desde el Estudio.",
+    "borrar": "Borrar",
     "acercaDe": "Acerca de",
     "motores": "Motores",
-    "sinMotores": "Los motores solo se ven dentro de la aplicación.",
     "licencia": "Software libre con licencia GPLv3."
   }
 }

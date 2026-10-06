@@ -36,5 +36,12 @@ códecs), **apagada por defecto** para conservar la promesa de la ADR 0002.
 
 ## Verificación
 
-Decidida con el cliente el 2026-10-06. **Sin hacer**: prevista para la entrega 2 (el núcleo y el
-interruptor en el Estudio).
+Decidida con el cliente el 2026-10-06. Hecha la misma tarde, en la entrega 2:
+
+- `orientacion.rs`: las ocho orientaciones, comprobadas contra la definición de EXIF (la prueba
+  tenía al principio la 6 y la 8 cambiadas; la fórmula estaba bien).
+- `-apolo_enderezar` en la CLI. Al principio no hacía nada: la CLI, como cwebp, no leía el EXIF si no
+  se iba a copiar. Ahora lo lee también para enderezar (`enderezar_gira_y_deja_el_exif_a_1`).
+- En el Estudio, el interruptor en Básico, el aviso cuando la foto viene girada y la marca «Con
+  extras de Apolo» en la orden (Playwright).
+- El nombre de la opción quedó `-apolo_enderezar`: todas las propias llevan el prefijo `-apolo_`.

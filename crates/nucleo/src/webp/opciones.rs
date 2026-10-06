@@ -181,6 +181,10 @@ pub struct OpcionesWebp {
     pub sin_alfa: bool,
     /// `-metadata`
     pub metadatos: Conservar,
+
+    /// Enderezar según la orientación EXIF (ADR 0012). **No es de cwebp**:
+    /// encendida, la orden cwebp equivalente ya no da el mismo fichero.
+    pub enderezar: bool,
 }
 
 impl Default for OpcionesWebp {
@@ -260,11 +264,24 @@ impl OpcionesWebp {
             mezclar_alfa: None,
             sin_alfa: false,
             metadatos: Conservar::NINGUNO,
+            enderezar: false,
         }
     }
 
     /// Escribe los campos en una `WebPConfig`, partiendo de la base.
     pub(crate) fn a_config(&self) -> w::WebPConfig {
+        let mut c = self.a_config_sin_normalizar();
+        // Lo que cwebp hace después de leer las opciones: con un objetivo de
+        // tamaño o de PSNR y una sola pasada, fuerza seis.
+        if (c.target_size > 0 || c.target_PSNR > 0.0) && c.pass == 1 {
+            c.pass = 6;
+        }
+        c
+    }
+
+    /// Los campos tal cual, sin lo que cwebp añade al acabar de leer: es el
+    /// punto de partida para seguir leyendo opciones encima.
+    pub(crate) fn a_config_sin_normalizar(&self) -> w::WebPConfig {
         use w::WebPImageHint::*;
         let mut c = config_base(None);
         c.lossless = self.sin_perdida as i32;
@@ -302,11 +319,6 @@ impl OpcionesWebp {
         c.use_sharp_yuv = self.yuv_nitido as i32;
         c.qmin = self.calidad_minima;
         c.qmax = self.calidad_maxima;
-        // Lo que cwebp hace después de leer las opciones: con un objetivo de
-        // tamaño o de PSNR y una sola pasada, fuerza seis.
-        if (c.target_size > 0 || c.target_PSNR > 0.0) && c.pass == 1 {
-            c.pass = 6;
-        }
         c
     }
 
@@ -321,6 +333,7 @@ impl OpcionesWebp {
             self.mezclar_alfa,
             self.sin_alfa,
             self.metadatos,
+            self.enderezar,
         );
         *self = OpcionesWebp::desde_config(&c, Some(preset));
         (
@@ -330,6 +343,7 @@ impl OpcionesWebp {
             self.mezclar_alfa,
             self.sin_alfa,
             self.metadatos,
+            self.enderezar,
         ) = fuera;
     }
 

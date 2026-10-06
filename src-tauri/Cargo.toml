@@ -16,6 +16,8 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 apolo-nucleo.workspace = true
+apolo-servicio.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"

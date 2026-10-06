@@ -8,22 +8,14 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **Entrega 2 — Estudio.** Comparador con deslizador, lado a lado y diferencias; zoom y
-  desplazamiento sincronizados; controles en tres niveles (Básico, Avanzado, Experto) con su
-  explicación; vista previa en vivo con generación y descarte; la orden cwebp equivalente, copiable y
-  pegable; exportar. Las vistas previas por `apolo://preview/<id>`, sin base64 por IPC. Y un modo
-  de desarrollo por HTTP para probar la interfaz con Playwright sin ventana, como el puente de dos
-  caminos de Esfinge (su ADR 0009).
-  **Incluye enderezar según la orientación EXIF, como opción apagada por defecto**
-  ([ADR 0012](adr/0012-enderezar-como-opcion.md)), que pidió el cliente el 2026-10-06: en el núcleo,
-  en `apolo webp` con nombre propio, y como interruptor en el Estudio, con aviso si la foto viene
-  girada y el interruptor está apagado.
+- **Abrir el instalador de la entrega 2 en un Mac y en un Windows** (deuda, alta): es la primera
+  entrega con ventana de verdad, y lo propio de Tauri no se ha visto funcionar.
 - **Montar la equivalencia con cwebp en macOS, Windows y Linux arm64** (deuda): Google publica
   cwebp para esas plataformas, y es donde libwebp y mozjpeg cambian de código SIMD.
 
 ## Media
 
-- **Entrega 3 — Lotes.** Arrastrar carpetas, preset con uno o varios formatos de salida, patrón de
+- **Entrega 3 — Lotes.** Pasa a ser lo siguiente de código. Arrastrar carpetas, preset con uno o varios formatos de salida, patrón de
   nombre y carpeta, paralelo, cancelar, y el resumen con el ahorro y las peores imágenes.
 - **Entrega 4 — Resto de códecs y proceso.** MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar,
   recortar y reducir paleta. La ADR de AVIF (libavif + aom frente a ravif/rav1e) se decide midiendo.
@@ -48,3 +40,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
   JSON; preset ⇄ orden cwebp en los dos sentidos. **Mismo fichero que cwebp byte a byte en 1015
   comparaciones.** Los presets con nombre (guardar, listar) quedan para la entrega 2, que es donde
   se usan. · 2026-10-06
+- ~~**Entrega 2 — Estudio**~~: comparador con deslizador y lado a lado, zoom y desplazamiento;
+  panel en tres niveles plegables pintado desde un esquema, con su explicación; vista previa en vivo
+  con generaciones; la orden cwebp, copiable y pegable; presets con nombre como JSON, compartidos con
+  la CLI (`-apolo_preset`, `apolo presets`); **enderezar según EXIF como opción** (ADR 0012), con aviso;
+  exportar; `apolo-dev` y 14 pruebas de Playwright. El modo «diferencias» pasa a la entrega 5. ·
+  2026-10-06

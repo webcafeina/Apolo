@@ -20,6 +20,10 @@
 >   Por dentro: un servicio con dos transportes, Tauri y HTTP ([ADR 0013](adr/0013-el-estudio-por-dentro.md)).
 >   Probado con **14 pruebas de Playwright** en claro y oscuro contra `apolo-dev`.
 >
+> **Publicada la v0.2.0 como pre-release** (https://github.com/webcafeina/Apolo/releases/tag/v0.2.0),
+> con los instaladores, la CLI de los seis objetivos y `SHA256SUMS.txt`. Lo pidió el cliente
+> ([ADR 0014](adr/0014-versiones-y-publicacion.md)).
+>
 > **Lo que más falta ver: la ventana de verdad.** Es la primera entrega con interfaz, y lo propio de
 > Tauri no se ha visto funcionar: órdenes, protocolo `apolo://`, diálogos y arrastrar y soltar. Solo
 > se compila en CI. Está en [deuda.md](deuda.md) con severidad alta.
@@ -29,7 +33,7 @@
 1. CI quedó **en verde a la primera** al cerrar la entrega 2: `comprobar`, que ya compila
    `src-tauri` con las órdenes y el protocolo, `e2e` y `equivalencia` en la 37494968142, y los seis
    instaladores en la **37494979883**. Mirar `gh run list` por si acaso.
-2. **Pedir al cliente que abra el instalador** de la última ejecución de `publicar.yml` en su Mac
+2. **Pedir al cliente que abra el instalador de la v0.2.0** (de la Release) en su Mac
    (y en un Windows si tiene). Que pruebe:
    - abrir una foto;
    - mover la calidad;
@@ -44,6 +48,7 @@
 - Entrega 0, cimientos (2026-10-06).
 - Entrega 1, núcleo WebP y CLI, con la equivalencia byte a byte (2026-10-06). ADR 0011.
 - Entrega 2, el Estudio, con enderezar (2026-10-06). ADR 0012 y 0013.
+- **v0.2.0 publicada** como pre-release, con la CLI en la Release (2026-10-06). ADR 0014.
 
 ## En curso
 

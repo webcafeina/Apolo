@@ -16,8 +16,14 @@
 
 ---
 
-> **En construcción.** Todavía no hay versión publicada. El plan, por entregas, está en
+> **Pre-release.** La [v0.2.0](https://github.com/webcafeina/Apolo/releases/tag/v0.2.0) es la
+> primera para probar: el Estudio con WebP y la línea de comandos. El plan, por entregas, está en
 > [docs/siguiente.md](docs/siguiente.md).
+
+## Descargas
+
+En [Releases](https://github.com/webcafeina/Apolo/releases): la aplicación (`.dmg`, instalador de
+Windows, `.deb` y AppImage) y la línea de comandos `apolo` para cada sistema, con `SHA256SUMS.txt`.
 
 ## Qué es
 

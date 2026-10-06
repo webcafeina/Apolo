@@ -35,4 +35,13 @@ entrega posterior. El flujo de publicar existía desde la entrega 0, pero lo que
 
 ## Verificación
 
-Pendiente de la primera publicación, la v0.2.0.
+2026-10-06, con la **v0.2.0** (https://github.com/webcafeina/Apolo/releases/tag/v0.2.0):
+
+- `publicar.yml` lanzado antes a mano para ver la CLI en las seis máquinas, y después con la
+  etiqueta: los once trabajos y `adjuntar` en verde.
+- Borrador revisado antes de publicar: 7 instaladores, 5 paquetes de la CLI y `SHA256SUMS.txt`.
+- La CLI de Linux amd64 **descargada de la Release**: la suma cuadra con `SHA256SUMS.txt` y
+  `apolo webp -q 80` da el mismo fichero que el cwebp 1.6.0 oficial.
+- Tauri cuelga además `Apolo_universal.app.tar.gz`, que es lo que usará la actualización automática;
+  hoy sobra, pero no molesta.
+- **No verificado**: ningún instalador de la Release se ha abierto.

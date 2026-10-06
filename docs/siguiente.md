@@ -8,9 +8,20 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **Terminar la prueba guiada con el cliente sobre la v0.3.0**, desde el paso 4 (abrir arrastrando y
-  con «Abrir otra…»), y además mirar el vidrio, el `.dmg` y el icono en el Dock. Los pasos 1 a 3 ya
-  se hicieron con la v0.2.0 (sesiones.md).
+- **v0.3.2 — lo que salió de la prueba guiada** (2026-10-06, en el Mac del cliente):
+  1. Más aire arriba en la cabecera de cada sección.
+  2. Los pesos, explicados y con diseño: etiquetas (Original, WebP), el ahorro grande y una barra
+     que compare los dos tamaños.
+  3. **Fallo**: al hacer zoom en el comparador (rueda o pellizco), la ventana entera rebota como si
+     hiciera scroll. El comparador tiene que quedarse el gesto (`wheel` no pasivo con
+     `preventDefault`) y nada en la ventana debe rebotar (`overscroll-behavior: none`).
+  4. Con la vista reducida, la compresión no se ve: una nota «Vista reducida al X %: acércate al
+     100 % para juzgar el detalle», que lleve al 100 %.
+  5. La orden copiada, con las rutas completas de entrada y salida (en pantalla, corta).
+  6. Sección propia de **Presets** en la barra lateral, con la lista, lo que hace cada uno y su orden,
+     y desde donde aplicarlos, renombrarlos y borrarlos. Ahora están escondidos en Ajustes.
+  7. «Con extras de Apolo» no se entiende: decir qué pasa («Distinto de cwebp: está enderezada»)
+     con una explicación.
 - **Montar la equivalencia con cwebp en CI para Windows y Linux arm64** (deuda). En un Mac con
   Apple Silicon ya la comprobó a mano el cliente: 25 de 25.
 

@@ -26,3 +26,4 @@ con el cliente.
 | [0011](adr/0011-leer-como-cwebp.md) | Leer las imágenes como cwebp, con sus manías; sin orientación EXIF | 2026-10-06 | aceptada · matizada por la 0012 |
 | [0012](adr/0012-enderezar-como-opcion.md) | Enderezar según la orientación EXIF, como opción apagada por defecto | 2026-10-06 | aceptada · hecha en la entrega 2 |
 | [0013](adr/0013-el-estudio-por-dentro.md) | El Estudio: un servicio con dos transportes (Tauri y HTTP), píxeles crudos en canvas, generaciones por imagen | 2026-10-06 | aceptada |
+| [0014](adr/0014-versiones-y-publicacion.md) | Versiones 0.x como pre-release en borrador, con la CLI y las sumas en la Release | 2026-10-06 | aceptada |

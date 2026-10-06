@@ -41,8 +41,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   - Playwright esperaba diez minutos por un 405.
 
   Cuatro trampas nuevas.
-- **No verificado**: la ventana de Tauri, que no compila aquí. Lo dice CI y lo tiene que abrir el
-  cliente.
+- CI en verde a la primera: `src-tauri` compila en Linux con las órdenes nuevas, Playwright pasa
+  también en GitHub y los seis instaladores salen (ejecución 37494979883).
+- **No verificado**: que la ventana funcione. Compilar no es abrirla: lo tiene que abrir el cliente.
 
 ---
 

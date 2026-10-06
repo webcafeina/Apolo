@@ -8,6 +8,9 @@ pub mod entrada;
 pub mod error;
 pub mod metadatos;
 pub mod motores;
+pub mod orientacion;
+pub mod presets;
+pub mod vista;
 pub mod webp;
 
 pub use error::{Error, Resultado};

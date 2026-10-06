@@ -24,4 +24,5 @@ con el cliente.
 | [0009](adr/0009-sin-firmar.md) | Sin firmar, por ahora | 2026-10-06 | aceptada |
 | [0010](adr/0010-plataformas.md) | Seis objetivos, con ARM | 2026-10-06 | aceptada |
 | [0011](adr/0011-leer-como-cwebp.md) | Leer las imágenes como cwebp, con sus manías; sin orientación EXIF | 2026-10-06 | aceptada · matizada por la 0012 |
-| [0012](adr/0012-enderezar-como-opcion.md) | Enderezar según la orientación EXIF, como opción apagada por defecto | 2026-10-06 | aceptada · sin hacer |
+| [0012](adr/0012-enderezar-como-opcion.md) | Enderezar según la orientación EXIF, como opción apagada por defecto | 2026-10-06 | aceptada · hecha en la entrega 2 |
+| [0013](adr/0013-el-estudio-por-dentro.md) | El Estudio: un servicio con dos transportes (Tauri y HTTP), píxeles crudos en canvas, generaciones por imagen | 2026-10-06 | aceptada |

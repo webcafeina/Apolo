@@ -9,6 +9,7 @@ use std::process::ExitCode;
 use std::time::Instant;
 
 use apolo_nucleo::cwebp::{self, Ayuda, OrdenCwebp};
+use apolo_nucleo::presets;
 use apolo_nucleo::webp::{self, Codificado, Medida};
 
 pub fn ejecutar(args: &[String]) -> ExitCode {
@@ -16,7 +17,39 @@ pub fn ejecutar(args: &[String]) -> ExitCode {
         ayuda_corta();
         return ExitCode::FAILURE;
     }
-    let orden = match cwebp::leer(args) {
+    // `-apolo_preset <nombre>`: un preset guardado (en el Estudio o a mano) es
+    // el punto de partida, y el resto de opciones se leen encima, como si
+    // cwebp ya las tuviera puestas.
+    let mut base = webp::OpcionesWebp::default();
+    let mut resto: Vec<String> = Vec::with_capacity(args.len());
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "-apolo_preset" {
+            let Some(nombre) = args.get(i + 1) else {
+                eprintln!("Error: -apolo_preset necesita un nombre");
+                return ExitCode::FAILURE;
+            };
+            let Some(carpeta) = presets::carpeta() else {
+                eprintln!("Error: no se encuentra la carpeta de configuración");
+                return ExitCode::FAILURE;
+            };
+            match presets::cargar(&carpeta, nombre) {
+                Some(p) => base = p.webp,
+                None => {
+                    eprintln!(
+                        "Error: no hay ningún preset «{nombre}» en {}",
+                        carpeta.display()
+                    );
+                    return ExitCode::FAILURE;
+                }
+            }
+            i += 2;
+            continue;
+        }
+        resto.push(args[i].clone());
+        i += 1;
+    }
+    let orden = match cwebp::leer_desde(&base, &resto) {
         Ok(o) => o,
         Err(e) => {
             eprintln!("Error: {e}");
@@ -364,6 +397,11 @@ fichero sale idéntico byte a byte. Entradas: PNG, JPEG, TIFF, WebP y PNM
   -hint <tipo> ........... photo, picture o graph
 
   -metadata <lista> ...... qué copiar: all, none (por defecto), exif, icc, xmp
+
+Propias de Apolo (cwebp no las tiene):
+  -apolo_preset <nombre> . partir de un preset guardado (apolo presets)
+  -apolo_enderezar ....... girar según la orientación EXIF; con ella, la
+                           salida ya no es la de cwebp
 
   -short ................. salida resumida
   -quiet ................. sin salida

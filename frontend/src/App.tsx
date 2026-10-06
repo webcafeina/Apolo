@@ -1,63 +1,84 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { motores, type Motor } from "./puente";
+import { Estudio } from "./estudio/Estudio";
+import * as puente from "./puente";
 
-type Vista = "estudio" | "lotes" | "ajustes";
+type Seccion = "estudio" | "lotes" | "ajustes";
 
 export function App() {
   const { t } = useTranslation();
-  const [vista, setVista] = useState<Vista>("estudio");
+  const [seccion, setSeccion] = useState<Seccion>("estudio");
+  const [inicio, setInicio] = useState<puente.Inicio | null>(null);
+  const [fallo, setFallo] = useState<string | null>(null);
+
+  useEffect(() => {
+    puente.inicio().then(setInicio, (e: puente.Fallo) => setFallo(e.mensaje));
+  }, []);
 
   return (
     <div className="marco">
       <nav className="barra" aria-label={t("app.nombre")}>
         <div className="marca">{t("app.nombre")}</div>
-        {(["estudio", "lotes", "ajustes"] as const).map((v) => (
-          <button
-            key={v}
-            className="fila"
-            aria-current={vista === v ? "page" : undefined}
-            onClick={() => setVista(v)}
-          >
-            {t(`nav.${v}`)}
+        {(["estudio", "lotes", "ajustes"] as const).map((s) => (
+          <button key={s} className="fila" aria-current={seccion === s ? "page" : undefined} onClick={() => setSeccion(s)}>
+            {t(`nav.${s}`)}
           </button>
         ))}
       </nav>
       <main className="contenido">
-        {vista === "estudio" && (
-          <Zona titulo={t("estudio.soltar")} detalle={t("estudio.soltarDetalle")} nota={t("estudio.pronto")} />
+        {fallo && (
+          <p className="error" role="alert">
+            {t("app.sinServicio")} {fallo}
+          </p>
         )}
-        {vista === "lotes" && <Zona titulo={t("lotes.soltar")} nota={t("lotes.pronto")} />}
-        {vista === "ajustes" && <Ajustes />}
+        {/* El Estudio no se desmonta al cambiar de sección: conserva la imagen. */}
+        <div hidden={seccion !== "estudio"} className="seccion">
+          {inicio && <Estudio inicio={inicio} />}
+        </div>
+        {seccion === "lotes" && (
+          <section className="zona">
+            <p className="zona-titulo">{t("lotes.soltar")}</p>
+            <p className="apagado nota">{t("lotes.pronto")}</p>
+          </section>
+        )}
+        {seccion === "ajustes" && <Ajustes inicio={inicio} />}
       </main>
     </div>
   );
 }
 
-function Zona({ titulo, detalle, nota }: { titulo: string; detalle?: string; nota: string }) {
-  return (
-    <section className="zona">
-      <p className="zona-titulo">{titulo}</p>
-      {detalle && <p className="apagado">{detalle}</p>}
-      <p className="apagado nota">{nota}</p>
-    </section>
-  );
-}
-
-function Ajustes() {
+function Ajustes({ inicio }: { inicio: puente.Inicio | null }) {
   const { t } = useTranslation();
-  const [lista, setLista] = useState<Motor[] | null>(null);
+  const [lista, setLista] = useState<puente.Motor[] | null>(null);
+  const [guardados, setGuardados] = useState<puente.PresetGuardado[]>([]);
 
   useEffect(() => {
-    motores().then(setLista, () => setLista([]));
+    puente.motores().then(setLista, () => setLista([]));
+    puente.presets().then(setGuardados, () => {});
   }, []);
 
   return (
     <section className="ajustes">
+      <h1>{t("ajustes.presets")}</h1>
+      <p className="apagado">{t("ajustes.presetsDonde")}</p>
+      {inicio && <code className="ruta">{inicio.carpeta_presets}</code>}
+      {guardados.length === 0 ? (
+        <p className="apagado">{t("ajustes.sinPresets")}</p>
+      ) : (
+        <ul className="lista-presets">
+          {guardados.map((g) => (
+            <li key={g.nombre}>
+              <span>{g.nombre}</span>
+              <code className="apagado">apolo webp -apolo_preset "{g.nombre}"</code>
+              <button onClick={async () => setGuardados(await puente.borrarPreset(g.nombre))}>{t("ajustes.borrar")}</button>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <h1>{t("ajustes.acercaDe")}</h1>
       <p>{t("app.lema")}</p>
       <h2>{t("ajustes.motores")}</h2>
-      {lista && lista.length === 0 && <p className="apagado">{t("ajustes.sinMotores")}</p>}
       <dl className="motores">
         {lista?.map((m) => (
           <div key={m.nombre}>

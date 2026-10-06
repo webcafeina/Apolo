@@ -86,3 +86,36 @@ fn las_opciones_se_guardan_en_json() {
     assert_eq!(parcial.calidad, 60.0);
     assert_eq!(parcial.metodo, OpcionesWebp::default().metodo);
 }
+
+#[test]
+fn enderezar_gira_y_deja_el_exif_a_1() {
+    let ruta = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../pruebas/corpus/orientacion-6.png");
+    let datos = std::fs::read(ruta).unwrap();
+    // Sin enderezar, como cwebp: 64×32.
+    let o = cwebp::leer(&["-metadata", "exif"]).unwrap();
+    let r = cwebp::ejecutar(&o, &datos, None).unwrap();
+    assert_eq!((r.ancho, r.alto), (64, 32));
+    // Enderezada: 32×64, la mitad roja arriba y la azul abajo, y el EXIF que
+    // se copia dice orientación 1.
+    let o = cwebp::leer(&["-metadata", "exif", "-apolo_enderezar", "-lossless"]).unwrap();
+    let r = cwebp::ejecutar(&o, &datos, None).unwrap();
+    assert_eq!((r.ancho, r.alto), (32, 64));
+    let (_, _, px) = decodificar(&r.datos);
+    let arriba = &px[..4];
+    let abajo = &px[px.len() - 4..];
+    assert!(
+        arriba[0] > 200 && arriba[2] < 60,
+        "arriba tiene que ser rojo: {arriba:?}"
+    );
+    assert!(
+        abajo[2] > 200 && abajo[0] < 60,
+        "abajo tiene que ser azul: {abajo:?}"
+    );
+    let img = entrada::leer(&r.datos, Lectura::default()).unwrap();
+    assert_eq!(
+        apolo_nucleo::orientacion::leer(img.metadatos.exif.as_deref()),
+        1
+    );
+    assert!(!cwebp::es_equivalente(&o.opciones));
+}

@@ -36,6 +36,31 @@ jobs:
       # La interfaz va primero: src-tauri embebe frontend/dist al compilar.
       - run: make comprobar
 
+  # La interfaz de punta a punta en un navegador, contra apolo-dev (ADR 0013).
+  e2e:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y nasm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: e2e
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm -C frontend install --frozen-lockfile
+      - run: pnpm -C frontend exec playwright install --with-deps chromium
+      - run: make e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: informe-e2e
+          path: frontend/playwright-report/
+
   # La promesa de la ADR 0002: el mismo fichero que el cwebp oficial, byte a
   # byte. Descarga el cwebp de Google y comprueba su sha256 (make equivalencia).
   equivalencia:

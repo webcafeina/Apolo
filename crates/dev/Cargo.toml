@@ -1,0 +1,17 @@
+[package]
+name = "apolo-dev"
+description = "Servidor HTTP de desarrollo: el Estudio sin ventana, para probar la interfaz en un navegador"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+[dependencies]
+apolo-servicio.workspace = true
+apolo-nucleo.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+axum = "0.8"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"] }

@@ -380,6 +380,13 @@ pub fn codificar(
         return Err(Error::Configuracion("libwebp no la acepta".into()));
     }
 
+    let enderezada = if op.enderezar {
+        crate::orientacion::enderezar(img)?
+    } else {
+        None
+    };
+    let img = enderezada.as_ref().unwrap_or(img);
+
     let mut pic = Picture::nueva()?;
     pic.0.use_argb = op.usa_argb() as i32;
     importar(img, &mut pic, !op.sin_alfa)?;

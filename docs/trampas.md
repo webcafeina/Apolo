@@ -53,3 +53,28 @@ explicación. Apolo llama a `WebPConfigInitInternal` y a `WebPPictureInitInterna
 Con Rust 1.99, `clippy::chunks_exact_to_as_chunks` falla la puerta con `-D warnings` en cada
 `chunks_exact(4)` de tamaño fijo. `as_chunks::<4>().0` da arrays (`&[u8; 4]`) y es lo que se usa en
 todo el núcleo. · 2026-10-06
+
+## La vista previa se queda en «…» después de recargar
+
+Las peticiones llegan y se cancelan todas. El contador de generación del servicio era **global**: al
+recargar, la interfaz vuelve a contar desde 1, y para el servicio, que ya iba por la 40, todas las
+peticiones eran viejas. Ahora va por imagen abierta. Lo encontró Playwright, que recarga en cada
+prueba. · 2026-10-06
+
+## Playwright espera a `apolo-dev` hasta agotar el tiempo, y el servidor sí estaba
+
+`webServer.url` comprueba con **GET**, y las rutas de `/api` son solo POST: un 405 no le vale como
+«listo» y espera los diez minutos enteros. Para eso está `GET /salud`. · 2026-10-06
+
+## `pkill -f <patrón>` se mata a sí mismo
+
+Si el patrón aparece en la propia orden de la shell (`pkill -f target/debug/apolo-dev` dentro de un
+`bash -c` más largo), mata también la shell que lo lanza: código 144 y nada más. Usar
+`pgrep -f "debug/apolo-[d]ev" | xargs -r kill`: los corchetes hacen que el patrón no se encuentre a
+sí mismo. · 2026-10-06
+
+## Otros proyectos de esta máquina usan los puertos 5173 y 5273
+
+Cronos y Esfinge levantan Vite y Playwright en esta misma máquina, a veces a la vez. Las pruebas de
+Apolo usan puertos propios: 5191 para Vite y 34591 para `apolo-dev`. `make dev-web` usa 5173 y 34500,
+que son los de por defecto. · 2026-10-06

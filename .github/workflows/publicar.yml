@@ -99,6 +99,21 @@ jobs:
           prerelease: ${{ startsWith(github.ref_name, 'v0.') }}
           args: --target ${{ matrix.objetivo }}
 
+      # El icono del volumen montado: el disco con el sol, como Esfinge. Tauri
+      # pone el de la aplicación y no deja elegir otro, así que se cambia en el
+      # .dmg ya hecho (empaquetado/macos/icono-volumen.sh). Con etiqueta, el
+      # .dmg ya está en la Release y se vuelve a subir encima.
+      - name: Icono del volumen
+        if: runner.os == 'macOS'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dmg=$(ls target/${{ matrix.objetivo }}/release/bundle/dmg/*.dmg)
+          empaquetado/macos/icono-volumen.sh "$dmg"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            gh release upload "$GITHUB_REF_NAME" "$dmg" --clobber
+          fi
+
       - name: Paquetes como artefacto
         if: github.ref_type != 'tag'
         uses: actions/upload-artifact@v4

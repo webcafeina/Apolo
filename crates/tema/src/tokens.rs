@@ -21,6 +21,7 @@ fn variables(t: &Tema) -> Vec<(&'static str, Rgb)> {
         ("sobre-acento", t.sobre_acento),
         ("acento", t.acento),
         ("barra", t.barra),
+        ("barra-encima", t.barra_encima),
         ("campo", t.campo),
         ("boton", t.boton),
         ("boton-encima", t.boton_encima),

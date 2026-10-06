@@ -16,6 +16,7 @@
   --sobre-acento: #2b2b31;
   --acento: #2b2b31;
   --barra: #f6f6f8;
+  --barra-encima: #e8e8ed;
   --campo: #ffffff;
   --boton: #ffffff;
   --boton-encima: #f2f2f5;
@@ -45,6 +46,7 @@
     --sobre-acento: #2b2b31;
     --acento: #ffffff;
     --barra: #242426;
+    --barra-encima: #343437;
     --campo: #1a1a1c;
     --boton: #3a3a3c;
     --boton-encima: #48484a;
@@ -74,6 +76,7 @@
   --sobre-acento: #2b2b31;
   --acento: #ffffff;
   --barra: #242426;
+  --barra-encima: #343437;
   --campo: #1a1a1c;
   --boton: #3a3a3c;
   --boton-encima: #48484a;

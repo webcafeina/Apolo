@@ -13,6 +13,7 @@ fn parejas(t: &Tema) -> Vec<(&'static str, Rgb, &'static str, Rgb, f64)> {
         ("tarjeta", t.tarjeta),
         ("elevada", t.elevada),
         ("barra", t.barra),
+        ("barra-encima", t.barra_encima),
         ("campo", t.campo),
         ("boton", t.boton),
         ("boton-encima", t.boton_encima),

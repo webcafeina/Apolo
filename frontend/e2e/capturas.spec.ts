@@ -32,6 +32,6 @@ test("vacío", async ({ page }, info) => {
 test("ajustes", async ({ page }, info) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Ajustes" }).click();
-  await page.getByRole("heading", { name: "Motores" }).waitFor();
+  await page.getByRole("heading", { name: "Acerca de" }).waitFor();
   await page.screenshot({ path: `capturas/ajustes-${info.project.name}.png` });
 });

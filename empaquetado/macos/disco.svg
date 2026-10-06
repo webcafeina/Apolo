@@ -1,0 +1,103 @@
+<!--
+  Icono del volumen de Apolo: lo que se ve en el escritorio y en la barra
+  lateral del Finder con el .dmg montado.
+
+  Es el disco de Esfinge (build/darwin/disco.svg) con el sol de Apolo en la
+  placa, como pidió el cliente el 2026-10-06: «el icono de unidad nativo de Mac
+  con el icono de Apolo puesto en la parte central». El porqué de cada pieza
+  —la carcasa de aluminio que se estrecha hacia arriba, la placa de color y la
+  banda con su piloto— está en el comentario del de Esfinge: costó dos intentos
+  dar con una unidad que se lea como unidad.
+
+  Sin él, el volumen y la aplicación que hay dentro se veían igual.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Aluminio: la luz cae desde arriba y a la izquierda. -->
+    <linearGradient id="aluminio" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#fbfbfc"/>
+      <stop offset="0.35" stop-color="#e4e5ea"/>
+      <stop offset="1" stop-color="#b9bbc4"/>
+    </linearGradient>
+    <!-- La banda de abajo es la cara frontal: recibe menos luz que la de arriba. -->
+    <linearGradient id="frente" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eceef2"/>
+      <stop offset="1" stop-color="#c2c4cd"/>
+    </linearGradient>
+    <!-- La placa, con el gris de piedra del icono de la aplicación. -->
+    <linearGradient id="piedra" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0" stop-color="#54545d"/>
+      <stop offset="1" stop-color="#2b2b31"/>
+    </linearGradient>
+
+    
+    
+    
+    <linearGradient id="sol" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd659"/>
+      <stop offset="1" stop-color="#f08c1e"/>
+    </linearGradient>
+    <radialGradient id="brillo" cx="0.5" cy="0.42" r="0.5">
+      <stop offset="0" stop-color="#ffe9a3"/>
+      <stop offset="0.6" stop-color="#ffc83d"/>
+      <stop offset="1" stop-color="#f08c1e"/>
+    </radialGradient>
+  </defs>
+
+  <!-- La carcasa. Se estrecha hacia arriba: eso es lo que da la sensación de
+       estar mirando la unidad desde arriba, y sin ello vuelve a parecer una
+       tarjeta plana. -->
+  <path d="M298 160 H726 a58 58 0 0 1 58 60 L819 810 a58 58 0 0 1 -58 60 H263
+           a58 58 0 0 1 -58 -60 L240 220 a58 58 0 0 1 58 -60 Z"
+        fill="url(#aluminio)"/>
+
+  <!-- La banda de abajo, que es la cara frontal de la unidad. -->
+  <path d="M216 628 H808 L819 810 a58 58 0 0 1 -58 60 H263 a58 58 0 0 1 -58 -60 Z"
+        fill="url(#frente)"/>
+
+  <!-- La placa con el logo, encajada en la cara de arriba. -->
+  <path d="M301 190 H723 a30 30 0 0 1 30 32 L778 628 H246 L271 222 a30 30 0 0 1 30 -32 Z"
+        fill="url(#piedra)"/>
+
+  <!-- El sol de Apolo, grande sobre la placa: es lo único que hay que
+       reconocer a 32 píxeles. -->
+  <g transform="translate(512 418) scale(0.45) translate(-512 -470)">
+  <g fill="url(#sol)">
+    <path d="M294.0 460.0L142.0 500.0L294.0 540.0z"/>
+    <path d="M321.3 390.7L234.8 385.2L299.9 442.4z"/>
+    <path d="M386.1 317.6L250.4 238.4L329.6 374.1z"/>
+    <path d="M454.4 287.9L397.2 222.8L402.7 309.3z"/>
+    <path d="M552.0 282.0L512.0 130.0L472.0 282.0z"/>
+    <path d="M621.3 309.3L626.8 222.8L569.6 287.9z"/>
+    <path d="M694.4 374.1L773.6 238.4L637.9 317.6z"/>
+    <path d="M724.1 442.4L789.2 385.2L702.7 390.7z"/>
+    <path d="M730.0 540.0L882.0 500.0L730.0 460.0z"/>
+  </g>
+  <circle cx="512" cy="500" r="182" fill="url(#brillo)"/>
+  <path d="M768.3 554.5A262 262 0 0 1 255.7 554.5" fill="none" stroke="#fff1d6" stroke-width="14" stroke-linecap="round"/>
+  <g>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(554.3 788.9) rotate(-38.3)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(595.1 716.6) rotate(9.0)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(673.9 743.0) rotate(-63.7)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(679.8 660.2) rotate(-16.3)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(762.3 650.4) rotate(-89.0)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(732.2 573.0) rotate(-41.7)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(469.7 788.9) rotate(218.3)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(428.9 716.6) rotate(171.0)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(350.1 743.0) rotate(243.7)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(344.2 660.2) rotate(196.3)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(261.7 650.4) rotate(269.0)" fill="#fff1d6"/>
+    <path d="M-64.0 0 Q0 -46.0 64.0 0 Q0 46.0 -64.0 0z" transform="translate(291.8 573.0) rotate(221.7)" fill="#fff1d6"/>
+  </g>
+  </g>
+
+  <!-- El piloto de la unidad, abajo a la derecha. Un detalle pequeño, pero es de
+       los que hacen que la cosa se lea como un disco y no como una caja. -->
+  <circle cx="706" cy="762" r="19" fill="#8fd18a"/>
+  <circle cx="706" cy="762" r="19" fill="none" stroke="#6aa867" stroke-width="4" opacity="0.7"/>
+
+  <!-- Contorno, para que no se disuelva sobre un escritorio claro. -->
+  <path d="M298 160 H726 a58 58 0 0 1 58 60 L819 810 a58 58 0 0 1 -58 60 H263
+           a58 58 0 0 1 -58 -60 L240 220 a58 58 0 0 1 58 -60 Z"
+        fill="none" stroke="#8b8d97" stroke-width="7" opacity="0.55"/>
+</svg>

@@ -13,3 +13,10 @@ Formato: `## Síntoma` · qué lo causa · cómo se evita · fecha.
 causa es una contraseña con `/`, `+`, `@`, `:` o `#` dentro de una URL. Se evita generándolas en
 hexadecimal: `openssl rand -hex 24`. Es regla de toda la máquina (`~/.claude/CLAUDE.md`); Apolo no
 tiene servidor, pero el día que tenga la actualización o una web, aplica. · 2026-10-06
+
+## «failed to build bundler settings: invalid category»
+
+Sale **al final** de `tauri build`, después de compilar todo, así que cuesta los minutos de la
+compilación entera en cada objetivo. `bundle.category` en `tauri.conf.json` no admite cualquier
+texto: es una lista cerrada con los nombres de Apple sin espacios (`GraphicsAndDesign`, no
+`Graphics`). Pasó en la primera publicación, en los seis objetivos a la vez. · 2026-10-06

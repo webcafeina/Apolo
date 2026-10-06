@@ -33,7 +33,7 @@
       "deb",
       "appimage"
     ],
-    "category": "Graphics",
+    "category": "GraphicsAndDesign",
     "shortDescription": "Optimiza imágenes con los motores de Squoosh",
     "longDescription": "Apolo comprime imágenes a WebP, AVIF, JPEG XL, MozJPEG y PNG con los mismos motores que Squoosh y cwebp, viendo el resultado al momento.",
     "copyright": "© 2026 Webcafeína · GPLv3",

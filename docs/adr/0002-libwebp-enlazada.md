@@ -35,4 +35,9 @@ Google descargado y su sha256 verificado.
 
 - 2026-10-06: `libwebp-sys 0.14.4` compila y enlaza **libwebp 1.6.0** (`apolo --version`, y la
   prueba `libwebp_esta_enlazada`). El `cwebp` de referencia tiene que ser, por tanto, el 1.6.0.
-- **Pendiente** la equivalencia byte a byte: es la prueba principal de la entrega 1.
+- 2026-10-06: **equivalencia byte a byte comprobada** en Linux x86-64: 1015 comparaciones idénticas
+  contra el cwebp 1.6.0 de Google, incluido `-mt` (que se temía distinto y no lo es). Corre en
+  `make equivalencia` y en CI. El detalle de lo que hubo que copiar de los lectores está en la
+  [ADR 0011](0011-leer-como-cwebp.md).
+- libwebp se compila con SSE2 en x86-64 pero **sin SSE4.1 ni AVX2** (las características de
+  `libwebp-sys` están apagadas). La salida es la misma; la velocidad no se ha medido.

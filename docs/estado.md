@@ -4,34 +4,38 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **Entrega 0 (cimientos) hecha el 2026-10-06**, el mismo día del planteamiento. Hay repositorio
-> público (`webcafeina/Apolo`, GPLv3), documentos vivos con las diez ADR del planteamiento, workspace
-> de Cargo con libwebp 1.6.0 enlazada, la CLI `apolo`, la carcasa de la interfaz en React con i18n, y
-> los tokens generados desde Rust con su prueba de contraste. `make comprobar` está en verde aquí.
+> **Entregas 0 y 1 hechas el 2026-10-06**, el mismo día del planteamiento.
 >
-> **CI en verde el mismo día**: `comprobar.yml`, con la ventana incluida, y `publicar.yml`, que
-> empaqueta los seis objetivos. La primera publicación cayó entera por la categoría del paquete
-> ([trampas.md](trampas.md)). **Lo que falta para dar la entrega 0 por vista es abrir un instalador
-> en un Mac, un Windows o un Debian.** Los artefactos están en la ejecución 37454237051 de Actions.
+> **La 1 cumple la promesa central** ([ADR 0002](adr/0002-libwebp-enlazada.md)): con las mismas
+> opciones, `apolo webp` da **el mismo fichero, byte a byte, que el cwebp 1.6.0 oficial de Google**.
+> Comprobado en 1015 comparaciones (29 imágenes × 35 combinaciones), con `make equivalencia`, que
+> también corre en CI. Para llegar ahí hubo que copiar tres manías de los lectores de cwebp —la
+> gamma y los ICC de libpng, el alfa premultiplicado de libtiff— que están en la
+> [ADR 0011](adr/0011-leer-como-cwebp.md).
+>
+> Cada opción de cwebp tiene su fila en [cobertura-cwebp.md](cobertura-cwebp.md); a todas les falta
+> solo la columna de la interfaz, que es la entrega 2.
+>
+> **Lo que no se ha visto**: la equivalencia fuera de Linux x86-64 (en ARM cambia el SIMD) y ningún
+> instalador abierto en una máquina de verdad. Las dos cosas, en [deuda.md](deuda.md).
 
 ### La siguiente acción, al retomar
 
-1. Que el cliente abra uno de los instaladores de la ejecución 37454237051
-   (`gh run download 37454237051 -R webcafeina/Apolo`) y diga si arranca y si Ajustes enseña
-   «libwebp 1.6.0».
-2. Si el cliente puede, que ejecute en el VPS
-   `sudo apt install build-essential cmake nasm pkg-config libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev webp`
-   para compilar la ventana aquí y tener `cwebp` de referencia. **Ojo:** el `cwebp` de Ubuntu no será el
-   1.6.0; para la prueba de equivalencia se descarga el binario oficial de Google 1.6.0.
-3. **Empezar la entrega 1** ([siguiente.md](siguiente.md)): decodificar las entradas y la
-   correspondencia de `cwebp` con `WebPConfig`, rellenando [cobertura-cwebp.md](cobertura-cwebp.md)
-   fila a fila, con la prueba byte a byte contra `cwebp` 1.6.0.
+1. Mirar Actions (`gh run list -R webcafeina/Apolo`): `comprobar.yml` ahora tiene el trabajo
+   `equivalencia`, y `publicar.yml` necesita nasm en las seis máquinas (mozjpeg). Si algo está en
+   rojo, es lo primero; lo más probable, mozjpeg en Windows ARM64.
+2. **Empezar la entrega 2, el Estudio** ([siguiente.md](siguiente.md)): primero el modo de
+   desarrollo por HTTP (para probar la interfaz sin ventana, como el puente de Esfinge), luego el
+   comparador y los controles, que se pintan a partir de `OpcionesWebp` y de los niveles de
+   [cobertura-cwebp.md](cobertura-cwebp.md).
+3. Pendiente del cliente: abrir un instalador en su Mac, Windows o Debian.
 
 ## Completado
 
 - Planteamiento y ADR 0001–0010 (2026-10-06).
-- Entrega 0 con CI en verde en los seis objetivos (2026-10-06).
+- Entrega 0, cimientos, con CI en verde en los seis objetivos (2026-10-06).
+- Entrega 1, núcleo WebP y CLI, con la equivalencia byte a byte (2026-10-06). ADR 0011.
 
 ## En curso
 
-- Entrega 0: falta abrir un instalador en una máquina de verdad.
+- Nada a medias en el código.

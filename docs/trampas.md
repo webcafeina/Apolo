@@ -20,3 +20,36 @@ Sale **al final** de `tauri build`, después de compilar todo, así que cuesta l
 compilación entera en cada objetivo. `bundle.category` en `tauri.conf.json` no admite cualquier
 texto: es una lista cerrada con los nombres de Apple sin espacios (`GraphicsAndDesign`, no
 `Graphics`). Pasó en la primera publicación, en los seis objetivos a la vez. · 2026-10-06
+
+## cwebp descarta un perfil ICC de un PNG y Apolo lo copia
+
+El fichero de cwebp sale más corto, justo el tamaño del perfil. No lo descarta cwebp: lo descarta
+**libpng**, que comprueba la cabecera del perfil (longitud, `acsp`, espacio de color, clase, PCS,
+tabla de etiquetas) y, si no le gusta, lo tira con un aviso «benigno» que nadie ve. `png::icc_valido`
+repite esas comprobaciones. Salió con un perfil falso del corpus de pruebas. · 2026-10-06
+
+## Un TIFF con transparencia da otro fichero que cwebp
+
+Más pequeño en cwebp, en todas las opciones. libtiff, al leer con `TIFFReadRGBAImage`,
+**premultiplica el alfa no asociado**, y cwebp solo deshace la premultiplicación si el alfa ya venía
+asociado: codifica el color oscurecido. Se repite con la tabla `UaToAa` de libtiff
+(`(v·a + 127) / 255`). Ver la ADR 0011. · 2026-10-06
+
+## El crate mozjpeg avisa de los errores con un pánico
+
+Un JPEG dañado no devuelve `Err`: hace `resume_unwind`. El lector lo envuelve en `catch_unwind`, y
+eso **solo funciona con `panic = "unwind"`**. Si algún día se pone `panic = "abort"` en el perfil
+de release para ganar tamaño, un JPEG roto cerrará la aplicación entera. · 2026-10-06
+
+## libwebp-sys inicializa `WebPConfig` con la versión del decodificador
+
+Sus ayudas `WebPConfig::new()` y `WebPInitConfig` pasan `WEBP_DECODER_ABI_VERSION` a una función
+del **codificador**. Hoy da igual porque las dos valen 0x0210, pero el día que difieran, fallará sin
+explicación. Apolo llama a `WebPConfigInitInternal` y a `WebPPictureInitInternal` directamente con
+`WEBP_ENCODER_ABI_VERSION`. · 2026-10-06
+
+## clippy pide `as_chunks` en vez de `chunks_exact`
+
+Con Rust 1.99, `clippy::chunks_exact_to_as_chunks` falla la puerta con `-D warnings` en cada
+`chunks_exact(4)` de tamaño fijo. `as_chunks::<4>().0` da arrays (`&[u8; 4]`) y es lo que se usa en
+todo el núcleo. · 2026-10-06

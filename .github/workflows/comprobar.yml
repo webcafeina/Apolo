@@ -19,7 +19,7 @@ jobs:
       - name: Dependencias del sistema (webkit para la ventana)
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config
+          sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config nasm
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -35,3 +35,16 @@ jobs:
 
       # La interfaz va primero: src-tauri embebe frontend/dist al compilar.
       - run: make comprobar
+
+  # La promesa de la ADR 0002: el mismo fichero que el cwebp oficial, byte a
+  # byte. Descarga el cwebp de Google y comprueba su sha256 (make equivalencia).
+  equivalencia:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y nasm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: equivalencia
+      - run: make equivalencia

@@ -3,6 +3,12 @@
 //! La ventana (`src-tauri`) y la línea de comandos (`crates/cli`) son dos caras
 //! sobre este mismo código. Lo que hace una lo hace la otra.
 
+pub mod cwebp;
+pub mod entrada;
+pub mod error;
+pub mod metadatos;
 pub mod motores;
+pub mod webp;
 
+pub use error::{Error, Resultado};
 pub use motores::{Motor, motores};

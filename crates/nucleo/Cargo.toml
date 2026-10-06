@@ -11,4 +11,15 @@ authors.workspace = true
 # La versión de libwebp queda fijada aquí (ADR 0002): cambiarla cambia los
 # bytes de salida y obliga a subir el cwebp de referencia de las pruebas.
 libwebp-sys = "=0.14.4"
+# El decodificador de JPEG es el de libjpeg-turbo, el mismo que usa cwebp: con
+# otro, los píxeles de partida cambian y la salida deja de ser idéntica.
+mozjpeg = "0.10"
+png = "0.18"
+tiff = "0.11"
+image = { version = "0.25", default-features = false, features = ["gif", "bmp", "qoi", "pnm"] }
 serde.workspace = true
+thiserror = "2"
+
+[dev-dependencies]
+serde_json.workspace = true
+miniz_oxide = "0.9"

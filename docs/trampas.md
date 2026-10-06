@@ -104,3 +104,17 @@ libheif aplica los giros del propio HEIF al decodificar, y el EXIF del iPhone di
 Las cabeceras de libde265 declaran sus funciones como de DLL salvo que se defina
 `LIBDE265_STATIC_BUILD`. Va en `cflag` y `cxxflag` al compilar libheif (`crates/heic/build.rs`).
 Apuntado antes de verlo fallar: es lo que dice la propia CMakeLists de libde265. · 2026-10-06
+
+## En macOS x86-64: «Undefined symbols: ___cpu_indicator_init»
+
+Al enlazar Apolo (aplicación y CLI) para Intel, con libde265 dentro. libde265 detecta AVX2 con
+`__builtin_cpu_supports`, y en macOS eso vive en la biblioteca de soporte de clang (compiler-rt),
+que rustc no enlaza. En Linux lo da libgcc y en Windows no se usa. Se apaga `ENABLE_AVX2` en macOS
+(`crates/heic/build.rs`): quedan las versiones SSE. · 2026-10-06
+
+## «object file was built for newer macOS version than being linked»
+
+Cientos de avisos al enlazar en el Mac de CI: CMake compila para la versión del Mac que compila, no
+para el mínimo de Apolo. Son avisos, pero dicen que la aplicación podría usar algo que macOS 11 no
+tiene. `crates/heic/build.rs` pasa `CMAKE_OSX_DEPLOYMENT_TARGET` (11.0, o `MACOSX_DEPLOYMENT_TARGET`
+si está puesto). Los mismos avisos salen de mozjpeg, sin plataforma, y son inofensivos. · 2026-10-06

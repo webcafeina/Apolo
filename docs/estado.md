@@ -4,8 +4,8 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **Entregas 0, 1, 2 y 3 hechas el 2026-10-06.** La v0.2.0 está publicada y la **v0.3.0** sale con la
-> entrega 3.
+> **Entregas 0, 1, 2 y 3 hechas el 2026-10-06.** Publicadas la v0.2.0 y la **v0.3.0**
+> (https://github.com/webcafeina/Apolo/releases/tag/v0.3.0), las dos como pre-release.
 >
 > - **La 1** cumple la promesa central: `apolo webp` da **el mismo fichero, byte a byte, que el
 >   cwebp 1.6.0 oficial**. Son 1015 de 1015 en Linux, y **25 de 25 en el Mac del cliente con Apple
@@ -30,11 +30,7 @@
 
 ### La siguiente acción, al retomar
 
-1. Si la v0.3.0 no está publicada todavía:
-   - lanzar `publicar.yml` a mano;
-   - etiquetar `v0.3.0`;
-   - revisar el borrador (lleva las notas de `.github/notas/v0.3.0.md`);
-   - publicarlo (ADR 0014).
+1. La v0.3.0 ya está publicada (CI en verde: el TIFF del fondo se hizo y el `.dmg` se montó con él).
 2. **Seguir la prueba guiada en el paso 4**, con la v0.3.0 en el Mac del cliente:
    - abrir arrastrando `mia.png` y con «Abrir otra…» (diálogo de macOS);
    - el comparador, la calidad y el zoom;
@@ -59,6 +55,7 @@
 - Entrega 2, el Estudio, con enderezar (2026-10-06). ADR 0012 y 0013.
 - v0.2.0 publicada como pre-release (2026-10-06). ADR 0014.
 - Entrega 3, identidad (2026-10-06). ADR 0015 y 0016.
+- v0.3.0 publicada como pre-release (2026-10-06).
 
 ## En curso
 

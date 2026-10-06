@@ -9,14 +9,16 @@
 > de Cargo con libwebp 1.6.0 enlazada, la CLI `apolo`, la carcasa de la interfaz en React con i18n, y
 > los tokens generados desde Rust con su prueba de contraste. `make comprobar` está en verde aquí.
 >
-> **Lo único de la entrega 0 que no se ha visto aquí es la ventana**: el VPS no tiene webkit2gtk y no
-> hay sudo. La compila CI. Si `comprobar.yml` y `publicar.yml` (lanzado a mano) salen en verde en los
-> seis objetivos, la entrega 0 está cerrada.
+> **CI en verde el mismo día**: `comprobar.yml`, con la ventana incluida, y `publicar.yml`, que
+> empaqueta los seis objetivos. La primera publicación cayó entera por la categoría del paquete
+> ([trampas.md](trampas.md)). **Lo que falta para dar la entrega 0 por vista es abrir un instalador
+> en un Mac, un Windows o un Debian.** Los artefactos están en la ejecución 37454237051 de Actions.
 
 ### La siguiente acción, al retomar
 
-1. Mirar las ejecuciones de Actions (`gh run list -R webcafeina/Apolo`). Si algo está en rojo, es lo
-   primero.
+1. Que el cliente abra uno de los instaladores de la ejecución 37454237051
+   (`gh run download 37454237051 -R webcafeina/Apolo`) y diga si arranca y si Ajustes enseña
+   «libwebp 1.6.0».
 2. Si el cliente puede, que ejecute en el VPS
    `sudo apt install build-essential cmake nasm pkg-config libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev webp`
    para compilar la ventana aquí y tener `cwebp` de referencia. **Ojo:** el `cwebp` de Ubuntu no será el
@@ -28,8 +30,8 @@
 ## Completado
 
 - Planteamiento y ADR 0001–0010 (2026-10-06).
-- Entrega 0, salvo verla en CI (2026-10-06).
+- Entrega 0 con CI en verde en los seis objetivos (2026-10-06).
 
 ## En curso
 
-- Entrega 0: comprobar CI.
+- Entrega 0: falta abrir un instalador en una máquina de verdad.

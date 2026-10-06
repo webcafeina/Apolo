@@ -1,0 +1,12 @@
+[package]
+name = "apolo-tema"
+description = "La paleta de Apolo, su contraste medido y el generador de tokens.css"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "tokens"
+path = "src/main.rs"

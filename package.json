@@ -1,0 +1,12 @@
+{
+  "name": "apolo",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "packageManager": "pnpm@11.20.0",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.1"
+  }
+}

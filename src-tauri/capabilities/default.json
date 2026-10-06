@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Lo que la ventana principal puede pedir",
+  "windows": ["principal"],
+  "permissions": ["core:default"]
+}

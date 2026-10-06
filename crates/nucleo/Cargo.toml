@@ -1,0 +1,14 @@
+[package]
+name = "apolo-nucleo"
+description = "El núcleo de Apolo: decodificar, codificar, procesar y medir imágenes"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+# La versión de libwebp queda fijada aquí (ADR 0002): cambiarla cambia los
+# bytes de salida y obliga a subir el cwebp de referencia de las pruebas.
+libwebp-sys = "=0.14.4"
+serde.workspace = true

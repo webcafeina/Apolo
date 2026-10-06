@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Provisional (ver docs/deuda.md): un sol sobre placa, por Apolo. -->
+  <defs>
+    <linearGradient id="placa" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f3a56"/>
+      <stop offset="1" stop-color="#151a29"/>
+    </linearGradient>
+    <radialGradient id="sol" cx="0.42" cy="0.38" r="0.7">
+      <stop offset="0" stop-color="#ffe08a"/>
+      <stop offset="1" stop-color="#f29d1b"/>
+    </radialGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#placa)"/>
+  <g stroke="#f7b733" stroke-width="44" stroke-linecap="round">
+    <line x1="512" y1="200" x2="512" y2="270"/>
+    <line x1="512" y1="754" x2="512" y2="824"/>
+    <line x1="200" y1="512" x2="270" y2="512"/>
+    <line x1="754" y1="512" x2="824" y2="512"/>
+    <line x1="291" y1="291" x2="341" y2="341"/>
+    <line x1="683" y1="683" x2="733" y2="733"/>
+    <line x1="291" y1="733" x2="341" y2="683"/>
+    <line x1="683" y1="341" x2="733" y2="291"/>
+  </g>
+  <circle cx="512" cy="512" r="190" fill="url(#sol)"/>
+</svg>

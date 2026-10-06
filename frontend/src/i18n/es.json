@@ -1,0 +1,26 @@
+{
+  "app": {
+    "nombre": "Apolo",
+    "lema": "Optimiza imágenes con los motores de Squoosh"
+  },
+  "nav": {
+    "estudio": "Estudio",
+    "lotes": "Lotes",
+    "ajustes": "Ajustes"
+  },
+  "estudio": {
+    "soltar": "Arrastra una imagen aquí",
+    "soltarDetalle": "JPEG, PNG, GIF, WebP, AVIF, JPEG XL, TIFF, BMP o QOI",
+    "pronto": "El comparador llega en la entrega 2."
+  },
+  "lotes": {
+    "soltar": "Arrastra carpetas o imágenes aquí",
+    "pronto": "Los lotes llegan en la entrega 3."
+  },
+  "ajustes": {
+    "acercaDe": "Acerca de",
+    "motores": "Motores",
+    "sinMotores": "Los motores solo se ven dentro de la aplicación.",
+    "licencia": "Software libre con licencia GPLv3."
+  }
+}

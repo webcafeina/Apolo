@@ -15,6 +15,10 @@ import { Panel } from "./Panel";
 
 const RETARDO_MS = 120;
 
+/** Eventos de ventana entre la sección Presets y el Estudio. */
+export const EVENTO_PRESETS = "apolo:presets";
+export const EVENTO_APLICAR = "apolo:aplicar-preset";
+
 export function formatoBytes(n: number): string {
   const f = (v: number, d: number) => v.toLocaleString("es", { maximumFractionDigits: d, minimumFractionDigits: d });
   if (n < 1024) return `${n} B`;
@@ -37,8 +41,18 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
   const [sobre, setSobre] = useState(false);
   const generacion = useRef(0);
 
+  // La sección Presets avisa por eventos de ventana: cuando se aplica uno al
+  // Estudio y cuando cambia la lista (guardar, renombrar, borrar).
   useEffect(() => {
-    puente.presets().then(setGuardados, () => {});
+    const recargar = () => puente.presets().then(setGuardados, () => {});
+    const aplicar = (e: Event) => setOpciones((e as CustomEvent<OpcionesWebp>).detail);
+    recargar();
+    window.addEventListener(EVENTO_PRESETS, recargar);
+    window.addEventListener(EVENTO_APLICAR, aplicar);
+    return () => {
+      window.removeEventListener(EVENTO_PRESETS, recargar);
+      window.removeEventListener(EVENTO_APLICAR, aplicar);
+    };
   }, []);
 
   const abrir = useCallback(
@@ -107,6 +121,7 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
   const guardar = async (nombre: string) => {
     try {
       setGuardados(await puente.guardarPreset({ nombre, formato: "webp", webp: opciones }));
+      window.dispatchEvent(new Event(EVENTO_PRESETS));
       setAviso(t("estudio.presetGuardado", { nombre }));
     } catch (e) {
       setError((e as puente.Fallo).mensaje);
@@ -172,7 +187,6 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
     );
   }
 
-  const ahorro = vista ? 1 - vista.bytes / info.bytes : 0;
   const psnr = vista?.estadisticas.psnr[3];
 
   return (
@@ -207,30 +221,25 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
 
         <footer className="barra-estado" data-prueba="barra-estado">
           <div className="fila-estado">
-          <div className="pesos">
-            <span>{formatoBytes(info.bytes)}</span>
-            <span className="flecha">→</span>
-            <strong data-prueba="peso-resultado">{vista ? formatoBytes(vista.bytes) : "…"}</strong>
+            <Pesos info={info} vista={vista} />
+            <span className="separador" />
             {vista && (
-              <span className={ahorro >= 0 ? "exito" : "error"} data-prueba="ahorro">
-                {ahorro >= 0 ? "−" : "+"}
-                {Math.abs(ahorro * 100).toLocaleString("es", { maximumFractionDigits: 1 })} %
-              </span>
+              <div className="datos apagado">
+                {vista.ancho} × {vista.alto} · {vista.milisegundos} ms
+                {psnr !== undefined && !opciones.sin_perdida && ` · PSNR ${psnr.toLocaleString("es", { maximumFractionDigits: 1 })} dB`}
+              </div>
             )}
-          </div>
-          {vista && (
-            <div className="datos apagado">
-              {vista.ancho} × {vista.alto} · {vista.milisegundos} ms
-              {psnr !== undefined && !opciones.sin_perdida && ` · PSNR ${psnr.toLocaleString("es", { maximumFractionDigits: 1 })} dB`}
-            </div>
-          )}
-          <span className="separador" />
-          <button className="principal" onClick={exportar} disabled={!vista} data-prueba="exportar">
-            <Icono nombre="exportar" />
-            {t("estudio.exportar")}
-          </button>
+            <button className="principal" onClick={exportar} disabled={!vista} data-prueba="exportar">
+              <Icono nombre="exportar" />
+              {t("estudio.exportar")}
+            </button>
           </div>
           <OrdenCwebp vista={vista} cambiar={setOpciones} />
+          {vista?.motivo && (
+            <p className="motivo apagado" data-prueba="motivo">
+              {t(`orden.motivo.${vista.motivo}`)}
+            </p>
+          )}
         </footer>
         {(error || aviso) && (
           <p className={error ? "error mensaje" : "exito mensaje"} role={error ? "alert" : "status"} onClick={() => { setError(null); setAviso(null); }}>
@@ -250,6 +259,49 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
         guardar={guardar}
         borrar={borrar}
       />
+    </div>
+  );
+}
+
+/**
+ * Los dos pesos, con lo que son, el ahorro grande y una barra que los compara.
+ * La v0.3.1 enseñaba «4,8 KB → 616 B −87 %» sin decir qué era cada número.
+ */
+function Pesos({ info, vista }: { info: puente.InfoImagen; vista: puente.Vista | null }) {
+  const { t } = useTranslation();
+  const ahorro = vista ? 1 - vista.bytes / info.bytes : 0;
+  const crece = ahorro < 0;
+  const proporcion = vista ? Math.min(1, vista.bytes / info.bytes) : 1;
+  return (
+    <div className="pesos" data-prueba="pesos">
+      <div className="peso">
+        <span className="etiqueta">{t("pesos.original", { formato: info.formato })}</span>
+        <span className="valor">{formatoBytes(info.bytes)}</span>
+      </div>
+      <div className="peso">
+        <span className="etiqueta">{t("pesos.resultado")}</span>
+        <strong className="valor" data-prueba="peso-resultado">{vista ? formatoBytes(vista.bytes) : "…"}</strong>
+      </div>
+      {vista && (
+        <div className={`ahorro ${crece ? "crece" : ""}`} data-prueba="ahorro">
+          <span className="ahorro-cifra">
+            {crece ? "+" : "−"}
+            {Math.abs(ahorro * 100).toLocaleString("es", { maximumFractionDigits: 1 })} %
+          </span>
+          <span className="etiqueta">
+            {crece
+              ? t("pesos.mas", { bytes: formatoBytes(vista.bytes - info.bytes) })
+              : t("pesos.menos", { bytes: formatoBytes(info.bytes - vista.bytes) })}
+          </span>
+        </div>
+      )}
+      <div
+        className="barra-pesos"
+        role="img"
+        aria-label={vista ? t("pesos.barra", { porcentaje: Math.round(proporcion * 100) }) : ""}
+      >
+        <span className="barra-resultado" style={{ width: `${Math.max(proporcion * 100, 1.5)}%` }} />
+      </div>
     </div>
   );
 }
@@ -287,15 +339,17 @@ function OrdenCwebp({ vista, cambiar }: { vista: puente.Vista | null; cambiar: (
   return (
     <div className="orden">
       <code title={vista?.orden} data-prueba="orden">{vista?.orden ?? "cwebp …"}</code>
-      {vista && !vista.equivalente && (
-        <span className="aviso-orden" title={t("orden.noEquivalenteAyuda")} data-prueba="no-equivalente">
+      {vista && vista.motivo && (
+        <span className="aviso-orden" title={t(`orden.motivo.${vista.motivo}`)} data-prueba="no-equivalente">
           {t("orden.noEquivalente")}
         </span>
       )}
       <button
         onClick={async () => {
           if (!vista) return;
-          await navigator.clipboard.writeText(vista.orden);
+          // Se copia con las rutas completas, para que funcione pegada en
+          // cualquier carpeta; en pantalla se ve corta.
+          await navigator.clipboard.writeText(vista.orden_completa);
           setCopiado(true);
           window.setTimeout(() => setCopiado(false), 1500);
         }}

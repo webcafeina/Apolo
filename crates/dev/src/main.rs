@@ -93,6 +93,11 @@ struct PeticionNivel {
 }
 
 #[derive(Deserialize)]
+struct PeticionOrden {
+    opciones: OpcionesWebp,
+}
+
+#[derive(Deserialize)]
 struct Texto {
     texto: String,
 }
@@ -203,6 +208,12 @@ fn rutas(s: Arc<Servicio>) -> Router {
         .route(
             "/api/presets",
             post(|State(s): Estado| async move { Json(s.presets()) }),
+        )
+        .route(
+            "/api/orden_opciones",
+            post(|Json(p): Json<PeticionOrden>| async move {
+                Json(apolo_servicio::orden_opciones(&p.opciones))
+            }),
         )
         .route(
             "/api/guardar_preset",

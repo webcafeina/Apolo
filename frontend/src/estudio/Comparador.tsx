@@ -211,10 +211,54 @@ export function Comparador({ original, resultado, modo, ocupado }: Props) {
     setVista({ escala, x: cx - x0 - (cx - x0 - vista.x) * f, y: cy - (cy - vista.y) * f });
   };
 
-  const alRueda = (e: React.WheelEvent) => {
-    const p = posicion(e);
-    zoom(Math.exp(-e.deltaY * 0.0015), p.x, p.y);
-  };
+  // El gesto de zoom (rueda, o pellizco en el trackpad) es solo del lienzo.
+  // Va con un oyente nativo **no pasivo**: el de React es pasivo, no puede
+  // cancelar el evento, y entonces la ventana entera hacía su rebote elástico
+  // a la vez que se acercaba la imagen (lo vio el cliente en la v0.3.1).
+  //
+  // El pellizco llega distinto según el motor: Chromium y WebView2 lo mandan
+  // como rueda con Ctrl; WebKit (macOS y Linux), como `gesturechange` con la
+  // escala acumulada desde que empezó.
+  const zoomActual = useRef(zoom);
+  zoomActual.current = zoom;
+  const puntero = useRef({ x: 0, y: 0 });
+  useEffect(() => {
+    const c = lienzo.current;
+    if (!c) return;
+    const enLienzo = (e: { clientX: number; clientY: number }) => {
+      const r = c.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    };
+    const rueda = (e: WheelEvent) => {
+      e.preventDefault();
+      const p = enLienzo(e);
+      puntero.current = p;
+      const intensidad = e.ctrlKey ? 0.01 : 0.0015;
+      zoomActual.current(Math.exp(-e.deltaY * intensidad), p.x, p.y);
+    };
+    let ultima = 1;
+    const empieza = (e: Event) => {
+      e.preventDefault();
+      ultima = 1;
+    };
+    const cambia = (e: Event) => {
+      e.preventDefault();
+      const escala = (e as unknown as { scale: number }).scale;
+      zoomActual.current(escala / ultima, puntero.current.x, puntero.current.y);
+      ultima = escala;
+    };
+    const mueve = (e: PointerEvent) => (puntero.current = enLienzo(e));
+    c.addEventListener("wheel", rueda, { passive: false });
+    c.addEventListener("gesturestart", empieza, { passive: false } as AddEventListenerOptions);
+    c.addEventListener("gesturechange", cambia, { passive: false } as AddEventListenerOptions);
+    c.addEventListener("pointermove", mueve);
+    return () => {
+      c.removeEventListener("wheel", rueda);
+      c.removeEventListener("gesturestart", empieza);
+      c.removeEventListener("gesturechange", cambia);
+      c.removeEventListener("pointermove", mueve);
+    };
+  }, []);
 
   const cienPorCien = () => {
     if (!vista || !ref) return;
@@ -232,7 +276,6 @@ export function Comparador({ original, resultado, modo, ocupado }: Props) {
         onPointerMove={alMover}
         onPointerUp={alSoltar}
         onPointerCancel={alSoltar}
-        onWheel={alRueda}
         onDoubleClick={() => setVista(ajustar())}
         aria-label={t("comparador.etiqueta")}
         role="img"
@@ -243,6 +286,13 @@ export function Comparador({ original, resultado, modo, ocupado }: Props) {
         {ocupado && <span className="girando" aria-label={t("comparador.codificando")} />}
       </span>
       {!mismaProporcion && modo === "deslizador" && <span className="nota-comparador">{t("comparador.otraProporcion")}</span>}
+      {/* Reducida, la vista promedia los píxeles y esconde los defectos de la
+          compresión: con calidad 5 «apenas se veía diferencia» (v0.3.1). */}
+      {vista && mismaProporcion && vista.escala < 0.995 && (
+        <button className="nota-reducida" onClick={cienPorCien} data-prueba="nota-reducida">
+          {t("comparador.reducida", { porcentaje: Math.round(vista.escala * 100) })}
+        </button>
+      )}
       <div className="zoom" role="group" aria-label={t("comparador.zoom")}>
         <button onClick={() => zoom(1 / 1.5, tamano.w / 2, tamano.h / 2)} aria-label={t("comparador.alejar")}>
           −

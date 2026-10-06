@@ -1,9 +1,9 @@
 [workspace]
 resolver = "3"
-members = ["crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "src-tauri"]
+members = ["crates/heic", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "src-tauri"]
 
 [workspace.package]
-version = "0.3.1"
+version = "0.3.2"
 edition = "2024"
 license = "GPL-3.0-or-later"
 repository = "https://github.com/webcafeina/Apolo"
@@ -11,6 +11,7 @@ authors = ["Webcafeína <info@webcafeina.com>"]
 
 [workspace.dependencies]
 apolo-nucleo = { path = "crates/nucleo" }
+apolo-heic = { path = "crates/heic" }
 apolo-tema = { path = "crates/tema" }
 apolo-servicio = { path = "crates/servicio" }
 serde = { version = "1", features = ["derive"] }

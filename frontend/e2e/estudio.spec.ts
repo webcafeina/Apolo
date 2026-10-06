@@ -20,7 +20,7 @@ test.use({ testIdAttribute: "data-prueba" });
 test("abrir una imagen enseña el resultado y la orden cwebp", async ({ page }) => {
   await abrir(page, "foto.webp");
   await expect(page.getByText("foto.webp", { exact: true })).toBeVisible();
-  await expect(page.getByTestId("orden")).toHaveText("cwebp foto.webp -o foto.webp");
+  await expect(page.getByTestId("orden")).toHaveText("cwebp foto.webp -o foto-apolo.webp");
   await expect(page.getByTestId("ahorro")).toBeVisible();
   // El lienzo pinta algo: no es todo del mismo color.
   const distintos = await page.getByTestId("lienzo").evaluate((c: HTMLCanvasElement) => {
@@ -36,7 +36,7 @@ test("cambiar la calidad cambia el resultado y la orden", async ({ page }) => {
   await abrir(page, "foto.webp");
   const antes = await page.getByTestId("peso-resultado").textContent();
   await page.locator("#control-calidad").fill("20");
-  await expect(page.getByTestId("orden")).toHaveText("cwebp -q 20 foto.webp -o foto.webp");
+  await expect(page.getByTestId("orden")).toHaveText("cwebp -q 20 foto.webp -o foto-apolo.webp");
   await expect(page.getByTestId("peso-resultado")).not.toHaveText(antes!);
 });
 
@@ -50,19 +50,35 @@ test("pegar una orden cwebp carga sus ajustes", async ({ page }) => {
   await expect(page.getByRole("switch", { name: "Sin pérdida" })).toBeChecked();
 });
 
-test("un preset guardado se puede volver a usar y aparece en Ajustes", async ({ page }) => {
+test("un preset guardado aparece en su sección, se aplica al Estudio, se renombra y se borra", async ({ page }) => {
   await abrir(page, "foto.webp");
   await page.locator("#control-calidad").fill("63");
   await page.getByTestId("nombre-preset").fill("Para la web");
   await page.getByRole("button", { name: "Guardar", exact: true }).click();
   await expect(page.getByText("Preset «Para la web» guardado.")).toBeVisible();
   await page.locator("#control-calidad").fill("90");
+  // Desde el Estudio, «Partir de».
   await page.getByTestId("partida").selectOption("apolo:Para la web");
   await expect(page.getByTestId("orden")).toContainText("-q 63");
-  await page.getByRole("button", { name: "Ajustes" }).click();
-  await expect(page.getByText('apolo webp -apolo_preset "Para la web"')).toBeVisible();
-  await page.getByRole("button", { name: "Borrar" }).click();
-  await expect(page.getByText("Todavía no hay ninguno")).toBeVisible();
+  // La sección Presets.
+  await page.locator("#control-calidad").fill("90");
+  await page.getByRole("button", { name: "Presets" }).click();
+  const ficha = page.getByTestId("preset");
+  await expect(ficha).toContainText("Para la web");
+  await expect(ficha).toContainText("Calidad 63");
+  await expect(ficha).toContainText('apolo webp -apolo_preset "Para la web"');
+  await expect(ficha).toContainText("-q 63");
+  await ficha.getByRole("button", { name: "Usar en el Estudio" }).click();
+  await expect(page.getByTestId("orden")).toContainText("-q 63");
+  await page.getByRole("button", { name: "Presets" }).click();
+  await ficha.getByRole("button", { name: "Renombrar" }).click();
+  await ficha.getByRole("textbox").fill("Web ligera");
+  await ficha.getByRole("button", { name: "Aceptar" }).click();
+  await expect(ficha.getByRole("heading")).toHaveText("Web ligera");
+  // Borrar pide confirmación con un segundo clic.
+  await ficha.getByRole("button", { name: "Borrar" }).click();
+  await ficha.getByRole("button", { name: "¿Borrarlo?" }).click();
+  await expect(page.getByTestId("presets-vacio")).toBeVisible();
 });
 
 test("una foto girada avisa, y enderezarla cambia las dimensiones y la orden", async ({ page }) => {
@@ -72,7 +88,8 @@ test("una foto girada avisa, y enderezarla cambia las dimensiones y la orden", a
   await page.getByRole("button", { name: "Enderezar" }).click();
   await expect(page.getByTestId("aviso-orientacion")).toBeHidden();
   await expect(page.getByTestId("barra-estado")).toContainText("32 × 64");
-  await expect(page.getByTestId("no-equivalente")).toBeVisible();
+  await expect(page.getByTestId("no-equivalente")).toHaveText("Distinto de cwebp");
+  await expect(page.getByTestId("motivo")).toContainText("cwebp no gira las fotos");
   await expect(page.getByRole("switch", { name: "Enderezar según EXIF" })).toBeChecked();
 });
 
@@ -81,7 +98,8 @@ test("exportar descarga el WebP", async ({ page }) => {
   const descarga = page.waitForEvent("download");
   await page.getByTestId("exportar").click();
   const d = await descarga;
-  expect(d.suggestedFilename()).toBe("foto.webp");
+  // Un .webp no se propone con su nombre: se sobrescribiría el original.
+  expect(d.suggestedFilename()).toBe("foto-apolo.webp");
   const datos = readFileSync(await d.path());
   expect(datos.subarray(0, 4).toString()).toBe("RIFF");
   expect(datos.subarray(8, 12).toString()).toBe("WEBP");
@@ -108,4 +126,33 @@ test("la marca: firma con la versión, y sin vidrio el fondo es opaco", async ({
   await expect(page.locator("html")).toHaveAttribute("data-vidrio", "no");
   const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   expect(fondo).not.toBe("rgba(0, 0, 0, 0)");
+});
+
+test("el zoom del comparador no mueve la ventana, y la vista reducida lo avisa", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  // La rueda sobre el lienzo la usa el comparador y nadie más.
+  const cancelada = await page.getByTestId("lienzo").evaluate((c) => {
+    const e = new WheelEvent("wheel", { deltaY: 100, bubbles: true, cancelable: true });
+    c.dispatchEvent(e);
+    return e.defaultPrevented;
+  });
+  expect(cancelada).toBe(true);
+  // Alejando por debajo del 100 % sale el aviso, que lleva al 100 %.
+  for (let i = 0; i < 8; i++) await page.getByRole("button", { name: "Alejar" }).click();
+  const nota = page.getByTestId("nota-reducida");
+  await expect(nota).toContainText("Vista reducida");
+  await nota.click();
+  await expect(page.getByTestId("zoom-100")).toHaveText("100 %");
+  await expect(nota).toBeHidden();
+});
+
+test("abre una foto HEIC, y la orden cwebp avisa de que cwebp no la lee", async ({ page }) => {
+  await page.goto("/");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../crates/heic/vendor/libheif/examples/example.heic"));
+  await expect(page.getByTestId("peso-resultado")).not.toHaveText("…");
+  await expect(page.getByText("HEIC · 1280 × 854")).toBeVisible();
+  await expect(page.getByTestId("no-equivalente")).toHaveText("Distinto de cwebp");
+  await expect(page.getByTestId("motivo")).toContainText("cwebp no lee este formato");
 });

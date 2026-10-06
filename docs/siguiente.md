@@ -8,20 +8,6 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **v0.3.2 — lo que salió de la prueba guiada** (2026-10-06, en el Mac del cliente):
-  1. Más aire arriba en la cabecera de cada sección.
-  2. Los pesos, explicados y con diseño: etiquetas (Original, WebP), el ahorro grande y una barra
-     que compare los dos tamaños.
-  3. **Fallo**: al hacer zoom en el comparador (rueda o pellizco), la ventana entera rebota como si
-     hiciera scroll. El comparador tiene que quedarse el gesto (`wheel` no pasivo con
-     `preventDefault`) y nada en la ventana debe rebotar (`overscroll-behavior: none`).
-  4. Con la vista reducida, la compresión no se ve: una nota «Vista reducida al X %: acércate al
-     100 % para juzgar el detalle», que lleve al 100 %.
-  5. La orden copiada, con las rutas completas de entrada y salida (en pantalla, corta).
-  6. Sección propia de **Presets** en la barra lateral, con la lista, lo que hace cada uno y su orden,
-     y desde donde aplicarlos, renombrarlos y borrarlos. Ahora están escondidos en Ajustes.
-  7. «Con extras de Apolo» no se entiende: decir qué pasa («Distinto de cwebp: está enderezada»)
-     con una explicación.
 - **Montar la equivalencia con cwebp en CI para Windows y Linux arm64** (deuda). En un Mac con
   Apple Silicon ya la comprobó a mano el cliente: 25 de 25.
 
@@ -38,7 +24,6 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 ## Baja
 
 - WebP animado: `gif2webp` e `img2webp`.
-- Entrada HEIC (libheif, LGPL: compatible con la GPLv3).
 - Butteraugli.
 - Firmar y notarizar ([ADR 0009](adr/0009-sin-firmar.md)).
 - La traducción al inglés: con la i18n hecha, es traducir `es.json`.
@@ -58,6 +43,10 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
   la CLI (`-apolo_preset`, `apolo presets`); **enderezar según EXIF como opción** (ADR 0012), con aviso;
   exportar; `apolo-dev` y 14 pruebas de Playwright. El modo «diferencias» pasa a la entrega 5. ·
   2026-10-06
+- ~~**v0.3.2 — lo que salió de la prueba guiada**~~: cabecera con aire; pesos con etiquetas, ahorro
+  y barra; **la ventana ya no rebota con el zoom**; aviso de vista reducida; orden copiada con rutas
+  completas (y un `.webp` ya no se propone con su mismo nombre); sección **Presets**; «Distinto de
+  cwebp» con su motivo; y **leer HEIC** (ADR 0017). · 2026-10-06
 - ~~**Entrega 3 — Identidad**~~ (ADR 0015 y 0016): el sol con laurel elegido entre cuatro propuestas;
   el oro del sol como acento («el oro rellena, la piedra escribe»); barra lateral translúcida en
   macOS; sello, firma, bienvenida con el icono y ficha en «Acerca de»; `.dmg` con fondo propio y sin

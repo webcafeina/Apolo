@@ -74,14 +74,22 @@ pub struct Vista {
     pub alto: u32,
     pub milisegundos: u64,
     pub estadisticas: Estadisticas,
-    /// La orden cwebp equivalente, con el nombre de la imagen.
+    /// La orden cwebp equivalente, con el nombre de la imagen: la que se ve.
     pub orden: String,
+    /// La misma con las rutas completas: la que se copia, para que funcione
+    /// pegada en cualquier carpeta. Sin ruta de disco, igual que `orden`.
+    pub orden_completa: String,
     /// Si esa orden da exactamente este fichero.
     pub equivalente: bool,
+    /// Por qué no lo da, si no lo da (la interfaz lo explica).
+    pub motivo: Option<Motivo>,
 }
 
 struct Abierta {
     nombre: String,
+    /// La ruta de disco, si se abrió de disco (en desarrollo llega por HTTP y
+    /// no la hay). Sirve para la orden copiable con rutas completas.
+    ruta: Option<PathBuf>,
     imagen: Imagen,
 }
 
@@ -143,11 +151,16 @@ impl Servicio {
             .file_name()
             .map(|n| n.to_string_lossy().into_owned())
             .unwrap_or_default();
-        self.abrir_bytes(&nombre, datos)
+        let ruta = std::path::absolute(ruta).unwrap_or_else(|_| ruta.to_path_buf());
+        self.abrir(&nombre, Some(ruta), datos)
     }
 
     /// Abre una imagen de memoria (lo que sube el navegador en desarrollo).
     pub fn abrir_bytes(&self, nombre: &str, datos: Vec<u8>) -> R<InfoImagen> {
+        self.abrir(nombre, None, datos)
+    }
+
+    fn abrir(&self, nombre: &str, ruta: Option<PathBuf>, datos: Vec<u8>) -> R<InfoImagen> {
         // Los metadatos se leen siempre, para enseñarlos; si están rotos, se
         // abre sin ellos en vez de no abrir.
         let imagen = entrada::leer(&datos, Lectura::default()).or_else(|_| {
@@ -180,6 +193,7 @@ impl Servicio {
             id,
             Arc::new(Abierta {
                 nombre: nombre.into(),
+                ruta,
                 imagen,
             }),
         );
@@ -245,7 +259,18 @@ impl Servicio {
             milisegundos,
             estadisticas: r.estadisticas,
             orden: cwebp::texto(opciones, &a.nombre, &nombre_salida(&a.nombre)),
-            equivalente: cwebp::es_equivalente(opciones),
+            orden_completa: match &a.ruta {
+                Some(r) => cwebp::texto(
+                    opciones,
+                    &r.display().to_string(),
+                    &r.with_file_name(nombre_salida(&a.nombre))
+                        .display()
+                        .to_string(),
+                ),
+                None => cwebp::texto(opciones, &a.nombre, &nombre_salida(&a.nombre)),
+            },
+            equivalente: motivo(a.imagen.formato, opciones).is_none(),
+            motivo: motivo(a.imagen.formato, opciones),
         };
         let u = self.ultimo(id);
         *u.lock().unwrap() = Ultimo {
@@ -374,12 +399,56 @@ fn partir(texto: &str) -> Vec<String> {
     v
 }
 
+/// Por qué la orden cwebp no da exactamente el fichero de Apolo.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Motivo {
+    /// La imagen está enderezada (ADR 0012): cwebp no gira las fotos.
+    Enderezada,
+    /// cwebp no lee este formato (GIF, BMP, QOI, HEIC): la orden sirve de
+    /// referencia, pero no se puede ejecutar tal cual.
+    FormatoSinCwebp,
+}
+
+fn motivo(formato: entrada::Formato, op: &OpcionesWebp) -> Option<Motivo> {
+    use entrada::Formato::*;
+    if !matches!(formato, Png | Jpeg | Tiff | WebP | Pnm | Yuv) {
+        Some(Motivo::FormatoSinCwebp)
+    } else if !cwebp::es_equivalente(op) {
+        Some(Motivo::Enderezada)
+    } else {
+        None
+    }
+}
+
+/// El nombre que se propone para el WebP. Si el original ya es un `.webp`,
+/// se le añade «-apolo»: con el mismo nombre, exportar o la orden cwebp
+/// sobrescribirían el original sin avisar.
 fn nombre_salida(nombre: &str) -> String {
-    let base = Path::new(nombre)
+    let p = Path::new(nombre);
+    let base = p
         .file_stem()
         .map(|s| s.to_string_lossy().into_owned())
         .unwrap_or_else(|| "imagen".into());
-    format!("{base}.webp")
+    let ya_es_webp = p
+        .extension()
+        .is_some_and(|e| e.eq_ignore_ascii_case("webp"));
+    if ya_es_webp {
+        format!("{base}-apolo.webp")
+    } else {
+        format!("{base}.webp")
+    }
+}
+
+/// La orden de `apolo webp` que reproduce unas opciones (sin entrada ni
+/// salida), para enseñarla junto a cada preset.
+pub fn orden_opciones(opciones: &OpcionesWebp) -> String {
+    let a = cwebp::escribir_apolo(opciones);
+    if a.is_empty() {
+        "(las opciones por defecto)".into()
+    } else {
+        a.join(" ")
+    }
 }
 
 fn webp_tiene_alfa(datos: &[u8]) -> bool {
@@ -462,6 +531,15 @@ mod pruebas {
         assert_eq!(v.generacion, 5);
         assert!(v.equivalente);
         assert!(v.orden.starts_with("cwebp foto.webp"));
+        // Un .webp no se propone con su mismo nombre: se sobrescribiría.
+        assert!(v.orden.ends_with("-o foto-apolo.webp"), "{}", v.orden);
+        // La orden para copiar lleva la ruta completa.
+        assert!(
+            v.orden_completa.contains("pruebas/corpus/foto.webp"),
+            "{}",
+            v.orden_completa
+        );
+        assert_eq!(v.motivo, None);
         // Una petición con generación anterior a la última ya no vale.
         let r = s.codificar(info.id, &OpcionesWebp::default(), 3);
         assert!(r.is_err_and(|f| f.cancelado));

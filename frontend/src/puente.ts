@@ -44,7 +44,11 @@ export interface Vista {
   milisegundos: number;
   estadisticas: Estadisticas;
   orden: string;
+  /** La misma orden con las rutas completas: la que se copia. */
+  orden_completa: string;
   equivalente: boolean;
+  /** Por qué la orden cwebp no da este fichero, si no lo da. */
+  motivo: "enderezada" | "formato_sin_cwebp" | null;
 }
 
 export interface PresetGuardado {
@@ -109,10 +113,11 @@ export const nivelSinPerdida = (opciones: OpcionesWebp, nivel: number) =>
   orden<OpcionesWebp>("nivel_sin_perdida", { opciones, nivel });
 export const leerOrden = (texto: string) => orden<OpcionesWebp>("leer_orden", { texto });
 export const presets = () => orden<PresetGuardado[]>("presets");
+export const ordenOpciones = (opciones: OpcionesWebp) => orden<string>("orden_opciones", { opciones });
 export const guardarPreset = (preset: PresetGuardado) => orden<PresetGuardado[]>("guardar_preset", { preset });
 export const borrarPreset = (nombre: string) => orden<PresetGuardado[]>("borrar_preset", { nombre });
 
-export const FORMATOS_ENTRADA = ["png", "jpg", "jpeg", "webp", "tif", "tiff", "gif", "bmp", "qoi", "ppm", "pgm", "pam", "pnm"];
+export const FORMATOS_ENTRADA = ["png", "jpg", "jpeg", "heic", "heif", "webp", "tif", "tiff", "gif", "bmp", "qoi", "ppm", "pgm", "pam", "pnm"];
 
 /** Abre una imagen de disco (en la aplicación). */
 export const abrirRuta = (ruta: string) => orden<InfoImagen>("abrir", { ruta });

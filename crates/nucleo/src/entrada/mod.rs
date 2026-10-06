@@ -7,6 +7,7 @@
 //! salida tampoco lo es (ADR 0002). Lo que no es de cwebp (GIF, BMP, QOI) va
 //! por el crate `image`.
 
+mod heic;
 mod jpeg;
 mod otros;
 mod png;
@@ -28,6 +29,8 @@ pub enum Formato {
     Gif,
     Bmp,
     Qoi,
+    /// HEIC/HEIF con HEVC: las fotos del iPhone. cwebp no lo lee.
+    Heic,
     /// YUV 4:2:0 crudo, con el tamaño dado aparte (`cwebp -s`).
     Yuv,
 }
@@ -43,6 +46,7 @@ impl Formato {
             Formato::Gif => "GIF",
             Formato::Bmp => "BMP",
             Formato::Qoi => "QOI",
+            Formato::Heic => "HEIC",
             Formato::Yuv => "YUV",
         }
     }
@@ -52,6 +56,9 @@ impl Formato {
     pub fn adivinar(datos: &[u8]) -> Option<Formato> {
         if datos.len() < 12 {
             return None;
+        }
+        if apolo_heic::es_heic(datos) {
+            return Some(Formato::Heic);
         }
         let be32 =
             |i: usize| u32::from_be_bytes([datos[i], datos[i + 1], datos[i + 2], datos[i + 3]]);
@@ -136,6 +143,7 @@ pub fn leer(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
         Formato::Jpeg => jpeg::leer(datos, lectura),
         Formato::Tiff => tiff::leer(datos, lectura),
         Formato::WebP => webp::leer(datos, lectura),
+        Formato::Heic => heic::leer(datos, lectura),
         Formato::Pnm | Formato::Gif | Formato::Bmp | Formato::Qoi => {
             otros::leer(datos, formato, lectura)
         }

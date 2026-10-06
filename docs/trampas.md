@@ -84,3 +84,23 @@ que son los de por defecto. · 2026-10-06
 El código de salida de una tubería es el del **último** comando, el `grep`, no el de `make`. Un
 `cargo fmt --check` fallido quedó escondido así, y solo se vio al repetirlo sin tubería. Para saber
 si la puerta pasa: `make comprobar > fichero.log 2>&1; echo $?`, y mirar el log aparte. · 2026-10-06
+
+## Con `libheif-sys` y `embedded-libheif`, ninguna foto de iPhone se abre
+
+Compila y enlaza bien, pero al decodificar dice que no hay decodificador para HEVC. Su modo
+«embebido» compila libheif con `WITH_LIBDE265=ON`, pero **no compila libde265**: la busca instalada
+en el sistema, y si no está, la deja fuera sin avisar. Por eso `crates/heic` compila las dos con su
+propio `build.rs` y le da a libheif la ruta de libde265 a mano (`LIBDE265_INCLUDE_DIR`,
+`LIBDE265_LIBRARY`). · 2026-10-06
+
+## Una foto HEIC enderezada sale girada otra vez
+
+libheif aplica los giros del propio HEIF al decodificar, y el EXIF del iPhone dice además
+«orientación 6». Si se respeta el EXIF, la foto se gira dos veces. Al leer un HEIC, el EXIF se deja en
+1 (`entrada/heic.rs`). · 2026-10-06
+
+## En Windows, enlazar libheif estática pide la DLL de libde265
+
+Las cabeceras de libde265 declaran sus funciones como de DLL salvo que se defina
+`LIBDE265_STATIC_BUILD`. Va en `cflag` y `cxxflag` al compilar libheif (`crates/heic/build.rs`).
+Apuntado antes de verlo fallar: es lo que dice la propia CMakeLists de libde265. · 2026-10-06

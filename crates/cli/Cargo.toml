@@ -1,0 +1,16 @@
+[package]
+name = "apolo-cli"
+description = "apolo, la línea de comandos de Apolo"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "apolo"
+path = "src/main.rs"
+
+[dependencies]
+apolo-nucleo.workspace = true
+clap = { version = "4", features = ["derive"] }

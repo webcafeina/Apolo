@@ -1,0 +1,16 @@
+# Rust
+/target/
+
+# Interfaz
+node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+*.tsbuildinfo
+
+# Lo que Tauri genera en cada compilación
+src-tauri/gen/
+
+# Salidas de pruebas a mano
+*.webp.tmp
+/salida/

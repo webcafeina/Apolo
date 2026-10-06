@@ -1,0 +1,98 @@
+# Los instaladores de los seis objetivos (ADR 0010).
+#
+# - Al empujar una etiqueta vX.Y.Z: borrador de Release con todo colgado.
+# - A mano (workflow_dispatch): solo compila y deja los paquetes como artefactos.
+name: Publicar
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  paquete:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - nombre: macos-universal
+            maquina: macos-14
+            objetivo: universal-apple-darwin
+            rust: aarch64-apple-darwin,x86_64-apple-darwin
+          - nombre: windows-x64
+            maquina: windows-latest
+            objetivo: x86_64-pc-windows-msvc
+            rust: x86_64-pc-windows-msvc
+          - nombre: windows-arm64
+            maquina: windows-11-arm
+            objetivo: aarch64-pc-windows-msvc
+            rust: aarch64-pc-windows-msvc
+          # Ubuntu 22.04: glibc 2.35, la de Debian 12 o menor.
+          - nombre: linux-amd64
+            maquina: ubuntu-22.04
+            objetivo: x86_64-unknown-linux-gnu
+            rust: x86_64-unknown-linux-gnu
+          - nombre: linux-arm64
+            maquina: ubuntu-22.04-arm
+            objetivo: aarch64-unknown-linux-gnu
+            rust: aarch64-unknown-linux-gnu
+
+    name: ${{ matrix.nombre }}
+    runs-on: ${{ matrix.maquina }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependencias del sistema
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config file
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.objetivo }}
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -C frontend install --frozen-lockfile
+
+      - uses: tauri-apps/tauri-action@v0
+        id: tauri
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Firma (ADR 0009): desactivada mientras no existan las cuentas.
+          # Para activarla, crear estos secretos y quitar el comentario:
+          # APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          # APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          # APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          # APPLE_ID: ${{ secrets.APPLE_ID }}
+          # APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Windows (Azure Trusted Signing): bundle.windows.signCommand en tauri.conf.json.
+        with:
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          releaseName: "Apolo ${{ github.ref_name }}"
+          releaseDraft: true
+          prerelease: false
+          args: --target ${{ matrix.objetivo }}
+
+      - name: Paquetes como artefacto
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: apolo-${{ matrix.nombre }}
+          path: |
+            target/${{ matrix.objetivo }}/release/bundle/dmg/*.dmg
+            target/${{ matrix.objetivo }}/release/bundle/nsis/*.exe
+            target/${{ matrix.objetivo }}/release/bundle/deb/*.deb
+            target/${{ matrix.objetivo }}/release/bundle/appimage/*.AppImage
+          if-no-files-found: error

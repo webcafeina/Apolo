@@ -1,0 +1,69 @@
+/* Apariencia del sistema (ADR 0008): tipografía del sistema, grises neutros,
+   controles de 28 px como en Esfinge. Los colores salen de tokens.css. */
+
+* { box-sizing: border-box; }
+
+html, body, #raiz { height: 100%; margin: 0; }
+
+body {
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, Ubuntu, Cantarell, sans-serif;
+  background: var(--lienzo);
+  color: var(--cuerpo);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+h1, h2 { color: var(--tinta); font-weight: 600; }
+h1 { font-size: 20px; margin: 0 0 8px; }
+h2 { font-size: 13px; margin: 24px 0 8px; }
+
+.apagado { color: var(--apagado); }
+
+.marco { display: grid; grid-template-columns: 200px 1fr; height: 100%; }
+
+.barra {
+  background: var(--barra);
+  border-right: 1px solid var(--filete);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.marca { color: var(--tinta); font-weight: 600; padding: 4px 10px 12px; }
+
+.fila {
+  all: unset;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: var(--cuerpo);
+  cursor: default;
+}
+.fila:hover { background: var(--elevada); }
+.fila[aria-current="page"] { background: var(--relleno); color: var(--sobre-acento); }
+.fila:focus-visible { outline: 2px solid var(--acento); outline-offset: 1px; }
+
+.contenido { overflow: auto; padding: 24px; }
+
+.zona {
+  height: 100%;
+  min-height: 320px;
+  border: 1.5px dashed var(--filete-fuerte);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--suave);
+}
+.zona p { margin: 4px 0; }
+.zona-titulo { color: var(--tinta); font-size: 15px; font-weight: 500; }
+.nota { margin-top: 16px !important; }
+
+.ajustes { max-width: 560px; }
+.motores { margin: 0; }
+.motores div { display: flex; gap: 12px; height: 28px; align-items: center; border-bottom: 1px solid var(--filete); }
+.motores dt { color: var(--tinta); min-width: 120px; }
+.motores dd { margin: 0; font-variant-numeric: tabular-nums; }

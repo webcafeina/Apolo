@@ -18,18 +18,28 @@ fn main() {
     }
     let msvc = std::env::var("CARGO_CFG_TARGET_ENV").unwrap() == "msvc";
     let sistema = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let macos = sistema == "macos";
 
     // libde265: solo la biblioteca. Con optimización siempre: en un perfil de
     // depuración, decodificar una foto de 12 MP tardaría segundos.
-    let de265 = cmake::Config::new(vendor.join("libde265"))
+    let mut de265 = cmake::Config::new(vendor.join("libde265"));
+    de265
         .profile("Release")
         .define("BUILD_SHARED_LIBS", "OFF")
         .define("CMAKE_INSTALL_LIBDIR", "lib")
         .define("ENABLE_SDL", "OFF")
         .define("ENABLE_DECODER", "OFF")
         .define("ENABLE_ENCODER", "OFF")
-        .define("ENABLE_AVX512", "OFF")
-        .build();
+        .define("ENABLE_AVX512", "OFF");
+    if macos {
+        // La detección de AVX2 de libde265 usa __builtin_cpu_supports, que en
+        // macOS necesita la biblioteca de soporte de clang (compiler-rt), y
+        // rustc no la enlaza: «___cpu_indicator_init» sin definir
+        // (docs/trampas.md). Sin AVX2 quedan las versiones SSE.
+        de265.define("ENABLE_AVX2", "OFF");
+    }
+    minimo_macos(&mut de265, macos);
+    let de265 = de265.build();
     let lib_de265 = de265
         .join("lib")
         .join(if msvc { "libde265.lib" } else { "libde265.a" });
@@ -78,6 +88,7 @@ fn main() {
     ] {
         heif.define(format!("WITH_{codec}"), "OFF");
     }
+    minimo_macos(&mut heif, macos);
     let heif = heif.build();
 
     println!(
@@ -100,4 +111,14 @@ fn main() {
         _ => println!("cargo:rustc-link-lib=stdc++"),
     }
     println!("cargo:rerun-if-changed=build.rs");
+}
+
+/// Compilar para el macOS mínimo de Apolo (11, ADR 0010), no para el del Mac
+/// que compila: si no, el enlazador avisa de objetos «para un macOS más nuevo»
+/// y la aplicación podría usar algo que macOS 11 no tiene.
+fn minimo_macos(c: &mut cmake::Config, macos: bool) {
+    if macos {
+        let minimo = std::env::var("MACOSX_DEPLOYMENT_TARGET").unwrap_or_else(|_| "11.0".into());
+        c.define("CMAKE_OSX_DEPLOYMENT_TARGET", &minimo);
+    }
 }

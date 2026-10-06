@@ -8,6 +8,17 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
+- **Entrega 3 — Identidad** ([ADR 0015](adr/0015-identidad-nativa-con-marca.md)), que pidió el cliente
+  al probar la v0.2.0 el 2026-10-06. Por orden:
+  1. **Propuestas de icono** —«más épico, más Apolo»— para que el cliente elija; varias direcciones,
+     en una página para compararlas.
+  2. El **acento de marca** sacado del icono, por `crates/tema` y con la prueba de contraste.
+  3. **Barra lateral translúcida** en macOS, como Esfinge.
+  4. **Pantalla vacía** del Estudio con el icono y una ilustración.
+  5. **Ventana del `.dmg`** con fondo propio, como `empaquetado/macos/armar-dmg.sh` de Esfinge.
+  6. **Quitar la licencia del `.dmg`** (`bundle.licenseFile`).
+  7. Repaso visual del Estudio con capturas en claro y oscuro.
+
 - **Abrir el instalador de la entrega 2 en un Mac y en un Windows** (deuda, alta): es la primera
   entrega con ventana de verdad, y lo propio de Tauri no se ha visto funcionar.
 - **Montar la equivalencia con cwebp en macOS, Windows y Linux arm64** (deuda): Google publica
@@ -15,12 +26,12 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
-- **Entrega 3 — Lotes.** Pasa a ser lo siguiente de código. Arrastrar carpetas, preset con uno o varios formatos de salida, patrón de
+- **Entrega 4 — Lotes.** Antes era la 3; la adelantó la Identidad. Arrastrar carpetas, preset con uno o varios formatos de salida, patrón de
   nombre y carpeta, paralelo, cancelar, y el resumen con el ahorro y las peores imágenes.
-- **Entrega 4 — Resto de códecs y proceso.** MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar,
+- **Entrega 5 — Resto de códecs y proceso.** MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar,
   recortar y reducir paleta. La ADR de AVIF (libavif + aom frente a ravif/rav1e) se decide midiendo.
-- **Entrega 5 — Métricas.** PSNR, SSIM escrito aquí, el mapa de diferencias y el mapa SSIM.
-- **Entrega 6 — 1.0.** Icono definitivo, DMG, NSIS, `.deb` y AppImage; actualización automática con
+- **Entrega 6 — Métricas.** PSNR, SSIM escrito aquí, el mapa de diferencias y el mapa SSIM.
+- **Entrega 7 — 1.0.** DMG, NSIS, `.deb` y AppImage; actualización automática con
   `tauri-plugin-updater` y clave minisign; README con la tabla de descargas.
 
 ## Baja

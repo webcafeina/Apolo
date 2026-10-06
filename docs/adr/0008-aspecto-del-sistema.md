@@ -1,6 +1,6 @@
 # ADR 0008 — Apariencia del sistema
 
-**Fecha:** 2026-10-06 · **Estado:** aceptada
+**Fecha:** 2026-10-06 · **Estado:** aceptada · matizada por la [0015](0015-identidad-nativa-con-marca.md)
 
 ## Contexto
 

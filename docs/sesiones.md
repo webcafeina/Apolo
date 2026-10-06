@@ -20,8 +20,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   JSON. Ida y vuelta preset ⇄ orden cwebp en 12 combinaciones.
 - ADR 0011 (leer como cwebp). Cinco trampas nuevas y siete apuntes de deuda, casi todos «sin
   comprobar».
-- **No verificado**: la equivalencia fuera de Linux x86-64; que `publicar.yml` siga compilando con
-  mozjpeg en las seis máquinas (se lanzó al subir).
+- CI en verde: la equivalencia también en GitHub (1015/1015), y `publicar.yml` compila con mozjpeg
+  en las seis máquinas, Windows ARM64 incluido.
+- **No verificado**: la equivalencia fuera de Linux x86-64.
 
 ---
 

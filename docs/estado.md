@@ -21,9 +21,8 @@
 
 ### La siguiente acción, al retomar
 
-1. Mirar Actions (`gh run list -R webcafeina/Apolo`): `comprobar.yml` ahora tiene el trabajo
-   `equivalencia`, y `publicar.yml` necesita nasm en las seis máquinas (mozjpeg). Si algo está en
-   rojo, es lo primero; lo más probable, mozjpeg en Windows ARM64.
+1. CI quedó en verde al cerrar (2026-10-06): `comprobar` y `equivalencia` en la ejecución
+   37463425487, y los seis objetivos con mozjpeg en la 37463471194. Mirar `gh run list` por si acaso.
 2. **Empezar la entrega 2, el Estudio** ([siguiente.md](siguiente.md)): primero el modo de
    desarrollo por HTTP (para probar la interfaz sin ventana, como el puente de Esfinge), luego el
    comparador y los controles, que se pintan a partir de `OpcionesWebp` y de los niveles de

@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Icono, Marca } from "../componentes";
+import { Cabecera, Icono, IconoApp, Marca } from "../componentes";
 import * as puente from "../puente";
 import { Comparador, type Modo } from "./Comparador";
 import type { OpcionesWebp, Preset } from "./opciones";
@@ -124,40 +124,50 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
     }
   };
 
+  const elegir = async () => {
+    const f = await puente.elegirImagen();
+    if (f) void abrir(f);
+  };
+
   if (!info) {
     return (
-      <div className="bienvenida">
-        <div className="bienvenida-cabecera" data-tauri-drag-region>
-          <Icono lado={96} clase="bienvenida-icono" />
-          <h1>{t("app.nombre")}</h1>
-          <p className="apagado">{t("app.lema")}</p>
+      <div className="seccion columna">
+        <Cabecera titulo={t("nav.estudio")} />
+        <div className="contenido bienvenida">
+          <div className="bienvenida-cabecera">
+            <IconoApp lado={88} clase="bienvenida-icono" />
+            <h2>{t("estudio.bienvenida")}</h2>
+            <p className="apagado">{t("app.lema")}</p>
+          </div>
+          <section
+            className={`zona-soltar${sobre ? " sobre" : ""}`}
+            data-prueba="zona"
+            onDragOver={(e) => {
+              e.preventDefault();
+              setSobre(true);
+            }}
+            onDragLeave={() => setSobre(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setSobre(false);
+              const f = e.dataTransfer.files[0];
+              if (f && !puente.enTauri()) void abrir(f);
+            }}
+          >
+            <Marca lado={52} clase="zona-marca" />
+            <p className="zona-titulo">{t("estudio.soltar")}</p>
+            <p className="apagado">{t("estudio.soltarDetalle")}</p>
+            <button className="principal" onClick={elegir}>
+              <Icono nombre="abrir" />
+              {t("estudio.abrir")}
+            </button>
+            {error && (
+              <p className="error" role="alert">
+                {error}
+              </p>
+            )}
+          </section>
         </div>
-      <section
-        className={`zona${sobre ? " sobre" : ""}`}
-        data-prueba="zona"
-        onDragOver={(e) => {
-          e.preventDefault();
-          setSobre(true);
-        }}
-        onDragLeave={() => setSobre(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setSobre(false);
-          const f = e.dataTransfer.files[0];
-          if (f && !puente.enTauri()) void abrir(f);
-        }}
-      >
-        <Marca lado={56} clase="zona-marca" />
-        <p className="zona-titulo">{t("estudio.soltar")}</p>
-        <p className="apagado">{t("estudio.soltarDetalle")}</p>
-        <button className="principal" onClick={async () => {
-          const f = await puente.elegirImagen();
-          if (f) void abrir(f);
-        }}>
-          {t("estudio.abrir")}
-        </button>
-        {error && <p className="error" role="alert">{error}</p>}
-      </section>
       </div>
     );
   }
@@ -168,27 +178,23 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
   return (
     <div className="estudio">
       <div className="lienzo-y-barra">
-        <div className="barra-superior" data-tauri-drag-region>
-          <span className="nombre-imagen" title={info.nombre}>{info.nombre}</span>
-          <span className="apagado">
-            {info.formato} · {info.ancho} × {info.alto}
-            {info.alfa ? ` · ${t("estudio.conAlfa")}` : ""}
-          </span>
-          <span className="separador" />
-          <div className="segmentado" role="radiogroup" aria-label={t("comparador.modo")}>
+        <Cabecera
+          titulo={info.nombre}
+          antetitulo={`${info.formato} · ${info.ancho} × ${info.alto}${info.alfa ? ` · ${t("estudio.conAlfa")}` : ""}`}
+        >
+          <div className="segmentado con-iconos" role="radiogroup" aria-label={t("comparador.modo")}>
             {(["deslizador", "ladoALado"] as const).map((m) => (
               <button key={m} role="radio" aria-checked={modo === m} onClick={() => setModo(m)}>
+                <Icono nombre={m} lado={15} />
                 {t(`comparador.${m}`)}
               </button>
             ))}
           </div>
-          <button onClick={async () => {
-            const f = await puente.elegirImagen();
-            if (f) void abrir(f);
-          }}>
+          <button onClick={elegir}>
+            <Icono nombre="abrir" />
             {t("estudio.abrirOtra")}
           </button>
-        </div>
+        </Cabecera>
 
         {info.orientacion !== 1 && !opciones.enderezar && (
           <div className="aviso" role="status" data-prueba="aviso-orientacion">
@@ -220,6 +226,7 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
           )}
           <span className="separador" />
           <button className="principal" onClick={exportar} disabled={!vista} data-prueba="exportar">
+            <Icono nombre="exportar" />
             {t("estudio.exportar")}
           </button>
           </div>
@@ -294,9 +301,13 @@ function OrdenCwebp({ vista, cambiar }: { vista: puente.Vista | null; cambiar: (
         }}
         disabled={!vista}
       >
+        <Icono nombre="copiar" />
         {copiado ? t("orden.copiada") : t("orden.copiar")}
       </button>
-      <button onClick={() => { setTexto(vista?.orden ?? ""); setEditando(true); }}>{t("orden.editar")}</button>
+      <button onClick={() => { setTexto(vista?.orden ?? ""); setEditando(true); }}>
+        <Icono nombre="pegar" />
+        {t("orden.editar")}
+      </button>
     </div>
   );
 }

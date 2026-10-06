@@ -4,6 +4,36 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-06 (noche) · v0.3.1: la ventana de Esfinge, el disco y el instalador de Windows
+
+- El cliente probó la v0.3.0 en su Mac:
+  - la ventana del `.dmg` estaba bien;
+  - el vidrio estaba bien, «aunque muy sutil»; se deja como el del sistema;
+  - el Dock estaba bien.
+
+  Pidió el icono del volumen como el de Esfinge, identidad en Windows y **la ventana como la de
+  Esfinge**: «fíjate en cómo es la ventana de Esfinge para hacerla igual en Apolo».
+- **Disco**: `disco.svg`, la carcasa de Esfinge con el sol. CI lo convierte en `.icns` y
+  `icono-volumen.sh` lo mete en el `.dmg` de Tauri, que no deja elegirlo.
+- **Windows**: NSIS en español, con `lateral.bmp` (164×314) y `cabecera.bmp` (150×57).
+  `rasterizar.mjs` ahora escribe BMP de 24 bits.
+- **Ventana**: la especificación de Esfinge, sacada de su CSS:
+  - barra lateral de 225 px, con el hueco de los semáforos de 52 px;
+  - sello de 26 px y título de 20;
+  - filas de 38 px con iconos de línea de 18 (caja de 18, trazo de 1,4);
+  - Ajustes abajo y la firma al pie;
+  - cabecera de 52 px con el título a la izquierda;
+  - botones de radio 9 con línea de 0,5 px, segmentado y campos de 30;
+  - tarjetas de 14 px;
+  - variantes de Windows y Linux.
+- **Token nuevo**: `--barra-encima`. La prueba de contraste lo cazó un punto más oscuro de lo que
+  aguantan los textos.
+- Verificado: 16 pruebas de Playwright, capturas en claro y oscuro, BMP vistos en el navegador y
+  `make comprobar`.
+- **No verificado**: el disco en un Mac y el instalador en un Windows.
+
+---
+
 ## 2026-10-06 (noche) · Prueba guiada, y la entrega 3: identidad
 
 - **Prueba guiada con el cliente** en su Mac con Apple Silicon:

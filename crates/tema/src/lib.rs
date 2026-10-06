@@ -62,6 +62,9 @@ pub struct Tema {
     // Superficies con nombre propio: la barra lateral, un campo que se hunde
     // y un botón que se levanta.
     pub barra: Rgb,
+    /// Una fila de la barra lateral con el puntero encima: se hunde, no se
+    /// levanta, como en las aplicaciones del sistema (y en Esfinge).
+    pub barra_encima: Rgb,
     pub campo: Rgb,
     pub boton: Rgb,
     pub boton_encima: Rgb,
@@ -118,6 +121,7 @@ pub fn claro() -> Tema {
         anillo: (ORO, 35),
         relleno_tenue: (ORO, 18),
         barra: Rgb::hex(0xf6f6f8),
+        barra_encima: peor,
         campo: lienzo,
         boton: lienzo,
         boton_encima: Rgb::hex(0xf2f2f5),
@@ -156,6 +160,7 @@ pub fn oscuro() -> Tema {
         anillo: (ORO, 45),
         relleno_tenue: (ORO, 22),
         barra: Rgb::hex(0x242426),
+        barra_encima: Rgb::hex(0x343437),
         campo: Rgb::hex(0x1a1a1c),
         boton: elevada,
         boton_encima: peor,

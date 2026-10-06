@@ -52,6 +52,17 @@
       "deb": {
         "depends": []
       }
+    },
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "headerImage": "../empaquetado/windows/cabecera.bmp",
+        "sidebarImage": "../empaquetado/windows/lateral.bmp",
+        "languages": [
+          "Spanish"
+        ],
+        "displayLanguageSelector": false
+      }
     }
   }
 }

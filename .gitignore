@@ -18,3 +18,4 @@ capturas/
 
 # El fondo del .dmg en TIFF lo hace CI con tiffutil (publicar.yml).
 empaquetado/macos/fondo-dmg.tiff
+empaquetado/macos/disco.icns

@@ -4,8 +4,14 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **Entregas 0, 1, 2 y 3 hechas el 2026-10-06.** Publicadas la v0.2.0 y la **v0.3.0**
-> (https://github.com/webcafeina/Apolo/releases/tag/v0.3.0), las dos como pre-release.
+> **Entregas 0, 1, 2 y 3 hechas el 2026-10-06.** Publicadas la v0.2.0, la v0.3.0 y la **v0.3.1**,
+> todas como pre-release. La v0.3.1 añade:
+> - la ventana rehecha con las medidas de Esfinge;
+> - el icono del volumen (una unidad de aluminio con el sol);
+> - el instalador de Windows en español y con imágenes.
+>
+> Lo pidió el cliente tras ver la v0.3.0 en su Mac, donde ya vio bien la ventana del `.dmg`, el
+> vidrio y el icono del Dock.
 >
 > - **La 1** cumple la promesa central: `apolo webp` da **el mismo fichero, byte a byte, que el
 >   cwebp 1.6.0 oficial**. Son 1015 de 1015 en Linux, y **25 de 25 en el Mac del cliente con Apple
@@ -30,8 +36,9 @@
 
 ### La siguiente acción, al retomar
 
-1. La v0.3.0 ya está publicada (CI en verde: el TIFF del fondo se hizo y el `.dmg` se montó con él).
-2. **Seguir la prueba guiada en el paso 4**, con la v0.3.0 en el Mac del cliente:
+1. Si la v0.3.1 no está publicada: `publicar.yml` a mano, etiqueta `v0.3.1`, revisar el borrador y
+   publicarlo.
+2. **Seguir la prueba guiada en el paso 4**, con la v0.3.1 en el Mac del cliente:
    - abrir arrastrando `mia.png` y con «Abrir otra…» (diálogo de macOS);
    - el comparador, la calidad y el zoom;
    - pegar una orden;
@@ -39,10 +46,11 @@
    - exportar;
    - una foto girada.
 
-   Y además, lo nuevo:
-   - **el vidrio de la barra lateral**, que no se ha visto nunca;
-   - **la ventana del `.dmg`**;
-   - **el icono en el Dock**.
+   Y además, lo nuevo de la v0.3.1:
+   - **el icono del volumen montado**;
+   - **la ventana con las medidas de Esfinge**.
+
+   El vidrio, la ventana del `.dmg` y el Dock ya los dio por buenos con la v0.3.0.
 
    Lo que falle, a la deuda y a arreglar.
 3. Con la prueba hecha: **la entrega 4, Lotes** ([siguiente.md](siguiente.md)).

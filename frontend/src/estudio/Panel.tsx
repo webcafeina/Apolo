@@ -62,7 +62,7 @@ export function Panel(p: Props) {
 
   return (
     <aside className="panel" aria-label={t("panel.etiqueta")}>
-      <div className="grupo">
+      <div className="panel-cabeza">
         <label className="campo">
           <span>{t("panel.formato")}</span>
           <select value="webp" onChange={() => {}} data-prueba="formato">

@@ -50,4 +50,16 @@ Decidida el 2026-10-06 y hecha el mismo día (entrega 3).
   versión, con las hojas sueltas, parecía un insecto a 22 px.
 - **`.dmg`**: fondo propio (simulado sin Mac con `make ventana-dmg`) y sin licencia que aceptar.
 - Capturas de la bienvenida, el Estudio y Ajustes, en claro y oscuro.
-- **No verificado**: el vidrio, el `.dmg` y el icono en el Dock en un Mac de verdad.
+- Con la v0.3.0 en su Mac, el cliente vio bien la ventana del `.dmg`, el vidrio («correcto, aunque
+  muy sutil»; se deja así, como el del sistema) y el icono del Dock. Pidió además:
+  - el **icono del volumen** como el de Esfinge, una unidad nativa de Mac con el sol en el centro;
+  - **identidad en el instalador de Windows**;
+  - la **ventana con las proporciones de la de Esfinge**.
+
+  Va en la **v0.3.1**:
+  - `empaquetado/macos/disco.svg`, la carcasa de Esfinge con el sol, que se pone en el `.dmg` con
+    `icono-volumen.sh` en CI, porque Tauri no deja elegirlo;
+  - NSIS en español con las imágenes `lateral.bmp` y `cabecera.bmp`;
+  - la hoja de estilos rehecha con las medidas de Esfinge, iconos de línea y variantes de Windows y
+    Linux.
+- **No verificado**: el icono del volumen en un Mac y el instalador de Windows en un Windows.

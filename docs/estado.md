@@ -36,25 +36,14 @@
 
 ### La siguiente acción, al retomar
 
-1. La v0.3.1 está publicada (https://github.com/webcafeina/Apolo/releases/tag/v0.3.1). CI la dejó
-   en verde: el icono del volumen se puso en el `.dmg`, y la suma de `SHA256SUMS.txt` corresponde al
-   `.dmg` ya corregido.
-2. **Seguir la prueba guiada en el paso 4**, con la v0.3.1 en el Mac del cliente:
-   - abrir arrastrando `mia.png` y con «Abrir otra…» (diálogo de macOS);
-   - el comparador, la calidad y el zoom;
-   - pegar una orden;
-   - guardar un preset;
-   - exportar;
-   - una foto girada.
-
-   Y además, lo nuevo de la v0.3.1:
-   - **el icono del volumen montado**;
-   - **la ventana con las medidas de Esfinge**.
-
-   El vidrio, la ventana del `.dmg` y el Dock ya los dio por buenos con la v0.3.0.
-
-   Lo que falle, a la deuda y a arreglar.
-3. Con la prueba hecha: **la entrega 4, Lotes** ([siguiente.md](siguiente.md)).
+1. **La prueba guiada con el cliente terminó** el 2026-10-06 sobre la v0.3.1 en su Mac, y todo
+   funcionó. Lo más importante: **el fichero que exporta la ventana es idéntico al de cwebp**, y
+   enderezar funciona con una foto de iPhone. Salieron siete arreglos de diseño y uso (uno es un
+   fallo: la ventana rebota al hacer zoom), que están en [siguiente.md](siguiente.md) como
+   **v0.3.2**. Son lo siguiente.
+2. Pendiente de respuesta del cliente: si sube **leer HEIC** de prioridad (sus fotos de iPhone son
+   HEIC).
+3. Después, **la entrega 4, Lotes**.
 
 ## Completado
 
@@ -69,4 +58,4 @@
 
 ## En curso
 
-- La prueba guiada con el cliente, desde el paso 4.
+- Nada a medias en el código. La v0.3.2 está planteada en siguiente.md, sin empezar.

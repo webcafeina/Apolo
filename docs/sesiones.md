@@ -4,6 +4,32 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-06 (noche) · Fin de la prueba guiada, sobre la v0.3.1
+
+- El cliente vio bien el icono del volumen y la ventana nueva.
+- **Paso 4, abrir**: abre bien arrastrando y con «Abrir otra…»; la cabecera, el comparador, los
+  pesos y la orden están bien.
+- **Paso 5, comparador**: deslizador, zoom, desplazamiento, ajustar, 100 % y lado a lado bien.
+  - Con calidad 5 «apenas» veía diferencia en la vista ajustada, y sí al acercarse: la vista
+    reducida promedia los defectos.
+  - **Fallo**: la ventana rebota al hacer zoom.
+- **Paso 6**: copiar y pegar la orden; el preset se guarda; exportar pesa lo prometido. **El fichero
+  exportado por la ventana es idéntico al de cwebp** con la misma orden, comprobado por el cliente
+  con `cmp`.
+- **Paso 7**: una foto de iPhone (HEIC convertida a JPEG con `sips`) sale tumbada con aviso, y al
+  enderezarla queda derecha.
+- **Siete arreglos** a la lista de la v0.3.2 (siguiente.md):
+  - cabecera con más aire;
+  - pesos con diseño;
+  - el rebote al hacer zoom;
+  - el aviso de vista reducida;
+  - la orden con rutas completas;
+  - una sección de Presets;
+  - un texto mejor que «Con extras de Apolo».
+- Pendiente: que el cliente diga si sube leer HEIC.
+
+---
+
 ## 2026-10-06 (noche) · v0.3.1: la ventana de Esfinge, el disco y el instalador de Windows
 
 - El cliente probó la v0.3.0 en su Mac:

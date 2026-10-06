@@ -23,10 +23,11 @@
 
 1. CI quedó en verde al cerrar (2026-10-06): `comprobar` y `equivalencia` en la ejecución
    37463425487, y los seis objetivos con mozjpeg en la 37463471194. Mirar `gh run list` por si acaso.
-2. **Empezar la entrega 2, el Estudio** ([siguiente.md](siguiente.md)): primero el modo de
+2. **Empezar la entrega 2, el Estudio** —el cliente la quiere retomar la tarde del 2026-10-06— ([siguiente.md](siguiente.md)): primero el modo de
    desarrollo por HTTP (para probar la interfaz sin ventana, como el puente de Esfinge), luego el
    comparador y los controles, que se pintan a partir de `OpcionesWebp` y de los niveles de
-   [cobertura-cwebp.md](cobertura-cwebp.md).
+   [cobertura-cwebp.md](cobertura-cwebp.md). **Dentro de la entrega 2 va enderezar según el EXIF
+   como opción** ([ADR 0012](adr/0012-enderezar-como-opcion.md)), que pidió el cliente al cerrar.
 3. Pendiente del cliente: abrir un instalador en su Mac, Windows o Debian.
 
 ## Completado

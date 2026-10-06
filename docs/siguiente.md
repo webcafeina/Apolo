@@ -14,6 +14,10 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
   pegable; exportar. Las vistas previas por `apolo://preview/<id>`, sin base64 por IPC. Y un modo
   de desarrollo por HTTP para probar la interfaz con Playwright sin ventana, como el puente de dos
   caminos de Esfinge (su ADR 0009).
+  **Incluye enderezar según la orientación EXIF, como opción apagada por defecto**
+  ([ADR 0012](adr/0012-enderezar-como-opcion.md)), que pidió el cliente el 2026-10-06: en el núcleo,
+  en `apolo webp` con nombre propio, y como interruptor en el Estudio, con aviso si la foto viene
+  girada y el interruptor está apagado.
 - **Montar la equivalencia con cwebp en macOS, Windows y Linux arm64** (deuda): Google publica
   cwebp para esas plataformas, y es donde libwebp y mozjpeg cambian de código SIMD.
 

@@ -23,6 +23,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - CI en verde: la equivalencia también en GitHub (1015/1015), y `publicar.yml` compila con mozjpeg
   en las seis máquinas, Windows ARM64 incluido.
 - **No verificado**: la equivalencia fuera de Linux x86-64.
+- Al cerrar, el cliente pidió **enderezar según el EXIF como opción**: ADR 0012, apuntado en la
+  entrega 2. Se retoma con la entrega 2 la tarde del mismo día.
 
 ---
 

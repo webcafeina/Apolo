@@ -38,7 +38,8 @@ Y lo que Apolo hace **de más**, sin romper la promesa:
 - Lee **GIF, BMP y QOI**, que cwebp no lee. Con esos no hay con qué compararse.
 - Lee TIFF a los que les falta la etiqueta `ExtraSamples`, que cwebp rechaza.
 
-Y lo que **no** hace, aposta: **no aplica la orientación EXIF.** cwebp tampoco. Una foto de móvil
+Y lo que **no** hace por defecto: **no aplica la orientación EXIF.** cwebp tampoco. (El cliente pidió
+después tenerlo como opción: [ADR 0012](0012-enderezar-como-opcion.md).) Una foto de móvil
 girada sale girada, igual que con cwebp. Si la interfaz quiere enderezarlas, será una opción propia
 de Apolo, marcada como tal y fuera de la orden cwebp equivalente.
 

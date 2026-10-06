@@ -1,5 +1,10 @@
-/* Apariencia del sistema (ADR 0008): tipografía del sistema, grises neutros,
-   controles de 28 px como en Esfinge. Los colores salen de tokens.css. */
+/* Apariencia del sistema con la marca de Apolo (ADR 0008 y 0015): tipografía
+   del sistema, grises neutros, controles de 28 px como en Esfinge, y el oro del
+   sol en lo que se pulsa o está elegido. Los colores salen de tokens.css.
+
+   El oro rellena y la piedra escribe: el oro va de fondo, nunca de texto ni de
+   línea fina; para eso está --acento, la tinta fuerte del tema. Y el oro nunca
+   va alrededor de la imagen, que tiene que juzgarse sobre gris neutro. */
 
 * { box-sizing: border-box; }
 
@@ -54,7 +59,12 @@ select, input[type="number"], input:not([type]), input[type="text"] {
   min-width: 0;
 }
 
-:focus-visible { outline: 2px solid var(--acento); outline-offset: 1px; }
+:focus-visible {
+  /* El filete en la tinta dice dónde estás; el halo de oro es la marca. */
+  outline: 2px solid var(--acento);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px var(--anillo);
+}
 
 /* Marco */
 
@@ -69,7 +79,40 @@ select, input[type="number"], input:not([type]), input[type="text"] {
   gap: 2px;
 }
 
-.marca { color: var(--tinta); font-weight: 600; padding: 4px 10px 12px; }
+/* El hueco de los semáforos en macOS, que también sirve para arrastrar la
+   ventana. En Windows, Linux y el navegador, la barra de título es del sistema. */
+.arrastre { height: 0; flex: none; }
+:root[data-sistema="macos"] .arrastre { height: 30px; }
+
+.sello {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 14px;
+  color: var(--tinta);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.sello .marca-svg { color: var(--tinta); }
+
+.separador { flex: 1; }
+
+/* La firma de la casa al pie, como en Esfinge. El glifo va en la tinta: en oro
+   y tan fino se perdería. */
+.firma {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px 2px;
+  color: var(--apagado);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.firma-barra { width: 3px; height: 11px; border-radius: 1.5px; background: var(--relleno); }
+
+.marca-svg { display: inline-flex; flex: none; color: inherit; }
+.marca-svg svg { width: 100%; height: 100%; }
 
 .fila {
   all: unset;
@@ -80,8 +123,15 @@ select, input[type="number"], input:not([type]), input[type="text"] {
   cursor: default;
 }
 .fila:hover { background: var(--elevada); }
-.fila[aria-current="page"] { background: var(--relleno); color: var(--sobre-acento); }
-.fila:focus-visible { outline: 2px solid var(--acento); outline-offset: 1px; }
+/* Con .barra delante: si no, «button:hover» (más específico) apaga el oro al
+   pasar el ratón por la sección en la que ya estás. */
+.barra .fila[aria-current="page"] { background: var(--relleno); color: var(--sobre-acento); }
+.fila:focus-visible {
+  /* El filete en la tinta dice dónde estás; el halo de oro es la marca. */
+  outline: 2px solid var(--acento);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px var(--anillo);
+}
 
 .contenido { overflow: hidden; min-width: 0; height: 100%; display: flex; flex-direction: column; }
 .seccion { flex: 1; min-height: 0; display: flex; }
@@ -103,7 +153,23 @@ select, input[type="number"], input:not([type]), input[type="text"] {
   text-align: center;
   background: var(--suave);
 }
-.zona.sobre { border-color: var(--acento); background: var(--tarjeta); }
+.zona.sobre { border-color: var(--acento); background: var(--relleno-tenue); }
+.zona-marca { color: var(--filete-fuerte); margin-bottom: 8px; }
+
+/* La bienvenida: el icono, el nombre y el lema, y debajo la zona para soltar. */
+.bienvenida { display: flex; flex-direction: column; min-height: 0; overflow-y: auto; }
+.bienvenida-cabecera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 40px 24px 8px;
+  text-align: center;
+}
+.bienvenida-cabecera h1 { font-size: 26px; margin: 10px 0 0; letter-spacing: 0.01em; }
+.bienvenida-cabecera p { margin: 0; }
+.bienvenida-icono { filter: drop-shadow(0 8px 18px rgb(0 0 0 / 0.22)); }
+.bienvenida .zona { flex: 1; }
 .zona p { margin: 0; }
 .zona .principal { margin-top: 16px; }
 .zona-titulo { color: var(--tinta); font-size: 15px; font-weight: 500; }
@@ -295,7 +361,23 @@ input[type="checkbox"] { accent-color: var(--relleno); width: 16px; height: 16px
 .lista-presets li { display: flex; align-items: center; gap: 12px; height: 36px; border-bottom: 1px solid var(--filete); }
 .lista-presets li span { color: var(--tinta); min-width: 120px; }
 .lista-presets li code { flex: 1; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ficha { display: flex; gap: 16px; align-items: center; margin: 8px 0 16px; }
+.ficha p { margin: 0; }
+.ficha-nombre { color: var(--tinta); font-size: 17px; font-weight: 600; }
 .motores { margin: 0; }
 .motores div { display: flex; gap: 12px; height: 28px; align-items: center; border-bottom: 1px solid var(--filete); }
 .motores dt { color: var(--tinta); min-width: 120px; }
 .motores dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+/* El vidrio (ADR 0016). Solo en macOS, con data-vidrio="si" (lo pone main.tsx
+   según la orden `plataforma`): la barra lateral y el fondo de la ventana se
+   vuelven transparentes y deja verse el material de barra lateral del sistema.
+   **Todo lo que es trabajo lleva fondo propio**, como en Esfinge: si no, se
+   vería el escritorio a través. */
+:root[data-vidrio="si"] body { background: transparent; }
+:root[data-vidrio="si"] .barra { background: transparent; border-right-color: transparent; }
+:root[data-vidrio="si"] .contenido { background: var(--lienzo); }
+:root[data-vidrio="si"] .fila:hover:not([aria-current="page"]) { background: rgb(0 0 0 / 0.06); }
+@media (prefers-color-scheme: dark) {
+  :root[data-vidrio="si"]:not([data-tema="claro"]) .fila:hover:not([aria-current="page"]) { background: rgb(255 255 255 / 0.08); }
+}

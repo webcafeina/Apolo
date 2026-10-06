@@ -1,0 +1,45 @@
+<!--
+  Propuesta 3 · Lira dorada.
+
+  El atributo más reconocible de Apolo. Los brazos curvos y el travesaño en oro
+  grueso, para que la forma de U con cuernos aguante a 32 px; las cuerdas, en
+  crema, y por encima del travesaño se abren en rayos: la música de Apolo es luz.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- La misma placa que Esfinge: así se leen como de la misma casa. -->
+    <linearGradient id="piedra" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a4a52"/>
+      <stop offset="1" stop-color="#2b2b31"/>
+    </linearGradient>
+    <!-- El oro de Apolo es más solar que el de Esfinge (#f2c14e → #d99a28):
+         más cálido abajo, para que los dos hermanos no se confundan en el Dock. -->
+    <linearGradient id="sol" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd659"/>
+      <stop offset="1" stop-color="#f08c1e"/>
+    </linearGradient>
+    <radialGradient id="brillo" cx="0.5" cy="0.42" r="0.5">
+      <stop offset="0" stop-color="#ffe9a3"/>
+      <stop offset="0.6" stop-color="#ffc83d"/>
+      <stop offset="1" stop-color="#f08c1e"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="228" fill="url(#piedra)"/>
+  <!-- Rayos que salen de las cuerdas, por encima del travesaño. -->
+  <g stroke="#ffd659" stroke-width="20" stroke-linecap="round" opacity="0.9">
+    <path d="M512 290V176"/><path d="M452 296L420 196"/><path d="M572 296L604 196"/>
+  </g>
+  <g fill="none" stroke="url(#sol)" stroke-linecap="round" stroke-width="66">
+    <!-- Brazos: salen de la caja y se abren hacia fuera, como cuernos. -->
+    <path d="M394 748C300 640 300 470 360 380C392 330 330 300 300 330"/>
+    <path d="M630 748C724 640 724 470 664 380C632 330 694 300 724 330"/>
+    <path d="M330 340H694"/>
+  </g>
+  <!-- Las cuerdas. -->
+  <g stroke="#fff1d6" stroke-width="16" stroke-linecap="round">
+    <path d="M452 340V744"/><path d="M512 340V744"/><path d="M572 340V744"/>
+  </g>
+  <!-- La caja de resonancia, un cuenco ancho abajo. -->
+  <path d="M332 720H692C692 800 616 856 512 856S332 800 332 720Z" fill="url(#sol)"/>
+  <ellipse cx="512" cy="776" rx="60" ry="28" fill="#2b2b31" opacity="0.55"/>
+</svg>

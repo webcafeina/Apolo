@@ -8,25 +8,15 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **Entrega 3 — Identidad** ([ADR 0015](adr/0015-identidad-nativa-con-marca.md)), que pidió el cliente
-  al probar la v0.2.0 el 2026-10-06. Por orden:
-  1. **Propuestas de icono** —«más épico, más Apolo»— para que el cliente elija; varias direcciones,
-     en una página para compararlas.
-  2. El **acento de marca** sacado del icono, por `crates/tema` y con la prueba de contraste.
-  3. **Barra lateral translúcida** en macOS, como Esfinge.
-  4. **Pantalla vacía** del Estudio con el icono y una ilustración.
-  5. **Ventana del `.dmg`** con fondo propio, como `empaquetado/macos/armar-dmg.sh` de Esfinge.
-  6. **Quitar la licencia del `.dmg`** (`bundle.licenseFile`).
-  7. Repaso visual del Estudio con capturas en claro y oscuro.
-
-- **Abrir el instalador de la entrega 2 en un Mac y en un Windows** (deuda, alta): es la primera
-  entrega con ventana de verdad, y lo propio de Tauri no se ha visto funcionar.
-- **Montar la equivalencia con cwebp en macOS, Windows y Linux arm64** (deuda): Google publica
-  cwebp para esas plataformas, y es donde libwebp y mozjpeg cambian de código SIMD.
+- **Terminar la prueba guiada con el cliente sobre la v0.3.0**, desde el paso 4 (abrir arrastrando y
+  con «Abrir otra…»), y además mirar el vidrio, el `.dmg` y el icono en el Dock. Los pasos 1 a 3 ya
+  se hicieron con la v0.2.0 (sesiones.md).
+- **Montar la equivalencia con cwebp en CI para Windows y Linux arm64** (deuda). En un Mac con
+  Apple Silicon ya la comprobó a mano el cliente: 25 de 25.
 
 ## Media
 
-- **Entrega 4 — Lotes.** Antes era la 3; la adelantó la Identidad. Arrastrar carpetas, preset con uno o varios formatos de salida, patrón de
+- **Entrega 4 — Lotes.** Lo siguiente de código, tras la prueba guiada. Antes era la 3; la adelantó la Identidad. Arrastrar carpetas, preset con uno o varios formatos de salida, patrón de
   nombre y carpeta, paralelo, cancelar, y el resumen con el ahorro y las peores imágenes.
 - **Entrega 5 — Resto de códecs y proceso.** MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar,
   recortar y reducir paleta. La ADR de AVIF (libavif + aom frente a ravif/rav1e) se decide midiendo.
@@ -57,3 +47,7 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
   la CLI (`-apolo_preset`, `apolo presets`); **enderezar según EXIF como opción** (ADR 0012), con aviso;
   exportar; `apolo-dev` y 14 pruebas de Playwright. El modo «diferencias» pasa a la entrega 5. ·
   2026-10-06
+- ~~**Entrega 3 — Identidad**~~ (ADR 0015 y 0016): el sol con laurel elegido entre cuatro propuestas;
+  el oro del sol como acento («el oro rellena, la piedra escribe»); barra lateral translúcida en
+  macOS; sello, firma, bienvenida con el icono y ficha en «Acerca de»; `.dmg` con fondo propio y sin
+  licencia; `make iconos` y `make ventana-dmg`. · 2026-10-06

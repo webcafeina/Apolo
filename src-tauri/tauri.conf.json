@@ -22,7 +22,8 @@
     ],
     "security": {
       "csp": "default-src 'self'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; connect-src 'self' ipc: http://ipc.localhost apolo: http://apolo.localhost"
-    }
+    },
+    "macOSPrivateApi": true
   },
   "bundle": {
     "active": true,
@@ -37,7 +38,6 @@
     "shortDescription": "Optimiza imágenes con los motores de Squoosh",
     "longDescription": "Apolo comprime imágenes a WebP, AVIF, JPEG XL, MozJPEG y PNG con los mismos motores que Squoosh y cwebp, viendo el resultado al momento.",
     "copyright": "© 2026 Webcafeína · GPLv3",
-    "licenseFile": "../LICENSE",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

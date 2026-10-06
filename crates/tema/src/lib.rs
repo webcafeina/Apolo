@@ -1,13 +1,21 @@
 //! La paleta de Apolo, con su contraste medido.
 //!
-//! Apolo sigue la apariencia del sistema (ADR 0008): superficies grises
-//! neutras, tipografía del sistema, y el azul del sistema como color de acción.
-//! Es el mismo mecanismo que Esfinge (`internal/tema`, su ADR 0008), traído a
-//! Rust: la paleta se define aquí, el contraste se calcula aquí, y
-//! `frontend/src/tokens.css` se **genera** con `make tokens`. No se edita a mano.
+//! Apolo sigue la apariencia del sistema (ADR 0008) con su marca (ADR 0015):
+//! superficies grises neutras, tipografía del sistema, y el **oro del sol** del
+//! icono como color de acción. Es el mismo mecanismo que Esfinge
+//! (`internal/tema`, sus ADR 0008 y 0021), traído a Rust: la paleta se define
+//! aquí, el contraste se calcula aquí, y `frontend/src/tokens.css` se **genera**
+//! con `make tokens`. No se edita a mano.
 //!
-//! Gris neutro no es solo gusto: en una herramienta de imágenes, un cromo con
-//! color tiñe el juicio sobre el color de la foto.
+//! La regla del oro es la de Esfinge: **el oro rellena, la piedra escribe**.
+//! Blanco sobre el oro del sol no llega ni a 2:1; piedra sobre él pasa de 9:1.
+//! Así que el oro va de fondo (botón principal, fila activa, selección) con
+//! tinta oscura encima, y nunca como texto ni como línea fina: para eso está
+//! `acento`, que es la tinta fuerte del tema.
+//!
+//! Gris neutro alrededor no es solo gusto: en una herramienta de imágenes, un
+//! cromo con color tiñe el juicio sobre el color de la foto. El oro se queda en
+//! los controles, nunca alrededor de la imagen.
 
 pub mod contraste;
 pub mod tokens;
@@ -36,14 +44,20 @@ pub struct Tema {
     pub cuerpo: Rgb,
     pub apagado: Rgb,
 
-    // Acción. `relleno` es el fondo de un botón principal, con `sobre_acento`
-    // encima; `acento` es el mismo azul cuando hace de texto (un enlace, un
-    // valor seleccionado), y por eso se ajusta contra el fondo y no contra el
-    // blanco.
+    // Acción. `relleno` es el oro de un botón principal o de lo seleccionado,
+    // con `sobre_acento` (piedra) encima. `acento` **no es oro**: es la tinta
+    // fuerte del tema, para el filete de foco, los bordes que señalan y el
+    // texto que destaca, porque el oro en una línea fina no se ve.
     pub relleno: Rgb,
     pub relleno_vivo: Rgb,
     pub sobre_acento: Rgb,
     pub acento: Rgb,
+
+    // El oro con transparencia: el halo del foco (`anillo`) y el fondo de lo
+    // seleccionado sin rellenar (`relleno_tenue`). Decoración: no llevan
+    // texto que dependa de ellos, así que no entran en el contraste.
+    pub anillo: (Rgb, u8),
+    pub relleno_tenue: (Rgb, u8),
 
     // Superficies con nombre propio: la barra lateral, un campo que se hunde
     // y un botón que se levanta.
@@ -63,8 +77,12 @@ pub struct Tema {
     pub damero_b: Rgb,
 }
 
-const AZUL_CLARO: Rgb = Rgb::hex(0x007aff); // el de macOS
-const AZUL_OSCURO: Rgb = Rgb::hex(0x0a84ff); // su variante para modo oscuro
+/// El oro del sol del icono (`empaquetado/icono.svg`, el centro del degradado
+/// «brillo»). Más cálido que el de Esfinge (`#f2c14e`), para que los dos
+/// hermanos no se confundan.
+const ORO: Rgb = Rgb::hex(0xffc83d);
+/// La placa del icono, la misma que la de Esfinge. Es la tinta sobre el oro.
+const PIEDRA: Rgb = Rgb::hex(0x2b2b31);
 const BLANCO: Rgb = Rgb::hex(0xffffff);
 const VERDE: Rgb = Rgb::hex(0x34c759);
 const AMBAR: Rgb = Rgb::hex(0xff9500);
@@ -77,9 +95,9 @@ pub fn claro() -> Tema {
     // Todo texto tiene que leerse en todas las superficies, así que se ajusta
     // contra la peor: en claro, la más oscura.
     let peor = Rgb::hex(0xe8e8ed);
-    // El azul del sistema con blanco encima se queda en 4,02:1. Se oscurece
-    // lo justo para llegar a AA, que es lo que hace Esfinge con su oro.
-    let relleno = contraste::relleno_legible(AZUL_CLARO, BLANCO, AA_NORMAL);
+    // Si algún día el oro cambiara a uno que no aguanta la piedra encima, se
+    // oscurece lo justo (y la prueba de contraste lo vigila).
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
 
     Tema {
         nombre: "claro",
@@ -94,9 +112,11 @@ pub fn claro() -> Tema {
         cuerpo: Rgb::hex(0x3c3c43),
         apagado: contraste::acento_legible(Rgb::hex(0x6c6c72), peor, AA_NORMAL),
         relleno,
-        relleno_vivo: relleno.oscurecer(0.88),
-        sobre_acento: BLANCO,
-        acento: contraste::acento_legible(AZUL_CLARO, peor, AA_NORMAL),
+        relleno_vivo: relleno.oscurecer(0.92),
+        sobre_acento: PIEDRA,
+        acento: PIEDRA,
+        anillo: (ORO, 35),
+        relleno_tenue: (ORO, 18),
         barra: Rgb::hex(0xf6f6f8),
         campo: lienzo,
         boton: lienzo,
@@ -115,7 +135,7 @@ pub fn oscuro() -> Tema {
     let elevada = Rgb::hex(0x3a3a3c);
     // En oscuro la peor superficie para el texto es la más clara.
     let peor = Rgb::hex(0x48484a);
-    let relleno = contraste::relleno_legible(AZUL_OSCURO, BLANCO, AA_NORMAL);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
 
     Tema {
         nombre: "oscuro",
@@ -130,9 +150,11 @@ pub fn oscuro() -> Tema {
         cuerpo: Rgb::hex(0xe3e3e6),
         apagado: contraste::acento_legible(Rgb::hex(0xa1a1a8), peor, AA_NORMAL),
         relleno,
-        relleno_vivo: relleno.oscurecer(0.88),
-        sobre_acento: BLANCO,
-        acento: contraste::acento_legible(AZUL_OSCURO, peor, AA_NORMAL),
+        relleno_vivo: relleno.oscurecer(0.92),
+        sobre_acento: PIEDRA,
+        acento: BLANCO,
+        anillo: (ORO, 45),
+        relleno_tenue: (ORO, 22),
         barra: Rgb::hex(0x242426),
         campo: Rgb::hex(0x1a1a1c),
         boton: elevada,

@@ -41,6 +41,12 @@ fn bloque(selector: &str, t: &Tema, sangria: &str) -> String {
     for (nombre, color) in variables(t) {
         s += &format!("{sangria}  --{nombre}: {color};\n");
     }
+    for (nombre, (c, alfa)) in [("anillo", t.anillo), ("relleno-tenue", t.relleno_tenue)] {
+        s += &format!(
+            "{sangria}  --{nombre}: rgb({} {} {} / {alfa}%);\n",
+            c.r, c.g, c.b
+        );
+    }
     s += &format!("{sangria}}}\n");
     s
 }

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "app": {
+    "windows": [
+      {
+        "label": "principal",
+        "title": "Apolo",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 900,
+        "minHeight": 600,
+        "transparent": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "windowEffects": {
+          "effects": [
+            "sidebar"
+          ],
+          "state": "followsWindowActiveState"
+        }
+      }
+    ]
+  },
+  "bundle": {
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "dmg": {
+        "background": "../empaquetado/macos/fondo-dmg.tiff",
+        "windowSize": {
+          "width": 660,
+          "height": 470
+        },
+        "appPosition": {
+          "x": 165,
+          "y": 220
+        },
+        "applicationFolderPosition": {
+          "x": 495,
+          "y": 220
+        }
+      }
+    }
+  }
+}

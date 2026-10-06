@@ -7,6 +7,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Icono, Marca } from "../componentes";
 import * as puente from "../puente";
 import { Comparador, type Modo } from "./Comparador";
 import type { OpcionesWebp, Preset } from "./opciones";
@@ -125,6 +126,12 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
 
   if (!info) {
     return (
+      <div className="bienvenida">
+        <div className="bienvenida-cabecera" data-tauri-drag-region>
+          <Icono lado={96} clase="bienvenida-icono" />
+          <h1>{t("app.nombre")}</h1>
+          <p className="apagado">{t("app.lema")}</p>
+        </div>
       <section
         className={`zona${sobre ? " sobre" : ""}`}
         data-prueba="zona"
@@ -140,6 +147,7 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
           if (f && !puente.enTauri()) void abrir(f);
         }}
       >
+        <Marca lado={56} clase="zona-marca" />
         <p className="zona-titulo">{t("estudio.soltar")}</p>
         <p className="apagado">{t("estudio.soltarDetalle")}</p>
         <button className="principal" onClick={async () => {
@@ -150,6 +158,7 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
         </button>
         {error && <p className="error" role="alert">{error}</p>}
       </section>
+      </div>
     );
   }
 
@@ -159,7 +168,7 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
   return (
     <div className="estudio">
       <div className="lienzo-y-barra">
-        <div className="barra-superior">
+        <div className="barra-superior" data-tauri-drag-region>
           <span className="nombre-imagen" title={info.nombre}>{info.nombre}</span>
           <span className="apagado">
             {info.formato} · {info.ancho} × {info.alto}

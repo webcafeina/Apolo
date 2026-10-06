@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 export PATH := $(HOME)/.cargo/bin:$(HOME)/.local/bin:$(PATH)
 
-.PHONY: ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia
+.PHONY: ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -15,6 +15,8 @@ ayuda:
 	@echo "make dev-web    el Estudio en el navegador, sin ventana (http://127.0.0.1:5173)"
 	@echo "make e2e        las pruebas de la interfaz con Playwright, contra apolo-dev"
 	@echo "make capturas   capturas del Estudio en claro y oscuro (frontend/capturas/)"
+	@echo "make iconos     rasteriza el icono y el fondo del .dmg y regenera src-tauri/icons"
+	@echo "make ventana-dmg  simula la ventana del .dmg sin un Mac (target/ventana-dmg.png)"
 
 comprobar: interfaz rust
 
@@ -82,3 +84,14 @@ $(CWEBP):
 equivalencia: $(CWEBP)
 	APOLO_CWEBP=$(abspath $(CWEBP)) APOLO_CWEBP_OBLIGATORIO=1 \
 		cargo test --release -p apolo-nucleo --test equivalencia_cwebp -- --nocapture
+
+# La marca: de los SVG de empaquetado/ a los PNG (Chromium de Playwright, como
+# Esfinge) y de ahí a los iconos de cada sistema. Los PNG van a git.
+iconos:
+	pnpm -C frontend install --frozen-lockfile
+	node frontend/herramientas/rasterizar.mjs
+	pnpm tauri icon empaquetado/icono.png -o src-tauri/icons
+	rm -rf src-tauri/icons/android src-tauri/icons/ios
+
+ventana-dmg:
+	node frontend/herramientas/ventana-dmg.mjs

@@ -57,6 +57,7 @@ export interface Inicio {
   opciones: OpcionesWebp;
   presets_cwebp: Preset[];
   carpeta_presets: string;
+  version: string;
 }
 
 /** Un error de Rust, con su texto ya en español. */
@@ -86,6 +87,16 @@ async function orden<T>(nombre: string, args: Record<string, unknown> = {}): Pro
     throw comoFallo(e);
   }
 }
+
+export interface Plataforma {
+  /** "macos", "windows", "linux", o "web" en el navegador de desarrollo. */
+  sistema: string;
+  /** Si la ventana tiene vidrio detrás (ADR 0016): solo macOS, por ahora. */
+  vidrio: boolean;
+}
+
+export const plataforma = (): Promise<Plataforma> =>
+  enTauri() ? orden<Plataforma>("plataforma") : Promise.resolve({ sistema: "web", vidrio: false });
 
 export const inicio = () => orden<Inicio>("inicio");
 export const motores = () => orden<Motor[]>("motores");

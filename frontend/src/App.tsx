@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Icono, Marca } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
 import * as puente from "./puente";
 
@@ -18,12 +19,23 @@ export function App() {
   return (
     <div className="marco">
       <nav className="barra" aria-label={t("app.nombre")}>
-        <div className="marca">{t("app.nombre")}</div>
+        {/* El hueco de los semáforos en macOS, y por donde se arrastra la ventana. */}
+        <div className="arrastre" data-tauri-drag-region />
+        <div className="sello" data-tauri-drag-region>
+          <Marca lado={22} />
+          <span>{t("app.nombre")}</span>
+        </div>
         {(["estudio", "lotes", "ajustes"] as const).map((s) => (
           <button key={s} className="fila" aria-current={seccion === s ? "page" : undefined} onClick={() => setSeccion(s)}>
             {t(`nav.${s}`)}
           </button>
         ))}
+        <span className="separador" />
+        {inicio && (
+          <div className="firma" data-prueba="firma">
+            {t("app.casa")} <span className="firma-barra" aria-hidden="true" /> {inicio.version}
+          </div>
+        )}
       </nav>
       <main className="contenido">
         {fallo && (
@@ -77,7 +89,14 @@ function Ajustes({ inicio }: { inicio: puente.Inicio | null }) {
       )}
 
       <h1>{t("ajustes.acercaDe")}</h1>
-      <p>{t("app.lema")}</p>
+      <div className="ficha">
+        <Icono lado={72} />
+        <div>
+          <p className="ficha-nombre">{t("app.nombre")}</p>
+          <p className="apagado">{inicio ? t("ajustes.version", { version: inicio.version }) : ""}</p>
+          <p>{t("app.lema")}</p>
+        </div>
+      </div>
       <h2>{t("ajustes.motores")}</h2>
       <dl className="motores">
         {lista?.map((m) => (

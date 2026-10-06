@@ -1,0 +1,14 @@
+<!--
+  La marca de Apolo dentro de la ventana: el icono reducido a trazo y a un solo
+  color (currentColor), como build/marca.svg de Esfinge. Una silueta maciza a
+  tamaño pequeño es un borrón; a trazo se lee y hereda el color del sitio donde
+  va. El grosor se ajusta desde CSS con stroke-width.
+
+  Solo el sol, sus cinco rayos de arriba y el arco de la corona: con las hojas
+  sueltas del laurel, a 22 px parecía un insecto.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="60" cy="62" r="20"/>
+  <path d="M60 32V18M39.5 41.5L30 32M80.5 41.5L90 32M30 62H18M90 62H102"/>
+  <path d="M26 76C34 100 86 100 94 76"/>
+</svg>

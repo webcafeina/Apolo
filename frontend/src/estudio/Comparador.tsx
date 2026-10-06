@@ -153,7 +153,9 @@ export function Comparador({ original, resultado, modo, ocupado }: Props) {
       const xc = corte * tamano.w;
       pintar(a, 0, tamano.w, 0, xc);
       pintar(b ?? a, 0, tamano.w, xc, tamano.w);
-      g.fillStyle = color("--sobre-acento");
+      // La línea del corte, blanca en los dos temas: va sobre la foto, no
+      // sobre el cromo.
+      g.fillStyle = "#ffffff";
       g.fillRect(xc - 1, 0, 2, tamano.h);
       g.fillStyle = color("--relleno");
       g.beginPath();

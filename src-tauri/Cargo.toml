@@ -19,5 +19,7 @@ apolo-nucleo.workspace = true
 apolo-servicio.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-tauri = { version = "2", features = [] }
+# macos-private-api: la ventana transparente con el vidrio de macOS lo exige
+# (ADR 0016). Va con app.macOSPrivateApi en tauri.conf.json.
+tauri = { version = "2", features = ["macos-private-api"] }
 tauri-plugin-dialog = "2"

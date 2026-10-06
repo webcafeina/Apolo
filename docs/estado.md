@@ -36,8 +36,9 @@
 
 ### La siguiente acción, al retomar
 
-1. Si la v0.3.1 no está publicada: `publicar.yml` a mano, etiqueta `v0.3.1`, revisar el borrador y
-   publicarlo.
+1. La v0.3.1 está publicada (https://github.com/webcafeina/Apolo/releases/tag/v0.3.1). CI la dejó
+   en verde: el icono del volumen se puso en el `.dmg`, y la suma de `SHA256SUMS.txt` corresponde al
+   `.dmg` ya corregido.
 2. **Seguir la prueba guiada en el paso 4**, con la v0.3.1 en el Mac del cliente:
    - abrir arrastrando `mia.png` y con «Abrir otra…» (diálogo de macOS);
    - el comparador, la calidad y el zoom;
@@ -64,6 +65,7 @@
 - v0.2.0 publicada como pre-release (2026-10-06). ADR 0014.
 - Entrega 3, identidad (2026-10-06). ADR 0015 y 0016.
 - v0.3.0 publicada como pre-release (2026-10-06).
+- v0.3.1 publicada: ventana de Esfinge, disco y Windows (2026-10-06).
 
 ## En curso
 

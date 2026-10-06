@@ -26,9 +26,9 @@
 
 ### La siguiente acción, al retomar
 
-1. Mirar Actions (`gh run list -R webcafeina/Apolo`). Lo nuevo en CI: el trabajo `e2e` (Playwright)
-   y la compilación de `src-tauri` con las órdenes y el protocolo, **que aquí no se puede compilar**.
-   Si `comprobar` está en rojo, lo más probable es un error de tipos en `src-tauri/src/lib.rs`.
+1. CI quedó **en verde a la primera** al cerrar la entrega 2: `comprobar`, que ya compila
+   `src-tauri` con las órdenes y el protocolo, `e2e` y `equivalencia` en la 37494968142, y los seis
+   instaladores en la **37494979883**. Mirar `gh run list` por si acaso.
 2. **Pedir al cliente que abra el instalador** de la última ejecución de `publicar.yml` en su Mac
    (y en un Windows si tiene). Que pruebe:
    - abrir una foto;

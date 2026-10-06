@@ -4,6 +4,22 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-06 (noche) · La v0.2.0, primera pre-release
+
+- El cliente preguntó si se podían hacer ya las Releases. Se podía; se le explicó lo que faltaba
+  para una 1.0 y pidió **la v0.2.0 con la CLI incluida**. ADR 0014.
+- `publicar.yml`:
+  - compila también la CLI de los seis objetivos (universal con `lipo` en macOS);
+  - con la etiqueta, la cuelga en la Release junto a `SHA256SUMS.txt` y a las notas de
+    `.github/notas/v0.2.0.md`;
+  - las 0.x salen como pre-release en borrador.
+- Se probó antes lanzándolo a mano, se etiquetó, se revisó el borrador y se publicó.
+- La notas decían «funciona» y se corrigieron antes de publicar: la ventana no la ha abierto nadie.
+- Verificado: la CLI bajada de la Release cuadra con su suma y da el mismo fichero que cwebp.
+- **No verificado**: ningún instalador abierto.
+
+---
+
 ## 2026-10-06 (tarde y noche) · Entrega 2: el Estudio
 
 - El cliente eligió en tres preguntas, las tres como se recomendaban:

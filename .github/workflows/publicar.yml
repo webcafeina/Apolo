@@ -1,6 +1,8 @@
-# Los instaladores de los seis objetivos (ADR 0010).
+# Los instaladores y la CLI de los seis objetivos (ADR 0010 y 0014).
 #
-# - Al empujar una etiqueta vX.Y.Z: borrador de Release con todo colgado.
+# - Al empujar una etiqueta vX.Y.Z: borrador de Release con todo colgado, las
+#   notas de .github/notas/vX.Y.Z.md y SHA256SUMS.txt. Las 0.x salen como
+#   pre-release. El borrador se publica a mano, después de mirarlo.
 # - A mano (workflow_dispatch): solo compila y deja los paquetes como artefactos.
 name: Publicar
 
@@ -85,7 +87,7 @@ jobs:
           tagName: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
           releaseName: "Apolo ${{ github.ref_name }}"
           releaseDraft: true
-          prerelease: false
+          prerelease: ${{ startsWith(github.ref_name, 'v0.') }}
           args: --target ${{ matrix.objetivo }}
 
       - name: Paquetes como artefacto
@@ -99,3 +101,100 @@ jobs:
             target/${{ matrix.objetivo }}/release/bundle/deb/*.deb
             target/${{ matrix.objetivo }}/release/bundle/appimage/*.AppImage
           if-no-files-found: error
+
+  # La línea de comandos `apolo`, suelta, para los mismos seis objetivos.
+  cli:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - nombre: macos-universal
+            maquina: macos-14
+            rust: aarch64-apple-darwin,x86_64-apple-darwin
+          - nombre: windows-x64
+            maquina: windows-latest
+            objetivo: x86_64-pc-windows-msvc
+            rust: x86_64-pc-windows-msvc
+          - nombre: windows-arm64
+            maquina: windows-11-arm
+            objetivo: aarch64-pc-windows-msvc
+            rust: aarch64-pc-windows-msvc
+          - nombre: linux-amd64
+            maquina: ubuntu-22.04
+            objetivo: x86_64-unknown-linux-gnu
+            rust: x86_64-unknown-linux-gnu
+          - nombre: linux-arm64
+            maquina: ubuntu-22.04-arm
+            objetivo: aarch64-unknown-linux-gnu
+            rust: aarch64-unknown-linux-gnu
+
+    name: cli-${{ matrix.nombre }}
+    runs-on: ${{ matrix.maquina }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/setup-nasm@v1
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: cli-${{ matrix.nombre }}
+
+      - name: Compilar
+        shell: bash
+        run: |
+          mkdir -p dist
+          if [ "${{ matrix.nombre }}" = macos-universal ]; then
+            cargo build --release -p apolo-cli --target aarch64-apple-darwin
+            cargo build --release -p apolo-cli --target x86_64-apple-darwin
+            lipo -create -output dist/apolo \
+              target/aarch64-apple-darwin/release/apolo target/x86_64-apple-darwin/release/apolo
+          else
+            cargo build --release -p apolo-cli --target ${{ matrix.objetivo }}
+            cp target/${{ matrix.objetivo }}/release/apolo${{ runner.os == 'Windows' && '.exe' || '' }} dist/
+          fi
+
+      - name: Empaquetar
+        shell: bash
+        run: |
+          V=${GITHUB_REF_NAME#v}
+          [ "$GITHUB_REF_TYPE" = tag ] || V=prueba
+          N=apolo-cli-$V-${{ matrix.nombre }}
+          cp LICENSE dist/
+          cd dist
+          if [ "$RUNNER_OS" = Windows ]; then
+            7z a "../$N.zip" apolo.exe LICENSE > /dev/null
+          else
+            tar czf "../$N.tar.gz" apolo LICENSE
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cli-${{ matrix.nombre }}
+          path: apolo-cli-*
+          if-no-files-found: error
+
+  # Con todo compilado: la CLI a la Release, las notas y las sumas.
+  adjuntar:
+    if: github.ref_type == 'tag'
+    needs: [paquete, cli]
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cli-*
+          merge-multiple: true
+          path: cli
+      - name: CLI, notas y sumas
+        run: |
+          gh release upload "$GITHUB_REF_NAME" cli/* --clobber
+          if [ -f ".github/notas/$GITHUB_REF_NAME.md" ]; then
+            gh release edit "$GITHUB_REF_NAME" --notes-file ".github/notas/$GITHUB_REF_NAME.md"
+          fi
+          mkdir todo
+          gh release download "$GITHUB_REF_NAME" -D todo --skip-existing
+          (cd todo && rm -f SHA256SUMS.txt && sha256sum * > ../SHA256SUMS.txt)
+          gh release upload "$GITHUB_REF_NAME" SHA256SUMS.txt --clobber

@@ -104,6 +104,11 @@ fn leer_orden(texto: String) -> Result<OpcionesWebp, Fallo> {
 }
 
 #[tauri::command]
+fn orden_opciones(opciones: OpcionesWebp) -> String {
+    apolo_servicio::orden_opciones(&opciones)
+}
+
+#[tauri::command]
 fn presets(s: Estado) -> Vec<PresetGuardado> {
     s.presets()
 }
@@ -181,6 +186,7 @@ pub fn arrancar() {
             aplicar_preset,
             nivel_sin_perdida,
             leer_orden,
+            orden_opciones,
             presets,
             guardar_preset,
             borrar_preset

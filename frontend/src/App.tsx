@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Cabecera, Icono, IconoApp, Marca } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
+import { Presets } from "./presets/Presets";
 import * as puente from "./puente";
 
-type Seccion = "estudio" | "lotes" | "ajustes";
+type Seccion = "estudio" | "lotes" | "presets" | "ajustes";
 
 // La ventana, con la anatomía de la de Esfinge: la barra lateral de 225 px con
 // el hueco de los semáforos, el sello y las secciones (Ajustes abajo del todo),
@@ -34,7 +35,7 @@ export function App() {
           <Marca lado={26} />
           <span>{t("app.nombre")}</span>
         </div>
-        <nav aria-label={t("app.nombre")}>{(["estudio", "lotes"] as const).map(fila)}</nav>
+        <nav aria-label={t("app.nombre")}>{(["estudio", "lotes", "presets"] as const).map(fila)}</nav>
         <nav className="abajo" aria-label={t("nav.ajustes")}>
           {fila("ajustes")}
         </nav>
@@ -68,6 +69,7 @@ export function App() {
             </div>
           </div>
         )}
+        {seccion === "presets" && <Presets carpeta={inicio?.carpeta_presets ?? null} irAlEstudio={() => setSeccion("estudio")} />}
         {seccion === "ajustes" && <Ajustes inicio={inicio} />}
       </main>
     </div>
@@ -77,11 +79,9 @@ export function App() {
 function Ajustes({ inicio }: { inicio: puente.Inicio | null }) {
   const { t } = useTranslation();
   const [lista, setLista] = useState<puente.Motor[] | null>(null);
-  const [guardados, setGuardados] = useState<puente.PresetGuardado[]>([]);
 
   useEffect(() => {
     puente.motores().then(setLista, () => setLista([]));
-    puente.presets().then(setGuardados, () => {});
   }, []);
 
   return (
@@ -89,25 +89,6 @@ function Ajustes({ inicio }: { inicio: puente.Inicio | null }) {
       <Cabecera titulo={t("nav.ajustes")} />
       <div className="contenido">
         <div className="panel-ajustes">
-          <section className="grupo">
-            <h2>{t("ajustes.presets")}</h2>
-            <p className="apagado">{t("ajustes.presetsDonde")}</p>
-            {inicio && <code className="ruta seleccionable">{inicio.carpeta_presets}</code>}
-            {guardados.length === 0 ? (
-              <p className="apagado">{t("ajustes.sinPresets")}</p>
-            ) : (
-              <ul className="lista-presets">
-                {guardados.map((g) => (
-                  <li key={g.nombre}>
-                    <span>{g.nombre}</span>
-                    <code className="apagado seleccionable">apolo webp -apolo_preset "{g.nombre}"</code>
-                    <button onClick={async () => setGuardados(await puente.borrarPreset(g.nombre))}>{t("ajustes.borrar")}</button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
           <section className="grupo">
             <h2>{t("ajustes.acercaDe")}</h2>
             <div className="ficha">

@@ -364,7 +364,7 @@ input[type="range"] { accent-color: var(--relleno); }
 .pesos { display: flex; align-items: baseline; gap: 6px; font-variant-numeric: tabular-nums; }
 .pesos strong { color: var(--tinta); font-size: var(--texto-grande); }
 .pesos .flecha { color: var(--apagado); }
-.datos { font-variant-numeric: tabular-nums; }
+.datos { font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .orden { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .orden code {
@@ -487,3 +487,82 @@ input[type="range"] { accent-color: var(--relleno); }
   * { transition: none !important; }
   .girando { animation: none; }
 }
+
+/* v0.3.2: lo que salió de la prueba guiada en el Mac del cliente. */
+
+/* Nada de la ventana rebota: es una aplicación, no una página. El rebote
+   elástico de macOS se veía al hacer zoom en el comparador. */
+html, body, #raiz { overscroll-behavior: none; }
+.contenido, .panel { overscroll-behavior: contain; }
+
+/* La cabecera, con más aire arriba («habría que dar más aire en la parte
+   superior»): el antetítulo y el título tenían 52 px justos. */
+.herramientas { height: auto; min-height: 64px; padding-top: var(--espacio-3); padding-bottom: var(--espacio-2); }
+.titulos { gap: 2px; }
+
+/* La nota de vista reducida: arriba en el centro, discreta, y es un botón que
+   lleva al 100 %. */
+.nota-reducida {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 24px;
+  padding: 0 var(--espacio-3);
+  border-radius: 12px;
+  background: var(--tarjeta);
+  border: var(--linea) solid var(--filete);
+  color: var(--cuerpo);
+  font-size: var(--texto-chico);
+  font-weight: 400;
+  max-width: calc(100% - 220px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Los pesos: qué es cada número, el ahorro grande y una barra que compara. */
+.pesos {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto;
+  column-gap: var(--espacio-5);
+  row-gap: 6px;
+  align-items: end;
+  font-variant-numeric: tabular-nums;
+}
+.peso, .ahorro { display: flex; flex-direction: column; gap: 1px; }
+.pesos .etiqueta { font-size: 11px; color: var(--apagado); letter-spacing: 0.2px; white-space: nowrap; }
+.peso .valor { color: var(--tinta); font-size: var(--texto-grande); }
+.peso strong.valor { font-weight: 600; }
+.ahorro-cifra { font-size: 22px; font-weight: 700; line-height: 1.1; color: var(--exito); letter-spacing: -0.02em; }
+.ahorro.crece .ahorro-cifra { color: var(--error); }
+.barra-pesos {
+  grid-column: 1 / -1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--elevada);
+  overflow: hidden;
+}
+.barra-resultado { display: block; height: 100%; border-radius: 3px; background: var(--relleno); transition: width 0.2s; }
+
+.motivo { font-size: var(--texto-chico); }
+
+/* Presets */
+.ficha-preset { gap: var(--espacio-2); }
+.ficha-preset-cabecera { display: flex; align-items: center; min-height: 30px; }
+.rasgos { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; }
+.rasgos li {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--elevada);
+  color: var(--cuerpo);
+  font-size: var(--texto-chico);
+}
+.orden-preset { font: 12px var(--mono); color: var(--tinta); }
+.equivale { font-size: var(--texto-chico); overflow-wrap: anywhere; }
+.equivale code { font: 11px var(--mono); }
+.acciones { display: flex; gap: var(--espacio-2); align-items: center; margin-top: var(--espacio-1); }
+button.peligro { border-color: var(--error); color: var(--error); }
+.grupo.vacio { align-items: center; text-align: center; padding: var(--espacio-6) var(--espacio-4); color: var(--apagado); }
+.pie-presets { font-size: var(--texto-chico); }
+.pie-presets code { display: inline; }

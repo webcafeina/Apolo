@@ -38,6 +38,9 @@ Tauri 2 + Rust, con la interfaz en React + Vite + TypeScript ([ADR 0001](docs/ad
 | Carpeta | Qué es |
 |---|---|
 | `crates/nucleo` | Todo el trabajo con imágenes: decodificar, codificar, procesar, medir. Sin interfaz |
+| `crates/heic` | Leer HEIC: libheif y libde265 compiladas dentro, con enlaces escritos a mano |
+| `crates/servicio` | El Estudio sin ventana: lo usan la aplicación y el servidor de desarrollo |
+| `crates/dev` | `apolo-dev`: el Estudio por HTTP, para probar la interfaz en un navegador |
 | `crates/tema` | La paleta, el cálculo de contraste y el generador de `frontend/src/tokens.css` |
 | `crates/cli` | El binario `apolo`, para scripts. `apolo webp` acepta las opciones de `cwebp` |
 | `src-tauri` | La aplicación de ventana: órdenes de Tauri sobre el núcleo |
@@ -48,7 +51,10 @@ Dos caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, con los
 
 ## Cómo se compila
 
-- Rust vive en `~/.cargo` (rustup, sin sudo). Node 22 y pnpm, por nvm.
+- Rust vive en `~/.cargo` (rustup, sin sudo). Node 22 y pnpm, por nvm. nasm y CMake, en
+  `~/.local/bin` (nasm compilado de fuente, CMake con pip). El Makefile los pone en el PATH.
+- **Submódulos**: libheif y libde265 van en `crates/heic/vendor/` (ADR 0017). Al clonar,
+  `git submodule update --init`.
 - `make comprobar`: formato, clippy, pruebas, contraste y la interfaz. Es la puerta de CI.
 - `make cli`: el binario `apolo`.
 - `make tokens`: regenera `frontend/src/tokens.css` desde `crates/tema`. **No se edita a mano.**

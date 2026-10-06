@@ -46,6 +46,8 @@ jobs:
     runs-on: ${{ matrix.maquina }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Dependencias del sistema
         if: runner.os == 'Linux'
@@ -156,6 +158,8 @@ jobs:
     runs-on: ${{ matrix.maquina }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - uses: ilammy/setup-nasm@v1
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -207,6 +211,8 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - uses: actions/download-artifact@v4
         with:
           pattern: cli-*

@@ -4,6 +4,31 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-06 (noche) · v0.3.2: los arreglos de la prueba y HEIC
+
+- **Los siete arreglos de la prueba**:
+  - cabecera con aire;
+  - pesos con etiquetas, ahorro y barra;
+  - **el rebote al hacer zoom**: el `onWheel` de React es pasivo, y ahora hay un oyente nativo no
+    pasivo, más `gesturechange` para el pellizco de WebKit y `overscroll-behavior: none`;
+  - aviso de vista reducida;
+  - orden con rutas completas;
+  - sección Presets;
+  - «Distinto de cwebp» con el motivo.
+- **Un riesgo que no salió en la prueba**: con un `.webp` de entrada, la orden y el nombre propuesto
+  eran `foto.webp -o foto.webp`, que sobrescribían el original. Ahora sale `foto-apolo.webp`.
+- **HEIC** (ADR 0017), pedido por el cliente:
+  - `crates/heic`, con libde265 v1.1.3 y libheif v1.23.6 como submódulos, compiladas por su
+    `build.rs` con CMake (instalado con pip en `~/.local/bin`), y enlaces a mano;
+  - el EXIF se deja en orientación 1 porque libheif ya endereza;
+  - el modo «embebido» de `libheif-sys` no sirve: no trae HEVC.
+- Verificado:
+  - la foto de ejemplo de libheif se decodifica y pasa a WebP con sus colores;
+  - 20 pruebas de Playwright, con una de HEIC.
+- **No verificado**: HEIC en las otras cinco plataformas (lo dirá CI) ni con una foto real de iPhone.
+
+---
+
 ## 2026-10-06 (noche) · Fin de la prueba guiada, sobre la v0.3.1
 
 - El cliente vio bien el icono del volumen y la ventana nueva.

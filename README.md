@@ -39,6 +39,8 @@ pesa y dónde se pierde calidad, y ajustas hasta que te convence.
 - **Redimensionar, recortar y reducir paleta**, como en Squoosh.
 - **Mapa de diferencias** con PSNR y SSIM.
 - **Línea de comandos `apolo`**, con los mismos presets, para scripts.
+- **Abre las fotos del iPhone** (HEIC) directamente, además de PNG, JPEG, WebP, TIFF, GIF, BMP,
+  QOI y PNM.
 - Nativo, ligero y sin conexión: tus imágenes no salen de tu ordenador.
 
 ## Plataformas
@@ -55,8 +57,9 @@ de todos modos).
 
 ## Compilar
 
-Hace falta Rust (estable), Node 22 y pnpm. En Linux, además,
-`libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config`.
+Hace falta Rust (estable), Node 22, pnpm, CMake, nasm y un compilador de C++. En Linux, además,
+`libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config`. Clona con submódulos:
+`git clone --recurse-submodules`.
 
 ```sh
 make comprobar   # pruebas
@@ -67,7 +70,8 @@ make app         # la aplicación
 ## Licencia
 
 [GPLv3](LICENSE). Apolo es software libre: puedes usarlo, estudiarlo, cambiarlo y compartirlo.
-Los motores que lleva dentro tienen sus propias licencias, todas compatibles: libwebp, MozJPEG,
-libavif y libjxl (BSD), OxiPNG (MIT) y libimagequant (GPLv3).
+Los motores que lleva dentro tienen sus propias licencias, todas compatibles: libwebp y MozJPEG
+(BSD), libheif y libde265 (LGPLv3), y los que vendrán: libavif y libjxl (BSD), OxiPNG (MIT) y
+libimagequant (GPLv3).
 
 Hecho por [Webcafeína](https://webcafeina.com).

@@ -1,0 +1,13 @@
+[package]
+name = "apolo-heic"
+description = "Leer HEIC (las fotos del iPhone) con libheif y libde265, compiladas dentro"
+version.workspace = true
+edition.workspace = true
+# Apolo es GPL-3.0; libheif y libde265 son LGPL-3.0, compatibles.
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+links = "heif"
+
+[build-dependencies]
+cmake = "0.1"

@@ -44,6 +44,8 @@ const DIBUJOS: Record<string, ReactNode> = {
       <path d="M8 9l2-2.4 1.6 1.8 1-1 1.4 1.6" />
     </>
   ),
+  // Una cinta de marcapáginas: lo guardado para volver a usarlo.
+  presets: <path d="M5 2.5h8a1 1 0 0 1 1 1v12l-5-3.2-5 3.2v-12a1 1 0 0 1 1-1zM7 6.5h4" />,
   ajustes: (
     <>
       <path d="M3 5.5h12M3 12.5h12" />

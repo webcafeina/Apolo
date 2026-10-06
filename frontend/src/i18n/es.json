@@ -8,11 +8,12 @@
   "nav": {
     "estudio": "Estudio",
     "lotes": "Lotes",
-    "ajustes": "Ajustes"
+    "ajustes": "Ajustes",
+    "presets": "Presets"
   },
   "estudio": {
     "soltar": "Arrastra una imagen aquí",
-    "soltarDetalle": "PNG, JPEG, WebP, TIFF, GIF, BMP, QOI o PNM",
+    "soltarDetalle": "PNG, JPEG, HEIC (iPhone), WebP, TIFF, GIF, BMP, QOI o PNM",
     "bienvenida": "Te damos la bienvenida a Apolo",
     "abrir": "Abrir una imagen…",
     "abrirOtra": "Abrir otra…",
@@ -35,7 +36,8 @@
     "zoom": "Zoom",
     "acercar": "Acercar",
     "alejar": "Alejar",
-    "ajustar": "Ajustar"
+    "ajustar": "Ajustar",
+    "reducida": "Vista reducida al {{porcentaje}} %: la compresión no se aprecia. Ver al 100 %"
   },
   "orden": {
     "copiar": "Copiar",
@@ -44,8 +46,11 @@
     "pegar": "Pega una orden de cwebp",
     "cargar": "Cargar",
     "cancelar": "Cancelar",
-    "noEquivalente": "Con extras de Apolo",
-    "noEquivalenteAyuda": "Hay opciones que cwebp no tiene (enderezar): esta orden no da exactamente el mismo fichero."
+    "noEquivalente": "Distinto de cwebp",
+    "motivo": {
+      "enderezada": "La foto está enderezada, y cwebp no gira las fotos: esta orden no da exactamente este fichero.",
+      "formato_sin_cwebp": "cwebp no lee este formato: la orden sirve de referencia, pero no se puede ejecutar tal cual."
+    }
   },
   "panel": {
     "etiqueta": "Ajustes de la compresión",
@@ -204,13 +209,36 @@
     "pronto": "Los lotes llegan en la entrega 3."
   },
   "ajustes": {
-    "presets": "Presets guardados",
-    "presetsDonde": "Cada preset es un fichero JSON en esta carpeta. La línea de comandos los usa igual, y se comparten copiando el fichero.",
-    "sinPresets": "Todavía no hay ninguno. Se guardan desde el Estudio.",
     "borrar": "Borrar",
     "acercaDe": "Acerca de",
     "version": "Versión {{version}}",
     "motores": "Motores",
     "licencia": "Software libre con licencia GPLv3."
+  },
+  "pesos": {
+    "original": "Original · {{formato}}",
+    "resultado": "Resultado · WebP",
+    "menos": "{{bytes}} menos",
+    "mas": "{{bytes}} más que el original",
+    "barra": "El resultado pesa el {{porcentaje}} % del original"
+  },
+  "presets": {
+    "entradilla": "Un preset es un ajuste guardado para volver a usarlo: en el Estudio, en los lotes o con la línea de comandos.",
+    "vacio": "Todavía no hay presets",
+    "comoCrear": "Se crean en el Estudio: ajusta una imagen y, en el panel de la derecha, escribe un nombre y pulsa «Guardar».",
+    "irAlEstudio": "Ir al Estudio",
+    "donde": "Cada preset es un fichero JSON en esta carpeta, que comparte la línea de comandos; se pasan de un ordenador a otro copiando el fichero:",
+    "nombre": "Nombre del preset",
+    "aceptar": "Aceptar",
+    "calidad": "Calidad {{valor}}",
+    "sinPerdida": "Sin pérdida",
+    "casiSinPerdida": "Casi sin pérdida {{valor}}",
+    "metodo": "Método {{valor}}",
+    "redimension": "Redimensiona a {{ancho}} × {{alto}}",
+    "endereza": "Endereza según EXIF",
+    "equivale": "Equivale a:",
+    "usar": "Usar en el Estudio",
+    "renombrar": "Renombrar",
+    "seguro": "¿Borrarlo?"
   }
 }

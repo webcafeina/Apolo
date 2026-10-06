@@ -36,13 +36,17 @@
 
 ### La siguiente acción, al retomar
 
-1. **La prueba guiada con el cliente terminó** el 2026-10-06 sobre la v0.3.1 en su Mac, y todo
-   funcionó. Lo más importante: **el fichero que exporta la ventana es idéntico al de cwebp**, y
-   enderezar funciona con una foto de iPhone. Salieron siete arreglos de diseño y uso (uno es un
-   fallo: la ventana rebota al hacer zoom), que están en [siguiente.md](siguiente.md) como
-   **v0.3.2**. Son lo siguiente.
-2. Pendiente de respuesta del cliente: si sube **leer HEIC** de prioridad (sus fotos de iPhone son
-   HEIC).
+1. **La v0.3.2**: lo que salió de la prueba guiada y **leer HEIC** (ADR 0017), con libheif y libde265
+   compiladas dentro como submódulos. Si no está publicada:
+   - `publicar.yml` a mano (lo nuevo es compilar libheif y libde265 en las seis máquinas, sobre todo
+     en Windows ARM64);
+   - etiqueta `v0.3.2`;
+   - revisar el borrador y publicarlo.
+2. Que el cliente la pruebe en su Mac:
+   - **una foto HEIC de su iPhone**, que no se ha probado con ninguna real;
+   - el zoom sin rebote;
+   - los pesos nuevos;
+   - la sección Presets.
 3. Después, **la entrega 4, Lotes**.
 
 ## Completado
@@ -55,7 +59,9 @@
 - Entrega 3, identidad (2026-10-06). ADR 0015 y 0016.
 - v0.3.0 publicada como pre-release (2026-10-06).
 - v0.3.1 publicada: ventana de Esfinge, disco y Windows (2026-10-06).
+- Prueba guiada de las entregas 1 y 2 en el Mac del cliente, completa (2026-10-06).
+- v0.3.2: arreglos de la prueba y HEIC (2026-10-06). ADR 0017.
 
 ## En curso
 
-- Nada a medias en el código. La v0.3.2 está planteada en siguiente.md, sin empezar.
+- Publicar la v0.3.2 (ver arriba).

@@ -29,3 +29,4 @@ con el cliente.
 | [0014](adr/0014-versiones-y-publicacion.md) | Versiones 0.x como pre-release en borrador, con la CLI y las sumas en la Release | 2026-10-06 | aceptada |
 | [0015](adr/0015-identidad-nativa-con-marca.md) | Nativa con marca, como Esfinge hoy; entrega «Identidad» antes de Lotes; sin licencia en el `.dmg` | 2026-10-06 | aceptada · hecha en la entrega 3 |
 | [0016](adr/0016-ventana-translucida.md) | Ventana translúcida en macOS con `macOSPrivateApi`; Windows y Linux opacos por ahora | 2026-10-06 | aceptada |
+| [0017](adr/0017-leer-heic.md) | Leer HEIC con libheif y libde265 compiladas dentro (submódulos); el EXIF se deja en orientación 1 | 2026-10-06 | aceptada |

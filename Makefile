@@ -22,7 +22,7 @@ comprobar: interfaz rust
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
-RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev)
+RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev)
 
 rust:
 	cargo fmt --all --check

@@ -35,3 +35,18 @@ test("ajustes", async ({ page }, info) => {
   await page.getByRole("heading", { name: "Acerca de" }).waitFor();
   await page.screenshot({ path: `capturas/ajustes-${info.project.name}.png` });
 });
+
+test("presets", async ({ page }, info) => {
+  await page.goto("/");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/corpus/foto.webp"));
+  await page.getByTestId("peso-resultado").waitFor();
+  await page.locator("#control-calidad").fill("70");
+  await page.getByTestId("nombre-preset").fill("Fotos web");
+  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await page.getByRole("button", { name: "Presets" }).click();
+  await page.getByTestId("preset").waitFor();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `capturas/presets-${info.project.name}.png` });
+});

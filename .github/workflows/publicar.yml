@@ -56,6 +56,15 @@ jobs:
       # mozjpeg compila su SIMD de x86 con nasm.
       - uses: ilammy/setup-nasm@v1
 
+      # El fondo del .dmg en un TIFF HiDPI (1x + 2x): con un PNG suelto, macOS
+      # lo escala y en Retina se ve borroso. Los PNG están en git (make iconos);
+      # el TIFF solo se hace aquí, que es donde hay tiffutil.
+      - name: Fondo del .dmg
+        if: runner.os == 'macOS'
+        run: |
+          tiffutil -cathidpicheck empaquetado/macos/fondo-dmg.png empaquetado/macos/fondo-dmg@2x.png \
+            -out empaquetado/macos/fondo-dmg.tiff
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.rust }}

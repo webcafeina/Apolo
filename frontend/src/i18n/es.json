@@ -2,7 +2,8 @@
   "app": {
     "nombre": "Apolo",
     "lema": "Optimiza imágenes con los motores de Squoosh",
-    "sinServicio": "No se puede hablar con el motor de Apolo."
+    "sinServicio": "No se puede hablar con el motor de Apolo.",
+    "casa": "Webcafeína"
   },
   "nav": {
     "estudio": "Estudio",
@@ -207,6 +208,7 @@
     "sinPresets": "Todavía no hay ninguno. Se guardan desde el Estudio.",
     "borrar": "Borrar",
     "acercaDe": "Acerca de",
+    "version": "Versión {{version}}",
     "motores": "Motores",
     "licencia": "Software libre con licencia GPLv3."
   }

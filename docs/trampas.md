@@ -78,3 +78,9 @@ sí mismo. · 2026-10-06
 Cronos y Esfinge levantan Vite y Playwright en esta misma máquina, a veces a la vez. Las pruebas de
 Apolo usan puertos propios: 5191 para Vite y 34591 para `apolo-dev`. `make dev-web` usa 5173 y 34500,
 que son los de por defecto. · 2026-10-06
+
+## `make comprobar | grep …` dice «salida 0» con la puerta en rojo
+
+El código de salida de una tubería es el del **último** comando, el `grep`, no el de `make`. Un
+`cargo fmt --check` fallido quedó escondido así, y solo se vio al repetirlo sin tubería. Para saber
+si la puerta pasa: `make comprobar > fichero.log 2>&1; echo $?`, y mirar el log aparte. · 2026-10-06

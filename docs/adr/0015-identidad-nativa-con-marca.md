@@ -1,6 +1,6 @@
 # ADR 0015 — Nativa con marca, como Esfinge hoy
 
-**Fecha:** 2026-10-06 · **Estado:** aceptada · **Matiza** la [ADR 0008](0008-aspecto-del-sistema.md)
+**Fecha:** 2026-10-06 · **Estado:** aceptada · hecha en la entrega 3 · **Matiza** la [ADR 0008](0008-aspecto-del-sistema.md)
 
 ## Contexto
 
@@ -38,4 +38,16 @@ Elegida con el cliente en tres preguntas:
 
 ## Verificación
 
-Decidida el 2026-10-06. Sin hacer.
+Decidida el 2026-10-06 y hecha el mismo día (entrega 3).
+
+- **Icono**: cuatro propuestas (`empaquetado/iconos/propuestas/`) en la misma familia que Esfinge,
+  enseñadas en una página con cada una a 1024, 128, 64, 32 y 16 px, en claro y oscuro y en un Dock
+  junto a Esfinge. Hubo una segunda vuelta: en la primera, el sol y el arco se quedaban cortos y el
+  laurel parecía confeti. **Eligió el sol con la corona de laurel.**
+- **Oro del sol** `#ffc83d` como `--relleno`, con piedra encima (más de 9:1). Una prueba deja
+  escrito que el blanco sobre el oro no llega ni a 3:1.
+- **Marca a trazo** (`empaquetado/marca.svg`) para el sello de la barra y la bienvenida. La primera
+  versión, con las hojas sueltas, parecía un insecto a 22 px.
+- **`.dmg`**: fondo propio (simulado sin Mac con `make ventana-dmg`) y sin licencia que aceptar.
+- Capturas de la bienvenida, el Estudio y Ajustes, en claro y oscuro.
+- **No verificado**: el vidrio, el `.dmg` y el icono en el Dock en un Mac de verdad.

@@ -15,3 +15,6 @@ src-tauri/gen/
 *.webp.tmp
 /salida/
 capturas/
+
+# El fondo del .dmg en TIFF lo hace CI con tiffutil (publicar.yml).
+empaquetado/macos/fondo-dmg.tiff

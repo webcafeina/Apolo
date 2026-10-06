@@ -27,6 +27,24 @@ fn inicio(s: Estado) -> Inicio {
     s.inicio()
 }
 
+/// En qué sistema corre la ventana y si tiene vidrio detrás (ADR 0016). La
+/// interfaz lo pone en `<html data-sistema data-vidrio>` y el CSS cuelga de ahí.
+#[derive(serde::Serialize)]
+struct Plataforma {
+    sistema: &'static str,
+    vidrio: bool,
+}
+
+#[tauri::command]
+fn plataforma() -> Plataforma {
+    Plataforma {
+        sistema: std::env::consts::OS,
+        // Solo macOS, con el material de barra lateral (tauri.macos.conf.json).
+        // En Windows y Linux la ventana es opaca: deuda.md.
+        vidrio: cfg!(target_os = "macos"),
+    }
+}
+
 #[tauri::command]
 fn motores() -> Vec<Motor> {
     apolo_nucleo::motores()
@@ -153,6 +171,7 @@ pub fn arrancar() {
         })
         .invoke_handler(tauri::generate_handler![
             inicio,
+            plataforma,
             motores,
             abrir,
             cerrar,

@@ -4,6 +4,46 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-06 (noche) · Prueba guiada, y la entrega 3: identidad
+
+- **Prueba guiada con el cliente** en su Mac con Apple Silicon:
+  1. La CLI de la v0.2.0 arranca y es universal.
+  2. **Equivalencia con el cwebp 1.6.0 de Google para Mac ARM: 25 de 25**, con WebP, PNG y JPEG.
+     Salda en parte la deuda de «solo Linux».
+  3. El `.dmg` se instala. Hubo que pulsar «Abrir igualmente» en Privacidad y seguridad, que es el
+     camino de macOS 15. La ventana se abre.
+- Ahí el cliente pidió parar:
+  - el `.dmg` pedía aceptar una licencia;
+  - la ventana del `.dmg` debía tener identidad «como Esfinge»;
+  - el icono, «más épico, más Apolo»;
+  - la aplicación «apenas tiene diseño».
+
+  Eligió identidad nativa con marca, ahora y antes de Lotes, y sin licencia en el `.dmg`
+  (ADR 0015).
+- **Entrega 3**:
+  - **Icono**: cuatro propuestas en la familia de Esfinge (sol con laurel, perfil, lira, arco),
+    con una segunda vuelta para el sol y el arco, en una página de comparación. Eligió **el sol
+    con laurel**.
+  - **El oro del sol** `#ffc83d` en el tema, con piedra encima, y una prueba de que el blanco no
+    sirve.
+  - **Vidrio en macOS** con `macOSPrivateApi` (ADR 0016) y la orden `plataforma`.
+  - **Sello, firma, bienvenida y ficha** en «Acerca de».
+  - **Fondo del `.dmg`** a 1x y 2x, unidos en TIFF por CI, y sin licencia.
+  - `make iconos` y `make ventana-dmg`, con el Chromium de Playwright, como Esfinge.
+- **Verificado**:
+  - 16 pruebas de Playwright;
+  - el contraste, con una prueba nueva;
+  - capturas en claro y oscuro;
+  - la ventana del `.dmg`, simulada.
+- **Fallos del camino**:
+  - la marca a trazo parecía un insecto;
+  - el dorado se apagaba al pasar el ratón por la sección activa (especificidad CSS);
+  - un `make comprobar | grep` dio por buena una puerta en rojo, que va a trampas.
+- **No verificado**: el vidrio, el `.dmg` y el Dock en un Mac de verdad. Es el paso siguiente de la
+  prueba guiada.
+
+---
+
 ## 2026-10-06 (noche) · La v0.2.0, primera pre-release
 
 - El cliente preguntó si se podían hacer ya las Releases. Se podía; se le explicó lo que faltaba

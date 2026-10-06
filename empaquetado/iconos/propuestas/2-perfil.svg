@@ -1,0 +1,46 @@
+<!--
+  Propuesta 2 · Perfil clásico de Apolo.
+
+  Un busto griego de perfil —la frente y la nariz en una sola línea, como en las
+  estatuas— con la corona de laurel ciñendo la cabeza. Es el hermano más directo
+  de Esfinge, que también es una cabeza sobre la misma placa.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- La misma placa que Esfinge: así se leen como de la misma casa. -->
+    <linearGradient id="piedra" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a4a52"/>
+      <stop offset="1" stop-color="#2b2b31"/>
+    </linearGradient>
+    <!-- El oro de Apolo es más solar que el de Esfinge (#f2c14e → #d99a28):
+         más cálido abajo, para que los dos hermanos no se confundan en el Dock. -->
+    <linearGradient id="sol" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd659"/>
+      <stop offset="1" stop-color="#f08c1e"/>
+    </linearGradient>
+    <radialGradient id="brillo" cx="0.5" cy="0.42" r="0.5">
+      <stop offset="0" stop-color="#ffe9a3"/>
+      <stop offset="0.6" stop-color="#ffc83d"/>
+      <stop offset="1" stop-color="#f08c1e"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="228" fill="url(#piedra)"/>
+  <path d="M392 214C512 150 676 186 712 318L774 516C780 534 770 546 752 548L732 552C740 566 742 578 730 588L714 598C726 606 730 620 722 632C716 676 690 704 646 708L606 712L616 858H352L380 700C318 662 286 590 284 504C282 382 312 262 392 214Z" fill="url(#sol)"/>
+  <!-- Los rizos de la nuca, bajo la corona: lo que distingue a Apolo de un
+       perfil cualquiera. -->
+  <g fill="#e0791a">
+    <circle cx="336" cy="566" r="42"/><circle cx="320" cy="486" r="40"/>
+    <circle cx="388" cy="640" r="36"/>
+  </g>
+  <!-- El ojo, almendrado, como en la escultura. -->
+  <path d="M636 418q36-24 70 0q-34 20-70 0z" fill="#2b2b31"/>
+  <g>
+    <path d="M-56.0 0 Q0 -40.0 56.0 0 Q0 40.0 -56.0 0z" transform="translate(600.6 228.1) rotate(172.6)" fill="#fff1d6"/>
+    <path d="M-56.0 0 Q0 -40.0 56.0 0 Q0 40.0 -56.0 0z" transform="translate(527.1 269.8) rotate(217.7)" fill="#fff1d6"/>
+    <path d="M-56.0 0 Q0 -40.0 56.0 0 Q0 40.0 -56.0 0z" transform="translate(467.4 210.0) rotate(142.9)" fill="#fff1d6"/>
+    <path d="M-56.0 0 Q0 -40.0 56.0 0 Q0 40.0 -56.0 0z" transform="translate(424.3 282.7) rotate(188.0)" fill="#fff1d6"/>
+    <path d="M-56.0 0 Q0 -40.0 56.0 0 Q0 40.0 -56.0 0z" transform="translate(342.8 260.4) rotate(113.1)" fill="#fff1d6"/>
+    <path d="M-56.0 0 Q0 -40.0 56.0 0 Q0 40.0 -56.0 0z" transform="translate(341.4 344.8) rotate(158.3)" fill="#fff1d6"/>
+    <path d="M-56.0 0 Q0 -40.0 56.0 0 Q0 40.0 -56.0 0z" transform="translate(259.6 365.8) rotate(83.4)" fill="#fff1d6"/>
+  </g>
+</svg>

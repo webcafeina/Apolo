@@ -413,6 +413,8 @@ pub struct Inicio {
     pub presets_cwebp: Vec<webp::Preset>,
     /// Dónde se guardan los presets con nombre, para decirlo en la interfaz.
     pub carpeta_presets: String,
+    /// La versión de Apolo, para la firma y «Acerca de».
+    pub version: &'static str,
 }
 
 impl Servicio {
@@ -421,6 +423,7 @@ impl Servicio {
             opciones: OpcionesWebp::default(),
             presets_cwebp: webp::Preset::TODOS.to_vec(),
             carpeta_presets: self.carpeta_presets.display().to_string(),
+            version: env!("CARGO_PKG_VERSION"),
         }
     }
 }

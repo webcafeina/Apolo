@@ -40,14 +40,17 @@ fn parejas(t: &Tema) -> Vec<(&'static str, Rgb, &'static str, Rgb, f64)> {
         t.relleno_vivo,
         AA_NORMAL,
     ));
-    // El borde de un campo o un botón es un componente: 3:1 contra lo que lo rodea.
+    // El borde de un campo o un botón es un componente: 3:1 contra lo que lo
+    // rodea. El oro no está aquí a propósito, igual que en Esfinge (su ADR
+    // 0021): un botón dorado se identifica por su texto, que sí llega a AA
+    // sobre él, y el foco lo marca `acento`, que sí llega a 3:1 en todas las
+    // superficies (abajo).
     for (nf, f) in [
         ("lienzo", t.lienzo),
         ("tarjeta", t.tarjeta),
         ("barra", t.barra),
     ] {
         v.push(("filete-fuerte", t.filete_fuerte, nf, f, AA_GRANDE));
-        v.push(("relleno", t.relleno, nf, f, AA_GRANDE));
     }
     v
 }
@@ -80,4 +83,19 @@ fn tokens_css_esta_al_dia() {
         "{} no coincide con la paleta: corre `make tokens` (y no lo edites a mano)",
         apolo_tema::tokens::RUTA
     );
+}
+
+#[test]
+fn blanco_sobre_el_oro_no_se_lee() {
+    // La razón de que la tinta sobre el oro sea piedra y no blanco. Si un día
+    // el oro cambia y esto deja de cumplirse, hay que revisar la regla, no
+    // solo el color.
+    for t in temas() {
+        let c = contraste(Rgb::hex(0xffffff), t.relleno);
+        assert!(
+            c < AA_GRANDE,
+            "{}: blanco sobre el oro da {c:.2}:1",
+            t.nombre
+        );
+    }
 }

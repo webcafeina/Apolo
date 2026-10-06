@@ -99,3 +99,13 @@ test("los niveles se pliegan y se recuerda cómo quedaron", async ({ page }) => 
   await (await elegir).setFiles(join(corpus, "foto.webp"));
   await expect(page.getByTestId("nivel-experto")).toHaveAttribute("open");
 });
+
+test("la marca: firma con la versión, y sin vidrio el fondo es opaco", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByTestId("firma")).toContainText(/Webcafeína.*\d+\.\d+\.\d+/);
+  // En el navegador no hay vidrio: si el body fuera transparente, se vería lo
+  // que haya detrás (ADR 0016). Es lo mismo que vigila Esfinge.
+  await expect(page.locator("html")).toHaveAttribute("data-vidrio", "no");
+  const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  expect(fondo).not.toBe("rgba(0, 0, 0, 0)");
+});

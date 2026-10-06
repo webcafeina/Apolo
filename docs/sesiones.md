@@ -23,6 +23,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **No verificado aquí**: la ventana. El VPS no tiene `libwebkit2gtk-4.1-dev` y no hay sudo; se
   compila en CI ([deuda](deuda.md)).
 - Rust instalado con rustup en `~/.cargo`, sin tocar el sistema.
+- **CI**: `comprobar.yml` en verde a la primera, con la ventana. `publicar.yml` cayó en los cinco
+  trabajos por `bundle.category` («Graphics» → «GraphicsAndDesign», a [trampas](trampas.md)), y a la
+  segunda salió verde: DMG universal, NSIS x64 y ARM64, `.deb` y AppImage amd64 y arm64.
 
 ---
 

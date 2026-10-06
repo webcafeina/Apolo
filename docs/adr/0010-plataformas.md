@@ -30,4 +30,9 @@ Linux se compila en Ubuntu 22.04 para que la glibc pedida (2.35) sea la de Debia
 
 ## Verificación
 
-Elegida con el cliente el 2026-10-06. **Pendiente**: que `publicar.yml` saque los seis.
+Elegida con el cliente el 2026-10-06.
+
+- 2026-10-06: `publicar.yml`, lanzado a mano, **compila y empaqueta los cinco trabajos** (seis
+  objetivos: el de macOS es universal). El NSIS de Windows ocupa ~1 MB en x64 y en ARM64, el DMG ~4 MB, y el
+  artefacto de Linux ~78 MB, porque la AppImage lleva webkit dentro. El `.deb` no lo lleva.
+- **No verificado**: que alguno **arranque**. Ningún paquete se ha abierto todavía en su sistema.

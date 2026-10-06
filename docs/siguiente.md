@@ -8,27 +8,17 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **Entrega 0 — Cimientos.** Repositorio, documentos vivos, workspace de Cargo, esqueleto de Tauri y
-  de la interfaz, tokens con prueba de contraste, `comprobar.yml` en verde y `publicar.yml` sacando
-  una ventana vacía para los seis objetivos. *(En marcha desde el 2026-10-06.)*
-- **Entrega 1 — Núcleo WebP y CLI.**
-  - Decodificar las entradas: JPEG, PNG, GIF, WebP, AVIF, JXL, TIFF, BMP y QOI, a RGBA con sus
-    metadatos (EXIF, ICC, XMP) y la orientación aplicada.
-  - La correspondencia completa con `WebPConfig` y `WebPPicture`, opción a opción, rellenando
-    [cobertura-cwebp.md](cobertura-cwebp.md).
-  - Los metadatos con WebPMux (`-metadata`).
-  - `apolo webp` con las opciones de `cwebp`, y la prueba de equivalencia byte a byte contra el
-    `cwebp` oficial de la misma versión de libwebp ([ADR 0002](adr/0002-libwebp-enlazada.md)).
-  - `preset.rs` (JSON) y `cwebp.rs`: preset ⇄ orden cwebp, en los dos sentidos.
-
-## Media
-
 - **Entrega 2 — Estudio.** Comparador con deslizador, lado a lado y diferencias; zoom y
   desplazamiento sincronizados; controles en tres niveles (Básico, Avanzado, Experto) con su
   explicación; vista previa en vivo con generación y descarte; la orden cwebp equivalente, copiable y
   pegable; exportar. Las vistas previas por `apolo://preview/<id>`, sin base64 por IPC. Y un modo
   de desarrollo por HTTP para probar la interfaz con Playwright sin ventana, como el puente de dos
   caminos de Esfinge (su ADR 0009).
+- **Montar la equivalencia con cwebp en macOS, Windows y Linux arm64** (deuda): Google publica
+  cwebp para esas plataformas, y es donde libwebp y mozjpeg cambian de código SIMD.
+
+## Media
+
 - **Entrega 3 — Lotes.** Arrastrar carpetas, preset con uno o varios formatos de salida, patrón de
   nombre y carpeta, paralelo, cancelar, y el resumen con el ahorro y las peores imágenes.
 - **Entrega 4 — Resto de códecs y proceso.** MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar,
@@ -47,4 +37,10 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Cerrado
 
-*(Nada todavía.)*
+- ~~**Entrega 0 — Cimientos**~~: repositorio, documentos vivos, workspace, carcasa de la interfaz,
+  tokens con contraste y CI en verde en los seis objetivos. · 2026-10-06
+- ~~**Entrega 1 — Núcleo WebP y CLI**~~: lectores de PNG, JPEG, TIFF, WebP, PNM, GIF, BMP, QOI y YUV;
+  todas las opciones de cwebp 1.6.0 en el núcleo y en `apolo webp`; metadatos; las opciones como
+  JSON; preset ⇄ orden cwebp en los dos sentidos. **Mismo fichero que cwebp byte a byte en 1015
+  comparaciones.** Los presets con nombre (guardar, listar) quedan para la entrega 2, que es donde
+  se usan. · 2026-10-06

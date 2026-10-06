@@ -2,50 +2,68 @@
 
 Última actualización: **2026-10-06**
 
-Cada opción de `cwebp` con su sitio en Apolo. **Una opción no está hecha hasta que su fila está
-completa**: el campo de libwebp que toca, la opción de `apolo webp`, el control de la interfaz y la
-prueba que lo vigila. La referencia es `cwebp -longhelp` de la versión de libwebp fijada en
-`crates/nucleo/Cargo.toml`.
+Cada opción de `cwebp` 1.6.0 con su sitio en Apolo. **Una opción no está hecha hasta que su fila
+está completa**: el campo de libwebp que toca, la opción de `apolo webp`, el control de la interfaz
+y la prueba que la vigila. La referencia es `cwebp -longhelp` y `examples/cwebp.c` de libwebp 1.6.0.
 
-Niveles de la interfaz: **B** Básico, **A** Avanzado, **E** Experto.
+- **CLI**: ✓ si `apolo webp` la acepta con el mismo efecto.
+- **Interfaz**: llega en la entrega 2. El nivel previsto es **B** (Básico), **A** (Avanzado) o
+  **E** (Experto).
+- **Prueba**: **eq** si está en la lista de `crates/nucleo/tests/equivalencia_cwebp.rs`, que
+  compara el fichero con el del cwebp oficial **byte a byte** sobre 29 imágenes; **ida** si la cubre
+  la prueba de ida y vuelta preset ⇄ orden (`cwebp::pruebas::ida_y_vuelta`).
 
-| Opción | Qué hace | libwebp | CLI | Interfaz | Nivel | Prueba |
-|---|---|---|---|---|---|---|
-| `-q` | Calidad 0–100 (con pérdida) o esfuerzo (sin pérdida) | `config.quality` | — | — | B | — |
-| `-alpha_q` | Calidad de la transparencia | `config.alpha_quality` | — | — | A | — |
-| `-preset` | Punto de partida: default, photo, picture, drawing, icon, text | `WebPConfigPreset` | — | — | B | — |
-| `-z` | Nivel sin pérdida 0–9, atajo de velocidad y tamaño | `WebPConfigLosslessPreset` | — | — | A | — |
-| `-m` | Método de compresión 0–6, velocidad frente a tamaño | `config.method` | — | — | A | — |
-| `-segments` | Número de segmentos 1–4 | `config.segments` | — | — | E | — |
-| `-size` | Tamaño objetivo en bytes | `config.target_size` | — | — | A | — |
-| `-psnr` | PSNR objetivo en dB | `config.target_PSNR` | — | — | E | — |
-| `-sns` | Fuerza del modelado espacial del ruido 0–100 | `config.sns_strength` | — | — | E | — |
-| `-f` | Fuerza del filtro de desbloqueo 0–100 | `config.filter_strength` | — | — | E | — |
-| `-sharpness` | Nitidez del filtro 0–7 | `config.filter_sharpness` | — | — | E | — |
-| `-strong` / `-nostrong` | Filtro fuerte o simple | `config.filter_type` | — | — | E | — |
-| `-sharp_yuv` | Conversión RGB→YUV más nítida y lenta | `config.use_sharp_yuv` | — | — | A | — |
-| `-partition_limit` | Límite de calidad para que quepa la partición 0 | `config.partition_limit` | — | — | E | — |
-| `-pass` | Pasadas de análisis 1–10 | `config.pass` | — | — | E | — |
-| `-qrange` | Calidad mínima y máxima | `config.qmin` / `config.qmax` | — | — | E | — |
-| `-af` | Filtro automático | `config.autofilter` | — | — | A | — |
-| `-crop` | Recortar antes de codificar | `WebPPictureCrop` | — | — | B | — |
-| `-resize` | Redimensionar antes de codificar | `WebPPictureRescale` | — | — | B | — |
-| `-mt` | Varios hilos | `config.thread_level` | — | — | E | — |
-| `-low_memory` | Menos memoria, más lento | `config.low_memory` | — | — | E | — |
-| `-alpha_method` | Compresión de la transparencia 0–1 | `config.alpha_compression` | — | — | E | — |
-| `-alpha_filter` | Filtro de la transparencia: none, fast, best | `config.alpha_filtering` | — | — | E | — |
-| `-exact` | Conservar el RGB bajo los píxeles transparentes | `config.exact` | — | — | A | — |
-| `-blend_alpha` | Mezclar la transparencia con un color de fondo | `WebPBlendAlpha` | — | — | A | — |
-| `-noalpha` | Descartar la transparencia | (sin canal alfa) | — | — | A | — |
-| `-lossless` | Sin pérdida | `config.lossless` | — | — | B | — |
-| `-near_lossless` | Casi sin pérdida 0–100 | `config.near_lossless` | — | — | A | — |
-| `-hint` | Pista del tipo de imagen: photo, picture, graph | `config.image_hint` | — | — | E | — |
-| `-metadata` | Qué metadatos copiar: all, none, exif, icc, xmp | WebPMux | — | — | A | — |
-| `-jpeg_like` | Ajustar el tamaño para que se parezca al de un JPEG | `config.emulate_jpeg_size` | — | — | E | — |
-| `-map` / `-print_psnr` / `-print_ssim` / `-print_lsim` | Estadísticas | `WebPAuxStats` | — | — | E | — |
-| `-d` / `-pgm` | Volcar la imagen comprimida | — | — | — | — | — |
-| `-v` / `-quiet` / `-progress` / `-short` | Salida del programa | `progress_hook` | — | — | — | — |
-| `-noasm` | Desactivar las instrucciones SIMD | `VP8GetCPUInfo` | — | — | — | — |
+| Opción | Qué hace | libwebp / núcleo | CLI | Interfaz | Prueba |
+|---|---|---|---|---|---|
+| `-q` | Calidad 0–100 con pérdida, o esfuerzo sin pérdida | `quality` · `calidad` | ✓ | B | eq, ida |
+| `-alpha_q` | Calidad de la transparencia | `alpha_quality` · `calidad_alfa` | ✓ | A | eq, ida |
+| `-preset` | Punto de partida; reescribe todo lo anterior | `WebPConfigPreset` · `aplicar_preset` | ✓ | B | eq (photo, drawing, icon, text), ida |
+| `-z` | Nivel sin pérdida 0–9; lo anulan `-q` y `-m` | `WebPConfigLosslessPreset` · `aplicar_nivel_sin_perdida` | ✓ | A | eq (0 y 9), ida |
+| `-m` | Método 0–6 | `method` · `metodo` | ✓ | A | eq, ida |
+| `-segments` | Segmentos 1–4 | `segments` · `segmentos` | ✓ | E | eq, ida |
+| `-size` | Tamaño objetivo en bytes (fuerza 6 pasadas si hay 1) | `target_size` · `tamano_objetivo` | ✓ | A | eq, ida |
+| `-psnr` | PSNR objetivo | `target_PSNR` · `psnr_objetivo` | ✓ | E | eq, ida |
+| `-s` | La entrada es YUV 4:2:0 crudo de ese tamaño | `ReadYUV` · `entrada::leer_yuv` | ✓ | — | eq (`yuv.yuv`) |
+| `-sns` | Modelado espacial del ruido 0–100 | `sns_strength` · `sns` | ✓ | E | eq, ida |
+| `-f` | Fuerza del filtro 0–100 | `filter_strength` · `fuerza_filtro` | ✓ | E | eq, ida |
+| `-sharpness` | Nitidez del filtro 0–7 | `filter_sharpness` · `nitidez_filtro` | ✓ | E | eq, ida |
+| `-strong` / `-nostrong` | Filtro fuerte o simple | `filter_type` · `filtro_fuerte` | ✓ | E | eq (`-nostrong`; `-strong` es el valor por defecto), ida |
+| `-sharp_yuv` | RGB→YUV más nítido | `use_sharp_yuv` · `yuv_nitido` | ✓ | A | eq, ida |
+| `-partition_limit` | Límite para que quepa la partición 0 | `partition_limit` · `limite_particion` | ✓ | E | eq, ida |
+| `-pass` | Pasadas de análisis 1–10 | `pass` · `pasadas` | ✓ | E | eq, ida |
+| `-qrange` | Calidad mínima y máxima | `qmin`/`qmax` · `calidad_minima`/`calidad_maxima` | ✓ | E | eq, ida |
+| `-crop` | Recortar (con una vista sobre la misma picture) | `WebPPictureView` · `recorte` | ✓ | B | eq, ida |
+| `-resize` | Redimensionar tras recortar; 0 = proporcional | `WebPPictureRescale` · `redimension` | ✓ | B | eq, ida |
+| `-resize_mode` | `up_only`, `down_only`, `always` | `ApplyResizeMode` · `modo_redimension` | ✓ | A | eq (los dos modos), ida |
+| `-mt` | Hilos; cada `-mt` sube un nivel | `thread_level` · `hilos` | ✓ | E | eq, ida |
+| `-low_memory` | Menos memoria | `low_memory` · `poca_memoria` | ✓ | E | eq, ida |
+| `-map` | Mapa por macrobloque | `extra_info` · `Extras::mapa` | ✓ | E | — (salida de consola) |
+| `-print_psnr` / `-print_ssim` / `-print_lsim` | Distorsión media | `WebPPictureDistortion` · `Extras::medir` | ✓ | (siempre a la vista) | — (salida de consola) |
+| `-d` | Volcar el resultado como PGM | `DumpPicture` · `Extras::volcar` | ✓ | — | — |
+| `-alpha_method` | Compresión de la transparencia 0–1 | `alpha_compression` · `compresion_alfa` | ✓ | E | eq, ida |
+| `-alpha_filter` | `none`, `fast`, `best` | `alpha_filtering` · `filtrado_alfa` | ✓ | E | eq (none, best), ida |
+| `-alpha_cleanup` | Obsoleta: lo contrario de `-exact` | `exact = 0` | ✓ | — | ida |
+| `-exact` | Conservar el RGB bajo lo transparente (y redimensionar sin premultiplicar) | `exact` · `exacto` | ✓ | A | eq, ida |
+| `-blend_alpha` | Mezclar con un color de fondo | `WebPBlendAlpha` · `mezclar_alfa` | ✓ | A | eq, ida |
+| `-noalpha` | Descartar la transparencia | lectores · `sin_alfa` | ✓ | A | eq, ida |
+| `-lossless` | Sin pérdida | `lossless` · `sin_perdida` | ✓ | B | eq, ida |
+| `-near_lossless` | Casi sin pérdida 0–100 (activa sin pérdida) | `near_lossless` · `casi_sin_perdida` | ✓ | A | eq, ida |
+| `-hint` | `photo`, `picture`, `graph` | `image_hint` · `pista` | ✓ | E | eq (graph), ida |
+| `-metadata` | `all`, `none`, `exif`, `icc`, `xmp` | `WriteWebPWithMetadata` · `metadatos::escribir` | ✓ | A | eq (all; icc,xmp), ida |
+| `-jpeg_like` | Tamaño parecido al de un JPEG | `emulate_jpeg_size` · `emular_jpeg` | ✓ | E | eq, ida |
+| `-af` | Filtro automático | `autofilter` · `autofiltro` | ✓ | A | eq, ida |
+| `-pre` | Preprocesado (experimental) | `preprocessing` · `preprocesado` | ✓ | E | eq, ida |
+| `-short` / `-quiet` / `-v` / `-progress` | Salida del programa | `progress_hook` · `Progreso` | ✓ | (progreso siempre a la vista) | — |
+| `-version` | Versión de libwebp | `WebPGetEncoderVersion` | ✓ | Ajustes | `libwebp_esta_enlazada` |
+| `-noasm` | Desactivar SIMD | `VP8GetCPUInfo` | se acepta y **se ignora** | — | — |
 
-Las tres últimas filas son de la herramienta de terminal y no del resultado. En la interfaz, lo que
-pintan (progreso, estadísticas) se ve sin pedirlo.
+## Lo que no se puede expresar con cwebp
+
+Dos campos de `WebPConfig` no tienen opción en cwebp: `partitions` y `use_delta_palette`. **Apolo
+tampoco los ofrece**: si los ofreciera, habría ficheros de Apolo que ninguna orden cwebp puede
+reproducir, y la orden equivalente que enseña la interfaz dejaría de serlo.
+
+## Cómo lee cwebp, y cómo se repite
+
+Los lectores de entrada deciden los píxeles de partida; si no son idénticos, la salida tampoco. Lo
+que se copia de `imageio/` está en [ADR 0011](adr/0011-leer-como-cwebp.md).

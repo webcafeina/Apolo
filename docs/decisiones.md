@@ -23,3 +23,4 @@ con el cliente.
 | [0008](adr/0008-aspecto-del-sistema.md) | Apariencia del sistema; tokens desde Rust con prueba de contraste | 2026-10-06 | aceptada |
 | [0009](adr/0009-sin-firmar.md) | Sin firmar, por ahora | 2026-10-06 | aceptada |
 | [0010](adr/0010-plataformas.md) | Seis objetivos, con ARM | 2026-10-06 | aceptada |
+| [0011](adr/0011-leer-como-cwebp.md) | Leer las imágenes como cwebp, con sus manías; sin orientación EXIF | 2026-10-06 | aceptada |

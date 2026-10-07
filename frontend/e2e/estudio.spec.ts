@@ -113,6 +113,12 @@ test("los niveles se pliegan y se recuerda cómo quedaron", async ({ page }) => 
   await expect(experto).not.toHaveAttribute("open");
   await experto.locator("summary").click();
   await expect(experto).toHaveAttribute("open");
+  // El atributo cambia con el clic, pero se guarda después: con el evento
+  // «toggle», que llega en otra vuelta, y un efecto de React. Recargar sin
+  // esperar a eso falló una vez en CI.
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("apolo.niveles")))
+    .toContain('"experto":true');
   await page.reload();
   const elegir = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: "Abrir una imagen…" }).click();

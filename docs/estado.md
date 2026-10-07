@@ -36,14 +36,17 @@
 
 ### La siguiente acción, al retomar
 
-1. **La entrega 4, Lotes, está hecha** ([ADR 0019](adr/0019-lotes.md)), como **v0.4.0 sin
-   publicar**. Todo está en `main`, con la puerta y las pruebas e2e en verde aquí.
+1. **La entrega 4, Lotes, está publicada como v0.4.0**
+   (https://github.com/webcafeina/Apolo/releases/tag/v0.4.0) ([ADR 0019](adr/0019-lotes.md)). CI
+   en verde. En el borrador se revisó todo: 22 ficheros, las sumas, y `latest.json` con 14
+   plataformas y sus firmas válidas.
    - Una carpeta elegida, con las subcarpetas repetidas.
    - Nunca se pisa nada: si el nombre existe, sale `foto-2.webp`.
    - Las que crecen se guardan y se señalan.
    - `apolo lote` en la CLI.
    - Cada imagen da los mismos bytes que cwebp.
-2. **Publicarla cuando el cliente lo diga.** Es la primera que le llegará **por el actualizador**:
+2. **Que el cliente actualice desde su v0.3.3.** Es la primera versión que le llega **por el
+   actualizador**:
    la v0.3.3 de su Mac debería avisar (al día siguiente, o con «Buscar ahora»), bajarla y
    reiniciarse. Esa es la deuda más alta, la del actualizador.
 3. Después, que pruebe Lotes en la ventana: elegir carpetas, soltarlas, cancelar, «Mostrar en la
@@ -66,7 +69,7 @@
 - v0.3.2: arreglos de la prueba y HEIC (2026-10-06). ADR 0017. Publicada el 2026-10-07.
 - v0.3.3: el actualizador (2026-10-07). ADR 0018. Publicada el mismo día, ya no como pre-release.
   El cliente la instaló a mano, y «Buscar ahora» funciona.
-- Entrega 4, Lotes (2026-10-07). ADR 0019. v0.4.0, sin publicar.
+- Entrega 4, Lotes (2026-10-07). ADR 0019. v0.4.0 publicada el mismo día.
 
 ## En curso
 

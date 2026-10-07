@@ -4,7 +4,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
-## 2026-10-07 · Entrega 4: Lotes (v0.4.0, sin publicar)
+## 2026-10-07 · Entrega 4: Lotes (v0.4.0)
 
 - El cliente instaló la v0.3.3 a mano, y «Buscar ahora» dice «Ya tienes la última versión.». La
   actualización de verdad se verá con la siguiente versión de las entregas, no con una v0.3.4 aparte.
@@ -29,6 +29,16 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   - **la CLI da los mismos bytes que el cwebp 1.6.0 oficial**, también con `-metadata all` y en una
     subcarpeta;
   - capturas de la sección.
+- **Publicada la v0.4.0** cuando el cliente lo dijo. El borrador se revisó antes:
+  - los 11 trabajos en verde;
+  - las sumas cuadran;
+  - las 14 entradas de `latest.json` tienen firmas válidas;
+  - la CLI bajada de la Release dice 0.4.0.
+
+  El endpoint del actualizador responde ya 0.4.0.
+- La página de las propuestas de icono se guardó de recuerdo en
+  `empaquetado/iconos/propuestas/propuestas-icono.html`, y se borró el artefacto publicado, como pidió
+  el cliente.
 - **No verificado**: Lotes en la ventana (diálogos, soltar, mostrar en la carpeta) y lotes grandes
   (deuda).
 

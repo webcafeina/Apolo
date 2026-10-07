@@ -59,6 +59,11 @@ set(AVIF_ZLIBPNG SYSTEM CACHE STRING "" FORCE)
 set(AVIF_LIBXML2 OFF CACHE STRING "" FORCE)
 set(AVIF_BUILD_APPS ON CACHE BOOL "" FORCE)
 set(AVIF_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+# Con MSVC (y clang-cl), el CMake de libyuv no compila sus ficheros NEON, pero
+# sus cabeceras los activan en ARM64: sin esto, no enlaza. Se queda con el C.
+if(MSVC AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(ARM64|arm64|aarch64)$")
+  add_compile_definitions(LIBYUV_DISABLE_NEON LIBYUV_DISABLE_SVE LIBYUV_DISABLE_SME)
+endif()
 add_subdirectory("${APOLO_LIBAVIF}" libavif EXCLUDE_FROM_ALL)
 target_link_libraries(avif_apps PRIVATE png_static)
 

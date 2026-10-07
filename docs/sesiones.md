@@ -4,6 +4,40 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-07 (noche) · Entrega 5b: AVIF y JPEG XL (v0.6.0, sin publicar)
+
+- El cliente eligió **las bibliotecas enlazadas dentro**, la opción recomendada, frente a llevar los
+  binarios oficiales al lado ([ADR 0021](adr/0021-avif-y-jpeg-xl.md)).
+- Medido antes: avifenc compilado con gcc da lo mismo que el oficial (40 de 40); **cjxl solo con
+  clang 18** (27 de 27), que es como sale el oficial. En el VPS no hay sudo: LLVM 18 descomprimido
+  en `~/.local/llvm18`, con una libtinfo 5 de pega (trampas.md).
+- **`crates/avifjxl`**:
+  - libavif 1.4.2, aom 3.14.1, libyuv y libjxl 0.12.0 con sus dependencias, en diez submódulos;
+  - un solo proyecto de CMake, con zlib y libpng una vez, el JPEG de mozjpeg-sys y el sharpyuv de
+    libwebp-sys;
+  - los `main` de avifenc, avifdec, cjxl y djxl con otro nombre, llamados con los argumentos de la
+    orden;
+  - los `exit()` de cjxl vuelven con `longjmp`, y la salida de avifenc se calla dentro de Apolo.
+- **El núcleo**: `OpcionesAvif` y `OpcionesJxl`, con las opciones del panel y las demás tal cual;
+  leer AVIF y JXL con avifdec y djxl; los motores con sus versiones.
+- **La interfaz**: los dos formatos en el Estudio y en Lotes, con sus controles; los deslizadores
+  enseñan el valor de la herramienta; la calidad de cjxl se apaga si recomprime un JPEG sin pérdida.
+- **La CLI**: `apolo avif` y `apolo jxl` son avifenc y cjxl tal cual; Apolo solo interviene con
+  sus opciones o con entradas que la herramienta no abre.
+- Errores míos que cazaron las pruebas o CI:
+  - `--opción=valor` de cjxl se guardaba con el valor repetido (la prueba de ida y vuelta);
+  - el primer commit guardó los submódulos en la punta de su rama, no en la etiqueta (trampas);
+  - en Linux ARM64 no enlazaba por `+whole-archive`, y en Windows libpng no encontraba zlib.h
+    al generar su configuración con el awk de Git (trampas).
+- Verificado:
+  - `make comprobar`;
+  - `make equivalencia`: **376 de 376 con avifenc y 280 de 280 con cjxl**, y las demás iguales,
+    también en CI;
+  - 49 pruebas e2e (eran 43);
+  - capturas del panel de los dos formatos; sin desvío de color (PSNR igual en los tres canales).
+- Abierto (deuda): la ventana sin ver; la equivalencia en macOS y Windows; rutas con tildes en
+  Windows; los mapas de ganancia de los JPEG.
+
 ## 2026-10-07 (tarde) · Entrega 5a: JPEG, PNG, QOI y el proceso (v0.5.0)
 
 - El cliente eligió las cuatro respuestas recomendadas ([ADR 0020](adr/0020-mas-formatos-y-proceso.md)):

@@ -134,6 +134,16 @@ que se guarda en `localStorage` llega después: con el evento `toggle`, que el n
 vuelta del bucle, y un efecto de React. La prueba recargaba antes. Ahora espera a verlo guardado.
 · 2026-10-07
 
+## La barra de la descarga va a tirones y por detrás del porcentaje
+
+El actualizador avisa **por cada trozo** que llega: con 11 MB son cientos de avisos por segundo. Cada
+uno redibujaba la banda y reiniciaba la transición CSS de la anchura, que con `ease` vuelve a
+arrancar despacio cada vez: la barra no llegaba nunca adonde iba y se quedaba hasta 41 puntos por
+detrás. Lo vio el cliente al actualizar a la v0.4.0. En el navegador no se notaba porque la
+descarga simulada eran diez pasos tranquilos. Ahora se redibuja solo cuando cambia el porcentaje
+entero, la barra no tiene transición, y la simulación imita la real (trozos de 16 KB a ráfagas). Una
+prueba compara la barra pintada con el número. · 2026-10-07
+
 ## «HTTP 502: Server Error» al subir el `.dmg` a la Release
 
 Pasó con la v0.3.2: todo compilado, el icono del volumen puesto, y al reemplazar el `.dmg` en la

@@ -52,3 +52,27 @@ test("sin versión nueva lo dice, y la casilla se recuerda", async ({ page }, in
   await casilla.check();
   await expect(casilla).toBeChecked();
 });
+
+test("la barra de la descarga va con el porcentaje, sin quedarse atrás", async ({ page }) => {
+  await buscarAhora(page, "/?novedad=9.9.9");
+  const banda = page.getByTestId("novedad");
+  await banda.getByRole("button", { name: "Descargar" }).click();
+  // Mientras baja, se compara la barra pintada con el número del texto.
+  const desfases: number[] = [];
+  for (let i = 0; i < 40; i++) {
+    const m = await banda.evaluate((b) => {
+      const pista = b.querySelector(".barra-progreso") as HTMLElement | null;
+      const relleno = pista?.querySelector("i") as HTMLElement | null;
+      const texto = b.textContent?.match(/(\d+) %/);
+      if (!pista || !relleno || !texto) return null;
+      const pintado = (relleno.getBoundingClientRect().width / pista.getBoundingClientRect().width) * 100;
+      return Math.abs(pintado - Number(texto[1]));
+    });
+    if (m === null) break;
+    desfases.push(m);
+    await page.waitForTimeout(25);
+  }
+  expect(desfases.length).toBeGreaterThan(5);
+  expect(Math.max(...desfases)).toBeLessThan(6);
+  await expect(banda).toContainText("está lista");
+});

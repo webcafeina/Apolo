@@ -137,10 +137,14 @@ Esfinge es Go + Wails y lo hace todo a mano. Apolo es Tauri, que trae `tauri-plu
   dice «Ya tienes la última versión.». Eso demuestra que la comprobación real funciona en macOS: el
   plugin lee el `latest.json` publicado, lo entiende y compara versiones. Verificado el 2026-10-07.
 
+- **Una actualización de verdad en macOS**, el 2026-10-07: el cliente pasó de la v0.3.3 a la
+  v0.4.0 desde la banda («Descargar» e «Instalar y reiniciar»), sin reinstalar. Avisó de que la barra
+  de la descarga iba a tirones y por detrás del número; se arregló en la v0.4.1 (trampas.md).
+
 **No verificado:**
 
 - ~~el `latest.json` y el paso que lo repasa~~: **verificado al publicar la v0.3.3**. Son 14
   entradas que apuntan a `releases/download/v0.3.3/…`, todas con firma válida, y el endpoint de
   `tauri.conf.json` responde 0.3.3;
-- una actualización de verdad en ningún sistema (hace falta la v0.3.4);
+- ~~una actualización de verdad~~: hecha en macOS. Faltan Windows y Linux;
 - el caso traslocado en un Mac.

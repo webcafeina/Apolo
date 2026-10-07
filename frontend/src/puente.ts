@@ -223,3 +223,85 @@ async function pixeles(ruta: string): Promise<ImageData> {
 export const pixelesOriginal = (id: number, enderezar: boolean) =>
   pixeles(`original/${id}${enderezar ? "?enderezar=1" : ""}`);
 export const pixelesResultado = (id: number) => pixeles(`resultado/${id}`);
+
+// ---------------------------------------------------------------- lotes (ADR 0019)
+
+/** Lo que hay en lo soltado, antes de convertir. */
+export interface Recogida {
+  imagenes: number;
+  bytes: number;
+  salida_sugerida: string | null;
+  muestra: string[];
+}
+
+export interface LoteEmpezado {
+  id: number;
+  total: number;
+  salida: string;
+}
+
+export interface Fila {
+  relativa: string;
+  bytes_entrada: number;
+  bytes_salida: number | null;
+  ruta: string | null;
+  error: string | null;
+}
+
+export interface Destacada {
+  relativa: string;
+  bytes_entrada: number;
+  bytes_salida: number;
+}
+
+export interface Resumen {
+  convertidas: number;
+  fallidas: number;
+  mayores: number;
+  bytes_entrada: number;
+  bytes_salida: number;
+  peores: Destacada[];
+}
+
+export interface EstadoLote {
+  total: number;
+  hechas: number;
+  nuevas: Fila[];
+  terminado: boolean;
+  cancelado: boolean;
+  segundos: number;
+  resumen: Resumen | null;
+}
+
+export const recogerLote = (entradas: string[]) => orden<Recogida>("recoger_lote", { entradas });
+export const empezarLote = (entradas: string[], opciones: OpcionesWebp, salida: string) =>
+  orden<LoteEmpezado>("empezar_lote", { entradas, opciones, salida });
+export const estadoLote = (id: number, desde: number) => orden<EstadoLote>("estado_lote", { id, desde });
+export const cancelarLote = (id: number) => orden<void>("cancelar_lote", { id });
+
+/** Pide carpetas o imágenes al sistema. En el navegador no hay rutas: `[]`. */
+export async function elegirEntradas(carpetas: boolean): Promise<string[]> {
+  if (!enTauri()) return [];
+  const { open } = await import("@tauri-apps/plugin-dialog");
+  const r = await open(
+    carpetas
+      ? { multiple: true, directory: true }
+      : { multiple: true, filters: [{ name: "Imágenes", extensions: FORMATOS_ENTRADA }] },
+  );
+  return r === null ? [] : Array.isArray(r) ? r : [r];
+}
+
+/** Pide la carpeta de salida. `null` si se cancela o en el navegador. */
+export async function elegirSalida(propuesta: string | null): Promise<string | null> {
+  if (!enTauri()) return null;
+  const { open } = await import("@tauri-apps/plugin-dialog");
+  const r = await open({ directory: true, multiple: false, defaultPath: propuesta ?? undefined });
+  return typeof r === "string" ? r : null;
+}
+
+/** Enseña un fichero en el Finder o el explorador. */
+export async function mostrarEnCarpeta(ruta: string): Promise<void> {
+  if (!enTauri()) return;
+  const { revealItemInDir } = await import("@tauri-apps/plugin-opener");
+  await revealItemInDir(ruta);
+}

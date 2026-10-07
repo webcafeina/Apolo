@@ -26,7 +26,7 @@ export function formatoBytes(n: number): string {
   return `${f(n / 1024 / 1024, 1)} MB`;
 }
 
-export function Estudio({ inicio }: { inicio: puente.Inicio }) {
+export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boolean }) {
   const { t } = useTranslation();
   const [info, setInfo] = useState<puente.InfoImagen | null>(null);
   const [opciones, setOpciones] = useState<OpcionesWebp>(inicio.opciones);
@@ -71,10 +71,16 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
     [info],
   );
 
-  // Soltar ficheros sobre la ventana de la aplicación.
+  // Soltar ficheros sobre la ventana de la aplicación. El Estudio no se
+  // desmonta al cambiar de sección: solo los toma si es lo que se ve, y si
+  // no, son de Lotes.
+  const activoRef = useRef(activo);
+  activoRef.current = activo;
   useEffect(() => {
     let quitar = () => {};
-    void puente.alSoltar((rutas) => rutas[0] && void abrir(rutas[0])).then((f) => (quitar = f));
+    void puente
+      .alSoltar((rutas) => activoRef.current && rutas[0] && void abrir(rutas[0]))
+      .then((f) => (quitar = f));
     return () => quitar();
   }, [abrir]);
 

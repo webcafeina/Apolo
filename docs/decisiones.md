@@ -31,3 +31,4 @@ con el cliente.
 | [0016](adr/0016-ventana-translucida.md) | Ventana translúcida en macOS con `macOSPrivateApi`; Windows y Linux opacos por ahora | 2026-10-06 | aceptada |
 | [0017](adr/0017-leer-heic.md) | Leer HEIC con libheif y libde265 compiladas dentro (submódulos); el EXIF se deja en orientación 1 | 2026-10-06 | aceptada |
 | [0018](adr/0018-actualizarse-sola.md) | Actualizarse desde la aplicación como Esfinge, con `tauri-plugin-updater`: puerta de 24 h, banda en dos pasos, `.deb` con contraseña; versiones normales, no pre-release | 2026-10-07 | aceptada |
+| [0019](adr/0019-lotes.md) | Lotes: carpeta elegida con subcarpetas, nunca sobrescribir (`foto-2.webp`), las que crecen se guardan y se señalan, `apolo lote` en la CLI | 2026-10-07 | aceptada |

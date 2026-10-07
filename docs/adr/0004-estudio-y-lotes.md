@@ -1,6 +1,6 @@
 # ADR 0004 — Estudio y lotes
 
-**Fecha:** 2026-10-06 · **Estado:** aceptada
+**Fecha:** 2026-10-06 · **Estado:** aceptada · Lotes, desarrollado en la [0019](0019-lotes.md)
 
 ## Contexto
 

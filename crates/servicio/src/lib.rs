@@ -1,5 +1,5 @@
-//! Lo que hace el Estudio, sin ventana: abrir imágenes, codificar la vista
-//! previa, exportar y los presets.
+//! Lo que hace la ventana, sin ventana: el Estudio (abrir imágenes, codificar
+//! la vista previa, exportar), los lotes, los presets y los ajustes.
 //!
 //! Lo usan dos caras (ADR 0013): la aplicación de Tauri (`src-tauri`) y el
 //! servidor de desarrollo por HTTP (`crates/dev`), que permite probar la
@@ -19,7 +19,9 @@ use apolo_nucleo::{Error, cwebp, orientacion, vista};
 use serde::{Deserialize, Serialize};
 
 mod ajustes;
+mod lotes;
 pub use ajustes::Ajustes;
+pub use lotes::{EstadoLote, Fila, LoteEmpezado, Recogida, recoger_lote};
 
 /// Un error para la interfaz: el texto que hay que enseñar, y si fue una
 /// cancelación (que no se enseña).
@@ -116,6 +118,7 @@ pub struct Servicio {
     generaciones: Mutex<HashMap<u64, Arc<AtomicU64>>>,
     carpeta_presets: PathBuf,
     ajustes: ajustes::Almacen,
+    lotes: Mutex<HashMap<u64, Arc<lotes::Lote>>>,
 }
 
 impl Servicio {
@@ -129,6 +132,7 @@ impl Servicio {
             generaciones: Mutex::default(),
             carpeta_presets: carpeta.join("presets"),
             ajustes: ajustes::Almacen::abrir(carpeta.join("ajustes.json")),
+            lotes: Mutex::default(),
         }
     }
 

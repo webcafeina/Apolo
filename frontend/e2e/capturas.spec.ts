@@ -1,6 +1,8 @@
 // Capturas para mirar, no para comprobar: solo corren con CAPTURAS=1 y
 // quedan en frontend/capturas/.
 import { test } from "@playwright/test";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 test.skip(!process.env.CAPTURAS, "solo con CAPTURAS=1");
@@ -60,4 +62,19 @@ test("novedad", async ({ page }, info) => {
   await page.getByRole("button", { name: "Descargar" }).click();
   await page.getByRole("button", { name: "Instalar y reiniciar" }).waitFor();
   await page.screenshot({ path: `capturas/novedad-lista-${info.project.name}.png` });
+});
+
+test("lotes", async ({ page }, info) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Lotes" }).click();
+  await page.waitForTimeout(200);
+  await page.screenshot({ path: `capturas/lotes-vacio-${info.project.name}.png` });
+  await page.getByTestId("ruta-dev").fill(join(import.meta.dirname, "../../pruebas/corpus"));
+  await page.getByRole("button", { name: "Añadir", exact: true }).click();
+  await page.getByTestId("recogida").waitFor();
+  await page.getByTestId("salida").fill(join(mkdtempSync(join(tmpdir(), "apolo-capturas-")), "fotos-webp"));
+  await page.screenshot({ path: `capturas/lotes-preparado-${info.project.name}.png` });
+  await page.getByRole("button", { name: /^Convertir/ }).click();
+  await page.getByTestId("resumen").waitFor();
+  await page.screenshot({ path: `capturas/lotes-resumen-${info.project.name}.png`, fullPage: true });
 });

@@ -133,6 +133,10 @@ Esfinge es Go + Wails y lo hace todo a mano. Apolo es Tauri, que trae `tauri-plu
   verificador minisign escrito aparte (Ed25519 sobre el BLAKE2b del fichero, más el comentario de
   confianza).
 
+- **En el Mac del cliente**, con la v0.3.3 instalada a mano en Aplicaciones, «Buscar ahora»
+  dice «Ya tienes la última versión.». Eso demuestra que la comprobación real funciona en macOS: el
+  plugin lee el `latest.json` publicado, lo entiende y compara versiones. Verificado el 2026-10-07.
+
 **No verificado:**
 
 - ~~el `latest.json` y el paso que lo repasa~~: **verificado al publicar la v0.3.3**. Son 14

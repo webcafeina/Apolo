@@ -4,6 +4,36 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-07 · Entrega 4: Lotes (v0.4.0, sin publicar)
+
+- El cliente instaló la v0.3.3 a mano, y «Buscar ahora» dice «Ya tienes la última versión.». La
+  actualización de verdad se verá con la siguiente versión de las entregas, no con una v0.3.4 aparte.
+- Decidió dejar la clave del actualizador en el VPS, sabiendo los riesgos (ADR 0018, deuda).
+- Para Lotes eligió las cuatro respuestas recomendadas ([ADR 0019](adr/0019-lotes.md)):
+  - una carpeta elegida, con las subcarpetas;
+  - si el nombre existe, se añade un número;
+  - las que crecen se guardan y se señalan;
+  - `apolo lote` en la CLI ya.
+- Hecho:
+  - `nucleo::lote`: recoger, no pisar con `create_new`, paralelo con `thread::scope`, cancelar y el
+    resumen;
+  - en el servicio, empezar, estado y cancelar, por Tauri y por HTTP;
+  - la sección Lotes;
+  - `apolo lote`;
+  - `tauri-plugin-opener` para «Mostrar en la carpeta»;
+  - el Estudio solo se queda lo que se suelta si es la sección que se ve.
+- Verificado:
+  - `make comprobar`;
+  - 29 pruebas e2e;
+  - 7 pruebas del lote en el núcleo, 1 en el servicio y 3 de la CLI;
+  - **la CLI da los mismos bytes que el cwebp 1.6.0 oficial**, también con `-metadata all` y en una
+    subcarpeta;
+  - capturas de la sección.
+- **No verificado**: Lotes en la ventana (diálogos, soltar, mostrar en la carpeta) y lotes grandes
+  (deuda).
+
+---
+
 ## 2026-10-07 · El actualizador (v0.3.3)
 
 - El cliente pidió, antes de Lotes, **actualizar desde la propia aplicación como en Esfinge**, y

@@ -13,6 +13,7 @@ pub mod metadatos;
 pub mod motores;
 pub mod orientacion;
 pub mod presets;
+pub mod proceso;
 pub mod vista;
 pub mod webp;
 

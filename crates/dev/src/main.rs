@@ -108,6 +108,16 @@ struct Nombre {
 }
 
 #[derive(Deserialize)]
+struct Si {
+    si: bool,
+}
+
+#[derive(Deserialize)]
+struct Forzar {
+    forzar: bool,
+}
+
+#[derive(Deserialize)]
 struct Guardar {
     preset: PresetGuardado,
 }
@@ -228,6 +238,22 @@ fn rutas(s: Arc<Servicio>) -> Router {
             }),
         )
         .route(
+            "/api/ajustes",
+            post(|State(s): Estado| async move { Json(s.ajustes()) }),
+        )
+        .route(
+            "/api/buscar_actualizaciones",
+            post(|State(s): Estado, Json(p): Json<Si>| async move {
+                Json(s.buscar_actualizaciones(p.si))
+            }),
+        )
+        .route(
+            "/api/reservar_comprobacion",
+            post(|State(s): Estado, Json(p): Json<Forzar>| async move {
+                Json(s.reservar_comprobacion(p.forzar))
+            }),
+        )
+        .route(
             "/pixeles/original/{id}",
             get(
                 |State(s): Estado, Path(id): Path<u64>, Query(q): Query<Enderezar>| async move {
@@ -276,7 +302,7 @@ fn percent_decode(s: &str) -> String {
 async fn main() {
     let mut args = std::env::args().skip(1);
     let mut direccion: SocketAddr = "127.0.0.1:34500".parse().unwrap();
-    let mut presets: Option<PathBuf> = None;
+    let mut config: Option<PathBuf> = None;
     while let Some(a) = args.next() {
         match a.as_str() {
             "--direccion" => {
@@ -286,7 +312,7 @@ async fn main() {
                     .parse()
                     .expect("dirección no válida")
             }
-            "--presets" => presets = Some(args.next().expect("falta la carpeta").into()),
+            "--config" => config = Some(args.next().expect("falta la carpeta").into()),
             otro => panic!("Opción desconocida: {otro}"),
         }
     }
@@ -294,7 +320,7 @@ async fn main() {
         direccion.ip().is_loopback(),
         "el servidor de desarrollo solo escucha en 127.0.0.1"
     );
-    let servicio = Arc::new(match presets {
+    let servicio = Arc::new(match config {
         Some(p) => Servicio::nuevo(p),
         None => Servicio::con_carpeta_por_defecto(),
     });

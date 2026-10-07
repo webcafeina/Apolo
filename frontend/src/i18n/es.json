@@ -216,7 +216,16 @@
     "acercaDe": "Acerca de",
     "version": "Versión {{version}}",
     "motores": "Motores",
-    "licencia": "Software libre con licencia GPLv3."
+    "licencia": "Software libre con licencia GPLv3.",
+    "actualizaciones": "Actualizaciones",
+    "avisarme": "Avisarme cuando haya una versión nueva",
+    "privacidad": "Es lo único que Apolo hace fuera de tu ordenador: una vez al día le pregunta a GitHub cuál es la última versión publicada. No manda tus imágenes, ni quién eres, ni cuántas veces la usas. GitHub ve tu dirección IP, como cualquier página que visites.",
+    "ultimaVez": "Se miró por última vez el {{fecha}}.",
+    "buscarAhora": "Buscar ahora",
+    "buscando": "Buscando…",
+    "alDia": "Ya tienes la última versión.",
+    "hayNueva": "Hay una versión nueva: Apolo {{version}}.",
+    "errorBuscar": "No se pudo preguntar a GitHub: {{detalle}}"
   },
   "pesos": {
     "original": "Original · {{formato}}",
@@ -243,5 +252,19 @@
     "usar": "Usar en el Estudio",
     "renombrar": "Renombrar",
     "seguro": "¿Borrarlo?"
+  },
+  "novedad": {
+    "hay": "Hay una versión nueva:",
+    "nombre": "Apolo {{version}}",
+    "descargar": "Descargar",
+    "ahoraNo": "Ahora no",
+    "descargando": "Descargando Apolo {{version}}…",
+    "descargandoPorcentaje": "Descargando Apolo {{version}} · {{porcentaje}} %",
+    "lista": "Apolo {{version}} está lista. Se instalará y volverá a abrirse.",
+    "instalar": "Instalar y reiniciar",
+    "instalando": "Instalando Apolo {{version}}. La ventana se cerrará y volverá a abrirse…",
+    "traslocada": "Para actualizarse sola, Apolo tiene que estar en Aplicaciones: arrástrala allí y ábrela desde esa carpeta",
+    "errorDescarga": "No se pudo descargar la versión nueva: {{detalle}}",
+    "errorInstalar": "No se pudo instalar la versión nueva: {{detalle}}"
   }
 }

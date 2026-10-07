@@ -1,8 +1,10 @@
 # Los instaladores y la CLI de los seis objetivos (ADR 0010 y 0014).
 #
 # - Al empujar una etiqueta vX.Y.Z: borrador de Release con todo colgado, las
-#   notas de .github/notas/vX.Y.Z.md y SHA256SUMS.txt. Las 0.x salen como
-#   pre-release. El borrador se publica a mano, después de mirarlo.
+#   notas de .github/notas/vX.Y.Z.md, SHA256SUMS.txt y el latest.json del
+#   actualizador (ADR 0018). Desde la v0.3.3 son versiones normales, no
+#   pre-release: el actualizador pregunta por la «última» de GitHub, y esa
+#   nunca es una pre-release. El borrador se publica a mano, después de mirarlo.
 # - A mano (workflow_dispatch): solo compila y deja los paquetes como artefactos.
 name: Publicar
 
@@ -85,7 +87,12 @@ jobs:
         id: tauri
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Firma (ADR 0009): desactivada mientras no existan las cuentas.
+          # La firma del actualizador (ADR 0018), que no es la de Apple ni la de
+          # Windows: minisign, con la clave pública en tauri.conf.json. Sin
+          # ella no salen los .sig y la aplicación no acepta la versión nueva.
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Firma de sistema (ADR 0009): desactivada mientras no existan las cuentas.
           # Para activarla, crear estos secretos y quitar el comentario:
           # APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           # APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -98,7 +105,10 @@ jobs:
           tagName: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
           releaseName: "Apolo ${{ github.ref_name }}"
           releaseDraft: true
-          prerelease: ${{ startsWith(github.ref_name, 'v0.') }}
+          prerelease: false
+          # En Windows solo hay NSIS, pero si algún día hay .msi, el
+          # actualizador sigue con el instalador con el que se instaló.
+          updaterJsonPreferNsis: true
           args: --target ${{ matrix.objetivo }}
 
       # El icono del volumen montado: el disco con el sol, como Esfinge. Tauri
@@ -224,6 +234,40 @@ jobs:
           pattern: cli-*
           merge-multiple: true
           path: cli
+      # tauri-action escribe latest.json a trozos, un trabajo cada vez, y apunta
+      # a la API de GitHub (`/releases/assets/<id>`), que sin sesión deja 60
+      # peticiones por hora. Antes de las sumas, se cambia cada URL por la de
+      # descarga normal y se comprueba que estén todas las plataformas con su
+      # firma: si falta una, esa plataforma no se enteraría nunca de la versión
+      # nueva.
+      - name: El latest.json del actualizador
+        run: |
+          gh release download "$GITHUB_REF_NAME" -p latest.json -D actualizador
+          gh release view "$GITHUB_REF_NAME" --json assets > activos.json
+          python3 - <<'EOF'
+          import json, os, sys
+          activos = json.load(open("activos.json"))["assets"]
+          # Con la etiqueta y no la «url» de GitHub: en un borrador esa dice
+          # untagged-…, y deja de valer al publicarlo.
+          base = "https://github.com/webcafeina/Apolo/releases/download/" + os.environ["GITHUB_REF_NAME"]
+          normal = {a["apiUrl"]: f"{base}/{a['name']}" for a in activos}
+          nombres = {a["name"] for a in activos}
+          j = json.load(open("actualizador/latest.json"))
+          for clave, p in j["platforms"].items():
+              p["url"] = normal.get(p["url"], p["url"])
+              if p["url"].rsplit("/", 1)[-1] not in nombres or not p["signature"].strip():
+                  sys.exit(f"{clave}: sin fichero o sin firma ({p['url']})")
+          hacen_falta = [f"{s}-{a}" for s in ("darwin", "windows", "linux") for a in ("x86_64", "aarch64")]
+          hacen_falta += [f"linux-{a}-{b}" for a in ("x86_64", "aarch64") for b in ("deb", "appimage")]
+          hacen_falta += [f"windows-{a}-nsis" for a in ("x86_64", "aarch64")]
+          faltan = [c for c in hacen_falta if c not in j["platforms"]]
+          if faltan:
+              sys.exit(f"Faltan plataformas en latest.json: {faltan}")
+          json.dump(j, open("actualizador/latest.json", "w"), indent=2)
+          print(json.dumps({c: p["url"] for c, p in j["platforms"].items()}, indent=2))
+          EOF
+          gh release upload "$GITHUB_REF_NAME" actualizador/latest.json --clobber
+
       - name: CLI, notas y sumas
         run: |
           gh release upload "$GITHUB_REF_NAME" cli/* --clobber

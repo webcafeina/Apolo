@@ -1,12 +1,16 @@
 # Lo siguiente
 
-Última actualización: **2026-10-06**
+Última actualización: **2026-10-07**
 
 El plan entero salió de la sesión del 2026-10-06, decidido con el cliente en cuatro rondas de
 preguntas (ver [decisiones.md](decisiones.md)). Va **por entregas**; cada una se cierra con sus
 pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
+
+- **Publicar la v0.3.3** cuando el cliente lo diga, y **sacar la v0.3.4** después para ver una
+  actualización de verdad (deuda). Y que el cliente guarde la clave del actualizador en su bóveda,
+  para borrar la copia del VPS.
 
 - **Montar la equivalencia con cwebp en CI para Windows y Linux arm64** (deuda). En un Mac con
   Apple Silicon ya la comprobó a mano el cliente: 25 de 25.
@@ -18,8 +22,8 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 - **Entrega 5 — Resto de códecs y proceso.** MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar,
   recortar y reducir paleta. La ADR de AVIF (libavif + aom frente a ravif/rav1e) se decide midiendo.
 - **Entrega 6 — Métricas.** PSNR, SSIM escrito aquí, el mapa de diferencias y el mapa SSIM.
-- **Entrega 7 — 1.0.** DMG, NSIS, `.deb` y AppImage; actualización automática con
-  `tauri-plugin-updater` y clave minisign; README con la tabla de descargas.
+- **Entrega 7 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas. (La
+  actualización automática se adelantó a la v0.3.3: ADR 0018.)
 
 ## Baja
 

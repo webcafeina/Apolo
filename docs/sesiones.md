@@ -4,6 +4,40 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-07 · El actualizador (v0.3.3, sin publicar)
+
+- El cliente pidió, antes de Lotes, **actualizar desde la propia aplicación como en Esfinge**, y
+  esperar para publicar. Respondió a cuatro preguntas:
+  - versiones normales, no pre-release;
+  - el `.deb` se instala pidiendo la contraseña;
+  - dos pasos, como Esfinge;
+  - la clave, en GitHub y una copia en su bóveda.
+
+  Todo queda en la [ADR 0018](adr/0018-actualizarse-sola.md).
+- Hecho:
+  - `tauri-plugin-updater` y `tauri-plugin-process`;
+  - la puerta de 24 h y los ajustes guardados en `ajustes.json`. El servicio pasa a recibir la
+    carpeta de configuración, y `apolo-dev` pasa de `--presets` a `--config`;
+  - la banda (`Novedad.tsx`) y la sección Actualizaciones en Ajustes;
+  - el caso traslocado de macOS;
+  - en `publicar.yml`: la firma, `prerelease: false`, y un paso que repasa `latest.json`;
+  - la clave minisign (contraseña hexadecimal) en los secretos de GitHub. La copia está en
+    `~/.config/apolo/claves/`.
+- Verificado aquí:
+  - `make comprobar`;
+  - 25 pruebas e2e, 3 de ellas nuevas con una novedad simulada (`?novedad=9.9.9`);
+  - capturas de la banda;
+  - licencias de las dependencias nuevas;
+  - la clave, firmando un fichero.
+- La prueba «pegar una orden» fallaba por tiempo con la máquina cargada: `-lossless -z 9` tarda 4 s
+  en depuración ([trampas](trampas.md)). Ahora tiene su propio plazo.
+- **No verificado**:
+  - la ventana con el plugin (CI);
+  - los `.sig` y `latest.json` (al publicar);
+  - una actualización real (v0.3.4).
+
+---
+
 ## 2026-10-07 · Textos tras probar la v0.3.2
 
 - El cliente probó la v0.3.2 en su Mac: «está todo perfecto», incluida su foto HEIC del iPhone.

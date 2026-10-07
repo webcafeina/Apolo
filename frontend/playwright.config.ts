@@ -6,9 +6,9 @@ import { defineConfig, devices } from "@playwright/test";
  * transporte, HTTP en vez de Tauri (ADR 0013). Es lo que permite probar el
  * Estudio entero en una máquina sin entorno gráfico.
  *
- * Los presets van a una carpeta temporal, nunca a la del usuario.
+ * Los presets y los ajustes van a una carpeta temporal, nunca a la del usuario.
  */
-const presets = `${process.env.TMPDIR ?? "/tmp"}/apolo-e2e-presets-${process.pid}`;
+const config = `${process.env.TMPDIR ?? "/tmp"}/apolo-e2e-config-${process.pid}`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -29,7 +29,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: `cargo run -q -p apolo-dev -- --direccion 127.0.0.1:34591 --presets ${presets}`,
+      command: `cargo run -q -p apolo-dev -- --direccion 127.0.0.1:34591 --config ${config}`,
       cwd: "..",
       url: "http://127.0.0.1:34591/salud",
       reuseExistingServer: false,

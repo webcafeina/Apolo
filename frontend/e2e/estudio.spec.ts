@@ -45,7 +45,9 @@ test("pegar una orden cwebp carga sus ajustes", async ({ page }) => {
   await page.getByRole("button", { name: "Pegar orden…" }).click();
   await page.getByTestId("orden-entrada").fill("cwebp -preset drawing -lossless -z 9 a.png -o b.webp");
   await page.getByRole("button", { name: "Cargar" }).click();
-  await expect(page.getByTestId("orden")).toContainText("-preset drawing");
+  // Sin pérdida con -z 9 tarda 4 s en la compilación de depuración de
+  // apolo-dev, y más con la máquina cargada: los 5 s de siempre no llegan.
+  await expect(page.getByTestId("orden")).toContainText("-preset drawing", { timeout: 30_000 });
   await expect(page.getByTestId("orden")).toContainText("-lossless");
   await expect(page.getByRole("switch", { name: "Sin pérdida" })).toBeChecked();
 });

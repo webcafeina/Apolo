@@ -37,7 +37,7 @@
     "acercar": "Acercar",
     "alejar": "Alejar",
     "ajustar": "Ajustar",
-    "reducida": "Vista reducida al {{porcentaje}} %: la compresión no se aprecia. Ver al 100 %"
+    "reducida": "Vista reducida al {{porcentaje}} %: clica aquí para ver al 100 % y apreciar más detalle"
   },
   "orden": {
     "copiar": "Copiar",
@@ -46,10 +46,13 @@
     "pegar": "Pega una orden de cwebp",
     "cargar": "Cargar",
     "cancelar": "Cancelar",
-    "noEquivalente": "Distinto de cwebp",
     "motivo": {
       "enderezada": "La foto está enderezada, y cwebp no gira las fotos: esta orden no da exactamente este fichero.",
       "formato_sin_cwebp": "cwebp no lee este formato: la orden sirve de referencia, pero no se puede ejecutar tal cual."
+    },
+    "aviso": {
+      "enderezada": "Enderezada: cwebp no la gira",
+      "formato_sin_cwebp": "cwebp no abre {{formato}}"
     }
   },
   "panel": {

@@ -36,30 +36,24 @@
 
 ### La siguiente acción, al retomar
 
-1. **La v0.4.0 (Lotes) está publicada**, y **el cliente se actualizó a ella desde la v0.3.3 con el
-   actualizador**, sin reinstalar. Es la primera actualización de verdad, y sale bien en macOS.
-2. Avisó de que **la barra de la descarga iba a tirones y por detrás del número**. Está arreglado
-   en `main`, sin publicar, y lo vigila una prueba. Ver trampas.md. **El cliente prefiere no
-   publicarlo solo:** sale en la **v0.4.1**, junto con lo que dé la prueba de Lotes en la ventana.
-   Ya van dos cosas más, de esa prueba:
-   - el desplegable «Formato» en Lotes, como el del Estudio, con WebP y los demás «pronto». Lo
-     pidió el cliente;
-   - el texto de la CLI con las opciones por defecto;
-   - «Mostrar en la carpeta» enseña la carpeta de salida seleccionada. Antes abría la subcarpeta de
-     la última imagen.
+1. **La v0.4.1 está publicada** (https://github.com/webcafeina/Apolo/releases/tag/v0.4.1). Lleva lo
+   que salió de probar Lotes y la primera actualización:
+   - la barra de la descarga, sin tirones;
+   - el formato en Lotes;
+   - «Mostrar en la carpeta» con la carpeta de salida;
+   - «Cancelar» en rojo;
+   - el texto de la CLI.
 
-   - «Cancelar» en rojo (el estilo `peligro`, como «Borrar» en Presets), y el resumen de un lote
-     cancelado también. Lo pidió el cliente.
-
-   **Prueba de Lotes en el Mac del cliente, completa y bien.** Salieron bien siete pasos: elegir,
-   soltar sin que el Estudio se lo quede, preset, convertir, mostrar en la carpeta, repetir sin pisar
-   y cancelar. El octavo, la CLI, no se hizo: no tiene la de la Release.
-   Será además la segunda actualización por la banda.
-3. Que el cliente pruebe **Lotes en la ventana**: elegir carpetas, soltarlas, cancelar, «Mostrar en
-   la carpeta».
+   CI en verde. En el borrador se revisó todo: 22 ficheros, las sumas, y `latest.json` con 14
+   plataformas y sus firmas válidas.
+2. Que el cliente se actualice desde la v0.4.0 y mire **la barra de la descarga**, que es lo que
+   se arregló de la primera actualización.
+3. **La entrega 4 está cerrada y probada en su Mac**, con Lotes entero y la actualización.
 4. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
    cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
-5. Después, **la entrega 5**: el resto de códecs y el proceso de imagen.
+5. Siguiente: **la entrega 5**, el resto de códecs (MozJPEG, OxiPNG, AVIF, JPEG XL, QOI) y el
+   proceso (redimensionar, recortar, reducir paleta). Con ella, Lotes gana el selector de formato
+   de verdad.
 
 ## Completado
 
@@ -76,6 +70,7 @@
 - v0.3.3: el actualizador (2026-10-07). ADR 0018. Publicada el mismo día, ya no como pre-release.
   El cliente la instaló a mano, y «Buscar ahora» funciona.
 - Entrega 4, Lotes (2026-10-07). ADR 0019. v0.4.0 publicada el mismo día.
+- Prueba de Lotes en el Mac del cliente, completa (2026-10-07). v0.4.1 publicada con sus arreglos.
 
 ## En curso
 

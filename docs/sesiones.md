@@ -4,6 +4,27 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-07 · Prueba de Lotes en el Mac, y la v0.4.1
+
+- El cliente probó Lotes en su Mac (v0.4.0) con la carpeta de `pruebas/lotes/generar.sh`, que se
+  bajó del VPS. Salieron bien siete pasos: elegir carpetas, soltar sin que el Estudio se lo quede,
+  preset, convertir (24 + 1 rota, −76 %, dos que crecen), mostrar en la carpeta, repetir sin pisar
+  y cancelar. La CLI no la tenía.
+- Pidió tres cosas, hechas:
+  - el desplegable «Formato» en Lotes, como en el Estudio;
+  - «Cancelar» y el resumen cancelado en rojo.
+
+  Y de la prueba salió una tercera: «Mostrar en la carpeta» abría la subcarpeta de la última
+  imagen, y ahora enseña la carpeta de salida.
+- Preguntó si la CLI se puede instalar desde un repositorio. Hoy no. Queda anotado para el futuro
+  (Homebrew con un tap propio, primero) en siguiente.md.
+- **Publicada la v0.4.1** con todo eso y la barra de la descarga. Antes de publicar:
+  - CI en verde, también `comprobar` sobre el mismo commit;
+  - las sumas y las 14 firmas de `latest.json`, verificadas;
+  - el endpoint responde 0.4.1.
+
+---
+
 ## 2026-10-07 · La primera actualización de verdad, y su barra
 
 - El cliente **se actualizó de la v0.3.3 a la v0.4.0 desde la banda**, sin reinstalar. Saldada en

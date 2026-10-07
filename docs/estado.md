@@ -36,37 +36,24 @@
 
 ### La siguiente acción, al retomar
 
-1. **La entrega 5a está publicada como v0.5.0** (https://github.com/webcafeina/Apolo/releases/tag/v0.5.0) ([ADR 0020](adr/0020-mas-formatos-y-proceso.md)).
-   - **JPEG, PNG y QOI** dan el mismo fichero que **cjpeg, oxipng y qoiconv**: 816, 351 y 13 de
-     13, con `make equivalencia`.
-   - **El proceso**: enderezar, recortar, redimensionar y reducir paleta, en cualquier formato.
-   - **El comparador**, con un formato por lado.
-   - **Lotes** con varios formatos y «solo el más ligero».
-   - **La CLI** gana `apolo jpeg`, `apolo png` y `apolo qoi`.
-
-   Lo decidió el cliente en cuatro preguntas: dos versiones, la misma promesa que con cwebp,
-   comparar formatos y el más ligero.
-   Antes de publicar se revisó el borrador:
-   - CI en verde;
-   - 22 ficheros, y las sumas cuadran;
-   - `latest.json` con 14 plataformas, todas con firma válida;
-   - la CLI de la Release da lo mismo que cjpeg.
-2. **La prueba guiada de la v0.5.0 en el Mac del cliente salió bien entera**:
-   - JPEG;
-   - PNG y QOI;
-   - comparar dos formatos;
-   - redimensionar;
-   - un lote con dos formatos y «solo el más ligero».
-
-   Pidió tres retoques, hechos en `main`. Saldrán en la **v0.5.1** cuando lo diga:
-   - el «%» que bajaba de línea;
-   - el selector de lado, que perdía la marca con el cursor encima;
-   - «Volver al original» como botón.
+1. **La entrega 5b está hecha y la v0.6.0, preparada sin publicar** ([ADR 0021](adr/0021-avif-y-jpeg-xl.md)).
+   Lleva también los tres retoques de la v0.5.1. **Se publica cuando lo diga el cliente**: etiqueta
+   `v0.6.0`, revisar el borrador (sumas, `latest.json` con sus firmas) y publicarlo.
+   - **AVIF y JPEG XL** dan el mismo fichero que **avifenc 1.4.2 y cjxl 0.12.0**: 376 de 376 y 280
+     de 280 con `make equivalencia`, también en CI.
+   - Van compilados dentro (`crates/avifjxl`): sus `main`, con los argumentos de la orden. libjxl,
+     con clang (en el VPS, `~/.local/llvm18`; el Makefile lo pone).
+   - Se abren .avif y .jxl; Estudio, Lotes, pegar órdenes, `apolo avif` y `apolo jxl`.
+   - CI: comprobar, e2e y equivalencia en verde. Los instaladores salen en macOS, Windows x64 y los
+     dos Linux; Windows ARM64 se acaba de arreglar (libyuv sin NEON) y está compilando.
+2. **Después de publicar, prueba guiada en el Mac del cliente**: elegir AVIF y JPEG XL en el Estudio
+   y moverse por sus controles; exportar y volver a abrir los dos; comparar AVIF con WebP; un JPEG a
+   JPEG XL (recomprimido sin pérdida, y con la calidad al apagarlo); un lote con AVIF y «solo el más
+   ligero»; `apolo avif` y `apolo jxl` frente a los oficiales de Mac, si los tiene.
 3. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
    cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
-4. La carpeta de prueba de Lotes está en `~/apolo-pruebas-lotes` del VPS. Se regenera con
-   `pruebas/lotes/generar.sh <destino>`.
-5. Después, **la entrega 5b: AVIF y JPEG XL** (v0.6). Empieza por decidir el motor de AVIF midiendo.
+4. La carpeta de prueba de Lotes se regenera con `pruebas/lotes/generar.sh <destino>`.
+5. Luego, **la entrega 6: métricas** (siguiente.md).
 
 ## Completado
 
@@ -86,6 +73,9 @@
 - Prueba de Lotes en el Mac del cliente, completa (2026-10-07). v0.4.1 publicada con sus arreglos.
 - Entrega 5a: JPEG, PNG, QOI, el proceso, un formato por lado y Lotes con varios formatos
   (2026-10-07). ADR 0020. v0.5.0 publicada el mismo día.
+- Prueba guiada de la v0.5.0 en el Mac del cliente, completa (2026-10-07), con tres retoques.
+- Entrega 5b: AVIF y JPEG XL con avifenc y cjxl compilados dentro (2026-10-07). ADR 0021. v0.6.0
+  preparada, sin publicar.
 
 ## En curso
 

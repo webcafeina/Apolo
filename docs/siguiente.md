@@ -8,8 +8,8 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **Publicar la v0.4.0** (Lotes) cuando el cliente lo diga: será la primera que llegue por el
-  actualizador a su Mac (deuda). La clave del actualizador se queda en el VPS por decisión del
+- ~~Publicar la v0.4.0~~ (2026-10-07). **Que el cliente actualice desde la v0.3.3** con el
+  actualizador: es la primera vez que se ve de verdad (deuda). La clave del actualizador se queda en el VPS por decisión del
   cliente (deuda).
 
 - **Montar la equivalencia con cwebp en CI para Windows y Linux arm64** (deuda). En un Mac con

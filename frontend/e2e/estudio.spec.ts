@@ -162,5 +162,58 @@ test("abre una foto HEIC, y la orden cwebp avisa de que cwebp no la lee", async 
   await expect(page.getByTestId("peso-resultado")).not.toHaveText("…");
   await expect(page.getByText("HEIC · 1280 × 854")).toBeVisible();
   await expect(page.getByTestId("no-equivalente")).toHaveText("cwebp no abre HEIC");
-  await expect(page.getByTestId("motivo")).toContainText("cwebp no lee este formato");
+  await expect(page.getByTestId("motivo")).toContainText("cwebp no lee HEIC");
+});
+
+test("cada formato enseña la orden de su herramienta, y QOI no tiene opciones", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  const formato = page.getByTestId("formato");
+  await formato.selectOption("jpeg");
+  await expect(page.getByTestId("orden")).toContainText("cjpeg -outfile foto.jpg foto.webp");
+  await expect(page.getByTestId("pesos")).toContainText("Resultado · JPEG");
+  // cjpeg no lee WebP: lo dice la orden.
+  await expect(page.getByTestId("no-equivalente")).toContainText("cjpeg no abre WebP");
+  await page.locator("#control-calidadJpeg").fill("40");
+  await expect(page.getByTestId("orden")).toContainText("cjpeg -quality 40");
+  await formato.selectOption("png");
+  await expect(page.getByTestId("orden")).toContainText("oxipng --out foto.png foto.webp");
+  await formato.selectOption("qoi");
+  await expect(page.getByTestId("orden")).toContainText("qoiconv foto.webp foto.qoi");
+  await expect(page.getByText("QOI no tiene opciones")).toBeVisible();
+});
+
+test("pegar una orden de cjpeg pasa a JPEG con sus opciones", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await page.getByRole("button", { name: "Pegar orden…" }).click();
+  await page.getByTestId("orden-entrada").fill("cjpeg -quality 55 -grayscale -outfile x.jpg a.png");
+  await page.getByRole("button", { name: "Cargar" }).click();
+  await expect(page.getByTestId("formato")).toHaveValue("jpeg");
+  await expect(page.getByTestId("orden")).toContainText("cjpeg -quality 55 -grayscale", { timeout: 30_000 });
+});
+
+test("se comparan dos formatos, uno a cada lado", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await expect(page.getByTestId("rotulo-izquierda")).toHaveText("Original");
+  await page.getByTestId("lados").getByRole("radio", { name: /Izquierda/ }).click();
+  await page.getByTestId("comparar-formato").click();
+  // El izquierdo empieza en otro formato que el derecho (WebP), con su peso.
+  await expect(page.getByTestId("rotulo-izquierda")).toContainText("JPEG ·", { timeout: 30_000 });
+  await expect(page.getByTestId("rotulo-derecha")).toContainText("WebP ·");
+  // La orden y los pesos son del lado que se edita.
+  await expect(page.getByTestId("orden")).toContainText("cjpeg");
+  await page.getByTestId("lados").getByRole("radio", { name: /Derecha/ }).click();
+  await expect(page.getByTestId("orden")).toContainText("cwebp");
+  // Y se puede volver al original.
+  await page.getByTestId("lados").getByRole("radio", { name: /Izquierda/ }).click();
+  await page.getByRole("button", { name: "Volver al original" }).click();
+  await expect(page.getByTestId("rotulo-izquierda")).toHaveText("Original");
+});
+
+test("el proceso redimensiona, en cualquier formato, y la orden lo dice", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await page.getByTestId("formato").selectOption("png");
+  await page.getByRole("switch", { name: "Redimensionar" }).first().check();
+  // La foto mide 128: a la mitad por defecto.
+  await expect(page.getByTestId("barra-estado")).toContainText("64 × 64", { timeout: 30_000 });
+  await expect(page.getByTestId("no-equivalente")).toContainText("Procesada por Apolo");
 });

@@ -43,16 +43,18 @@
     "copiar": "Copiar",
     "copiada": "Copiada",
     "editar": "Pegar orden…",
-    "pegar": "Pega una orden de cwebp",
+    "pegar": "Pega una orden de cwebp, cjpeg, oxipng o qoiconv",
     "cargar": "Cargar",
     "cancelar": "Cancelar",
     "motivo": {
-      "enderezada": "La foto está enderezada, y cwebp no gira las fotos: esta orden no da exactamente este fichero.",
-      "formato_sin_cwebp": "cwebp no lee este formato: la orden sirve de referencia, pero no se puede ejecutar tal cual."
+      "enderezada": "La foto está enderezada, y {{herramienta}} no gira las fotos: esta orden no da exactamente este fichero.",
+      "procesada": "Apolo la ha recortado, redimensionado o le ha reducido la paleta antes: {{herramienta}} no lo hace igual, y esta orden no da este fichero.",
+      "formato_sin_herramienta": "{{herramienta}} no lee {{formato}}: la orden sirve de referencia, pero no se puede ejecutar tal cual."
     },
     "aviso": {
-      "enderezada": "Enderezada: cwebp no la gira",
-      "formato_sin_cwebp": "cwebp no abre {{formato}}"
+      "enderezada": "Enderezada: {{herramienta}} no la gira",
+      "procesada": "Procesada por Apolo",
+      "formato_sin_herramienta": "{{herramienta}} no abre {{formato}}"
     }
   },
   "panel": {
@@ -76,7 +78,21 @@
     "colorFondo": "Color de fondo",
     "exif": "EXIF",
     "icc": "Perfil ICC",
-    "xmp": "XMP"
+    "xmp": "XMP",
+    "lado": {
+      "etiqueta": "Qué lado se ajusta",
+      "izquierda": "Izquierda",
+      "derecha": "Derecha"
+    },
+    "izquierdaOriginal": "A la izquierda está el original. Puedes poner ahí otro formato para comparar dos resultados entre sí, por ejemplo WebP contra JPEG.",
+    "compararFormato": "Comparar con otro formato",
+    "volverOriginal": "Volver al original",
+    "sinOpciones": "{{formato}} no tiene opciones: hay una sola forma de codificarlo, sin pérdida.",
+    "auto": "auto",
+    "filtro": "Filtro",
+    "lineal": "Mezclar en RGB lineal",
+    "colores": "Colores",
+    "tramado": "Tramado"
   },
   "formato": {
     "avif": "AVIF",
@@ -96,13 +112,16 @@
   "nivel": {
     "basico": "Básico",
     "avanzado": "Avanzado",
-    "experto": "Experto"
+    "experto": "Experto",
+    "proceso": "Proceso"
   },
   "porQue": {
     "soloSinPerdida": "Solo cuenta sin pérdida.",
     "soloConPerdida": "Solo cuenta con pérdida.",
     "sinAlfa": "La imagen no tiene transparencia, o se descarta.",
-    "sinRedimension": "Solo cuenta al redimensionar."
+    "sinRedimension": "Solo cuenta al redimensionar.",
+    "soloZopfli": "Solo con Zopfli encendido.",
+    "conZopfli": "Con Zopfli, la compresión la hace Zopfli."
   },
   "opcion": {
     "calidad": "Calidad",
@@ -111,12 +130,8 @@
     "esfuerzoAyuda": "Sin pérdida la imagen sale idéntica siempre: más esfuerzo, más lento y algo más pequeño.",
     "sinPerdida": "Sin pérdida",
     "sinPerdidaAyuda": "Cada píxel sale exacto. Para capturas, gráficos y logotipos; en fotos pesa mucho más.",
-    "redimension": "Redimensionar",
-    "redimensionAyuda": "Cambia el tamaño antes de comprimir. Un lado a 0 mantiene la proporción.",
-    "recorte": "Recortar",
-    "recorteAyuda": "Se queda con un rectángulo de la imagen, antes de redimensionar.",
     "enderezar": "Enderezar según EXIF",
-    "enderezarAyuda": "Gira la foto como dice su orientación EXIF. cwebp no lo hace: con esto encendido, la orden cwebp ya no da el mismo fichero.",
+    "enderezarAyuda": "Gira la foto como dice su orientación EXIF, antes que todo lo demás. Ninguna herramienta lo hace: con esto encendido, la orden ya no da el mismo fichero.",
     "nivelSinPerdida": "Nivel sin pérdida",
     "nivelSinPerdidaAyuda": "Atajo que fija método y esfuerzo a la vez, de 0 (rápido) a 9 (lento y más pequeño).",
     "metodo": "Método",
@@ -172,7 +187,81 @@
     "hilos": "Varios hilos",
     "hilosAyuda": "Usa más núcleos del procesador. El resultado es el mismo.",
     "pocaMemoria": "Poca memoria",
-    "pocaMemoriaAyuda": "Para imágenes enormes: usa menos memoria y tarda más."
+    "pocaMemoriaAyuda": "Para imágenes enormes: usa menos memoria y tarda más.",
+    "redimensionCwebp": "Redimensionar como cwebp",
+    "redimensionCwebpAyuda": "El -resize de cwebp, con su propio método. Para repetir una orden de cwebp; lo normal es el Redimensionar del proceso, que vale para todos los formatos.",
+    "recorteCwebp": "Recortar como cwebp",
+    "recorteCwebpAyuda": "El -crop de cwebp. Para repetir una orden de cwebp; lo normal es el Recortar del proceso.",
+    "procesoRedimension": "Redimensionar",
+    "procesoRedimensionAyuda": "Cambia el tamaño antes de comprimir, en cualquier formato. Deja un lado vacío para mantener la proporción.",
+    "procesoRecorte": "Recortar",
+    "procesoRecorteAyuda": "Se queda con un rectángulo de la imagen, antes de redimensionar.",
+    "procesoPaleta": "Reducir paleta",
+    "procesoPaletaAyuda": "Deja la imagen en pocos colores con libimagequant, como Squoosh. Pesa mucho menos en PNG; el tramado disimula los saltos de color.",
+    "calidadJpeg": "Calidad",
+    "calidadJpegAyuda": "Más alta, más fiel y más pesada. Desde 80, MozJPEG reduce menos el color, y desde 90 nada.",
+    "colorJpeg": "Color",
+    "colorJpegAyuda": "Gris quita el color del todo. RGB guarda el color sin convertirlo a YCbCr: más grande, y casi nunca hace falta.",
+    "escaneoJpeg": "Escaneo",
+    "escaneoJpegAyuda": "Progresivo se va viendo entero y cada vez más nítido mientras carga, y suele pesar menos. Secuencial carga de arriba abajo.",
+    "afinadoJpeg": "Afinar para",
+    "afinadoJpegAyuda": "A qué medida de calidad se ajusta la cuantización. PSNR-HVS es lo de MozJPEG y el que mejor se ve.",
+    "muestreoJpeg": "Submuestreo del color",
+    "muestreoJpegAyuda": "Cuánto color se guarda frente al brillo. 4:2:0 pesa menos; 4:4:4 conserva los bordes de color nítidos, como en textos de colores.",
+    "tablaJpeg": "Tabla de cuantización",
+    "tablaJpegAyuda": "La tabla base que decide qué detalle se pierde. La 3, de ImageMagick, es la de MozJPEG.",
+    "suavizadoJpeg": "Suavizado",
+    "suavizadoJpegAyuda": "Suaviza la imagen antes de comprimir: para imágenes con tramado o ruido. A 0, nada.",
+    "sinTrellisJpeg": "Sin trellis",
+    "sinTrellisJpegAyuda": "Apaga la cuantización trellis de MozJPEG: más rápido y algo más pesado.",
+    "revertirJpeg": "Como libjpeg",
+    "revertirJpegAyuda": "Los valores del JPEG de siempre, sin las mejoras de MozJPEG. Más grande; para comparar.",
+    "rapidoJpeg": "Escaneos rápidos",
+    "rapidoJpegAyuda": "No busca el mejor reparto de los escaneos progresivos: más rápido y algo más pesado.",
+    "dcScanJpeg": "Escaneo de la componente DC",
+    "dcScanJpegAyuda": "Cómo se agrupa el primer escaneo progresivo. Pocas veces cambia algo.",
+    "dctJpeg": "Método DCT",
+    "dctJpegAyuda": "Entero exacto es lo de siempre. Rápido y flotante son métodos antiguos.",
+    "tablasBaselineJpeg": "Tablas de 8 bits",
+    "tablasBaselineJpegAyuda": "Limita las tablas a 8 bits, para lectores muy antiguos.",
+    "sinOvershootJpeg": "Sin desbordamiento",
+    "sinOvershootJpegAyuda": "Apaga el truco de MozJPEG que quita halos en el texto negro sobre blanco.",
+    "sinJfifJpeg": "Sin cabecera JFIF",
+    "sinJfifJpegAyuda": "Quita 18 bytes de cabecera. Los navegadores la leen igual, pero no es del todo estándar.",
+    "optimizarJpeg": "Optimizar Huffman",
+    "optimizarJpegAyuda": "Calcula tablas de Huffman a medida. MozJPEG ya lo hace por defecto; solo cambia algo con «Como libjpeg».",
+    "nivelPng": "Nivel",
+    "nivelPngAyuda": "Cuánto busca OxiPNG la mejor compresión. Más alto, más lento y algo más pequeño. Nunca pierde calidad.",
+    "alfaPng": "Optimizar la transparencia",
+    "alfaPngAyuda": "Cambia el color de los píxeles totalmente transparentes, que no se ven, si así comprime más.",
+    "quitarPng": "Quitar metadatos",
+    "quitarPngAyuda": "Seguro quita lo que no cambia cómo se ve la imagen. Todo quita también el perfil de color.",
+    "entrelazadoPng": "Entrelazado",
+    "entrelazadoPngAyuda": "Entrelazado se va viendo entero mientras carga, pero pesa más.",
+    "zopfliPng": "Zopfli",
+    "zopfliPngAyuda": "Un compresor mucho más lento que exprime algo más.",
+    "iteracionesPng": "Iteraciones de Zopfli",
+    "iteracionesPngAyuda": "Más vueltas, más lento y un poco más pequeño. Son 15 si se deja vacío.",
+    "compresionPng": "Compresión",
+    "compresionPngAyuda": "El nivel de libdeflate. Por defecto lo decide el nivel.",
+    "rapidoPng": "Evaluación rápida",
+    "rapidoPngAyuda": "Elige el filtro con una estimación rápida en vez de comprimiendo de verdad.",
+    "sinReduccionesPng": "Sin reducciones",
+    "sinReduccionesPngAyuda": "No cambia la profundidad, el tipo de color ni la paleta; solo recomprime.",
+    "sinBitsPng": "Sin reducir bits",
+    "sinBitsPngAyuda": "No baja la profundidad de color aunque sobre.",
+    "sinColorPng": "Sin cambiar el tipo de color",
+    "sinColorPngAyuda": "No pasa, por ejemplo, de RGB a paleta.",
+    "sinPaletaPng": "Sin reducir la paleta",
+    "sinPaletaPngAyuda": "No quita los colores de la paleta que no se usan.",
+    "sinGrisPng": "Sin pasar a gris",
+    "sinGrisPngAyuda": "No convierte a gris una imagen en color que solo tiene grises.",
+    "sinRecodificarPng": "Sin recomprimir",
+    "sinRecodificarPngAyuda": "Si no hay ninguna reducción, deja los datos comprimidos como están.",
+    "escala16Png": "De 16 a 8 bits",
+    "escala16PngAyuda": "Pasa una imagen de 16 bits a 8, escalando. Pierde algo de precisión.",
+    "forzarPng": "Escribir siempre",
+    "forzarPngAyuda": "Escribe el resultado aunque no gane nada frente al original."
   },
   "valor": {
     "nivel": {
@@ -205,6 +294,79 @@
       "1": "Suavizado por segmentos",
       "2": "Tramado",
       "3": "Los dos"
+    },
+    "afinadoJpeg": {
+      "defecto": "Lo de MozJPEG (PSNR-HVS)",
+      "hvs_psnr": "PSNR-HVS",
+      "psnr": "PSNR",
+      "ssim": "SSIM",
+      "ms_ssim": "MS-SSIM"
+    },
+    "colorJpeg": {
+      "auto": "El de la imagen",
+      "gris": "Gris",
+      "rgb": "RGB sin convertir"
+    },
+    "escaneoJpeg": {
+      "por_defecto": "Lo de MozJPEG (progresivo)",
+      "progresivo": "Progresivo",
+      "secuencial": "Secuencial"
+    },
+    "muestreoJpeg": {
+      "auto": "Según la calidad",
+      "1x1": "4:4:4 (todo el color)",
+      "2x1": "4:2:2",
+      "2x2": "4:2:0 (menos color)"
+    },
+    "tablaJpeg": {
+      "defecto": "La de MozJPEG (3)",
+      "0": "0 · Anexo K de JPEG",
+      "1": "1 · Plana",
+      "2": "2 · MS-SSIM (Kodak)",
+      "3": "3 · ImageMagick",
+      "4": "4 · PSNR-HVS (Kodak)",
+      "5": "5 · Klein, Silverstein y Carney",
+      "6": "6 · Watson, Taylor y Borthwick",
+      "7": "7 · Ahumada, Watson y Peterson",
+      "8": "8 · Peterson, Ahumada y Watson"
+    },
+    "dcScanJpeg": {
+      "defecto": "Lo de MozJPEG (1)",
+      "0": "0 · Uno para todo",
+      "1": "1 · Uno por componente",
+      "2": "2 · Elegir el mejor"
+    },
+    "dctJpeg": {
+      "defecto": "Entero exacto",
+      "int": "Entero exacto",
+      "fast": "Entero rápido",
+      "float": "Coma flotante"
+    },
+    "quitarPng": {
+      "nada": "Ninguno",
+      "seguro": "Los que no se ven",
+      "todo": "Todos, perfil incluido"
+    },
+    "entrelazadoPng": {
+      "no": "Sin entrelazar",
+      "si": "Entrelazado",
+      "mantener": "Como estaba"
+    },
+    "compresionPng": {
+      "defecto": "La del nivel",
+      "0": "0",
+      "4": "4",
+      "8": "8",
+      "10": "10",
+      "11": "11",
+      "12": "12 · la máxima"
+    },
+    "filtro": {
+      "lanczos3": "Lanczos3 · nítido",
+      "mitchell": "Mitchell · suave",
+      "catmull_rom": "Catmull-Rom",
+      "bilineal": "Bilineal",
+      "vecino": "Vecino · pixel art"
     }
   },
   "lotes": {
@@ -223,8 +385,8 @@
     "cuantas_other": "{{count}} imágenes · {{bytes}}",
     "como": "Cómo",
     "preset": "Preset",
-    "porDefecto": "Por defecto (lo de cwebp sin opciones)",
-    "formato": "Cada imagen a WebP, como",
+    "porDefecto": "Por defecto (lo de {{herramienta}} sin opciones)",
+    "formato": "Cada imagen a {{formato}}, como",
     "donde": "Dónde",
     "salida": "Carpeta de salida",
     "cambiar": "Cambiar…",
@@ -256,7 +418,15 @@
       "segundos": "{{s}} s",
       "minutos": "{{m}} min",
       "minutosYSegundos": "{{m}} min {{s}} s"
-    }
+    },
+    "anadirFormato": "Añadir otro formato",
+    "quitarFormato": "Quitar {{formato}}",
+    "masLigero": "Guardar solo el más ligero de cada imagen",
+    "masLigeroDetalle": "De cada imagen se guarda un solo fichero: el formato que menos pese.",
+    "todosDetalle": "De cada imagen se guarda un fichero por formato.",
+    "sinOpciones": "Sin opciones",
+    "ficheros_one": "1 fichero",
+    "ficheros_other": "{{count}} ficheros"
   },
   "ajustes": {
     "borrar": "Borrar",
@@ -276,7 +446,7 @@
   },
   "pesos": {
     "original": "Original · {{formato}}",
-    "resultado": "Resultado · WebP",
+    "resultado": "Resultado · {{formato}}",
     "menos": "{{bytes}} menos",
     "mas": "{{bytes}} más que el original",
     "barra": "El resultado pesa el {{porcentaje}} % del original"
@@ -298,7 +468,9 @@
     "equivale": "Equivale a:",
     "usar": "Usar en el Estudio",
     "renombrar": "Renombrar",
-    "seguro": "¿Borrarlo?"
+    "seguro": "¿Borrarlo?",
+    "nivelPng": "Nivel {{valor}}",
+    "paleta": "{{colores}} colores"
   },
   "novedad": {
     "hay": "Hay una versión nueva:",
@@ -313,5 +485,11 @@
     "traslocada": "Para actualizarse sola, Apolo tiene que estar en Aplicaciones: arrástrala allí y ábrela desde esa carpeta",
     "errorDescarga": "No se pudo descargar la versión nueva: {{detalle}}",
     "errorInstalar": "No se pudo instalar la versión nueva: {{detalle}}"
+  },
+  "formatoSalida": {
+    "webp": "WebP",
+    "jpeg": "JPEG (MozJPEG)",
+    "png": "PNG (OxiPNG)",
+    "qoi": "QOI"
   }
 }

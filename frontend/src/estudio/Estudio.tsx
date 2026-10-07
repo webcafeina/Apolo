@@ -10,8 +10,8 @@ import { useTranslation } from "react-i18next";
 import { Cabecera, Icono, IconoApp, Marca } from "../componentes";
 import * as puente from "../puente";
 import { Comparador, type Modo } from "./Comparador";
-import type { OpcionesWebp, Preset } from "./opciones";
-import { Panel } from "./Panel";
+import type { Ajuste, Preset } from "./opciones";
+import { nombreFormato, Panel, type Lado } from "./Panel";
 
 const RETARDO_MS = 120;
 
@@ -26,26 +26,48 @@ export function formatoBytes(n: number): string {
   return `${f(n / 1024 / 1024, 1)} MB`;
 }
 
+/** Un lado del comparador: su ajuste (null en el izquierdo: el original) y lo que dio. */
+interface EstadoLado {
+  ajuste: Ajuste | null;
+  vista: puente.Vista | null;
+  pixeles: ImageData | null;
+  ocupado: boolean;
+}
+
+const ladoVacio = (ajuste: Ajuste | null): EstadoLado => ({ ajuste, vista: null, pixeles: null, ocupado: false });
+
 export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boolean }) {
   const { t } = useTranslation();
   const [info, setInfo] = useState<puente.InfoImagen | null>(null);
-  const [opciones, setOpciones] = useState<OpcionesWebp>(inicio.opciones);
+  // El izquierdo empieza siendo el original; el derecho, WebP.
+  const [lados, setLados] = useState<[EstadoLado, EstadoLado]>([ladoVacio(null), ladoVacio(inicio.ajuste)]);
+  const [editando, setEditando] = useState<Lado>(1);
   const [original, setOriginal] = useState<ImageData | null>(null);
-  const [resultado, setResultado] = useState<ImageData | null>(null);
-  const [vista, setVista] = useState<puente.Vista | null>(null);
-  const [ocupado, setOcupado] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [modo, setModo] = useState<Modo>("deslizador");
   const [guardados, setGuardados] = useState<puente.PresetGuardado[]>([]);
   const [sobre, setSobre] = useState(false);
-  const generacion = useRef(0);
+  const generaciones = useRef<[number, number]>([0, 0]);
+
+  const ajusteDe = (l: Lado) => lados[l].ajuste;
+  const editado = lados[editando].ajuste ?? lados[1].ajuste!;
+  const cambiarLado = useCallback((l: Lado, cambio: Partial<EstadoLado>) => {
+    setLados((x) => {
+      const n: [EstadoLado, EstadoLado] = [x[0], x[1]];
+      n[l] = { ...n[l], ...cambio };
+      return n;
+    });
+  }, []);
+  const ponerAjuste = useCallback((a: Ajuste) => cambiarLado(editando, { ajuste: a }), [cambiarLado, editando]);
 
   // La sección Presets avisa por eventos de ventana: cuando se aplica uno al
-  // Estudio y cuando cambia la lista (guardar, renombrar, borrar).
+  // Estudio (al lado que se edita) y cuando cambia la lista.
+  const ponerRef = useRef(ponerAjuste);
+  ponerRef.current = ponerAjuste;
   useEffect(() => {
     const recargar = () => puente.presets().then(setGuardados, () => {});
-    const aplicar = (e: Event) => setOpciones((e as CustomEvent<OpcionesWebp>).detail);
+    const aplicar = (e: Event) => ponerRef.current((e as CustomEvent<Ajuste>).detail);
     recargar();
     window.addEventListener(EVENTO_PRESETS, recargar);
     window.addEventListener(EVENTO_APLICAR, aplicar);
@@ -61,8 +83,10 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
       try {
         const nueva = typeof fuente === "string" ? await puente.abrirRuta(fuente) : await puente.abrirFichero(fuente);
         if (info) void puente.cerrar(info.id);
-        setResultado(null);
-        setVista(null);
+        setLados((x) => [
+          { ...x[0], vista: null, pixeles: null },
+          { ...x[1], vista: null, pixeles: null },
+        ]);
         setInfo(nueva);
       } catch (e) {
         setError((e as puente.Fallo).mensaje);
@@ -84,61 +108,70 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
     return () => quitar();
   }, [abrir]);
 
-  // Los píxeles del original: al abrir, y al enderezar o dejar de hacerlo.
+  // Los píxeles del original: al abrir, y al enderezar o dejar de hacerlo
+  // (se endereza si el lado derecho lo hace).
+  const enderezado = lados[1].ajuste!.proceso.enderezar;
   useEffect(() => {
     if (!info) return;
     let vivo = true;
-    puente.pixelesOriginal(info.id, opciones.enderezar).then(
+    puente.pixelesOriginal(info.id, enderezado).then(
       (p) => vivo && setOriginal(p),
       (e: puente.Fallo) => vivo && setError(e.mensaje),
     );
     return () => {
       vivo = false;
     };
-  }, [info, opciones.enderezar]);
+  }, [info, enderezado]);
 
-  // La vista previa en vivo.
-  useEffect(() => {
-    if (!info) return;
-    const g = ++generacion.current;
-    setOcupado(true);
+  // La vista previa en vivo de cada lado, cada una con su generación.
+  const previsualizar = (l: Lado, ajuste: Ajuste | null) => {
+    if (!info || !ajuste) return;
+    const g = ++generaciones.current[l];
+    cambiarLado(l, { ocupado: true });
     const reloj = window.setTimeout(async () => {
       try {
-        const v = await puente.codificar(info.id, opciones, g);
-        if (g !== generacion.current) return;
-        const px = await puente.pixelesResultado(info.id);
-        if (g !== generacion.current) return;
-        setVista(v);
-        setResultado(px);
+        const v = await puente.codificar(info.id, ajuste, l, g);
+        if (g !== generaciones.current[l]) return;
+        const px = await puente.pixelesResultado(info.id, l);
+        if (g !== generaciones.current[l]) return;
+        cambiarLado(l, { vista: v, pixeles: px, ocupado: false });
         setError(null);
-        setOcupado(false);
       } catch (e) {
         const f = e as puente.Fallo;
-        if (g !== generacion.current || f.cancelado) return;
+        if (g !== generaciones.current[l] || f.cancelado) return;
         setError(f.mensaje);
-        setOcupado(false);
+        cambiarLado(l, { ocupado: false });
       }
     }, RETARDO_MS);
     return () => window.clearTimeout(reloj);
-  }, [info, opciones]);
+  };
+  const ajusteIzq = ajusteDe(0);
+  const ajusteDer = ajusteDe(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => previsualizar(0, ajusteIzq), [info, ajusteIzq]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => previsualizar(1, ajusteDer), [info, ajusteDer]);
 
-  const aplicarPreset = async (p: Preset) => setOpciones(await puente.aplicarPreset(opciones, p));
-  const nivelSinPerdida = async (n: number) => setOpciones(await puente.nivelSinPerdida(opciones, n));
+  const aplicarPreset = async (p: Preset) => ponerAjuste({ ...editado, webp: await puente.aplicarPreset(editado.webp, p) });
+  const nivelSinPerdida = async (n: number) =>
+    ponerAjuste({ ...editado, webp: await puente.nivelSinPerdida(editado.webp, n) });
   const guardar = async (nombre: string) => {
     try {
-      setGuardados(await puente.guardarPreset({ nombre, formato: "webp", webp: opciones }));
+      setGuardados(await puente.guardarPreset({ nombre, ...editado }));
       window.dispatchEvent(new Event(EVENTO_PRESETS));
       setAviso(t("estudio.presetGuardado", { nombre }));
     } catch (e) {
       setError((e as puente.Fallo).mensaje);
     }
   };
-  const borrar = async (nombre: string) => setGuardados(await puente.borrarPreset(nombre));
+
+  const ladoActivo: Lado = lados[editando].ajuste ? editando : 1;
+  const vista = lados[ladoActivo].vista;
 
   const exportar = async () => {
     if (!info) return;
     try {
-      const r = await puente.exportar(info.id, opciones);
+      const r = await puente.exportar(info.id, lados[ladoActivo].ajuste!, ladoActivo);
       if (r) setAviso(t("estudio.exportado", { nombre: r }));
     } catch (e) {
       setError((e as puente.Fallo).mensaje);
@@ -193,7 +226,13 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
     );
   }
 
-  const psnr = vista?.estadisticas.psnr[3];
+  const psnr = vista?.estadisticas?.psnr[3];
+  const sinPerdida = vista?.formato === "webp" && lados[ladoActivo].ajuste!.webp.sin_perdida;
+  const rotulo = (l: Lado) => {
+    const v = lados[l].vista;
+    if (!lados[l].ajuste) return t("comparador.original");
+    return v ? `${nombreFormato(v.formato)} · ${formatoBytes(v.bytes)}` : nombreFormato(lados[l].ajuste!.formato);
+  };
 
   return (
     <div className="estudio">
@@ -216,14 +255,30 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
           </button>
         </Cabecera>
 
-        {info.orientacion !== 1 && !opciones.enderezar && (
+        {info.orientacion !== 1 && !enderezado && (
           <div className="aviso" role="status" data-prueba="aviso-orientacion">
             {t("estudio.avisoOrientacion")}
-            <button onClick={() => setOpciones({ ...opciones, enderezar: true })}>{t("estudio.enderezar")}</button>
+            <button
+              onClick={() => {
+                // Se enderezan los dos lados: si no, no se podrían comparar.
+                for (const l of [0, 1] as const) {
+                  const a = lados[l].ajuste;
+                  if (a) cambiarLado(l, { ajuste: { ...a, proceso: { ...a.proceso, enderezar: true } } });
+                }
+              }}
+            >
+              {t("estudio.enderezar")}
+            </button>
           </div>
         )}
 
-        <Comparador original={original} resultado={resultado} modo={modo} ocupado={ocupado} />
+        <Comparador
+          izquierda={lados[0].ajuste ? lados[0].pixeles : original}
+          derecha={lados[1].pixeles}
+          rotulos={[rotulo(0), rotulo(1)]}
+          ocupados={[lados[0].ocupado, lados[1].ocupado]}
+          modo={modo}
+        />
 
         <footer className="barra-estado" data-prueba="barra-estado">
           <div className="fila-estado">
@@ -232,7 +287,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
             {vista && (
               <div className="datos apagado">
                 {vista.ancho} × {vista.alto} · {vista.milisegundos} ms
-                {psnr !== undefined && !opciones.sin_perdida && ` · PSNR ${psnr.toLocaleString("es", { maximumFractionDigits: 1 })} dB`}
+                {psnr !== undefined && !sinPerdida && ` · PSNR ${psnr.toLocaleString("es", { maximumFractionDigits: 1 })} dB`}
               </div>
             )}
             <button className="principal" onClick={exportar} disabled={!vista} data-prueba="exportar">
@@ -240,10 +295,10 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
               {t("estudio.exportar")}
             </button>
           </div>
-          <OrdenCwebp vista={vista} formato={info.formato} cambiar={setOpciones} />
+          <OrdenHerramienta vista={vista} formato={info.formato} ajuste={lados[ladoActivo].ajuste!} cambiar={ponerAjuste} />
           {vista?.motivo && (
             <p className="motivo apagado" data-prueba="motivo">
-              {t(`orden.motivo.${vista.motivo}`)}
+              {t(`orden.motivo.${vista.motivo}`, { herramienta: vista.herramienta, formato: info.formato })}
             </p>
           )}
         </footer>
@@ -255,15 +310,22 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
       </div>
 
       <Panel
-        opciones={opciones}
+        ajuste={editado}
         contexto={{ alfa: info.alfa, ancho: info.ancho, alto: info.alto }}
         presetsCwebp={inicio.presets_cwebp}
         guardados={guardados}
-        cambiar={setOpciones}
+        cambiar={ponerAjuste}
         aplicarPreset={aplicarPreset}
         nivelSinPerdida={nivelSinPerdida}
         guardar={guardar}
-        borrar={borrar}
+        lado={editando}
+        elegirLado={setEditando}
+        izquierdaOriginal={lados[0].ajuste === null}
+        formatoIzquierda={lados[0].ajuste?.formato ?? null}
+        formatoDerecha={lados[1].ajuste!.formato}
+        usarFormatoIzquierda={(si) =>
+          cambiarLado(0, si ? { ajuste: { ...lados[1].ajuste!, formato: lados[1].ajuste!.formato === "webp" ? "jpeg" : "webp" } } : ladoVacio(null))
+        }
       />
     </div>
   );
@@ -285,7 +347,7 @@ function Pesos({ info, vista }: { info: puente.InfoImagen; vista: puente.Vista |
         <span className="valor">{formatoBytes(info.bytes)}</span>
       </div>
       <div className="peso">
-        <span className="etiqueta">{t("pesos.resultado")}</span>
+        <span className="etiqueta">{t("pesos.resultado", { formato: vista ? nombreFormato(vista.formato) : "…" })}</span>
         <strong className="valor" data-prueba="peso-resultado">{vista ? formatoBytes(vista.bytes) : "…"}</strong>
       </div>
       {vista && (
@@ -312,15 +374,17 @@ function Pesos({ info, vista }: { info: puente.InfoImagen; vista: puente.Vista |
   );
 }
 
-/** La orden cwebp equivalente: se copia, y se puede pegar otra para cargarla. */
-function OrdenCwebp({
+/** La orden de la herramienta: se copia, y se puede pegar otra para cargarla. */
+function OrdenHerramienta({
   vista,
   formato,
+  ajuste,
   cambiar,
 }: {
   vista: puente.Vista | null;
   formato: string;
-  cambiar: (o: OpcionesWebp) => void;
+  ajuste: Ajuste;
+  cambiar: (a: Ajuste) => void;
 }) {
   const { t } = useTranslation();
   const [editando, setEditando] = useState(false);
@@ -335,7 +399,7 @@ function OrdenCwebp({
         onSubmit={async (e) => {
           e.preventDefault();
           try {
-            cambiar(await puente.leerOrden(texto));
+            cambiar(await puente.leerOrden(texto, ajuste));
             setEditando(false);
             setFallo(null);
           } catch (er) {
@@ -352,11 +416,11 @@ function OrdenCwebp({
   }
   return (
     <div className="orden">
-      <code title={vista?.orden} data-prueba="orden">{vista?.orden ?? "cwebp …"}</code>
+      <code title={vista?.orden} data-prueba="orden">{vista?.orden ?? "…"}</code>
       {vista && vista.motivo && (
-        <span className="aviso-orden" title={t(`orden.motivo.${vista.motivo}`)} data-prueba="no-equivalente">
+        <span className="aviso-orden" title={t(`orden.motivo.${vista.motivo}`, { herramienta: vista.herramienta, formato })} data-prueba="no-equivalente">
           {/* Una frase corta según el caso; la explicación larga va debajo. */}
-          {t(`orden.aviso.${vista.motivo}`, { formato })}
+          {t(`orden.aviso.${vista.motivo}`, { formato, herramienta: vista.herramienta })}
         </span>
       )}
       <button

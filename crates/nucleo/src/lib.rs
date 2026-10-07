@@ -14,6 +14,7 @@ pub mod motores;
 pub mod orientacion;
 pub mod presets;
 pub mod proceso;
+pub mod salida;
 pub mod vista;
 pub mod webp;
 

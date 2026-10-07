@@ -9,7 +9,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Cabecera, Icono } from "../componentes";
 import { EVENTO_APLICAR, EVENTO_PRESETS } from "../estudio/Estudio";
-import type { OpcionesWebp } from "../estudio/opciones";
+import type { Ajuste } from "../estudio/opciones";
+import { nombreFormato } from "../estudio/Panel";
 import * as puente from "../puente";
 
 export function Presets({ carpeta, irAlEstudio }: { carpeta: string | null; irAlEstudio: () => void }) {
@@ -49,7 +50,8 @@ export function Presets({ carpeta, irAlEstudio }: { carpeta: string | null; irAl
               key={p.nombre}
               preset={p}
               usar={() => {
-                window.dispatchEvent(new CustomEvent<OpcionesWebp>(EVENTO_APLICAR, { detail: p.webp }));
+                const { nombre: _, ...ajuste } = p;
+                window.dispatchEvent(new CustomEvent<Ajuste>(EVENTO_APLICAR, { detail: ajuste }));
                 irAlEstudio();
               }}
               renombrar={async (nuevo) => {
@@ -85,25 +87,42 @@ function Ficha({
   const [orden, setOrden] = useState("");
   const [nombre, setNombre] = useState<string | null>(null);
   const [seguro, setSeguro] = useState(false);
-  const w = preset.webp;
+  const { nombre: _, ...ajuste } = preset;
+  const w = ajuste.webp;
+  const pr = ajuste.proceso;
 
   useEffect(() => {
-    puente.ordenOpciones(w).then(setOrden, () => {});
-  }, [w]);
+    puente.ordenOpciones(ajuste).then(setOrden, () => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(ajuste)]);
 
   // Lo que hace el preset en una línea: lo que más cambia el resultado.
+  const delFormato =
+    ajuste.formato === "webp"
+      ? [
+          w.sin_perdida
+            ? w.casi_sin_perdida < 100
+              ? t("presets.casiSinPerdida", { valor: w.casi_sin_perdida })
+              : t("presets.sinPerdida")
+            : t("presets.calidad", { valor: w.calidad }),
+          t("presets.metodo", { valor: w.metodo }),
+          ...(w.preset ? [t(`presetCwebp.${w.preset}`)] : []),
+        ]
+      : ajuste.formato === "jpeg"
+        ? [t("presets.calidad", { valor: ajuste.jpeg.calidad[0] ?? 75 })]
+        : ajuste.formato === "png"
+          ? [t("presets.nivelPng", { valor: ajuste.png.nivel })]
+          : [];
   const rasgos = [
-    "WebP",
-    w.sin_perdida
-      ? w.casi_sin_perdida < 100
-        ? t("presets.casiSinPerdida", { valor: w.casi_sin_perdida })
-        : t("presets.sinPerdida")
-      : t("presets.calidad", { valor: w.calidad }),
-    t("presets.metodo", { valor: w.metodo }),
-    ...(w.preset ? [t(`presetCwebp.${w.preset}`)] : []),
-    ...(w.redimension ? [t("presets.redimension", { ancho: w.redimension.ancho || "auto", alto: w.redimension.alto || "auto" })] : []),
-    ...(w.enderezar ? [t("presets.endereza")] : []),
+    nombreFormato(ajuste.formato),
+    ...delFormato,
+    ...(pr.redimension
+      ? [t("presets.redimension", { ancho: pr.redimension.ancho ?? "auto", alto: pr.redimension.alto ?? "auto" })]
+      : []),
+    ...(pr.paleta ? [t("presets.paleta", { colores: pr.paleta.colores })] : []),
+    ...(pr.enderezar || w.enderezar ? [t("presets.endereza")] : []),
   ];
+  const sub = { webp: "webp", jpeg: "jpeg", png: "png", qoi: "qoi" }[ajuste.formato];
 
   return (
     <section className="grupo ficha-preset" data-prueba="preset">
@@ -132,7 +151,9 @@ function Ficha({
           <li key={r}>{r}</li>
         ))}
       </ul>
-      <code className="orden-preset seleccionable">apolo webp -apolo_preset "{preset.nombre}"</code>
+      <code className="orden-preset seleccionable">
+        apolo {sub} -apolo_preset "{preset.nombre}"
+      </code>
       <p className="apagado equivale">
         {t("presets.equivale")} <code className="seleccionable">{orden}</code>
       </p>

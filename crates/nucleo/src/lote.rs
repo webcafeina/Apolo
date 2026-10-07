@@ -23,8 +23,8 @@ use std::time::Instant;
 
 use serde::Serialize;
 
-use crate::cwebp::{self, OrdenCwebp};
-use crate::webp::OpcionesWebp;
+use crate::entrada::{self, Imagen, Lectura};
+use crate::salida::{self, Ajuste, FormatoSalida};
 use crate::{Error, Resultado};
 
 /// Las extensiones que se recogen de una carpeta. Un fichero suelto se
@@ -119,9 +119,20 @@ pub fn recoger(entradas: &[PathBuf], excluir: Option<&Path>) -> Vec<Elemento> {
     v
 }
 
+/// El sufijo de la carpeta que se propone: la extensión del formato si es
+/// uno solo («-webp», «-jpg»…), y «-apolo» si son varios.
+pub fn sufijo(ajustes: &[Ajuste]) -> String {
+    let mut formatos: Vec<FormatoSalida> = ajustes.iter().map(|a| a.formato).collect();
+    formatos.dedup();
+    match formatos.as_slice() {
+        [f] => f.extension().to_string(),
+        _ => "apolo".to_string(),
+    }
+}
+
 /// La carpeta de salida que se propone: junto a la carpeta de entrada (o a la
-/// de los ficheros), con «-webp» detrás.
-pub fn salida_sugerida(entradas: &[PathBuf]) -> Option<PathBuf> {
+/// de los ficheros), con `-sufijo` detrás.
+pub fn salida_sugerida(entradas: &[PathBuf], sufijo: &str) -> Option<PathBuf> {
     let primera = std::path::absolute(entradas.first()?).ok()?;
     let carpeta = if entradas.len() == 1 && primera.is_dir() {
         primera
@@ -129,7 +140,7 @@ pub fn salida_sugerida(entradas: &[PathBuf]) -> Option<PathBuf> {
         primera.parent()?.to_path_buf()
     };
     let nombre = carpeta.file_name()?.to_string_lossy().into_owned();
-    Some(carpeta.with_file_name(format!("{nombre}-webp")))
+    Some(carpeta.with_file_name(format!("{nombre}-{sufijo}")))
 }
 
 /// Escribe `datos` en `ruta` o, si ya existe, en `nombre-2.ext`, `nombre-3.ext`…
@@ -181,40 +192,78 @@ pub struct Hecho {
     pub indice: usize,
     pub relativa: PathBuf,
     pub bytes_entrada: u64,
-    /// Dónde quedó y cuánto pesa; o por qué no se pudo.
-    pub resultado: Result<Salida, String>,
+    /// Los ficheros que dejó (uno por ajuste, o el más ligero); o por qué
+    /// no se pudo.
+    pub resultado: Result<Vec<Salida>, String>,
+}
+
+impl Hecho {
+    /// El más ligero de los que dejó.
+    pub fn principal(&self) -> Option<&Salida> {
+        self.resultado.as_ref().ok()?.iter().min_by_key(|s| s.bytes)
+    }
 }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Salida {
+    pub formato: FormatoSalida,
     pub ruta: PathBuf,
     pub bytes: u64,
     pub milisegundos: u64,
 }
 
-/// Convierte una imagen y la escribe en `destino`, sin pisar nada.
+/// Lee una imagen para convertirla: con metadatos si se puede, y sin ellos
+/// si están rotos (como el Estudio).
+fn leer(datos: &[u8]) -> Resultado<Imagen> {
+    entrada::leer(datos, Lectura::default()).or_else(|_| {
+        entrada::leer(
+            datos,
+            Lectura {
+                conservar_alfa: true,
+                metadatos: false,
+            },
+        )
+    })
+}
+
+/// Convierte una imagen con cada ajuste y escribe en `destino`, sin pisar
+/// nada. Con `solo_mas_ligero`, escribe solo el que menos pese.
 pub fn convertir(
     e: &Elemento,
     destino: &Path,
-    opciones: &OpcionesWebp,
+    ajustes: &[Ajuste],
+    solo_mas_ligero: bool,
     seguir: &mut dyn FnMut(i32) -> bool,
-) -> Resultado<Salida> {
-    let reloj = Instant::now();
+) -> Resultado<Vec<Salida>> {
     let datos = std::fs::read(&e.origen)
         .map_err(|x| Error::Fichero(format!("No se puede leer «{}»: {x}", e.origen.display())))?;
-    let orden = OrdenCwebp {
-        opciones: opciones.clone(),
-        ..OrdenCwebp::default()
-    };
-    let r = cwebp::ejecutar(&orden, &datos, Some(seguir))?;
-    let ruta = destino.join(&e.relativa).with_extension("webp");
-    let ruta = escribir_sin_pisar(&ruta, &r.datos)
-        .map_err(|x| Error::Fichero(format!("No se puede escribir «{}»: {x}", ruta.display())))?;
-    Ok(Salida {
-        ruta,
-        bytes: r.datos.len() as u64,
-        milisegundos: reloj.elapsed().as_millis() as u64,
-    })
+    let img = leer(&datos)?;
+    let mut hechos: Vec<(FormatoSalida, Vec<u8>, u64)> = Vec::new();
+    for a in ajustes {
+        let reloj = Instant::now();
+        let r = salida::codificar(&datos, &img, a, Some(&mut *seguir))?;
+        hechos.push((a.formato, r.datos, reloj.elapsed().as_millis() as u64));
+    }
+    if solo_mas_ligero && let Some(i) = (0..hechos.len()).min_by_key(|&i| hechos[i].1.len()) {
+        let elegido = hechos.swap_remove(i);
+        hechos = vec![elegido];
+    }
+    let mut salidas = Vec::new();
+    for (formato, bytes, ms) in hechos {
+        let ruta = destino
+            .join(&e.relativa)
+            .with_extension(formato.extension());
+        let ruta = escribir_sin_pisar(&ruta, &bytes).map_err(|x| {
+            Error::Fichero(format!("No se puede escribir «{}»: {x}", ruta.display()))
+        })?;
+        salidas.push(Salida {
+            formato,
+            ruta,
+            bytes: bytes.len() as u64,
+            milisegundos: ms,
+        });
+    }
+    Ok(salidas)
 }
 
 /// Cuántos hilos usar: uno por núcleo, como mucho ocho. Cada hilo tiene una
@@ -232,7 +281,8 @@ pub fn hilos_por_defecto() -> usize {
 pub fn ejecutar(
     elementos: &[Elemento],
     destino: &Path,
-    opciones: &OpcionesWebp,
+    ajustes: &[Ajuste],
+    solo_mas_ligero: bool,
     hilos: usize,
     cancelado: &AtomicBool,
     avisar: &(dyn Fn(Hecho) + Sync),
@@ -248,7 +298,7 @@ pub fn ejecutar(
                     let i = siguiente.fetch_add(1, Ordering::Relaxed);
                     let Some(e) = elementos.get(i) else { return };
                     let mut seguir = |_| !cancelado.load(Ordering::Relaxed);
-                    let r = convertir(e, destino, opciones, &mut seguir);
+                    let r = convertir(e, destino, ajustes, solo_mas_ligero, &mut seguir);
                     if matches!(r, Err(Error::Cancelado)) {
                         return;
                     }
@@ -268,6 +318,17 @@ pub fn ejecutar(
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct Destacada {
     pub relativa: PathBuf,
+    pub formato: FormatoSalida,
+    pub bytes_entrada: u64,
+    pub bytes_salida: u64,
+}
+
+/// Lo de un formato en el resumen.
+#[derive(Debug, Clone, Serialize, PartialEq)]
+pub struct PorFormato {
+    pub formato: FormatoSalida,
+    pub ficheros: usize,
+    /// Lo que pesaban los originales de esos ficheros, y lo que pesan ellos.
     pub bytes_entrada: u64,
     pub bytes_salida: u64,
 }
@@ -277,12 +338,17 @@ pub struct Destacada {
 pub struct Resumen {
     pub convertidas: usize,
     pub fallidas: usize,
-    /// Las que pesan más que el original. Se guardan igual.
+    /// Las imágenes cuyo fichero más ligero pesa más que el original. Se
+    /// guardan igual.
     pub mayores: usize,
-    /// De las convertidas: lo que pesaban y lo que pesan.
+    /// De las convertidas: lo que pesaban, y lo que pesa el más ligero de
+    /// cada una.
     pub bytes_entrada: u64,
     pub bytes_salida: u64,
-    /// Las que menos ahorran (o más crecen), de peor a mejor. Como mucho cinco.
+    /// Por formato, en el orden en que aparecen.
+    pub por_formato: Vec<PorFormato>,
+    /// Las que menos ahorran (o más crecen), de peor a mejor, por su fichero
+    /// más ligero. Como mucho cinco.
     pub peores: Vec<Destacada>,
 }
 
@@ -291,22 +357,38 @@ impl Resumen {
         let mut r = Resumen::default();
         let mut ok = Vec::new();
         for h in hechos {
-            match &h.resultado {
-                Ok(s) => {
-                    r.convertidas += 1;
-                    r.bytes_entrada += h.bytes_entrada;
-                    r.bytes_salida += s.bytes;
-                    if s.bytes > h.bytes_entrada {
-                        r.mayores += 1;
+            let Ok(salidas) = &h.resultado else {
+                r.fallidas += 1;
+                continue;
+            };
+            for s in salidas {
+                match r.por_formato.iter_mut().find(|p| p.formato == s.formato) {
+                    Some(p) => {
+                        p.ficheros += 1;
+                        p.bytes_entrada += h.bytes_entrada;
+                        p.bytes_salida += s.bytes;
                     }
-                    ok.push(Destacada {
-                        relativa: h.relativa.clone(),
+                    None => r.por_formato.push(PorFormato {
+                        formato: s.formato,
+                        ficheros: 1,
                         bytes_entrada: h.bytes_entrada,
                         bytes_salida: s.bytes,
-                    });
+                    }),
                 }
-                Err(_) => r.fallidas += 1,
             }
+            let Some(p) = h.principal() else { continue };
+            r.convertidas += 1;
+            r.bytes_entrada += h.bytes_entrada;
+            r.bytes_salida += p.bytes;
+            if p.bytes > h.bytes_entrada {
+                r.mayores += 1;
+            }
+            ok.push(Destacada {
+                relativa: h.relativa.clone(),
+                formato: p.formato,
+                bytes_entrada: h.bytes_entrada,
+                bytes_salida: p.bytes,
+            });
         }
         let proporcion = |d: &Destacada| d.bytes_salida as f64 / d.bytes_entrada.max(1) as f64;
         ok.sort_by(|a, b| proporcion(b).total_cmp(&proporcion(a)));
@@ -319,6 +401,7 @@ impl Resumen {
 #[cfg(test)]
 mod pruebas {
     use super::*;
+    use crate::cwebp::{self, OrdenCwebp};
     use std::sync::Mutex;
 
     fn corpus(nombre: &str) -> PathBuf {
@@ -361,7 +444,7 @@ mod pruebas {
             ["a.webp", "playa/b.png"]
         );
         assert_eq!(
-            salida_sugerida(std::slice::from_ref(&d)).unwrap(),
+            salida_sugerida(std::slice::from_ref(&d), "webp").unwrap(),
             d.with_file_name("vacaciones-webp")
         );
     }
@@ -418,14 +501,20 @@ mod pruebas {
             relativa: "rota.png".into(),
             bytes: 13,
         });
-        let op = OpcionesWebp {
-            calidad: 60.0,
-            ..OpcionesWebp::default()
-        };
+        let mut a = Ajuste::default();
+        a.webp.calidad = 60.0;
+        let op = a.webp.clone();
+        let ajustes = [a];
         let hechos = Mutex::new(Vec::new());
-        ejecutar(&elementos, &salida, &op, 3, &AtomicBool::new(false), &|h| {
-            hechos.lock().unwrap().push(h)
-        });
+        ejecutar(
+            &elementos,
+            &salida,
+            &ajustes,
+            false,
+            3,
+            &AtomicBool::new(false),
+            &|h| hechos.lock().unwrap().push(h),
+        );
         let hechos = hechos.into_inner().unwrap();
         assert_eq!(hechos.len(), 3);
 
@@ -455,13 +544,84 @@ mod pruebas {
         ejecutar(
             &elementos[..1],
             &salida,
-            &op,
+            &ajustes,
+            false,
             1,
             &AtomicBool::new(false),
             &|h| hechos2.lock().unwrap().push(h),
         );
         let h = &hechos2.into_inner().unwrap()[0];
-        assert_eq!(h.resultado.as_ref().unwrap().ruta, salida.join("a-2.webp"));
+        assert_eq!(
+            h.resultado.as_ref().unwrap()[0].ruta,
+            salida.join("a-2.webp")
+        );
+    }
+
+    #[test]
+    fn varios_formatos_y_el_mas_ligero() {
+        let d = arbol("formatos");
+        let elementos = recoger(std::slice::from_ref(&d), None);
+        let ajustes: Vec<Ajuste> = [FormatoSalida::Webp, FormatoSalida::Png, FormatoSalida::Qoi]
+            .into_iter()
+            .map(|formato| Ajuste {
+                formato,
+                ..Default::default()
+            })
+            .collect();
+        // Todos: un fichero por formato y por imagen.
+        let todos = d.with_file_name("formatos-todos");
+        let hechos = Mutex::new(Vec::new());
+        ejecutar(
+            &elementos,
+            &todos,
+            &ajustes,
+            false,
+            2,
+            &AtomicBool::new(false),
+            &|h| hechos.lock().unwrap().push(h),
+        );
+        let hechos = hechos.into_inner().unwrap();
+        assert!(
+            hechos
+                .iter()
+                .all(|h| h.resultado.as_ref().unwrap().len() == 3)
+        );
+        assert!(
+            todos.join("a.png").exists()
+                && todos.join("a.qoi").exists()
+                && todos.join("a.webp").exists()
+        );
+        let r = Resumen::de(&hechos);
+        assert_eq!(r.por_formato.len(), 3);
+        assert!(r.por_formato.iter().all(|p| p.ficheros == 2));
+        // El más ligero: uno por imagen, y es el menor de los tres.
+        let ligero = d.with_file_name("formatos-ligero");
+        let hechos2 = Mutex::new(Vec::new());
+        ejecutar(
+            &elementos,
+            &ligero,
+            &ajustes,
+            true,
+            2,
+            &AtomicBool::new(false),
+            &|h| hechos2.lock().unwrap().push(h),
+        );
+        for h in hechos2.into_inner().unwrap() {
+            let s = h.resultado.unwrap();
+            assert_eq!(s.len(), 1);
+            let otros = hechos
+                .iter()
+                .find(|x| x.relativa == h.relativa)
+                .unwrap()
+                .resultado
+                .as_ref()
+                .unwrap()
+                .iter()
+                .map(|x| x.bytes)
+                .min()
+                .unwrap();
+            assert_eq!(s[0].bytes, otros);
+        }
     }
 
     #[test]
@@ -475,14 +635,13 @@ mod pruebas {
         let cancelado = AtomicBool::new(false);
         let n = AtomicUsize::new(0);
         // Calidad lenta a propósito (-m 6), y se cancela con la primera hecha.
-        let op = OpcionesWebp {
-            metodo: 6,
-            ..OpcionesWebp::default()
-        };
+        let mut a = Ajuste::default();
+        a.webp.metodo = 6;
         ejecutar(
             &elementos,
             &d.with_file_name("medias-salida"),
-            &op,
+            &[a],
+            false,
             2,
             &cancelado,
             &|_| {
@@ -502,7 +661,8 @@ mod pruebas {
         ejecutar(
             &elementos,
             &d.with_file_name("salida"),
-            &OpcionesWebp::default(),
+            &[Ajuste::default()],
+            false,
             2,
             &AtomicBool::new(true),
             &|_| {

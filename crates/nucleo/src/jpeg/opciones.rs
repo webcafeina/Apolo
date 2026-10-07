@@ -440,7 +440,15 @@ impl OpcionesJpeg {
 
     /// Lee opciones de cjpeg (y de Apolo), sin ficheros.
     pub fn leer<S: AsRef<str>>(args: &[S]) -> Result<OpcionesJpeg, String> {
-        let mut o = OpcionesJpeg::default();
+        Self::leer_desde(&OpcionesJpeg::default(), args)
+    }
+
+    /// Lo mismo, encima de unas opciones de partida (un preset).
+    pub fn leer_desde<S: AsRef<str>>(
+        base: &OpcionesJpeg,
+        args: &[S],
+    ) -> Result<OpcionesJpeg, String> {
+        let mut o = base.clone();
         let mut i = 0;
         while i < args.len() {
             let a = args[i].as_ref();
@@ -479,7 +487,18 @@ pub struct OrdenCjpeg {
 /// es la forma de Windows). `-qtables` y `-scans` (ficheros de tablas y de
 /// escaneos) no están todavía.
 pub fn leer_orden<S: AsRef<str>>(args: &[S]) -> Result<OrdenCjpeg, String> {
-    let mut o = OrdenCjpeg::default();
+    leer_orden_desde(&OpcionesJpeg::default(), args)
+}
+
+/// Lo mismo, encima de unas opciones de partida (un preset).
+pub fn leer_orden_desde<S: AsRef<str>>(
+    base: &OpcionesJpeg,
+    args: &[S],
+) -> Result<OrdenCjpeg, String> {
+    let mut o = OrdenCjpeg {
+        opciones: base.clone(),
+        ..Default::default()
+    };
     let mut ficheros = Vec::new();
     let mut i = 0;
     while i < args.len() {

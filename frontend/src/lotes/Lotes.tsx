@@ -17,7 +17,8 @@ import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Cabecera, Icono } from "../componentes";
 import { EVENTO_PRESETS, formatoBytes } from "../estudio/Estudio";
-import type { OpcionesWebp, Preset } from "../estudio/opciones";
+import { FORMATOS, type Ajuste, type FormatoSalida, type Preset } from "../estudio/opciones";
+import { nombreFormato } from "../estudio/Panel";
 import * as puente from "../puente";
 
 const CADA_MS = 250;
@@ -28,6 +29,15 @@ type Momento =
   | { es: "preparando" }
   | { es: "convirtiendo"; lote: puente.LoteEmpezado; estado: puente.EstadoLote | null; filas: puente.Fila[] }
   | { es: "terminado"; lote: puente.LoteEmpezado; estado: puente.EstadoLote; filas: puente.Fila[] };
+
+/** Una salida del lote: un formato y su preset («defecto», «cwebp:photo» o «apolo:Nombre»). */
+interface SalidaLote {
+  formato: FormatoSalida;
+  eleccion: string;
+}
+
+const EXTENSION: Record<FormatoSalida, string> = { webp: "webp", jpeg: "jpg", png: "png", qoi: "qoi" };
+const HERRAMIENTA: Record<FormatoSalida, string> = { webp: "cwebp", jpeg: "cjpeg", png: "oxipng", qoi: "qoiconv" };
 
 export function ahorro(antes: number, despues: number): number {
   return antes > 0 ? Math.round((1 - despues / antes) * 100) : 0;
@@ -46,9 +56,11 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
   const [entradas, setEntradas] = useState<string[]>([]);
   const [recogida, setRecogida] = useState<puente.Recogida | null>(null);
   const [salida, setSalida] = useState("");
-  const [eleccion, setEleccion] = useState("defecto");
-  const [opciones, setOpciones] = useState<OpcionesWebp>(inicio.opciones);
-  const [orden, setOrden] = useState("");
+  // Una salida por formato pedido (ADR 0020): su formato y su preset.
+  const [salidas, setSalidas] = useState<SalidaLote[]>([{ formato: "webp", eleccion: "defecto" }]);
+  const [ajustes, setAjustes] = useState<Ajuste[]>([inicio.ajuste]);
+  const [ordenes, setOrdenes] = useState<string[]>([]);
+  const [soloMasLigero, setSoloMasLigero] = useState(false);
   const [guardados, setGuardados] = useState<puente.PresetGuardado[]>([]);
   const [momento, setMomento] = useState<Momento>({ es: "preparando" });
   const [error, setError] = useState<string | null>(null);
@@ -64,31 +76,45 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
     return () => window.removeEventListener(EVENTO_PRESETS, cargar);
   }, []);
 
-  // Las opciones del preset elegido, y su orden cwebp para enseñarla.
+  // El ajuste de cada salida (su formato con su preset), y la orden de su
+  // herramienta para enseñarla.
   useEffect(() => {
     let vale = true;
-    const base = inicio.opciones;
-    const calcular: Promise<OpcionesWebp> = eleccion.startsWith("cwebp:")
-      ? puente.aplicarPreset(base, eleccion.slice(6) as Preset)
-      : eleccion.startsWith("apolo:")
-        ? Promise.resolve(guardados.find((g) => g.nombre === eleccion.slice(6))?.webp ?? base)
-        : Promise.resolve(base);
-    calcular
-      .then(async (o) => {
-        // Sin opciones, `orden_opciones` da una frase («las opciones por
-        // defecto»); aquí se enseña la orden tal cual: `cwebp` a secas.
-        const args = await puente.ordenOpciones(o);
-        const texto = args.startsWith("(") ? "cwebp" : `cwebp ${args}`;
+    const base = inicio.ajuste;
+    Promise.all(
+      salidas.map(async (s): Promise<Ajuste> => {
+        if (s.eleccion.startsWith("cwebp:"))
+          return { ...base, formato: "webp", webp: await puente.aplicarPreset(base.webp, s.eleccion.slice(6) as Preset) };
+        if (s.eleccion.startsWith("apolo:")) {
+          const g = guardados.find((x) => x.nombre === s.eleccion.slice(6));
+          if (g) {
+            const { nombre: _, ...a } = g;
+            return a;
+          }
+        }
+        return { ...base, formato: s.formato };
+      }),
+    )
+      .then(async (a) => {
+        const o = await Promise.all(a.map((x) => puente.ordenOpciones(x)));
         if (vale) {
-          setOpciones(o);
-          setOrden(texto);
+          setAjustes(a);
+          setOrdenes(o);
         }
       })
       .catch(() => {});
     return () => {
       vale = false;
     };
-  }, [eleccion, guardados, inicio.opciones]);
+  }, [salidas, guardados, inicio.ajuste]);
+
+  // La carpeta propuesta lleva el sufijo de lo que se pide: «-webp», «-jpg»…
+  // o «-apolo» si son varios formatos.
+  const formatosPedidos = [...new Set(salidas.map((s) => s.formato))];
+  const sufijo = formatosPedidos.length === 1 ? EXTENSION[formatosPedidos[0]] : "apolo";
+  useEffect(() => {
+    if (!salidaElegida.current && recogida?.salida_sugerida) setSalida(`${recogida.salida_sugerida}-${sufijo}`);
+  }, [sufijo, recogida]);
 
   // Lo que hay en lo elegido, cada vez que cambia.
   useEffect(() => {
@@ -101,7 +127,6 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
       (r) => {
         if (!vale) return;
         setRecogida(r);
-        if (!salidaElegida.current) setSalida(r.salida_sugerida ?? "");
       },
       (e: puente.Fallo) => vale && setError(e.mensaje),
     );
@@ -156,7 +181,7 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
   async function convertir() {
     setError(null);
     try {
-      const lote = await puente.empezarLote(entradas, opciones, salida);
+      const lote = await puente.empezarLote(entradas, ajustes, soloMasLigero && ajustes.length > 1, salida);
       setMomento({ es: "convirtiendo", lote, estado: null, filas: [] });
     } catch (e) {
       setError((e as puente.Fallo).mensaje);
@@ -265,45 +290,39 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
 
               <section className="grupo">
                 <h2>{t("lotes.como")}</h2>
-                {/* El mismo que el del panel del Estudio: hoy solo WebP, y los
-                    demás se ven como «pronto» (entrega 5). Lo pidió el cliente al
-                    probar la v0.4.0, para que se vea que el formato se elige. */}
-                <label className="campo">
-                  <span>{t("panel.formato")}</span>
-                  <select value="webp" onChange={() => {}} data-prueba="formato-lote">
-                    <option value="webp">WebP</option>
-                    {["avif", "jxl", "mozjpeg", "oxipng", "qoi"].map((f) => (
-                      <option key={f} value={f} disabled>
-                        {t(`formato.${f}`)} · {t("panel.pronto")}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="campo">
-                  <span>{t("lotes.preset")}</span>
-                  <select value={eleccion} onChange={(e) => setEleccion(e.target.value)} data-prueba="preset-lote">
-                    <option value="defecto">{t("lotes.porDefecto")}</option>
-                    {guardados.length > 0 && (
-                      <optgroup label={t("panel.presetsGuardados")}>
-                        {guardados.map((g) => (
-                          <option key={g.nombre} value={`apolo:${g.nombre}`}>
-                            {g.nombre}
-                          </option>
-                        ))}
-                      </optgroup>
-                    )}
-                    <optgroup label={t("panel.presetsCwebp")}>
-                      {inicio.presets_cwebp.map((p) => (
-                        <option key={p} value={`cwebp:${p}`}>
-                          {t(`presetCwebp.${p}`)}
-                        </option>
-                      ))}
-                    </optgroup>
-                  </select>
-                </label>
-                <p className="apagado">
-                  {t("lotes.formato")} <code data-prueba="orden-lote">{orden}</code>
-                </p>
+                {salidas.map((s, i) => (
+                  <FilaSalida
+                    key={i}
+                    indice={i}
+                    salida={s}
+                    orden={ordenes[i] ?? ""}
+                    guardados={guardados}
+                    presetsCwebp={inicio.presets_cwebp}
+                    cambiar={(n) => setSalidas((x) => x.map((y, k) => (k === i ? n : y)))}
+                    quitar={salidas.length > 1 ? () => setSalidas((x) => x.filter((_, k) => k !== i)) : undefined}
+                  />
+                ))}
+                <div className="pareja">
+                  <button
+                    onClick={() => {
+                      // El siguiente formato que no esté ya.
+                      const libre = FORMATOS.find((f) => !salidas.some((s) => s.formato === f)) ?? "webp";
+                      setSalidas((x) => [...x, { formato: libre, eleccion: "defecto" }]);
+                    }}
+                    data-prueba="anadir-formato"
+                  >
+                    {t("lotes.anadirFormato")}
+                  </button>
+                </div>
+                {salidas.length > 1 && (
+                  <label className="casilla" data-prueba="mas-ligero">
+                    <input type="checkbox" checked={soloMasLigero} onChange={(e) => setSoloMasLigero(e.target.checked)} />
+                    {t("lotes.masLigero")}
+                  </label>
+                )}
+                {salidas.length > 1 && (
+                  <p className="apagado">{t(soloMasLigero ? "lotes.masLigeroDetalle" : "lotes.todosDetalle")}</p>
+                )}
               </section>
 
               <section className="grupo">
@@ -402,6 +421,24 @@ function Progreso({
                     <strong>{t("lotes.ahorro", { porcentaje: ahorro(r.bytes_entrada, r.bytes_salida) })}</strong>
                   </p>
                 )}
+                {/* Con varios formatos: cuántos ficheros de cada uno y cuánto pesan
+                    (todos guardados) o cuántas imágenes ganó cada uno (el más ligero). */}
+                {r.por_formato.length > 1 && (
+                  <ul className="por-formato" data-prueba="por-formato">
+                    {r.por_formato.map((f) => (
+                      <li key={f.formato}>
+                        <strong>{nombreFormato(f.formato)}</strong>
+                        <span className="apagado">
+                          {" · "}
+                          {t("lotes.ficheros", { count: f.ficheros })}
+                          {" · "}
+                          {formatoBytes(f.bytes_entrada)} → {formatoBytes(f.bytes_salida)}
+                        </span>
+                        <span className="cifra">{t("lotes.ahorro", { porcentaje: ahorro(f.bytes_entrada, f.bytes_salida) })}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {r.mayores > 0 && <p className="aviso-texto">{t("lotes.mayores", { count: r.mayores })}</p>}
                 {r.fallidas > 0 && <p className="error">{t("lotes.fallidas", { count: r.fallidas })}</p>}
                 <p className="apagado">{t("lotes.dondeQuedo", { salida: momento.lote.salida })}</p>
@@ -429,7 +466,12 @@ function Progreso({
                 {r.peores.map((p) => (
                   <FilaLote
                     key={p.relativa}
-                    fila={{ relativa: p.relativa, bytes_entrada: p.bytes_entrada, bytes_salida: p.bytes_salida, ruta: null, error: null }}
+                    fila={{
+                      relativa: p.relativa,
+                      bytes_entrada: p.bytes_entrada,
+                      salidas: [{ formato: p.formato, bytes: p.bytes_salida, ruta: "" }],
+                      error: null,
+                    }}
                   />
                 ))}
               </ul>
@@ -460,7 +502,14 @@ function Progreso({
 
 function FilaLote({ fila }: { fila: puente.Fila }) {
   const { t } = useTranslation();
-  const crece = fila.bytes_salida !== null && fila.bytes_salida > fila.bytes_entrada;
+  // La más ligera de las que dejó; con varias, las demás en el título.
+  const principal = fila.salidas[0];
+  const bytesSalida = principal?.bytes ?? 0;
+  const crece = principal !== undefined && bytesSalida > fila.bytes_entrada;
+  const resto = fila.salidas
+    .slice(1)
+    .map((s) => `${nombreFormato(s.formato)} ${formatoBytes(s.bytes)}`)
+    .join(" · ");
   return (
     <li className={fila.error ? "con-error" : undefined}>
       <span className="nombre" title={fila.relativa}>
@@ -470,16 +519,106 @@ function FilaLote({ fila }: { fila: puente.Fila }) {
         <span className="error">{fila.error}</span>
       ) : (
         <>
-          <span className="apagado">
-            {formatoBytes(fila.bytes_entrada)} → {formatoBytes(fila.bytes_salida ?? 0)}
+          <span className="apagado" title={resto || undefined}>
+            {formatoBytes(fila.bytes_entrada)} → {principal && `${nombreFormato(principal.formato)} `}
+            {formatoBytes(bytesSalida)}
+            {fila.salidas.length > 1 && " …"}
           </span>
           <span className={crece ? "aviso-texto cifra" : "cifra"}>
             {crece
-              ? t("lotes.crece", { porcentaje: -ahorro(fila.bytes_entrada, fila.bytes_salida ?? 0) })
-              : `−${ahorro(fila.bytes_entrada, fila.bytes_salida ?? 0)} %`}
+              ? t("lotes.crece", { porcentaje: -ahorro(fila.bytes_entrada, bytesSalida) })
+              : `−${ahorro(fila.bytes_entrada, bytesSalida)} %`}
           </span>
         </>
       )}
     </li>
+  );
+}
+
+/** Una salida pedida: formato, preset y la orden de su herramienta. */
+function FilaSalida({
+  indice,
+  salida: s,
+  orden,
+  guardados,
+  presetsCwebp,
+  cambiar,
+  quitar,
+}: {
+  indice: number;
+  salida: SalidaLote;
+  orden: string;
+  guardados: puente.PresetGuardado[];
+  presetsCwebp: Preset[];
+  cambiar: (s: SalidaLote) => void;
+  quitar?: () => void;
+}) {
+  const { t } = useTranslation();
+  // La primera conserva los nombres de prueba de siempre.
+  const prueba = (n: string) => (indice === 0 ? n : `${n}-${indice}`);
+  const suyos = guardados.filter((g) => g.formato === s.formato);
+  return (
+    <div className="salida-lote" data-prueba={prueba("salida-lote")}>
+      <div className="pareja">
+        <label className="campo">
+          <span>{t("panel.formato")}</span>
+          <select
+            value={s.formato}
+            onChange={(e) => cambiar({ formato: e.target.value as FormatoSalida, eleccion: "defecto" })}
+            data-prueba={prueba("formato-lote")}
+          >
+            {FORMATOS.map((f) => (
+              <option key={f} value={f}>
+                {t(`formatoSalida.${f}`)}
+              </option>
+            ))}
+            {["avif", "jxl"].map((f) => (
+              <option key={f} value={f} disabled>
+                {t(`formato.${f}`)} · {t("panel.pronto")}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="campo crece">
+          <span>{t("lotes.preset")}</span>
+          <select
+            value={s.eleccion}
+            onChange={(e) => cambiar({ ...s, eleccion: e.target.value })}
+            data-prueba={prueba("preset-lote")}
+            disabled={s.formato === "qoi"}
+          >
+            <option value="defecto">
+              {s.formato === "qoi" ? t("lotes.sinOpciones") : t("lotes.porDefecto", { herramienta: HERRAMIENTA[s.formato] })}
+            </option>
+            {suyos.length > 0 && (
+              <optgroup label={t("panel.presetsGuardados")}>
+                {suyos.map((g) => (
+                  <option key={g.nombre} value={`apolo:${g.nombre}`}>
+                    {g.nombre}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+            {s.formato === "webp" && (
+              <optgroup label={t("panel.presetsCwebp")}>
+                {presetsCwebp.map((p) => (
+                  <option key={p} value={`cwebp:${p}`}>
+                    {t(`presetCwebp.${p}`)}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+          </select>
+        </label>
+        {quitar && (
+          <button className="discreto quitar-salida" onClick={quitar} aria-label={t("lotes.quitarFormato", { formato: nombreFormato(s.formato) })}>
+            ×
+          </button>
+        )}
+      </div>
+      <p className="apagado">
+        {t("lotes.formato", { formato: nombreFormato(s.formato) })} <code data-prueba={prueba("orden-lote")}>{orden}</code>
+      </p>
+    </div>
   );
 }

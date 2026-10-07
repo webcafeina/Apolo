@@ -76,3 +76,58 @@ fn yuv_a_rgba(d: &[u8], ancho: u32, alto: u32) -> (u32, u32, Vec<u8>) {
     }
     (ancho, alto, s)
 }
+
+/// RGBA de un fichero de salida, para enseñarlo: WebP, JPEG, PNG o QOI.
+/// Sin corrección de gamma (como lo pinta un navegador).
+pub fn decodificar(datos: &[u8]) -> Resultado<(u32, u32, Vec<u8>)> {
+    match datos.get(..4) {
+        Some(b"RIFF") => decodificar_webp(datos),
+        Some(b"qoif") => {
+            let img = image::load_from_memory_with_format(datos, image::ImageFormat::Qoi)
+                .map_err(|e| crate::Error::lectura("QOI", e))?;
+            Ok((img.width(), img.height(), img.into_rgba8().into_raw()))
+        }
+        Some([0x89, b'P', b'N', b'G']) => {
+            let mut d = png::Decoder::new(std::io::Cursor::new(datos));
+            d.set_transformations(png::Transformations::EXPAND | png::Transformations::STRIP_16);
+            let mut l = d.read_info().map_err(|e| crate::Error::lectura("PNG", e))?;
+            let mut buf = vec![0; l.output_buffer_size().unwrap_or(0)];
+            let marco = l
+                .next_frame(&mut buf)
+                .map_err(|e| crate::Error::lectura("PNG", e))?;
+            buf.truncate(marco.buffer_size());
+            let (w, h) = (marco.width, marco.height);
+            let rgba = match marco.color_type {
+                png::ColorType::Rgba => buf,
+                png::ColorType::Rgb => buf
+                    .as_chunks::<3>()
+                    .0
+                    .iter()
+                    .flat_map(|p| [p[0], p[1], p[2], 255])
+                    .collect(),
+                png::ColorType::Grayscale => buf.iter().flat_map(|&g| [g, g, g, 255]).collect(),
+                png::ColorType::GrayscaleAlpha => buf
+                    .as_chunks::<2>()
+                    .0
+                    .iter()
+                    .flat_map(|p| [p[0], p[0], p[0], p[1]])
+                    .collect(),
+                png::ColorType::Indexed => {
+                    return Err(crate::Error::lectura("PNG", "paleta sin expandir"));
+                }
+            };
+            Ok((w, h, rgba))
+        }
+        _ => {
+            // JPEG (u otro que Apolo lea).
+            let img = crate::entrada::leer(
+                datos,
+                crate::entrada::Lectura {
+                    conservar_alfa: true,
+                    metadatos: false,
+                },
+            )?;
+            rgba(&img)
+        }
+    }
+}

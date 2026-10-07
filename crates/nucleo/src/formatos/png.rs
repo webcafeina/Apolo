@@ -355,7 +355,15 @@ pub struct OrdenOxipng {
 /// clap. Admite `--opción valor` y `--opción=valor`, y las letras sueltas
 /// juntas (`-sa`).
 pub fn leer_orden<S: AsRef<str>>(args: &[S]) -> Resultado<OrdenOxipng> {
-    let mut o = OrdenOxipng::default();
+    leer_orden_desde(&OpcionesPng::default(), args)
+}
+
+/// Lo mismo, encima de unas opciones de partida (un preset).
+pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesPng, args: &[S]) -> Resultado<OrdenOxipng> {
+    let mut o = OrdenOxipng {
+        opciones: base.clone(),
+        ..Default::default()
+    };
     let op = &mut o.opciones;
     let mut cola: std::collections::VecDeque<String> =
         args.iter().map(|s| s.as_ref().to_string()).collect();

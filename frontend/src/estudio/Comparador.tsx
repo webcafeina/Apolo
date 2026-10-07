@@ -1,4 +1,5 @@
-// El comparador: original y resultado sobre el mismo lienzo, con deslizador
+// El comparador: dos lados sobre el mismo lienzo —el original o un resultado
+// a la izquierda, un resultado a la derecha (ADR 0020)—, con deslizador
 // o lado a lado, zoom con la rueda (alrededor del cursor) y arrastre para
 // moverse. Los dos lados comparten la vista: lo que se acerca en uno se
 // acerca en el otro.
@@ -14,10 +15,12 @@ import { useTranslation } from "react-i18next";
 export type Modo = "deslizador" | "ladoALado";
 
 interface Props {
-  original: ImageData | null;
-  resultado: ImageData | null;
+  /** El original o el resultado del lado izquierdo. */
+  izquierda: ImageData | null;
+  derecha: ImageData | null;
+  rotulos: [string, string];
+  ocupados: [boolean, boolean];
   modo: Modo;
-  ocupado: boolean;
 }
 
 interface Vista {
@@ -36,7 +39,7 @@ function color(nombre: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(nombre).trim() || "#ccc";
 }
 
-export function Comparador({ original, resultado, modo, ocupado }: Props) {
+export function Comparador({ izquierda: original, derecha: resultado, rotulos, ocupados, modo }: Props) {
   const { t } = useTranslation();
   const caja = useRef<HTMLDivElement>(null);
   const lienzo = useRef<HTMLCanvasElement>(null);
@@ -280,10 +283,13 @@ export function Comparador({ original, resultado, modo, ocupado }: Props) {
         aria-label={t("comparador.etiqueta")}
         role="img"
       />
-      <span className="rotulo izquierda">{t("comparador.original")}</span>
-      <span className="rotulo derecha">
-        {t("comparador.resultado")}
-        {ocupado && <span className="girando" aria-label={t("comparador.codificando")} />}
+      <span className="rotulo izquierda" data-prueba="rotulo-izquierda">
+        {rotulos[0]}
+        {ocupados[0] && <span className="girando" aria-label={t("comparador.codificando")} />}
+      </span>
+      <span className="rotulo derecha" data-prueba="rotulo-derecha">
+        {rotulos[1]}
+        {ocupados[1] && <span className="girando" aria-label={t("comparador.codificando")} />}
       </span>
       {!mismaProporcion && modo === "deslizador" && <span className="nota-comparador">{t("comparador.otraProporcion")}</span>}
       {/* Reducida, la vista promedia los píxeles y esconde los defectos de la

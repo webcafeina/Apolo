@@ -9,6 +9,7 @@ use std::sync::Arc;
 
 use apolo_nucleo::Motor;
 use apolo_nucleo::presets::PresetGuardado;
+use apolo_nucleo::salida::{Ajuste, FormatoSalida};
 use apolo_nucleo::webp::{OpcionesWebp, Preset};
 use apolo_servicio::{
     Ajustes, EstadoLote, Fallo, InfoImagen, Inicio, LoteEmpezado, Recogida, Servicio, Vista,
@@ -75,27 +76,29 @@ fn cerrar(s: Estado, id: u64) {
 async fn codificar(
     s: Estado<'_>,
     id: u64,
-    opciones: OpcionesWebp,
+    ajuste: Ajuste,
+    lado: u8,
     generacion: u64,
 ) -> Result<Vista, Fallo> {
     let s = s.inner().clone();
-    bloqueante(move || s.codificar(id, &opciones, generacion)).await
+    bloqueante(move || s.codificar(id, &ajuste, lado, generacion)).await
 }
 
 #[tauri::command]
 async fn exportar(
     s: Estado<'_>,
     id: u64,
-    opciones: OpcionesWebp,
+    ajuste: Ajuste,
+    lado: u8,
     ruta: PathBuf,
 ) -> Result<usize, Fallo> {
     let s = s.inner().clone();
-    bloqueante(move || s.exportar(id, &opciones, &ruta)).await
+    bloqueante(move || s.exportar(id, &ajuste, lado, &ruta)).await
 }
 
 #[tauri::command]
-fn nombre_salida(s: Estado, id: u64) -> Result<String, Fallo> {
-    s.nombre_salida(id)
+fn nombre_salida(s: Estado, id: u64, formato: FormatoSalida) -> Result<String, Fallo> {
+    s.nombre_salida(id, formato)
 }
 
 #[tauri::command]
@@ -109,13 +112,13 @@ fn nivel_sin_perdida(opciones: OpcionesWebp, nivel: i32) -> Result<OpcionesWebp,
 }
 
 #[tauri::command]
-fn leer_orden(texto: String) -> Result<OpcionesWebp, Fallo> {
-    apolo_servicio::leer_orden(&texto)
+fn leer_orden(texto: String, base: Ajuste) -> Result<Ajuste, Fallo> {
+    apolo_servicio::leer_orden(&texto, &base)
 }
 
 #[tauri::command]
-fn orden_opciones(opciones: OpcionesWebp) -> String {
-    apolo_servicio::orden_opciones(&opciones)
+fn orden_opciones(ajuste: Ajuste) -> String {
+    apolo_servicio::orden_opciones(&ajuste)
 }
 
 #[tauri::command]
@@ -142,11 +145,12 @@ async fn recoger_lote(entradas: Vec<String>) -> Recogida {
 async fn empezar_lote(
     s: Estado<'_>,
     entradas: Vec<String>,
-    opciones: OpcionesWebp,
+    ajustes: Vec<Ajuste>,
+    solo_mas_ligero: bool,
     salida: String,
 ) -> Result<LoteEmpezado, Fallo> {
     let s = s.inner().clone();
-    bloqueante(move || s.empezar_lote(&entradas, &opciones, &salida)).await
+    bloqueante(move || s.empezar_lote(&entradas, &ajustes, solo_mas_ligero, &salida)).await
 }
 
 #[tauri::command]
@@ -193,7 +197,10 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
             let enderezar = consulta.is_some_and(|q| q.split('&').any(|p| p == "enderezar=1"));
             s.pixeles_original(id()?, enderezar).map(empaquetar_pixeles)
         }
-        Some(&"resultado") => s.pixeles_resultado(id()?).map(empaquetar_pixeles),
+        Some(&"resultado") => {
+            let lado = consulta.is_some_and(|q| q.split('&').any(|p| p == "lado=1")) as u8;
+            s.pixeles_resultado(id()?, lado).map(empaquetar_pixeles)
+        }
         _ => Err(Fallo {
             mensaje: "Ruta no válida".into(),
             cancelado: false,

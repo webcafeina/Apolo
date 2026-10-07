@@ -78,3 +78,30 @@ test("lotes", async ({ page }, info) => {
   await page.getByTestId("resumen").waitFor();
   await page.screenshot({ path: `capturas/lotes-resumen-${info.project.name}.png`, fullPage: true });
 });
+
+test("formatos", async ({ page }, info) => {
+  await page.goto("/");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/corpus/foto.webp"));
+  await page.getByTestId("peso-resultado").waitFor();
+  await page.getByRole("radio", { name: "Lado a lado" }).click();
+  await page.getByTestId("lados").getByRole("radio", { name: /Izquierda/ }).click();
+  await page.getByTestId("comparar-formato").click();
+  await page.locator("#control-calidadJpeg").fill("30");
+  await page.getByTestId("rotulo-izquierda").filter({ hasText: "JPEG ·" }).waitFor();
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `capturas/formatos-${info.project.name}.png` });
+});
+
+test("lotes-formatos", async ({ page }, info) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Lotes" }).click();
+  await page.getByTestId("ruta-dev").fill(join(import.meta.dirname, "../../pruebas/corpus"));
+  await page.getByRole("button", { name: "Añadir", exact: true }).click();
+  await page.getByTestId("anadir-formato").click();
+  await page.getByTestId("formato-lote-1").selectOption("png");
+  await page.getByTestId("mas-ligero").waitFor();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `capturas/lotes-formatos-${info.project.name}.png`, fullPage: true });
+});

@@ -17,10 +17,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
-- **Entrega 5b — AVIF y JPEG XL** (v0.6). Con la misma promesa que los demás (ADR 0020): el mismo
-  fichero que `avifenc` y que `cjxl`. Antes, la ADR del motor de AVIF (libavif + aom frente a
-  ravif/rav1e), que se decide midiendo. Son librerías en C grandes: el riesgo está en compilarlas
-  en los seis sistemas.
+- **Comprobar AVIF y JPEG XL en macOS y Windows** contra los binarios oficiales de esos sistemas
+  (deuda): en CI, con los `macOS-artifacts.zip` y `windows-artifacts.zip` de libavif y el
+  `jxl-x64-windows-static.zip` de libjxl.
 - **Entrega 6 — Métricas.** PSNR, SSIM escrito aquí, el mapa de diferencias y el mapa SSIM.
 - **Entrega 7 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas. (La
   actualización automática se adelantó a la v0.3.3: ADR 0018.)
@@ -45,6 +44,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 - La traducción al inglés: con la i18n hecha, es traducir `es.json`.
 
 ## Cerrado
+
+- ~~**Entrega 5b — AVIF y JPEG XL**~~ (v0.6.0, sin publicar todavía): avifenc 1.4.2 y cjxl 0.12.0
+  compilados dentro, con sus `main`; libjxl con clang. **376 de 376 iguales con avifenc y 280 de
+  280 con cjxl.** Se abren AVIF y JXL; Estudio, Lotes, pegar órdenes, `apolo avif` y `apolo jxl`.
+  ADR 0021. · 2026-10-07
 
 - ~~**Entrega 5a — JPEG, PNG, QOI y proceso**~~ (v0.5.0): MozJPEG, OxiPNG y QOI con el mismo
   fichero que cjpeg, oxipng y qoiconv (816, 351 y 13 de 13); el proceso (enderezar, recortar,

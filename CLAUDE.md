@@ -2,8 +2,8 @@
 
 Optimizador de imágenes nativo para macOS, Windows y Linux que sustituye a Squoosh. El motor de WebP es
 **libwebp enlazada** —el mismo que hay detrás de `cwebp` y de Squoosh— y Apolo tiene que hacer todo lo que
-hace `cwebp`, pero viéndolo. Además: MozJPEG, OxiPNG y QOI (el mismo fichero que `cjpeg`, `oxipng` y
-`qoiconv`), AVIF y JPEG XL; redimensionar, recortar, reducir paleta y medir la pérdida.
+hace `cwebp`, pero viéndolo. Además: MozJPEG, OxiPNG, QOI, AVIF y JPEG XL (el mismo fichero que `cjpeg`,
+`oxipng`, `qoiconv`, `avifenc` y `cjxl`); redimensionar, recortar, reducir paleta y medir la pérdida.
 
 ## Protocolo de sesión
 
@@ -39,10 +39,11 @@ Tauri 2 + Rust, con la interfaz en React + Vite + TypeScript ([ADR 0001](docs/ad
 |---|---|
 | `crates/nucleo` | Todo el trabajo con imágenes: decodificar, codificar, procesar, medir. Sin interfaz |
 | `crates/heic` | Leer HEIC: libheif y libde265 compiladas dentro, con enlaces escritos a mano |
+| `crates/avifjxl` | avifenc, avifdec, cjxl y djxl compilados dentro (libavif, aom, libjxl en submódulos), llamados por su `main` |
 | `crates/servicio` | El Estudio sin ventana: lo usan la aplicación y el servidor de desarrollo |
 | `crates/dev` | `apolo-dev`: el Estudio por HTTP, para probar la interfaz en un navegador |
 | `crates/tema` | La paleta, el cálculo de contraste y el generador de `frontend/src/tokens.css` |
-| `crates/cli` | El binario `apolo`, para scripts. `apolo webp`, `jpeg` y `png` aceptan las opciones de `cwebp`, `cjpeg` y `oxipng` |
+| `crates/cli` | El binario `apolo`, para scripts. `apolo webp`, `jpeg` y `png` aceptan las opciones de `cwebp`, `cjpeg` y `oxipng`; `apolo avif` y `jxl` son `avifenc` y `cjxl` |
 | `src-tauri` | La aplicación de ventana: órdenes de Tauri sobre el núcleo |
 | `frontend` | La interfaz. Los textos, en `src/i18n/es.json`, nunca escritos a mano en un componente |
 | `pruebas/corpus` | Imágenes de prueba para la equivalencia con `cwebp` |
@@ -53,11 +54,15 @@ Dos caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, con los
 
 - Rust vive en `~/.cargo` (rustup, sin sudo). Node 22 y pnpm, por nvm. nasm y CMake, en
   `~/.local/bin` (nasm compilado de fuente, CMake con pip). El Makefile los pone en el PATH.
-- **Submódulos**: libheif y libde265 van en `crates/heic/vendor/` (ADR 0017). Al clonar,
+- **Submódulos**: libheif y libde265 van en `crates/heic/vendor/` (ADR 0017); libavif, aom, libyuv,
+  libjxl y sus dependencias, en `crates/avifjxl/vendor/` (ADR 0021). Al clonar,
   `git submodule update --init`.
+- **clang**: libjxl se compila con clang, o cjxl da otros bytes. En el VPS es un LLVM 18 en
+  `~/.local/llvm18`, que el Makefile pone en `APOLO_CLANG`; con `cargo` a mano hay que ponerlo
+  (docs/trampas.md).
 - `make comprobar`: formato, clippy, pruebas, contraste y la interfaz. Es la puerta de CI.
-- `make equivalencia`: el mismo fichero que cwebp, cjpeg, oxipng y qoiconv (`make referencias` las
-  prepara: cjpeg y libpng se compilan desde la fuente).
+- `make equivalencia`: el mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl (`make
+  referencias` las prepara: cjpeg y libpng se compilan desde la fuente).
 - `make cli`: el binario `apolo`.
 - `make tokens`: regenera `frontend/src/tokens.css` desde `crates/tema`. **No se edita a mano.**
 - `make app`: la aplicación. En Linux necesita `libwebkit2gtk-4.1-dev`; si la máquina no lo tiene, la
@@ -71,8 +76,9 @@ Dos caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, con los
   por i18n ([ADR 0007](docs/adr/0007-espanol-con-i18n.md)).
 - Nombres del dominio en español en el código (`calidad`, `preset`, `lote`); los de las librerías,
   como vengan.
-- **Cada opción de `cwebp`, `cjpeg` y `oxipng`** está en [docs/cobertura-cwebp.md](docs/cobertura-cwebp.md)
-  y [docs/cobertura-cjpeg-oxipng.md](docs/cobertura-cjpeg-oxipng.md): dónde vive en el núcleo, en la
+- **Cada opción de `cwebp`, `cjpeg`, `oxipng`, `avifenc` y `cjxl`** está en
+  [docs/cobertura-cwebp.md](docs/cobertura-cwebp.md), [docs/cobertura-cjpeg-oxipng.md](docs/cobertura-cjpeg-oxipng.md)
+  y [docs/cobertura-avifenc-cjxl.md](docs/cobertura-avifenc-cjxl.md): dónde vive en el núcleo, en la
   CLI y en la interfaz, y qué prueba la vigila. Una opción nueva no está hecha hasta que su fila
   está completa.
 - Licencia GPLv3 ([ADR 0006](docs/adr/0006-gplv3-y-repositorio-publico.md)): **ninguna dependencia

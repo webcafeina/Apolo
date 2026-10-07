@@ -2,8 +2,8 @@
 
 Optimizador de imágenes nativo para macOS, Windows y Linux que sustituye a Squoosh. El motor de WebP es
 **libwebp enlazada** —el mismo que hay detrás de `cwebp` y de Squoosh— y Apolo tiene que hacer todo lo que
-hace `cwebp`, pero viéndolo. Además: MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar, recortar,
-reducir paleta y medir la pérdida.
+hace `cwebp`, pero viéndolo. Además: MozJPEG, OxiPNG y QOI (el mismo fichero que `cjpeg`, `oxipng` y
+`qoiconv`), AVIF y JPEG XL; redimensionar, recortar, reducir paleta y medir la pérdida.
 
 ## Protocolo de sesión
 
@@ -42,7 +42,7 @@ Tauri 2 + Rust, con la interfaz en React + Vite + TypeScript ([ADR 0001](docs/ad
 | `crates/servicio` | El Estudio sin ventana: lo usan la aplicación y el servidor de desarrollo |
 | `crates/dev` | `apolo-dev`: el Estudio por HTTP, para probar la interfaz en un navegador |
 | `crates/tema` | La paleta, el cálculo de contraste y el generador de `frontend/src/tokens.css` |
-| `crates/cli` | El binario `apolo`, para scripts. `apolo webp` acepta las opciones de `cwebp` |
+| `crates/cli` | El binario `apolo`, para scripts. `apolo webp`, `jpeg` y `png` aceptan las opciones de `cwebp`, `cjpeg` y `oxipng` |
 | `src-tauri` | La aplicación de ventana: órdenes de Tauri sobre el núcleo |
 | `frontend` | La interfaz. Los textos, en `src/i18n/es.json`, nunca escritos a mano en un componente |
 | `pruebas/corpus` | Imágenes de prueba para la equivalencia con `cwebp` |
@@ -56,6 +56,8 @@ Dos caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, con los
 - **Submódulos**: libheif y libde265 van en `crates/heic/vendor/` (ADR 0017). Al clonar,
   `git submodule update --init`.
 - `make comprobar`: formato, clippy, pruebas, contraste y la interfaz. Es la puerta de CI.
+- `make equivalencia`: el mismo fichero que cwebp, cjpeg, oxipng y qoiconv (`make referencias` las
+  prepara: cjpeg y libpng se compilan desde la fuente).
 - `make cli`: el binario `apolo`.
 - `make tokens`: regenera `frontend/src/tokens.css` desde `crates/tema`. **No se edita a mano.**
 - `make app`: la aplicación. En Linux necesita `libwebkit2gtk-4.1-dev`; si la máquina no lo tiene, la
@@ -69,9 +71,10 @@ Dos caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, con los
   por i18n ([ADR 0007](docs/adr/0007-espanol-con-i18n.md)).
 - Nombres del dominio en español en el código (`calidad`, `preset`, `lote`); los de las librerías,
   como vengan.
-- **Cada opción de `cwebp`** está en [docs/cobertura-cwebp.md](docs/cobertura-cwebp.md): dónde vive en el
-  núcleo, en la CLI y en la interfaz, y qué prueba la vigila. Una opción nueva no está hecha hasta que
-  su fila está completa.
+- **Cada opción de `cwebp`, `cjpeg` y `oxipng`** está en [docs/cobertura-cwebp.md](docs/cobertura-cwebp.md)
+  y [docs/cobertura-cjpeg-oxipng.md](docs/cobertura-cjpeg-oxipng.md): dónde vive en el núcleo, en la
+  CLI y en la interfaz, y qué prueba la vigila. Una opción nueva no está hecha hasta que su fila
+  está completa.
 - Licencia GPLv3 ([ADR 0006](docs/adr/0006-gplv3-y-repositorio-publico.md)): **ninguna dependencia
   nueva sin mirar su licencia**. AGPL no (por eso no `dssim`); propietarias no.
 - Commits en español y en prosa.

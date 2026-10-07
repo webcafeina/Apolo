@@ -4,6 +4,50 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-07 (tarde) · Entrega 5a: JPEG, PNG, QOI y el proceso (v0.5.0, sin publicar)
+
+- El cliente eligió las cuatro respuestas recomendadas ([ADR 0020](adr/0020-mas-formatos-y-proceso.md)):
+  - dos versiones (AVIF y JPEG XL, en la v0.6);
+  - la misma promesa que con cwebp para cada formato;
+  - un formato por lado en el comparador;
+  - «solo el más ligero» en Lotes.
+- **JPEG**:
+  - el `main` y el `parse_switches` de cjpeg 4.1.5 trasladados sobre `mozjpeg-sys`;
+  - la imagen leída como cjpeg (gris, sin componer la transparencia, sin gamma, con sus
+    marcadores);
+  - `make cjpeg-oficial` compila el cjpeg de referencia con una libpng, todo desde la fuente.
+  - **816 de 816 iguales.**
+- **PNG**: `oxipng` 10.2.1 con sus opciones convertidas como su propio binario; libdeflater fijada
+  a la de su `Cargo.lock`. **351 de 351.**
+- **QOI**: `qoi_encode` de qoi.h trasladado (el crate da otros bytes) y la lectura de stb_image.
+  **13 de 13.**
+- Errores míos que cazaron las pruebas (a trampas.md):
+  - el perfil sRGB de cjpeg copiado a mano, con 4 bytes de menos;
+  - la codificación aritmética, que el oficial no trae;
+  - el rango −3..2 de QOI, que debía ser −2..1.
+- **Proceso** para todos los formatos: enderezar (pasa aquí), recortar, redimensionar
+  (`fast_image_resize`, Lanczos3, lineal y premultiplicado) y paleta (libimagequant).
+- **`salida::Ajuste`** guarda las opciones de todos los formatos, y los presets lo guardan entero
+  (los de antes se siguen leyendo).
+- **El servicio** va por imagen y lado.
+- **La interfaz**:
+  - un formato por lado;
+  - el panel con los controles de los tres formatos y el grupo Proceso;
+  - Lotes con una lista de salidas y «solo el más ligero».
+- **La CLI**: `apolo jpeg`, `apolo png`, `apolo qoi`, y `apolo lote --formato --mas-ligero`. Con la
+  carpeta de prueba, «el más ligero» guarda 20 WebP, 3 PNG y 1 JPEG: el pixel art y el GIF, que en
+  WebP crecían, salen en PNG un 70 % más ligeros.
+- `git push` dio «Internal Server Error» tres veces seguidas; esperando un minuto, pasó (trampas).
+- Verificado:
+  - `make comprobar`;
+  - `make equivalencia` (las cuatro herramientas);
+  - 43 pruebas e2e;
+  - capturas.
+- **No verificado**: nada en la ventana (CI y luego el cliente), BMP, GIF y Targa en cjpeg, y lotes
+  grandes con varios formatos (deuda).
+
+---
+
 ## 2026-10-07 · Prueba de Lotes en el Mac, y la v0.4.1
 
 - El cliente probó Lotes en su Mac (v0.4.0) con la carpeta de `pruebas/lotes/generar.sh`, que se

@@ -1,6 +1,6 @@
 # ADR 0005 — Redimensionar, reducir paleta, la CLI y el mapa de diferencias
 
-**Fecha:** 2026-10-06 · **Estado:** aceptada
+**Fecha:** 2026-10-06 · **Estado:** aceptada · redimensionar, recortar y reducir paleta hechos en la [0020](0020-mas-formatos-y-proceso.md)
 
 ## Contexto
 

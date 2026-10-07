@@ -36,26 +36,27 @@
 
 ### La siguiente acción, al retomar
 
-1. **La v0.4.1 está publicada** (https://github.com/webcafeina/Apolo/releases/tag/v0.4.1). Lleva lo
-   que salió de probar Lotes y la primera actualización:
-   - la barra de la descarga, sin tirones;
-   - el formato en Lotes;
-   - «Mostrar en la carpeta» con la carpeta de salida;
-   - «Cancelar» en rojo;
-   - el texto de la CLI.
+1. **La entrega 5a está hecha, como v0.5.0 sin publicar** ([ADR 0020](adr/0020-mas-formatos-y-proceso.md)).
+   - **JPEG, PNG y QOI** dan el mismo fichero que **cjpeg, oxipng y qoiconv**: 816, 351 y 13 de
+     13, con `make equivalencia`.
+   - **El proceso**: enderezar, recortar, redimensionar y reducir paleta, en cualquier formato.
+   - **El comparador**, con un formato por lado.
+   - **Lotes** con varios formatos y «solo el más ligero».
+   - **La CLI** gana `apolo jpeg`, `apolo png` y `apolo qoi`.
 
-   CI en verde. En el borrador se revisó todo: 22 ficheros, las sumas, y `latest.json` con 14
-   plataformas y sus firmas válidas.
-2. Que el cliente se actualice desde la v0.4.0 y mire **la barra de la descarga**, que es lo que
-   se arregló de la primera actualización.
-3. **La entrega 4 está cerrada y probada en su Mac**, con Lotes entero y la actualización.
-4. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
+   Lo decidió el cliente en cuatro preguntas: dos versiones, la misma promesa que con cwebp,
+   comparar formatos y el más ligero.
+2. **Publicarla cuando el cliente lo diga.** Le llega por el actualizador, y conviene una prueba
+   guiada en su Mac:
+   - un JPEG y un PNG desde el Estudio;
+   - comparar WebP contra JPEG;
+   - redimensionar;
+   - un lote con dos formatos.
+3. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
    cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
-5. La carpeta de prueba de Lotes está en `~/apolo-pruebas-lotes` del VPS. Se regenera con
+4. La carpeta de prueba de Lotes está en `~/apolo-pruebas-lotes` del VPS. Se regenera con
    `pruebas/lotes/generar.sh <destino>`.
-6. Siguiente: **la entrega 5**, el resto de códecs (MozJPEG, OxiPNG, AVIF, JPEG XL, QOI) y el
-   proceso (redimensionar, recortar, reducir paleta). Con ella, Lotes gana el selector de formato
-   de verdad.
+5. Después, **la entrega 5b: AVIF y JPEG XL** (v0.6). Empieza por decidir el motor de AVIF midiendo.
 
 ## Completado
 
@@ -73,6 +74,8 @@
   El cliente la instaló a mano, y «Buscar ahora» funciona.
 - Entrega 4, Lotes (2026-10-07). ADR 0019. v0.4.0 publicada el mismo día.
 - Prueba de Lotes en el Mac del cliente, completa (2026-10-07). v0.4.1 publicada con sus arreglos.
+- Entrega 5a: JPEG, PNG, QOI, el proceso, un formato por lado y Lotes con varios formatos
+  (2026-10-07). ADR 0020. v0.5.0, sin publicar.
 
 ## En curso
 

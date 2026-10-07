@@ -1,6 +1,6 @@
 # ADR 0003 — WebP entero, y el resto de Squoosh
 
-**Fecha:** 2026-10-06 · **Estado:** aceptada
+**Fecha:** 2026-10-06 · **Estado:** aceptada · MozJPEG, OxiPNG y QOI hechos en la [0020](0020-mas-formatos-y-proceso.md)
 
 ## Contexto
 

@@ -17,8 +17,10 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
-- **Entrega 5 — Resto de códecs y proceso.** MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar,
-  recortar y reducir paleta. La ADR de AVIF (libavif + aom frente a ravif/rav1e) se decide midiendo.
+- **Entrega 5b — AVIF y JPEG XL** (v0.6). Con la misma promesa que los demás (ADR 0020): el mismo
+  fichero que `avifenc` y que `cjxl`. Antes, la ADR del motor de AVIF (libavif + aom frente a
+  ravif/rav1e), que se decide midiendo. Son librerías en C grandes: el riesgo está en compilarlas
+  en los seis sistemas.
 - **Entrega 6 — Métricas.** PSNR, SSIM escrito aquí, el mapa de diferencias y el mapa SSIM.
 - **Entrega 7 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas. (La
   actualización automática se adelantó a la v0.3.3: ADR 0018.)
@@ -43,6 +45,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 - La traducción al inglés: con la i18n hecha, es traducir `es.json`.
 
 ## Cerrado
+
+- ~~**Entrega 5a — JPEG, PNG, QOI y proceso**~~ (v0.5.0): MozJPEG, OxiPNG y QOI con el mismo
+  fichero que cjpeg, oxipng y qoiconv (816, 351 y 13 de 13); el proceso (enderezar, recortar,
+  redimensionar y reducir paleta); el comparador con un formato por lado; Lotes con varios formatos
+  y «solo el más ligero»; `apolo jpeg`, `apolo png` y `apolo qoi`. ADR 0020. · 2026-10-07
 
 - ~~**Entrega 4 — Lotes**~~: carpetas y ficheros, presets, salida con subcarpetas sin pisar nada,
   en paralelo y cancelable, resumen con las que menos ahorran; `apolo lote` en la CLI. Cada imagen

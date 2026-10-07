@@ -185,6 +185,12 @@ trae la **1.26.0** en su `Cargo.lock`. Otra versión de libdeflate puede comprim
 fijadas con `cargo update --precise`, y la referencia se instala con `cargo install --locked`.
 · 2026-10-07
 
+## `git push`: «remote: Internal Server Error» varias veces seguidas
+
+Con un commit normal y githubstatus.com diciendo que todo va bien. Tres reintentos seguidos
+fallaron; esperando un minuto, pasó a la primera. Si vuelve a pasar, se reintenta cada minuto en vez
+de seguido. · 2026-10-07
+
 ## «HTTP 502: Server Error» al subir el `.dmg` a la Release
 
 Pasó con la v0.3.2: todo compilado, el icono del volumen puesto, y al reemplazar el `.dmg` en la

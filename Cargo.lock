@@ -99,7 +99,7 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 
 [[package]]
 name = "apolo"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "apolo-nucleo",
  "apolo-servicio",
@@ -115,7 +115,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-cli"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "apolo-nucleo",
  "clap",
@@ -123,7 +123,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-dev"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "apolo-nucleo",
  "apolo-servicio",
@@ -135,14 +135,14 @@ dependencies = [
 
 [[package]]
 name = "apolo-heic"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "cmake",
 ]
 
 [[package]]
 name = "apolo-nucleo"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "apolo-heic",
  "dirs 6.0.0",
@@ -164,7 +164,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-servicio"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "apolo-nucleo",
  "libwebp-sys",
@@ -174,7 +174,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-tema"
-version = "0.4.1"
+version = "0.5.0"
 
 [[package]]
 name = "arbitrary"

@@ -32,3 +32,4 @@ con el cliente.
 | [0017](adr/0017-leer-heic.md) | Leer HEIC con libheif y libde265 compiladas dentro (submódulos); el EXIF se deja en orientación 1 | 2026-10-06 | aceptada |
 | [0018](adr/0018-actualizarse-sola.md) | Actualizarse desde la aplicación como Esfinge, con `tauri-plugin-updater`: puerta de 24 h, banda en dos pasos, `.deb` con contraseña; versiones normales, no pre-release | 2026-10-07 | aceptada |
 | [0019](adr/0019-lotes.md) | Lotes: carpeta elegida con subcarpetas, nunca sobrescribir (`foto-2.webp`), las que crecen se guardan y se señalan, `apolo lote` en la CLI | 2026-10-07 | aceptada |
+| [0020](adr/0020-mas-formatos-y-proceso.md) | JPEG, PNG y QOI con el mismo fichero que cjpeg, oxipng y qoiconv; el proceso (enderezar, recortar, redimensionar, paleta) para todos los formatos; un formato por lado en el comparador; Lotes con varios formatos y «solo el más ligero»; AVIF y JPEG XL en la v0.6 | 2026-10-07 | aceptada |

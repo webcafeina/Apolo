@@ -6,6 +6,7 @@
 pub mod cwebp;
 pub mod entrada;
 pub mod error;
+pub mod formatos;
 pub mod jpeg;
 pub mod lote;
 pub mod metadatos;

@@ -170,6 +170,21 @@ argumento raro, los dos fallan, y `cmp` compara los ficheros de la vuelta anteri
 `${=o}`, y borrar las salidas antes de cada caso para que un fallo no pase por igualdad.
 · 2026-10-07
 
+## El QOI de Apolo es válido pero no es el de `qoiconv`
+
+Mismo tamaño, misma cabecera, y difiere a los pocos cientos de bytes. El crate `qoi` apunta cada
+color en la tabla de índices aunque ya estuviera; `qoi.h` solo cuando no lo encuentra, y nunca en
+una racha. Los dos ficheros son QOI correctos, pero no los mismos. Apolo traslada `qoi_encode` tal
+cual. Al trasladarlo, `vr > -3 && vr < 2` se escribió como `(-3..2)`, que en Rust **incluye** el
+−3: el fichero salió más pequeño que el de la referencia, que también es un error. · 2026-10-07
+
+## El PNG de Apolo y el de `oxipng` difieren con las mismas opciones
+
+No ha pasado, pero pasaría: Cargo eligió libdeflater **1.26.1** y el `oxipng` 10.2.1 publicado
+trae la **1.26.0** en su `Cargo.lock`. Otra versión de libdeflate puede comprimir distinto. Van
+fijadas con `cargo update --precise`, y la referencia se instala con `cargo install --locked`.
+· 2026-10-07
+
 ## «HTTP 502: Server Error» al subir el `.dmg` a la Release
 
 Pasó con la v0.3.2: todo compilado, el icono del volumen puesto, y al reemplazar el `.dmg` en la

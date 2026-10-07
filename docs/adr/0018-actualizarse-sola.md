@@ -127,6 +127,8 @@ Esfinge es Go + Wails y lo hace todo a mano. Apolo es Tauri, que trae `tauri-plu
 
 **No verificado:**
 
-- el `latest.json` y el paso que lo repasa (solo corren con etiqueta: lo dirá la primera publicación);
+- ~~el `latest.json` y el paso que lo repasa~~: **verificado al publicar la v0.3.3**. Son 14
+  entradas que apuntan a `releases/download/v0.3.3/…`, todas con firma válida, y el endpoint de
+  `tauri.conf.json` responde 0.3.3;
 - una actualización de verdad en ningún sistema (hace falta la v0.3.4);
 - el caso traslocado en un Mac.

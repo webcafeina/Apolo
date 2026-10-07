@@ -41,6 +41,10 @@
 2. Avisó de que **la barra de la descarga iba a tirones y por detrás del número**. Está arreglado
    en `main`, sin publicar, y lo vigila una prueba. Ver trampas.md. **El cliente prefiere no
    publicarlo solo:** sale en la **v0.4.1**, junto con lo que dé la prueba de Lotes en la ventana.
+   Ya van dos cosas más, de esa prueba:
+   - el desplegable «Formato» en Lotes, como el del Estudio, con WebP y los demás «pronto». Lo
+     pidió el cliente;
+   - el texto de la CLI con las opciones por defecto.
    Será además la segunda actualización por la banda.
 3. Que el cliente pruebe **Lotes en la ventana**: elegir carpetas, soltarlas, cancelar, «Mostrar en
    la carpeta».

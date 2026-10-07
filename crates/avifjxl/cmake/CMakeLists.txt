@@ -28,6 +28,13 @@ set(JPEGXL_ENABLE_SJPEG ON CACHE BOOL "" FORCE)
 set(JPEGXL_ENABLE_SKCMS ON CACHE BOOL "" FORCE)
 set(JPEGXL_BUNDLE_LIBPNG ON CACHE BOOL "" FORCE)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+# En Windows, CMake encuentra el awk de Git, y libpng intenta generar su
+# pnglibconf.h compilando un fichero que no ve zlib.h. Sin awk usa el que trae
+# hecho, que es la configuración por defecto. OFF, y no NOTFOUND: find_program
+# no vuelve a buscar, y if(AWK) es falso.
+if(WIN32)
+  set(AWK OFF CACHE FILEPATH "" FORCE)
+endif()
 add_subdirectory("${APOLO_LIBJXL}" libjxl EXCLUDE_FROM_ALL)
 
 # ── libavif, como su CI de Linux, con la zlib y la libpng de libjxl ───────────

@@ -197,3 +197,49 @@ Pasó con la v0.3.2: todo compilado, el icono del volumen puesto, y al reemplaza
 Release la API de GitHub dio un 502 y el trabajo de macOS cayó; el de adjuntar ya no corrió, y el
 borrador se quedó a medias. Es pasajero: `gh run rerun <id> --failed` lo arregla, y desde entonces
 `publicar.yml` reintenta la subida cuatro veces. · 2026-10-07
+
+## cjxl compilado con gcc da otro fichero que el oficial
+
+Mismas fuentes, mismas opciones, y el `.jxl` difiere en unos pocos bytes. libjxl calcula en coma
+flotante, y gcc y clang no redondean igual: ni con `-ffp-contract=off` en gcc sale lo mismo. El cjxl
+oficial sale de clang 18 (lo dice `cjxl --version`: `{Clang 18.1.3}`), y con clang 18 sale idéntico.
+Por eso `crates/avifjxl/build.rs` no compila sin clang en Linux. avifenc da lo mismo con los dos.
+· 2026-10-07
+
+## El clang 18 del VPS: «libtinfo.so.5: cannot open shared object file»
+
+No hay sudo, así que LLVM 18 está descomprimido en `~/.local/llvm18` desde el paquete oficial, que
+se enlazó contra la libtinfo 5 de Ubuntu antiguo. Ubuntu actual solo trae la 6. Hay una de pega en
+`~/.local/llvm18/compat/libtinfo.so.5`, compilada de `tinfo5.c` con el script de versiones
+`NCURSES_TINFO_5.0.19991023`, que reexporta la 6. El Makefile pone `APOLO_CLANG` y
+`LD_LIBRARY_PATH`; con `cargo` a mano, hay que ponerlos (ver el Makefile). · 2026-10-07
+
+## «FETCHCONTENT_FULLY_DISCONNECTED … the source directory for dependency libaom»
+
+libavif trae sus dependencias con FetchContent, y el nombre con el que las declara no es el de la
+biblioteca: aom es **libaom**, así que la carpeta se le da con `FETCHCONTENT_SOURCE_DIR_LIBAOM`, no
+`_AOM`. Con el nombre mal, CMake no la encuentra, y con `FULLY_DISCONNECTED` no la descarga: el
+error habla de `_deps/libaom-src`. · 2026-10-07
+
+## Un submódulo apuntado a la punta de su rama, sin querer
+
+`git submodule add` deja el submódulo en la punta de la rama por defecto. Si después se hace
+`git checkout <etiqueta>` dentro, el repositorio de fuera no se entera hasta que se vuelve a añadir:
+`git status` lo enseña como `M` (o `AM`) y el commit guarda la punta, no la etiqueta. Pasó con los
+diez de `crates/avifjxl/vendor` en el primer commit de la 5b; el segundo los dejó bien. Antes de
+hacer commit, `git submodule status` tiene que enseñar el commit fijado. · 2026-10-07
+
+## Linux ARM64: «undefined reference to `avifQueryCPUCount'» al enlazar
+
+En x86-64 enlazaba y en ARM64 no, con las mismas bibliotecas. `build.rs` pedía la del puente con
+`static:+whole-archive`, y rustc saca esas del paquete del crate y las pone **detrás** de las demás;
+el enlazador de GNU lee en una pasada, y lo que el puente necesitaba ya había pasado. Sin
+`+whole-archive` no hace falta nada: Rust llama al puente, y eso lo enlaza. · 2026-10-07
+
+## Windows: «pnglibconf.c: fatal error: 'zlib.h' file not found»
+
+Al compilar libpng dentro de libjxl. En Windows, CMake encuentra el awk de Git, y con awk libpng
+genera su `pnglibconf.h` compilando un fichero que no recibe la carpeta de zlib. Sin awk usa el
+`pnglibconf.h.prebuilt`, que es la configuración por defecto. El proyecto de CMake pone
+`AWK=OFF` en Windows: `OFF` y no `NOTFOUND`, porque con `NOTFOUND` `find_program` vuelve a
+buscar. · 2026-10-07

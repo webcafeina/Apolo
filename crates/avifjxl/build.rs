@@ -88,8 +88,10 @@ fn main() {
     let construido = c.build().join("build");
 
     // De quien usa a quien es usado: el enlazador de Linux lee en una pasada.
-    // apolo_avif va el primero y entera: lleva el puente (c/puente.c), que
-    // llama a los cuatro main y define apolo_salir, que usan cjxl y djxl.
+    // apolo_avif va la primera: lleva el puente (c/puente.c), al que llama
+    // Rust, y que llama a los cuatro main y define apolo_salir, que usan cjxl y
+    // djxl. Sin +whole-archive: con él, rustc la saca del paquete y la pone
+    // detrás de las demás, y en Linux ARM64 no enlaza (docs/trampas.md).
     let orden = [
         "apolo_avif",
         "apolo_cjxl",
@@ -123,11 +125,7 @@ fn main() {
             println!("cargo:rustc-link-search=native={}", carpeta.display());
             carpetas.push(carpeta);
         }
-        if nombre == "apolo_avif" {
-            println!("cargo:rustc-link-lib=static:+whole-archive={enlace}");
-        } else {
-            println!("cargo:rustc-link-lib=static={enlace}");
-        }
+        println!("cargo:rustc-link-lib=static={enlace}");
     }
     match sistema.as_str() {
         "macos" | "ios" => println!("cargo:rustc-link-lib=c++"),

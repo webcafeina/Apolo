@@ -25,6 +25,20 @@ test("estudio", async ({ page }, info) => {
   await page.screenshot({ path: `capturas/lado-a-lado-${info.project.name}.png` });
 });
 
+test("avif y jpeg xl", async ({ page }, info) => {
+  await page.goto("/");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/corpus/foto.webp"));
+  await page.getByText("foto.webp", { exact: true }).waitFor();
+  await page.getByTestId("nivel-avanzado").locator("summary").click();
+  for (const f of ["avif", "jxl"]) {
+    await page.getByTestId("formato").selectOption(f);
+    await page.waitForTimeout(1500);
+    await page.screenshot({ path: `capturas/${f}-${info.project.name}.png` });
+  }
+});
+
 test("vacío", async ({ page }, info) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Abrir una imagen…" }).waitFor();

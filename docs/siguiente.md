@@ -25,6 +25,18 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Baja
 
+- **Instalar la CLI desde un repositorio de paquetes.** Hoy solo se baja el `.tar.gz` de la
+  Release, o se compila con `cargo install --git …`, que exige Rust, nasm y CMake. El cliente lo
+  preguntó el 2026-10-07 y lo dejó para el futuro, no es prioritario.
+  - **Lo propuesto, por orden**: primero **Homebrew con un tap propio**
+    (`webcafeina/homebrew-apolo`, `brew install webcafeina/apolo/apolo`). Cubre macOS y Linux, y
+    Homebrew no pone la cuarentena. Después Scoop o winget en Windows, y un repositorio apt propio
+    en Debian, firmado y alojado.
+  - **Qué haría falta** para el tap:
+    - la receta, unas 20 líneas, que apunta al `.tar.gz` de cada Release;
+    - un paso en `publicar.yml` que la actualice al publicar (versión y sumas);
+    - un token de GitHub con permiso solo sobre ese repositorio, como secreto.
+
 - WebP animado: `gif2webp` e `img2webp`.
 - Butteraugli.
 - Firmar y notarizar ([ADR 0009](adr/0009-sin-firmar.md)).

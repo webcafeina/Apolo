@@ -99,10 +99,12 @@ pub fn ejecutar(p: Peticion) -> ExitCode {
             if total == 1 { "imagen" } else { "imágenes" },
             salida.display()
         );
-        eprintln!(
-            "Cada una como: cwebp {}",
-            cwebp::escribir_apolo(&op).join(" ")
-        );
+        let opciones = cwebp::escribir_apolo(&op);
+        if opciones.is_empty() {
+            eprintln!("Cada una como: cwebp (sin opciones)");
+        } else {
+            eprintln!("Cada una como: cwebp {}", opciones.join(" "));
+        }
     }
 
     let reloj = Instant::now();

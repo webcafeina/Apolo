@@ -109,6 +109,66 @@ fn corregir_gamma(pixeles: &mut Pixeles, gamma_imagen: u32) {
     }
 }
 
+/// Un PNG como lo lee `cjpeg` (MozJPEG, `rdpng.c`): paleta y gris de pocos
+/// bits expandidos, la transparencia **descartada** (`png_set_strip_alpha`:
+/// queda el color que hubiera debajo), 16 bits recortados al byte alto, el
+/// gris en gris, y **sin corregir la gamma**. Devuelve también el perfil ICC
+/// que libpng deja pasar, y si hay un trozo `sRGB` (cjpeg mete entonces su
+/// perfil sRGB mínimo).
+pub(crate) fn leer_para_cjpeg(datos: &[u8]) -> Resultado<PngCjpeg> {
+    let mut decodificador = png::Decoder::new(Cursor::new(datos));
+    decodificador.set_transformations(Transformations::EXPAND | Transformations::STRIP_16);
+    decodificador.set_ignore_text_chunk(true);
+    let mut lector = decodificador
+        .read_info()
+        .map_err(|e| Error::lectura(F, e))?;
+    let tamano = lector
+        .output_buffer_size()
+        .ok_or_else(|| Error::lectura(F, "la imagen es demasiado grande"))?;
+    let mut buf = vec![0; tamano];
+    let marco = lector
+        .next_frame(&mut buf)
+        .map_err(|e| Error::lectura(F, e))?;
+    buf.truncate(marco.buffer_size());
+    lector.finish().map_err(|e| Error::lectura(F, e))?;
+    let (tipo, _) = lector.output_color_type();
+    let info = lector.info();
+    if info.width > 65535 || info.height > 65535 {
+        return Err(Error::lectura(F, "la imagen es demasiado grande para JPEG"));
+    }
+    let (gris, filas) = match tipo {
+        ColorType::Grayscale => (true, buf),
+        ColorType::GrayscaleAlpha => (true, buf.as_chunks::<2>().0.iter().map(|p| p[0]).collect()),
+        ColorType::Rgb => (false, buf),
+        ColorType::Rgba => (false, quitar_alfa(&buf)),
+        ColorType::Indexed => return Err(Error::lectura(F, "la paleta no se expandió")),
+    };
+    let en_color = matches!(
+        info.color_type,
+        ColorType::Rgb | ColorType::Rgba | ColorType::Indexed
+    );
+    Ok(PngCjpeg {
+        ancho: info.width,
+        alto: info.height,
+        gris,
+        filas,
+        srgb: info.srgb.is_some(),
+        icc: info
+            .icc_profile
+            .as_ref()
+            .and_then(|p| icc_valido(p, en_color)),
+    })
+}
+
+pub(crate) struct PngCjpeg {
+    pub ancho: u32,
+    pub alto: u32,
+    pub gris: bool,
+    pub filas: Vec<u8>,
+    pub srgb: bool,
+    pub icc: Option<Vec<u8>>,
+}
+
 fn metadatos(info: &png::Info) -> Resultado<Metadatos> {
     let mut m = Metadatos::default();
 
@@ -175,7 +235,7 @@ fn metadatos(info: &png::Info) -> Resultado<Metadatos> {
 /// ICC que no pasan sus comprobaciones, con solo un aviso, y cwebp nunca los
 /// ve. Hay que descartar los mismos. Lo que sobra tras la longitud que dice la
 /// cabecera también se tira.
-fn icc_valido(perfil: &[u8], png_en_color: bool) -> Option<Vec<u8>> {
+pub(crate) fn icc_valido(perfil: &[u8], png_en_color: bool) -> Option<Vec<u8>> {
     let be32 =
         |i: usize| u32::from_be_bytes([perfil[i], perfil[i + 1], perfil[i + 2], perfil[i + 3]]);
     if perfil.len() < 132 {

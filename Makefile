@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 export PATH := $(HOME)/.cargo/bin:$(HOME)/.local/bin:$(PATH)
 
-.PHONY: ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia iconos ventana-dmg
+.PHONY: cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -81,9 +81,44 @@ $(CWEBP):
 	echo "$(CWEBP_SHA256)  $(CWEBP_DIR)/cwebp.tar.gz" | sha256sum -c -
 	tar xzf $(CWEBP_DIR)/cwebp.tar.gz -C $(CWEBP_DIR)
 
-equivalencia: $(CWEBP)
+# El cjpeg oficial de MozJPEG (ADR 0020), de la misma versión que la que
+# enlaza Apolo. Mozilla no publica binarios: se compila desde su fuente, con
+# una libpng también compilada aquí (sin sudo no hay cabeceras de sistema).
+# Sumas comprobadas de las dos fuentes. Su CMakeLists pide una versión de
+# CMake tan vieja que CMake 4 la rechaza sin CMAKE_POLICY_VERSION_MINIMUM.
+MOZJPEG_VERSION := 4.1.5
+MOZJPEG_SHA256 := 9fcbb7171f6ac383f5b391175d6fb3acde5e64c4c4727274eade84ed0998fcc1
+LIBPNG_VERSION := 1.6.50
+LIBPNG_SHA256 := 71158e53cfdf2877bc99bcab33641d78df3f48e6e0daad030afe9cb8c031aa46
+CJPEG_DIR := target/cjpeg-$(MOZJPEG_VERSION)
+CJPEG := $(CJPEG_DIR)/instalado/bin/cjpeg
+
+$(CJPEG):
+	mkdir -p $(CJPEG_DIR)
+	curl -sSfL https://github.com/pnggroup/libpng/archive/refs/tags/v$(LIBPNG_VERSION).tar.gz -o $(CJPEG_DIR)/libpng.tar.gz
+	echo "$(LIBPNG_SHA256)  $(CJPEG_DIR)/libpng.tar.gz" | sha256sum -c -
+	curl -sSfL https://github.com/mozilla/mozjpeg/archive/refs/tags/v$(MOZJPEG_VERSION).tar.gz -o $(CJPEG_DIR)/mozjpeg.tar.gz
+	echo "$(MOZJPEG_SHA256)  $(CJPEG_DIR)/mozjpeg.tar.gz" | sha256sum -c -
+	tar xzf $(CJPEG_DIR)/libpng.tar.gz -C $(CJPEG_DIR)
+	tar xzf $(CJPEG_DIR)/mozjpeg.tar.gz -C $(CJPEG_DIR)
+	cmake -S $(CJPEG_DIR)/libpng-$(LIBPNG_VERSION) -B $(CJPEG_DIR)/libpng-build \
+		-DCMAKE_BUILD_TYPE=Release -DPNG_SHARED=OFF -DPNG_TESTS=OFF -DPNG_TOOLS=OFF \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_INSTALL_PREFIX=$(abspath $(CJPEG_DIR))/instalado
+	cmake --build $(CJPEG_DIR)/libpng-build -j4 --target install
+	cmake -S $(CJPEG_DIR)/mozjpeg-$(MOZJPEG_VERSION) -B $(CJPEG_DIR)/mozjpeg-build \
+		-DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=OFF -DPNG_SUPPORTED=ON \
+		-DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+		-DCMAKE_PREFIX_PATH=$(abspath $(CJPEG_DIR))/instalado \
+		-DCMAKE_INSTALL_PREFIX=$(abspath $(CJPEG_DIR))/instalado
+	cmake --build $(CJPEG_DIR)/mozjpeg-build -j4 --target install
+
+cjpeg-oficial: $(CJPEG)
+
+equivalencia: $(CWEBP) $(CJPEG)
 	APOLO_CWEBP=$(abspath $(CWEBP)) APOLO_CWEBP_OBLIGATORIO=1 \
 		cargo test --release -p apolo-nucleo --test equivalencia_cwebp -- --nocapture
+	APOLO_CJPEG=$(abspath $(CJPEG)) APOLO_CJPEG_OBLIGATORIO=1 \
+		cargo test --release -p apolo-nucleo --test equivalencia_cjpeg -- --nocapture
 
 # La marca: de los SVG de empaquetado/ a los PNG (Chromium de Playwright, como
 # Esfinge) y de ahí a los iconos de cada sistema. Los PNG van a git.

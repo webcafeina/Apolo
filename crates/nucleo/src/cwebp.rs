@@ -602,7 +602,7 @@ pub fn texto(op: &OpcionesWebp, entrada: &str, salida: &str) -> String {
     partes.join(" ")
 }
 
-fn citar(s: &str) -> String {
+pub(crate) fn citar(s: &str) -> String {
     if !s.is_empty()
         && s.chars()
             .all(|c| c.is_ascii_alphanumeric() || "._-/+,:=@".contains(c))

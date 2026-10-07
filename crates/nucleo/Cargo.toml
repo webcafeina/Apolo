@@ -19,6 +19,10 @@ mozjpeg = "0.10"
 # misma versión que usa el crate mozjpeg: si no, habría dos.
 mozjpeg-sys = { version = "=2.2.3", features = ["icc_io"] }
 libc = "0.2"
+# PNG optimizado (ADR 0020). Sin el binario; con hilos y Zopfli, como el
+# oxipng oficial. libdeflater y zopfli van fijadas en Cargo.lock a las del
+# oxipng publicado (1.26.0 y 0.8.3): con otras, otros bytes.
+oxipng = { version = "=10.2.1", default-features = false, features = ["parallel", "zopfli"] }
 png = "0.18"
 # HEIC (las fotos del iPhone), con libheif y libde265 compiladas dentro.
 apolo-heic.workspace = true

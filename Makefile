@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 export PATH := $(HOME)/.cargo/bin:$(HOME)/.local/bin:$(PATH)
 
-.PHONY: cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -114,11 +114,43 @@ $(CJPEG):
 
 cjpeg-oficial: $(CJPEG)
 
-equivalencia: $(CWEBP) $(CJPEG)
+# El oxipng oficial (ADR 0020): el mismo crate que enlaza Apolo, instalado
+# con --locked para que traiga las versiones exactas de libdeflate y zopfli.
+OXIPNG_VERSION := 10.2.1
+OXIPNG_DIR := target/oxipng-$(OXIPNG_VERSION)
+OXIPNG := $(OXIPNG_DIR)/bin/oxipng
+
+$(OXIPNG):
+	cargo install oxipng --version =$(OXIPNG_VERSION) --locked --root $(OXIPNG_DIR)
+
+# qoiconv, la herramienta del autor de QOI (ADR 0020), con stb_image. No hay
+# versiones: van fijados los commits y las sumas de los cuatro ficheros.
+QOI_COMMIT := ffb2d2cb74a1de60819b21b939f7209aa53e91c1
+STB_COMMIT := 2c980bb59875b0d32144a71867fbdebb2f77cd20
+QOICONV_DIR := target/qoiconv
+QOICONV := $(QOICONV_DIR)/qoiconv
+
+$(QOICONV):
+	mkdir -p $(QOICONV_DIR)
+	for f in qoi.h qoiconv.c; do curl -sSfL -o $(QOICONV_DIR)/$$f https://raw.githubusercontent.com/phoboslab/qoi/$(QOI_COMMIT)/$$f || exit 1; done
+	for f in stb_image.h stb_image_write.h; do curl -sSfL -o $(QOICONV_DIR)/$$f https://raw.githubusercontent.com/nothings/stb/$(STB_COMMIT)/$$f || exit 1; done
+	cd $(QOICONV_DIR) && printf '%s\n' \
+		"7de6fca1a285b1c20d38f2723dec8b774eb9f144edb9710800a95feeea09375a  qoi.h" \
+		"6abba2e650d93429c32b55ff5cc27ba18c56607385f5dfd4aed5d5bd017132ed  qoiconv.c" \
+		"594c2fe35d49488b4382dbfaec8f98366defca819d916ac95becf3e75f4200b3  stb_image.h" \
+		"cbd5f0ad7a9cf4468affb36354a1d2338034f2c12473cf1a8e32053cb6914a05  stb_image_write.h" \
+		| sha256sum -c -
+	cc -O2 -o $(QOICONV) $(QOICONV_DIR)/qoiconv.c -I$(QOICONV_DIR)
+
+referencias: $(CWEBP) $(CJPEG) $(OXIPNG) $(QOICONV)
+
+equivalencia: $(CWEBP) $(CJPEG) $(OXIPNG) $(QOICONV)
 	APOLO_CWEBP=$(abspath $(CWEBP)) APOLO_CWEBP_OBLIGATORIO=1 \
 		cargo test --release -p apolo-nucleo --test equivalencia_cwebp -- --nocapture
 	APOLO_CJPEG=$(abspath $(CJPEG)) APOLO_CJPEG_OBLIGATORIO=1 \
 		cargo test --release -p apolo-nucleo --test equivalencia_cjpeg -- --nocapture
+	APOLO_OXIPNG=$(abspath $(OXIPNG)) APOLO_QOICONV=$(abspath $(QOICONV)) APOLO_REFERENCIAS_OBLIGATORIAS=1 \
+		cargo test --release -p apolo-nucleo --test equivalencia_png_qoi -- --nocapture
 
 # La marca: de los SVG de empaquetado/ a los PNG (Chromium de Playwright, como
 # Esfinge) y de ahí a los iconos de cada sistema. Los PNG van a git.

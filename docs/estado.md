@@ -39,8 +39,9 @@
 1. **La v0.4.0 (Lotes) está publicada**, y **el cliente se actualizó a ella desde la v0.3.3 con el
    actualizador**, sin reinstalar. Es la primera actualización de verdad, y sale bien en macOS.
 2. Avisó de que **la barra de la descarga iba a tirones y por detrás del número**. Está arreglado
-   en `main`, sin publicar, y lo vigila una prueba. Ver trampas.md. Saldría como **v0.4.1**: sería
-   además la segunda actualización por la banda.
+   en `main`, sin publicar, y lo vigila una prueba. Ver trampas.md. **El cliente prefiere no
+   publicarlo solo:** sale en la **v0.4.1**, junto con lo que dé la prueba de Lotes en la ventana.
+   Será además la segunda actualización por la banda.
 3. Que el cliente pruebe **Lotes en la ventana**: elegir carpetas, soltarlas, cancelar, «Mostrar en
    la carpeta».
 4. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del

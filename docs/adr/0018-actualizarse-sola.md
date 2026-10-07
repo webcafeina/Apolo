@@ -59,8 +59,9 @@ Esfinge es Go + Wails y lo hace todo a mano. Apolo es Tauri, que trae `tauri-plu
   - minisign, generada con una contraseña hexadecimal;
   - la privada y su contraseña van en los secretos de GitHub (`TAURI_SIGNING_PRIVATE_KEY` y
     `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`);
-  - una copia va a la bóveda de Esfinge del cliente;
-  - la copia del VPS (`~/.config/apolo/claves/`, modo 600) se borra en cuanto el cliente la tenga.
+  - ~~una copia va a la bóveda de Esfinge del cliente, y la del VPS se borra~~. **Cambiado el
+    2026-10-07, a petición del cliente**: la copia legible se queda de momento en el VPS
+    (`~/.config/apolo/claves/`, carpeta 700 y ficheros 600). Ver Consecuencias.
 - **`latest.json` se repasa al publicar**. tauri-action lo escribe a trozos, uno por trabajo, con
   URLs de la API de GitHub. Esas URLs tienen un límite de 60 peticiones por hora sin sesión. El
   trabajo `adjuntar` de `publicar.yml` hace tres cosas:
@@ -91,6 +92,13 @@ Esfinge es Go + Wails y lo hace todo a mano. Apolo es Tauri, que trae `tauri-plu
   Hasta la v0.3.4 no se puede ver una actualización de verdad.
 - **Perder la clave privada** es no poder volver a actualizar a nadie: cada instalación solo acepta
   lo firmado con ella. Cambiarla exige otra vez una instalación a mano. Por eso va a la bóveda.
+- **La clave en el VPS**, decidido por el cliente sabiendo dos riesgos:
+  - **Si se pierde el VPS**, no queda copia legible: el secreto de GitHub sirve para firmar pero no
+    se puede leer. Mientras exista se puede publicar, pero no rehacerlo.
+  - **Si alguien entra en el VPS**, puede firmar una actualización falsa que todas las instalaciones
+    aceptarían.
+
+  Moverla a la bóveda sigue siendo lo recomendado.
 - Apolo sale a la red una vez al día, y solo para esto. La nota de privacidad de Ajustes lo dice,
   y la casilla lo apaga.
 - En macOS sin firmar, la aplicación reemplazada no lleva la marca de cuarentena (la baja Apolo, no

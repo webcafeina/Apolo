@@ -265,6 +265,20 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
 
               <section className="grupo">
                 <h2>{t("lotes.como")}</h2>
+                {/* El mismo que el del panel del Estudio: hoy solo WebP, y los
+                    demás se ven como «pronto» (entrega 5). Lo pidió el cliente al
+                    probar la v0.4.0, para que se vea que el formato se elige. */}
+                <label className="campo">
+                  <span>{t("panel.formato")}</span>
+                  <select value="webp" onChange={() => {}} data-prueba="formato-lote">
+                    <option value="webp">WebP</option>
+                    {["avif", "jxl", "mozjpeg", "oxipng", "qoi"].map((f) => (
+                      <option key={f} value={f} disabled>
+                        {t(`formato.${f}`)} · {t("panel.pronto")}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <label className="campo">
                   <span>{t("lotes.preset")}</span>
                   <select value={eleccion} onChange={(e) => setEleccion(e.target.value)} data-prueba="preset-lote">

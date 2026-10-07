@@ -22,6 +22,10 @@ test("convierte una carpeta, la resume, y repetirlo no pisa nada", async ({ page
   await expect(page.getByTestId("salida")).toHaveValue(/corpus-webp$/);
   await page.getByTestId("salida").fill(salida);
 
+  // El formato: hoy solo WebP; los demás, a la vista pero sin elegir.
+  await expect(page.getByTestId("formato-lote")).toHaveValue("webp");
+  await expect(page.getByTestId("formato-lote").locator("option:disabled")).toHaveCount(5);
+
   await page.getByTestId("preset-lote").selectOption({ label: "Foto" });
   await expect(page.getByTestId("orden-lote")).toContainText("-preset photo");
 

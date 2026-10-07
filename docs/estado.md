@@ -45,7 +45,8 @@
      con clang (en el VPS, `~/.local/llvm18`; el Makefile lo pone).
    - Se abren .avif y .jxl; Estudio, Lotes, pegar órdenes, `apolo avif` y `apolo jxl`.
    - CI: comprobar, e2e y equivalencia en verde. Los instaladores salen en macOS, Windows x64 y los
-     dos Linux; Windows ARM64 se acaba de arreglar (libyuv sin NEON) y está compilando.
+     dos Linux, y en Windows ARM64 tras apagar el NEON de libyuv: **los seis objetivos compilan**
+     (ejecución 37687128943).
 2. **Después de publicar, prueba guiada en el Mac del cliente**: elegir AVIF y JPEG XL en el Estudio
    y moverse por sus controles; exportar y volver a abrir los dos; comparar AVIF con WebP; un JPEG a
    JPEG XL (recomprimido sin pérdida, y con la calidad al apagarlo); un lote con AVIF y «solo el más

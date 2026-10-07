@@ -4,7 +4,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
-## 2026-10-07 (tarde) · Entrega 5a: JPEG, PNG, QOI y el proceso (v0.5.0, sin publicar)
+## 2026-10-07 (tarde) · Entrega 5a: JPEG, PNG, QOI y el proceso (v0.5.0)
 
 - El cliente eligió las cuatro respuestas recomendadas ([ADR 0020](adr/0020-mas-formatos-y-proceso.md)):
   - dos versiones (AVIF y JPEG XL, en la v0.6);
@@ -43,7 +43,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   - `make equivalencia` (las cuatro herramientas);
   - 43 pruebas e2e;
   - capturas.
-- **No verificado**: nada en la ventana (CI y luego el cliente), BMP, GIF y Targa en cjpeg, y lotes
+- **Publicada la v0.5.0** cuando el cliente lo dijo. Antes de publicar:
+  - CI y los 11 trabajos de publicar, en verde;
+  - las sumas cuadran;
+  - las 14 firmas de `latest.json` son válidas;
+  - `apolo jpeg` de la Release da el mismo fichero que cjpeg.
+- **No verificado**: nada en la ventana (lo verá el cliente), BMP, GIF y Targa en cjpeg, y lotes
   grandes con varios formatos (deuda).
 
 ---

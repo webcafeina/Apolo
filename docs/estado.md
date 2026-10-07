@@ -36,7 +36,7 @@
 
 ### La siguiente acción, al retomar
 
-1. **La entrega 5a está hecha, como v0.5.0 sin publicar** ([ADR 0020](adr/0020-mas-formatos-y-proceso.md)).
+1. **La entrega 5a está publicada como v0.5.0** (https://github.com/webcafeina/Apolo/releases/tag/v0.5.0) ([ADR 0020](adr/0020-mas-formatos-y-proceso.md)).
    - **JPEG, PNG y QOI** dan el mismo fichero que **cjpeg, oxipng y qoiconv**: 816, 351 y 13 de
      13, con `make equivalencia`.
    - **El proceso**: enderezar, recortar, redimensionar y reducir paleta, en cualquier formato.
@@ -46,8 +46,12 @@
 
    Lo decidió el cliente en cuatro preguntas: dos versiones, la misma promesa que con cwebp,
    comparar formatos y el más ligero.
-2. **Publicarla cuando el cliente lo diga.** Le llega por el actualizador, y conviene una prueba
-   guiada en su Mac:
+   Antes de publicar se revisó el borrador:
+   - CI en verde;
+   - 22 ficheros, y las sumas cuadran;
+   - `latest.json` con 14 plataformas, todas con firma válida;
+   - la CLI de la Release da lo mismo que cjpeg.
+2. **Prueba guiada en el Mac del cliente**, que la recibe por el actualizador:
    - un JPEG y un PNG desde el Estudio;
    - comparar WebP contra JPEG;
    - redimensionar;
@@ -75,7 +79,7 @@
 - Entrega 4, Lotes (2026-10-07). ADR 0019. v0.4.0 publicada el mismo día.
 - Prueba de Lotes en el Mac del cliente, completa (2026-10-07). v0.4.1 publicada con sus arreglos.
 - Entrega 5a: JPEG, PNG, QOI, el proceso, un formato por lado y Lotes con varios formatos
-  (2026-10-07). ADR 0020. v0.5.0, sin publicar.
+  (2026-10-07). ADR 0020. v0.5.0 publicada el mismo día.
 
 ## En curso
 

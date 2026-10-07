@@ -69,6 +69,14 @@ jobs:
           tiffutil -cathidpicheck empaquetado/macos/fondo-dmg.png empaquetado/macos/fondo-dmg@2x.png \
             -out empaquetado/macos/fondo-dmg.tiff
 
+      # libjxl se compila con clang 18, como el cjxl oficial (ADR 0021): con
+      # gcc, cjxl da otros bytes.
+      - name: clang 18
+        if: runner.os == 'Linux'
+        run: |
+          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh 18
+          echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.rust }}
@@ -179,6 +187,14 @@ jobs:
         with:
           submodules: true
       - uses: ilammy/setup-nasm@v1
+      # libjxl se compila con clang 18, como el cjxl oficial (ADR 0021): con
+      # gcc, cjxl da otros bytes.
+      - name: clang 18
+        if: runner.os == 'Linux'
+        run: |
+          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
+          sudo bash llvm.sh 18
+          echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.rust }}

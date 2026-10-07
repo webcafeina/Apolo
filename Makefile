@@ -14,7 +14,7 @@ ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
 	@echo "make tokens     regenera frontend/src/tokens.css desde crates/tema"
 	@echo "make contraste  solo la prueba de contraste"
-	@echo "make equivalencia  mismo fichero que el cwebp oficial, byte a byte (descarga cwebp)"
+	@echo "make equivalencia  mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl, byte a byte"
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
 	@echo "make app        compila la aplicación (necesita libwebkit2gtk-4.1-dev en Linux)"
 	@echo "make dev        la aplicación con recarga en caliente"
@@ -148,15 +148,42 @@ $(QOICONV):
 		| sha256sum -c -
 	cc -O2 -o $(QOICONV) $(QOICONV_DIR)/qoiconv.c -I$(QOICONV_DIR)
 
-referencias: $(CWEBP) $(CJPEG) $(OXIPNG) $(QOICONV)
+# avifenc y cjxl (ADR 0021): los binarios oficiales de Linux de cada versión.
+# El de cjxl viene en .tar.lz; sin lzip, lo abre un Python de la biblioteca
+# estándar (pruebas/referencias/deslzip.py).
+AVIFENC_VERSION := 1.4.2
+AVIFENC_SHA256 := faf58a670ffbfdc0e3559e6d37592cff277c447dd39453f1cd1d7d7f5a20b8ef
+AVIFENC_DIR := target/avifenc-$(AVIFENC_VERSION)
+AVIFENC := $(AVIFENC_DIR)/avifenc
 
-equivalencia: $(CWEBP) $(CJPEG) $(OXIPNG) $(QOICONV)
+$(AVIFENC):
+	mkdir -p $(AVIFENC_DIR)
+	curl -sSfL https://github.com/AOMediaCodec/libavif/releases/download/v$(AVIFENC_VERSION)/linux-artifacts.zip -o $(AVIFENC_DIR)/avif.zip
+	echo "$(AVIFENC_SHA256)  $(AVIFENC_DIR)/avif.zip" | sha256sum -c -
+	cd $(AVIFENC_DIR) && python3 -I -m zipfile -e avif.zip . && chmod +x avifenc avifdec
+
+CJXL_VERSION := 0.12.0
+CJXL_SHA256 := 5318a1ea40adad76d023e0c17a03d4627f8282f83cb2b575e69be8e74f1ff456
+CJXL_DIR := target/cjxl-$(CJXL_VERSION)
+CJXL := $(CJXL_DIR)/tools/cjxl
+
+$(CJXL):
+	mkdir -p $(CJXL_DIR)
+	curl -sSfL https://github.com/libjxl/libjxl/releases/download/v$(CJXL_VERSION)/jxl-linux-x86_64-static.tar.lz -o $(CJXL_DIR)/jxl.tar.lz
+	echo "$(CJXL_SHA256)  $(CJXL_DIR)/jxl.tar.lz" | sha256sum -c -
+	python3 -I pruebas/referencias/deslzip.py $(CJXL_DIR)/jxl.tar.lz | tar x -C $(CJXL_DIR)
+
+referencias: $(CWEBP) $(CJPEG) $(OXIPNG) $(QOICONV) $(AVIFENC) $(CJXL)
+
+equivalencia: $(CWEBP) $(CJPEG) $(OXIPNG) $(QOICONV) $(AVIFENC) $(CJXL)
 	APOLO_CWEBP=$(abspath $(CWEBP)) APOLO_CWEBP_OBLIGATORIO=1 \
 		cargo test --release -p apolo-nucleo --test equivalencia_cwebp -- --nocapture
 	APOLO_CJPEG=$(abspath $(CJPEG)) APOLO_CJPEG_OBLIGATORIO=1 \
 		cargo test --release -p apolo-nucleo --test equivalencia_cjpeg -- --nocapture
 	APOLO_OXIPNG=$(abspath $(OXIPNG)) APOLO_QOICONV=$(abspath $(QOICONV)) APOLO_REFERENCIAS_OBLIGATORIAS=1 \
 		cargo test --release -p apolo-nucleo --test equivalencia_png_qoi -- --nocapture
+	APOLO_AVIFENC=$(abspath $(AVIFENC)) APOLO_CJXL=$(abspath $(CJXL)) APOLO_REFERENCIAS_OBLIGATORIAS=1 \
+		cargo test --release -p apolo-nucleo --test equivalencia_avif_jxl -- --nocapture
 
 # La marca: de los SVG de empaquetado/ a los PNG (Chromium de Playwright, como
 # Esfinge) y de ahí a los iconos de cada sistema. Los PNG van a git.

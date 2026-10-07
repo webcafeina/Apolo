@@ -30,8 +30,8 @@ use crate::{Error, Resultado};
 /// Las extensiones que se recogen de una carpeta. Un fichero suelto se
 /// intenta igual aunque no tenga una de estas: si no es una imagen, lo dirá.
 pub const EXTENSIONES: &[&str] = &[
-    "png", "jpg", "jpeg", "heic", "heif", "webp", "tif", "tiff", "gif", "bmp", "qoi", "ppm", "pgm",
-    "pam", "pnm",
+    "png", "jpg", "jpeg", "heic", "heif", "avif", "jxl", "webp", "tif", "tiff", "gif", "bmp",
+    "qoi", "ppm", "pgm", "pam", "pnm",
 ];
 
 /// Una imagen del lote.

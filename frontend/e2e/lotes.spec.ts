@@ -22,9 +22,9 @@ test("convierte una carpeta, la resume, y repetirlo no pisa nada", async ({ page
   await expect(page.getByTestId("salida")).toHaveValue(/corpus-webp$/);
   await page.getByTestId("salida").fill(salida);
 
-  // El formato: WebP por defecto; AVIF y JPEG XL, a la vista como «pronto».
+  // El formato: WebP por defecto, y los seis a elegir.
   await expect(page.getByTestId("formato-lote")).toHaveValue("webp");
-  await expect(page.getByTestId("formato-lote").locator("option:disabled")).toHaveCount(2);
+  await expect(page.getByTestId("formato-lote").locator("option")).toHaveCount(6);
 
   await page.getByTestId("preset-lote").selectOption({ label: "Foto" });
   await expect(page.getByTestId("orden-lote")).toContainText("-preset photo");

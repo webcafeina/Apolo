@@ -140,7 +140,9 @@ export const ordenOpciones = (ajuste: Ajuste) => orden<string>("orden_opciones",
 export const guardarPreset = (preset: PresetGuardado) => orden<PresetGuardado[]>("guardar_preset", { preset });
 export const borrarPreset = (nombre: string) => orden<PresetGuardado[]>("borrar_preset", { nombre });
 
-export const FORMATOS_ENTRADA = ["png", "jpg", "jpeg", "heic", "heif", "webp", "tif", "tiff", "gif", "bmp", "qoi", "ppm", "pgm", "pam", "pnm"];
+export const FORMATOS_ENTRADA = [
+  "png", "jpg", "jpeg", "heic", "heif", "avif", "jxl", "webp", "tif", "tiff", "gif", "bmp", "qoi", "ppm", "pgm", "pam", "pnm",
+];
 
 /** Abre una imagen de disco (en la aplicación). */
 export const abrirRuta = (ruta: string) => orden<InfoImagen>("abrir", { ruta });
@@ -186,8 +188,22 @@ export async function alSoltar(f: (rutas: string[]) => void): Promise<() => void
  * sistema; en el navegador lo descarga. Devuelve el nombre o `null` si se
  * canceló.
  */
-const NOMBRE_FORMATO: Record<FormatoSalida, string> = { webp: "WebP", jpeg: "JPEG", png: "PNG", qoi: "QOI" };
-const EXTENSIONES: Record<FormatoSalida, string[]> = { webp: ["webp"], jpeg: ["jpg", "jpeg"], png: ["png"], qoi: ["qoi"] };
+const NOMBRE_FORMATO: Record<FormatoSalida, string> = {
+  webp: "WebP",
+  jpeg: "JPEG",
+  png: "PNG",
+  qoi: "QOI",
+  avif: "AVIF",
+  jxl: "JPEG XL",
+};
+const EXTENSIONES: Record<FormatoSalida, string[]> = {
+  webp: ["webp"],
+  jpeg: ["jpg", "jpeg"],
+  png: ["png"],
+  qoi: ["qoi"],
+  avif: ["avif"],
+  jxl: ["jxl"],
+};
 
 export async function exportar(id: number, ajuste: Ajuste, lado: 0 | 1): Promise<string | null> {
   const nombre = await orden<string>("nombre_salida", { id, formato: ajuste.formato });

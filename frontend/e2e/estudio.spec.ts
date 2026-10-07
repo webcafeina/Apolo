@@ -182,6 +182,56 @@ test("cada formato enseña la orden de su herramienta, y QOI no tiene opciones",
   await expect(page.getByText("QOI no tiene opciones")).toBeVisible();
 });
 
+test("AVIF y JPEG XL enseñan la orden de avifenc y cjxl, y sus controles la cambian", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  const formato = page.getByTestId("formato");
+  await formato.selectOption("avif");
+  await expect(page.getByTestId("orden")).toContainText("avifenc foto.webp foto.avif");
+  await expect(page.getByTestId("pesos")).toContainText("Resultado · AVIF", { timeout: 30_000 });
+  await expect(page.getByTestId("no-equivalente")).toContainText("avifenc no abre WebP");
+  await page.locator("#control-calidadAvif").fill("40");
+  await expect(page.getByTestId("orden")).toContainText("avifenc -q 40 foto.webp foto.avif");
+  await formato.selectOption("jxl");
+  await expect(page.getByTestId("orden")).toContainText("cjxl foto.webp foto.jxl");
+  await expect(page.getByTestId("pesos")).toContainText("Resultado · JPEG XL", { timeout: 30_000 });
+  await page.locator("#control-esfuerzoJxl").fill("3");
+  await expect(page.getByTestId("orden")).toContainText("cjxl foto.webp foto.jxl -e 3");
+  // Sin un JPEG de entrada, recomprimir sin pérdida no cuenta.
+  await expect(page.getByTestId("control-jpegSinPerdidaJxl")).toHaveClass(/apagado/);
+});
+
+test("un AVIF y un JPEG XL exportados se vuelven a abrir", async ({ page }, info) => {
+  for (const [f, nombre] of [
+    ["avif", "AVIF"],
+    ["jxl", "JPEG XL"],
+  ]) {
+    await abrir(page, "foto.webp");
+    await page.getByTestId("formato").selectOption(f);
+    await expect(page.getByTestId("pesos")).toContainText(`Resultado · ${nombre}`, { timeout: 30_000 });
+    const descarga = page.waitForEvent("download");
+    await page.getByTestId("exportar").click();
+    const d = await descarga;
+    expect(d.suggestedFilename()).toBe(`foto.${f}`);
+    const ruta = info.outputPath(`foto.${f}`);
+    await d.saveAs(ruta);
+    const elegir = page.waitForEvent("filechooser");
+    await page.getByRole("button", { name: "Abrir otra…" }).click();
+    await (await elegir).setFiles(ruta);
+    await expect(page.getByText(`${nombre} · 128 × 128`)).toBeVisible({ timeout: 30_000 });
+  }
+});
+
+test("pegar una orden de cjxl pasa a JPEG XL con sus opciones", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await page.getByRole("button", { name: "Pegar orden…" }).click();
+  await page.getByTestId("orden-entrada").fill("cjxl a.png b.jxl -q 80 -e 4 --resampling=2");
+  await page.getByRole("button", { name: "Cargar" }).click();
+  await expect(page.getByTestId("formato")).toHaveValue("jxl");
+  await expect(page.getByTestId("orden")).toContainText("cjxl foto.webp foto.jxl -q 80 -e 4 --resampling=2", {
+    timeout: 30_000,
+  });
+});
+
 test("pegar una orden de cjpeg pasa a JPEG con sus opciones", async ({ page }) => {
   await abrir(page, "foto.webp");
   await page.getByRole("button", { name: "Pegar orden…" }).click();

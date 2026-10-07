@@ -127,6 +127,13 @@ compilación de depuración de `apolo-dev` (1,3 s en release). Con la máquina c
 proyectos, se pasa de los 5 s de espera de Playwright. Esa espera lleva su propio plazo de 30 s.
 · 2026-10-07
 
+## «los niveles se pliegan» falla en CI de vez en cuando
+
+Tras recargar, el nivel experto sale cerrado. El `open` de `<details>` cambia con el clic, pero lo
+que se guarda en `localStorage` llega después: con el evento `toggle`, que el navegador manda en otra
+vuelta del bucle, y un efecto de React. La prueba recargaba antes. Ahora espera a verlo guardado.
+· 2026-10-07
+
 ## «HTTP 502: Server Error» al subir el `.dmg` a la Release
 
 Pasó con la v0.3.2: todo compilado, el icono del volumen puesto, y al reemplazar el `.dmg` en la

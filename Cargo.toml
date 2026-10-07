@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/heic", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "src-tauri"]
+members = ["crates/heic", "crates/avifjxl", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "src-tauri"]
 
 [workspace.package]
 version = "0.5.0"
@@ -12,6 +12,7 @@ authors = ["Webcafeína <info@webcafeina.com>"]
 [workspace.dependencies]
 apolo-nucleo = { path = "crates/nucleo" }
 apolo-heic = { path = "crates/heic" }
+apolo-avifjxl = { path = "crates/avifjxl" }
 apolo-tema = { path = "crates/tema" }
 apolo-servicio = { path = "crates/servicio" }
 serde = { version = "1", features = ["derive"] }

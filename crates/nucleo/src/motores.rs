@@ -11,12 +11,29 @@ pub struct Motor {
     pub version: String,
 }
 
-/// Los motores enlazados, en el orden en que se enseñan.
+/// Los motores enlazados, en el orden en que se enseñan. MozJPEG y oxipng van
+/// fijados en Cargo.toml (ADR 0020); libavif, aom y libjxl lo dicen ellas.
 pub fn motores() -> Vec<Motor> {
-    vec![Motor {
-        nombre: "libwebp",
-        version: version_libwebp(),
-    }]
+    let mut v = vec![
+        Motor {
+            nombre: "libwebp",
+            version: version_libwebp(),
+        },
+        Motor {
+            nombre: "MozJPEG",
+            version: "4.1.5".into(),
+        },
+        Motor {
+            nombre: "oxipng",
+            version: "10.2.1".into(),
+        },
+    ];
+    v.extend(
+        apolo_avifjxl::versiones()
+            .into_iter()
+            .map(|(nombre, version)| Motor { nombre, version }),
+    );
+    v
 }
 
 /// La versión del codificador de libwebp, como «1.5.0».
@@ -40,6 +57,15 @@ mod pruebas {
     fn desempaqueta_la_version() {
         assert_eq!(desempaquetar(0x010500), "1.5.0");
         assert_eq!(desempaquetar(0x000603), "0.6.3");
+    }
+
+    #[test]
+    fn avif_y_jxl_estan_enlazadas() {
+        let v = motores();
+        let de = |n: &str| v.iter().find(|m| m.nombre == n).unwrap().version.clone();
+        assert_eq!(de("libavif"), "1.4.2");
+        assert!(de("aom").starts_with("3.14.1"), "{}", de("aom"));
+        assert_eq!(de("libjxl"), "0.12.0");
     }
 
     #[test]

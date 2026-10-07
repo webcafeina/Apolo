@@ -403,8 +403,8 @@ pub fn nivel_sin_perdida(opciones: &OpcionesWebp, nivel: i32) -> R<OpcionesWebp>
     Ok(o)
 }
 
-/// Una orden pegada por quien usa la interfaz: de cwebp, cjpeg, oxipng o
-/// qoiconv (o `apolo webp`, `apolo jpeg`, `apolo png`), con o sin ficheros.
+/// Una orden pegada por quien usa la interfaz: de cwebp, cjpeg, oxipng,
+/// qoiconv, avifenc o cjxl (o `apolo webp`, `apolo jpeg`…), con o sin ficheros.
 /// Devuelve el ajuste que da: el formato y sus opciones, sobre `base` (lo
 /// demás no se toca). Sin herramienta delante, se lee como del formato de
 /// `base`.
@@ -418,11 +418,15 @@ pub fn leer_orden(texto: &str, base: &Ajuste) -> R<Ajuste> {
         Some(p) if es(p, "cjpeg") => Some(FormatoSalida::Jpeg),
         Some(p) if es(p, "oxipng") => Some(FormatoSalida::Png),
         Some(p) if es(p, "qoiconv") => Some(FormatoSalida::Qoi),
+        Some(p) if es(p, "avifenc") => Some(FormatoSalida::Avif),
+        Some(p) if es(p, "cjxl") => Some(FormatoSalida::Jxl),
         Some("apolo") => match palabras.get(1).map(String::as_str) {
             Some("webp") => Some(FormatoSalida::Webp),
             Some("jpeg") => Some(FormatoSalida::Jpeg),
             Some("png") => Some(FormatoSalida::Png),
             Some("qoi") => Some(FormatoSalida::Qoi),
+            Some("avif") => Some(FormatoSalida::Avif),
+            Some("jxl") => Some(FormatoSalida::Jxl),
             _ => None,
         },
         _ => None,
@@ -456,6 +460,12 @@ pub fn leer_orden(texto: &str, base: &Ajuste) -> R<Ajuste> {
             if palabras.len() > 2 {
                 return Err(Fallo::nuevo("qoiconv solo lleva la entrada y la salida"));
             }
+        }
+        FormatoSalida::Avif => {
+            a.avif = apolo_nucleo::formatos::avif::leer_orden(&palabras)?.opciones;
+        }
+        FormatoSalida::Jxl => {
+            a.jxl = apolo_nucleo::formatos::jxl::leer_orden(&palabras)?.opciones;
         }
     }
     Ok(a)

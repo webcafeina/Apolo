@@ -62,7 +62,11 @@ fn formato(s: &str) -> Result<FormatoSalida, String> {
         "jpeg" | "jpg" | "mozjpeg" => Ok(FormatoSalida::Jpeg),
         "png" | "oxipng" => Ok(FormatoSalida::Png),
         "qoi" => Ok(FormatoSalida::Qoi),
-        otro => Err(format!("no hay formato «{otro}»: webp, jpeg, png o qoi")),
+        "avif" | "avifenc" => Ok(FormatoSalida::Avif),
+        "jxl" | "jpegxl" | "cjxl" => Ok(FormatoSalida::Jxl),
+        otro => Err(format!(
+            "no hay formato «{otro}»: webp, jpeg, png, qoi, avif o jxl"
+        )),
     }
 }
 
@@ -115,6 +119,22 @@ fn ajustes(p: &Peticion) -> Result<Vec<Ajuste>, String> {
                 a.png = o.opciones;
             }
             FormatoSalida::Qoi => return Err("QOI no tiene opciones".into()),
+            FormatoSalida::Avif => {
+                let o = apolo_nucleo::formatos::avif::leer_orden_desde(&a.avif, &p.herramienta)
+                    .map_err(|e| e.to_string())?;
+                if !o.ficheros.is_empty() {
+                    return Err(SOLO_OPCIONES.into());
+                }
+                a.avif = o.opciones;
+            }
+            FormatoSalida::Jxl => {
+                let o = apolo_nucleo::formatos::jxl::leer_orden_desde(&a.jxl, &p.herramienta)
+                    .map_err(|e| e.to_string())?;
+                if !o.ficheros.is_empty() {
+                    return Err(SOLO_OPCIONES.into());
+                }
+                a.jxl = o.opciones;
+            }
         }
     }
     if v.iter().any(|a| !a.webp.validar()) {

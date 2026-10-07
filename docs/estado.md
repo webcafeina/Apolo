@@ -46,9 +46,9 @@
 2. **El cliente la instala a mano**, una última vez.
 3. **Sacar una v0.3.4** (puede ser pequeña) para ver una actualización de verdad en su Mac. Es la
    deuda más alta.
-4. **La clave del actualizador**: el cliente la guarda en su bóveda de Esfinge (la privada, su
-   contraseña y la pública, de `~/.config/apolo/claves/`). Después se borra la copia del VPS. **No
-   se escribe nunca en el chat.**
+4. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
+   cliente, con los riesgos dichos (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en
+   el chat.
 5. Después, **la entrega 4, Lotes**.
 
 ## Completado

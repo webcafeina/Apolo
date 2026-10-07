@@ -51,7 +51,9 @@
 3. **La entrega 4 está cerrada y probada en su Mac**, con Lotes entero y la actualización.
 4. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
    cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
-5. Siguiente: **la entrega 5**, el resto de códecs (MozJPEG, OxiPNG, AVIF, JPEG XL, QOI) y el
+5. La carpeta de prueba de Lotes está en `~/apolo-pruebas-lotes` del VPS. Se regenera con
+   `pruebas/lotes/generar.sh <destino>`.
+6. Siguiente: **la entrega 5**, el resto de códecs (MozJPEG, OxiPNG, AVIF, JPEG XL, QOI) y el
    proceso (redimensionar, recortar, reducir paleta). Con ella, Lotes gana el selector de formato
    de verdad.
 

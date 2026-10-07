@@ -118,3 +118,10 @@ Cientos de avisos al enlazar en el Mac de CI: CMake compila para la versión del
 para el mínimo de Apolo. Son avisos, pero dicen que la aplicación podría usar algo que macOS 11 no
 tiene. `crates/heic/build.rs` pasa `CMAKE_OSX_DEPLOYMENT_TARGET` (11.0, o `MACOSX_DEPLOYMENT_TARGET`
 si está puesto). Los mismos avisos salen de mozjpeg, sin plataforma, y son inofensivos. · 2026-10-06
+
+## «HTTP 502: Server Error» al subir el `.dmg` a la Release
+
+Pasó con la v0.3.2: todo compilado, el icono del volumen puesto, y al reemplazar el `.dmg` en la
+Release la API de GitHub dio un 502 y el trabajo de macOS cayó; el de adjuntar ya no corrió, y el
+borrador se quedó a medias. Es pasajero: `gh run rerun <id> --failed` lo arregla, y desde entonces
+`publicar.yml` reintenta la subida cuatro veces. · 2026-10-07

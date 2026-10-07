@@ -36,12 +36,10 @@
 
 ### La siguiente acción, al retomar
 
-1. **La v0.3.2**: lo que salió de la prueba guiada y **leer HEIC** (ADR 0017), con libheif y libde265
-   compiladas dentro como submódulos. Si no está publicada:
-   - `publicar.yml` a mano (lo nuevo es compilar libheif y libde265 en las seis máquinas, sobre todo
-     en Windows ARM64);
-   - etiqueta `v0.3.2`;
-   - revisar el borrador y publicarlo.
+1. **La v0.3.2 está publicada** (https://github.com/webcafeina/Apolo/releases/tag/v0.3.2): lo que
+   salió de la prueba guiada y **leer HEIC** (ADR 0017). libheif y libde265 compilan en los seis
+   sistemas, Windows ARM64 incluido. En macOS hubo que quitar AVX2 de libde265 (trampas.md). La CLI
+   bajada de la Release convierte un HEIC a WebP.
 2. Que el cliente la pruebe en su Mac:
    - **una foto HEIC de su iPhone**, que no se ha probado con ninguna real;
    - el zoom sin rebote;
@@ -64,4 +62,4 @@
 
 ## En curso
 
-- Publicar la v0.3.2 (ver arriba).
+- Nada a medias en el código.

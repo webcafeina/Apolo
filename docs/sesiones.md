@@ -4,7 +4,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
-## 2026-10-07 · El actualizador (v0.3.3, sin publicar)
+## 2026-10-07 · El actualizador (v0.3.3)
 
 - El cliente pidió, antes de Lotes, **actualizar desde la propia aplicación como en Esfinge**, y
   esperar para publicar. Respondió a cuatro preguntas:
@@ -34,8 +34,13 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - CI en verde, también `publicar.yml` lanzado a mano: la ventana compila con el plugin, y los siete
   paquetes del actualizador salen con su `.sig`. **Las siete firmas, verificadas** contra la clave
   pública.
+- **Publicada** cuando el cliente dio el visto bueno, ya como versión normal. Al publicar:
+  - los 11 trabajos en verde, y el paso de `latest.json` también;
+  - las sumas del borrador cuadran;
+  - las 14 entradas de `latest.json` apuntan a `releases/download/v0.3.3/…` y sus firmas son
+    válidas;
+  - `releases/latest/download/latest.json` responde 0.3.3.
 - **No verificado**:
-  - `latest.json` (solo al publicar);
   - una actualización real (v0.3.4).
 
 ---

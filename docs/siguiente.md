@@ -8,8 +8,8 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **Publicar la v0.3.3** cuando el cliente lo diga, y **sacar la v0.3.4** después para ver una
-  actualización de verdad (deuda). Y que el cliente guarde la clave del actualizador en su bóveda,
+- ~~Publicar la v0.3.3~~ (hecho el 2026-10-07). **Sacar la v0.3.4** para ver una actualización de
+  verdad (deuda). Y que el cliente guarde la clave del actualizador en su bóveda,
   para borrar la copia del VPS.
 
 - **Montar la equivalencia con cwebp en CI para Windows y Linux arm64** (deuda). En un Mac con

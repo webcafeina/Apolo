@@ -36,23 +36,18 @@
 
 ### La siguiente acción, al retomar
 
-1. **La v0.3.3 está hecha, sin publicar**: el cliente pidió esperar («Espera para publicar»). Lleva:
-   - **el actualizador** ([ADR 0018](adr/0018-actualizarse-sola.md)), como el de Esfinge, pedido
-     antes de empezar Lotes;
-   - los dos textos que pidió tras probar la v0.3.2.
+1. **La v0.3.3 está publicada como versión normal**
+   (https://github.com/webcafeina/Apolo/releases/tag/v0.3.3). Lleva:
+   - el actualizador ([ADR 0018](adr/0018-actualizarse-sola.md));
+   - los textos tras probar la v0.3.2.
 
-   Todo está en `main` y en verde, también en CI. Un `publicar.yml` lanzado a mano demostró dos
-   cosas: la ventana compila con el plugin en los seis objetivos, y salen las siete firmas del
-   actualizador, verificadas.
-2. **Publicarla cuando el cliente lo diga.**
-   - Etiqueta `v0.3.3`.
-   - `publicar.yml` comprueba solo que `latest.json` tiene las 12 plataformas.
-   - Revisar el borrador y publicarlo **como versión normal**, no pre-release.
-   - El cliente la instala **a mano una última vez**.
+   El endpoint `releases/latest/download/latest.json` ya responde 0.3.3, con 14 plataformas y las
+   firmas verificadas.
+2. **El cliente la instala a mano**, una última vez.
 3. **Sacar una v0.3.4** (puede ser pequeña) para ver una actualización de verdad en su Mac. Es la
    deuda más alta.
 4. **La clave del actualizador**: el cliente la guarda en su bóveda de Esfinge (la privada, su
-   contraseña y la pública, de `~/.config/apolo/claves/`), y después se borra la copia del VPS. **No
+   contraseña y la pública, de `~/.config/apolo/claves/`). Después se borra la copia del VPS. **No
    se escribe nunca en el chat.**
 5. Después, **la entrega 4, Lotes**.
 
@@ -68,7 +63,7 @@
 - v0.3.1 publicada: ventana de Esfinge, disco y Windows (2026-10-06).
 - Prueba guiada de las entregas 1 y 2 en el Mac del cliente, completa (2026-10-06).
 - v0.3.2: arreglos de la prueba y HEIC (2026-10-06). ADR 0017. Publicada el 2026-10-07.
-- v0.3.3: el actualizador (2026-10-07). ADR 0018. Sin publicar.
+- v0.3.3: el actualizador (2026-10-07). ADR 0018. Publicada el mismo día, ya no como pre-release.
 
 ## En curso
 

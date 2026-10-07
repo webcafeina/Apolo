@@ -56,7 +56,7 @@ function leerPlegado(): Plegado {
 
 /** Nombre corto de un formato de salida, para la interfaz. */
 export function nombreFormato(f: FormatoSalida): string {
-  return { webp: "WebP", jpeg: "JPEG", png: "PNG", qoi: "QOI" }[f];
+  return { webp: "WebP", jpeg: "JPEG", png: "PNG", qoi: "QOI", avif: "AVIF", jxl: "JPEG XL" }[f];
 }
 
 export function Panel(p: Props) {
@@ -155,11 +155,6 @@ export function Panel(p: Props) {
                 {t(`formatoSalida.${f}`)}
               </option>
             ))}
-            {["avif", "jxl"].map((f) => (
-              <option key={f} value={f} disabled>
-                {t(`formato.${f}`)} · {t("panel.pronto")}
-              </option>
-            ))}
           </select>
         </label>
         <label className="campo">
@@ -235,7 +230,10 @@ function Fila({ control: c, ajuste: a, contexto, cambiar, nivelSinPerdida }: Pro
   const { t } = useTranslation();
   const activo = !c.cuando || c.cuando(a, contexto);
   const obj = a[c.de] as unknown as Record<string, unknown>;
-  const poner = (campo: string, v: unknown) => cambiar({ ...a, [c.de]: { ...obj, [campo]: v } } as Ajuste);
+  const poner = (campo: string, v: unknown) => {
+    const quitados = Object.fromEntries((c.limpiar ?? []).map((k) => [k, null]));
+    cambiar({ ...a, [c.de]: { ...obj, ...quitados, [campo]: v } } as Ajuste);
+  };
   const sinPerdidaWebp = c.de === "webp" && c.clave === "calidad" && a.webp.sin_perdida;
   const etiqueta = sinPerdidaWebp ? t("opcion.esfuerzo") : t(`opcion.${c.clave}`);
   const ayuda = sinPerdidaWebp ? t("opcion.esfuerzoAyuda") : t(`opcion.${c.clave}Ayuda`);
@@ -244,7 +242,7 @@ function Fila({ control: c, ajuste: a, contexto, cambiar, nivelSinPerdida }: Pro
   let entrada: React.ReactNode;
   switch (c.tipo) {
     case "deslizador": {
-      const v = (obj[c.campo] as number | null) ?? 0;
+      const v = (obj[c.campo] as number | null) ?? c.defecto ?? 0;
       entrada = (
         <div className="deslizador">
           <input
@@ -258,7 +256,8 @@ function Fila({ control: c, ajuste: a, contexto, cambiar, nivelSinPerdida }: Pro
             // Un campo que puede faltar (null) vuelve a faltar al llevarlo a 0.
             onChange={(e) => {
               const n = Number(e.target.value);
-              poner(c.campo, n === 0 && obj[c.campo] === null ? null : n === 0 && c.campo === "suavizado" ? null : n);
+              const vuelveANulo = c.defecto === undefined && n === 0 && (obj[c.campo] === null || c.campo === "suavizado");
+              poner(c.campo, vuelveANulo ? null : n);
             }}
           />
           <output htmlFor={id}>{v}</output>

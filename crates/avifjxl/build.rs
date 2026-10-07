@@ -56,11 +56,25 @@ fn main() {
         .define("FETCHCONTENT_SOURCE_DIR_LIBYUV", vendor.join("libyuv"))
         .define("CMAKE_POLICY_VERSION_MINIMUM", "3.5")
         .build_target("apolo");
+    // aom y libyuv eligen su SIMD por el procesador. El Mac universal compila
+    // x86_64 en un Mac ARM: hay que decírselo, o compilarían NEON para x86.
+    let arch = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+    let cpu = match arch.as_str() {
+        "x86_64" => "x86_64",
+        "aarch64" => "arm64",
+        otra => panic!("arquitectura sin probar para aom: {otra}"),
+    };
+    c.define("AOM_TARGET_CPU", cpu);
+    let cruzada = std::env::var("HOST").unwrap() != std::env::var("TARGET").unwrap();
     match sistema.as_str() {
         "macos" => {
             let minimo =
                 std::env::var("MACOSX_DEPLOYMENT_TARGET").unwrap_or_else(|_| "11.0".into());
             c.define("CMAKE_OSX_DEPLOYMENT_TARGET", &minimo);
+            if cruzada {
+                c.define("CMAKE_SYSTEM_NAME", "Darwin")
+                    .define("CMAKE_SYSTEM_PROCESSOR", cpu);
+            }
         }
         "windows" if msvc => {
             c.generator_toolset("ClangCL");

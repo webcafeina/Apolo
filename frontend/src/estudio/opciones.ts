@@ -69,8 +69,8 @@ export interface OpcionesWebp {
 
 // --------------------------------------------------------- los demás formatos
 
-export type FormatoSalida = "webp" | "jpeg" | "png" | "qoi";
-export const FORMATOS: FormatoSalida[] = ["webp", "jpeg", "png", "qoi"];
+export type FormatoSalida = "webp" | "jpeg" | "png" | "qoi" | "avif" | "jxl";
+export const FORMATOS: FormatoSalida[] = ["webp", "jpeg", "png", "qoi", "avif", "jxl"];
 
 /** Las opciones de cjpeg (OpcionesJpeg en crates/nucleo/src/jpeg/opciones.rs). */
 export interface OpcionesJpeg {
@@ -126,6 +126,50 @@ export interface OpcionesPng {
   enderezar: boolean;
 }
 
+/** Las opciones de avifenc (OpcionesAvif en crates/nucleo/src/formatos/avif.rs). */
+export interface OpcionesAvif {
+  /** -q; null, lo de avifenc (60). */
+  calidad: number | null;
+  calidad_alfa: number | null;
+  /** -s; null, lo de avifenc (6). */
+  velocidad: number | null;
+  sin_perdida: boolean;
+  submuestreo: "444" | "422" | "420" | "400" | null;
+  profundidad: number | null;
+  sharpyuv: boolean;
+  rango_limitado: boolean;
+  afinado: "iq" | "ssim" | "psnr" | null;
+  nitidez: number | null;
+  premultiplicar: boolean;
+  progresivo: boolean;
+  sin_exif: boolean;
+  sin_xmp: boolean;
+  sin_icc: boolean;
+  /** Las demás opciones de avifenc, tal cual. */
+  otras: string[];
+  enderezar: boolean;
+}
+
+/** Las opciones de cjxl (OpcionesJxl en crates/nucleo/src/formatos/jxl.rs). */
+export interface OpcionesJxl {
+  /** -q; null, lo de cjxl (-d 1, que es como -q 90). */
+  calidad: number | null;
+  /** -d; si está, manda sobre -q. */
+  distancia: number | null;
+  esfuerzo: number | null;
+  distancia_alfa: number | null;
+  progresivo: boolean;
+  modular: number | null;
+  /** Con un JPEG: recomprimirlo sin pérdida (lo de cjxl) o codificar sus píxeles. */
+  jpeg_sin_perdida: boolean;
+  ruido_iso: number | null;
+  epf: number | null;
+  gaborish: number | null;
+  decodificacion_rapida: number | null;
+  otras: string[];
+  enderezar: boolean;
+}
+
 export type Filtro = "lanczos3" | "mitchell" | "catmull_rom" | "bilineal" | "vecino";
 
 /** El proceso antes de codificar (Proceso en crates/nucleo/src/proceso.rs). */
@@ -142,6 +186,8 @@ export interface Ajuste {
   webp: OpcionesWebp;
   jpeg: OpcionesJpeg;
   png: OpcionesPng;
+  avif: OpcionesAvif;
+  jxl: OpcionesJxl;
   proceso: Proceso;
 }
 
@@ -155,12 +201,14 @@ export interface Contexto {
   alfa: boolean;
   ancho: number;
   alto: number;
+  /** La entrada es un JPEG (cjxl lo recomprime sin pérdida). */
+  jpeg: boolean;
 }
 
 type Cuando = (a: Ajuste, c: Contexto) => boolean;
 
 /** Dónde vive el campo que toca el control. */
-export type De = "webp" | "jpeg" | "png" | "proceso";
+export type De = "webp" | "jpeg" | "png" | "avif" | "jxl" | "proceso";
 
 interface Base {
   clave: string;
@@ -173,10 +221,13 @@ interface Base {
   cuando?: Cuando;
   /** Clave i18n de por qué está apagado. */
   porQue?: string;
+  /** Campos que se quitan (null) al tocar este: -q y -d de cjxl se excluyen. */
+  limpiar?: string[];
 }
 
 export type Control =
-  | (Base & { tipo: "deslizador"; campo: string; min: number; max: number; paso: number })
+  /** `defecto`: lo que se enseña mientras el campo está sin poner (null). */
+  | (Base & { tipo: "deslizador"; campo: string; min: number; max: number; paso: number; defecto?: number })
   | (Base & { tipo: "interruptor"; campo: string })
   /** `nulo`: el valor que en la lista significa «sin poner» (null). */
   | (Base & { tipo: "lista"; campo: string; valores: string[]; nulo?: string; numerica?: boolean })
@@ -371,6 +422,97 @@ export const CONTROLES_PNG: Control[] = [
   { clave: "forzarPng", nivel: "experto", de: "png", marca: "--force", tipo: "interruptor", campo: "forzar" },
 ];
 
+const avifConPerdida: Cuando = (a) => !a.avif.sin_perdida;
+const avifConAlfa: Cuando = (a, c) => c.alfa && !a.avif.sin_perdida;
+
+export const CONTROLES_AVIF: Control[] = [
+  // Básico
+  {
+    clave: "calidadAvif", nivel: "basico", de: "avif", marca: "-q", tipo: "deslizador", campo: "calidad", min: 0, max: 100, paso: 1,
+    defecto: 60, cuando: avifConPerdida, porQue: "porQue.soloConPerdida",
+  },
+  { clave: "velocidadAvif", nivel: "basico", de: "avif", marca: "-s", tipo: "deslizador", campo: "velocidad", min: 0, max: 10, paso: 1, defecto: 6 },
+  { clave: "sinPerdidaAvif", nivel: "basico", de: "avif", marca: "-l", tipo: "interruptor", campo: "sin_perdida" },
+  // Avanzado
+  {
+    clave: "calidadAlfaAvif", nivel: "avanzado", de: "avif", marca: "--qalpha", tipo: "deslizador", campo: "calidad_alfa", min: 0, max: 100,
+    paso: 1, defecto: 60, cuando: avifConAlfa, porQue: "porQue.sinAlfa",
+  },
+  {
+    clave: "submuestreoAvif", nivel: "avanzado", de: "avif", marca: "-y", tipo: "lista", campo: "submuestreo",
+    valores: ["auto", "444", "422", "420", "400"], nulo: "auto", cuando: avifConPerdida, porQue: "porQue.soloConPerdida",
+  },
+  {
+    clave: "sharpyuvAvif", nivel: "avanzado", de: "avif", marca: "--sharpyuv", tipo: "interruptor", campo: "sharpyuv",
+    cuando: (a) => a.avif.submuestreo === "420" && !a.avif.sin_perdida, porQue: "porQue.solo420",
+  },
+  {
+    clave: "afinadoAvif", nivel: "avanzado", de: "avif", marca: "-a tune", tipo: "lista", campo: "afinado",
+    valores: ["defecto", "iq", "ssim", "psnr"], nulo: "defecto", cuando: avifConPerdida, porQue: "porQue.soloConPerdida",
+  },
+  {
+    clave: "nitidezAvif", nivel: "avanzado", de: "avif", marca: "-a sharpness", tipo: "deslizador", campo: "nitidez", min: 0, max: 7, paso: 1,
+    cuando: avifConPerdida, porQue: "porQue.soloConPerdida",
+  },
+  { clave: "progresivoAvif", nivel: "avanzado", de: "avif", marca: "--progressive", tipo: "interruptor", campo: "progresivo" },
+  // Experto
+  {
+    clave: "profundidadAvif", nivel: "experto", de: "avif", marca: "-d", tipo: "lista", campo: "profundidad",
+    valores: ["defecto", "8", "10", "12"], nulo: "defecto", numerica: true,
+  },
+  { clave: "rangoLimitadoAvif", nivel: "experto", de: "avif", marca: "-r limited", tipo: "interruptor", campo: "rango_limitado" },
+  {
+    clave: "premultiplicarAvif", nivel: "experto", de: "avif", marca: "-p", tipo: "interruptor", campo: "premultiplicar",
+    cuando: (_a, c) => c.alfa, porQue: "porQue.sinAlfa",
+  },
+  { clave: "sinExifAvif", nivel: "experto", de: "avif", marca: "--ignore-exif", tipo: "interruptor", campo: "sin_exif" },
+  { clave: "sinXmpAvif", nivel: "experto", de: "avif", marca: "--ignore-xmp", tipo: "interruptor", campo: "sin_xmp" },
+  { clave: "sinIccAvif", nivel: "experto", de: "avif", marca: "--ignore-icc", tipo: "interruptor", campo: "sin_icc" },
+];
+
+/** Con un JPEG que cjxl recomprime sin pérdida, la calidad no cuenta. */
+const jxlConCalidad: Cuando = (a, c) => !(c.jpeg && a.jxl.jpeg_sin_perdida);
+
+export const CONTROLES_JXL: Control[] = [
+  // Básico
+  {
+    clave: "calidadJxl", nivel: "basico", de: "jxl", marca: "-q", tipo: "deslizador", campo: "calidad", min: 0, max: 100, paso: 1,
+    defecto: 90, limpiar: ["distancia"], cuando: jxlConCalidad, porQue: "porQue.jpegSinPerdida",
+  },
+  { clave: "esfuerzoJxl", nivel: "basico", de: "jxl", marca: "-e", tipo: "deslizador", campo: "esfuerzo", min: 1, max: 10, paso: 1, defecto: 7 },
+  {
+    clave: "jpegSinPerdidaJxl", nivel: "basico", de: "jxl", marca: "--lossless_jpeg", tipo: "interruptor", campo: "jpeg_sin_perdida",
+    cuando: (_a, c) => c.jpeg, porQue: "porQue.soloJpeg",
+  },
+  // Avanzado
+  {
+    clave: "distanciaAlfaJxl", nivel: "avanzado", de: "jxl", marca: "-a", tipo: "deslizador", campo: "distancia_alfa", min: 0, max: 25,
+    paso: 0.1, cuando: (_a, c) => c.alfa, porQue: "porQue.sinAlfa",
+  },
+  { clave: "progresivoJxl", nivel: "avanzado", de: "jxl", marca: "-p", tipo: "interruptor", campo: "progresivo" },
+  {
+    clave: "modularJxl", nivel: "avanzado", de: "jxl", marca: "-m", tipo: "lista", campo: "modular",
+    valores: ["defecto", "0", "1"], nulo: "defecto", numerica: true,
+  },
+  {
+    clave: "ruidoJxl", nivel: "avanzado", de: "jxl", marca: "--photon_noise_iso", tipo: "numero", campo: "ruido_iso", min: 0, max: 409600,
+    cuando: jxlConCalidad, porQue: "porQue.jpegSinPerdida",
+  },
+  // Experto
+  {
+    clave: "epfJxl", nivel: "experto", de: "jxl", marca: "--epf", tipo: "lista", campo: "epf",
+    valores: ["defecto", "0", "1", "2", "3"], nulo: "defecto", numerica: true,
+  },
+  {
+    clave: "gaborishJxl", nivel: "experto", de: "jxl", marca: "--gaborish", tipo: "lista", campo: "gaborish",
+    valores: ["defecto", "0", "1"], nulo: "defecto", numerica: true,
+  },
+  {
+    clave: "decodificacionRapidaJxl", nivel: "experto", de: "jxl", marca: "--faster_decoding", tipo: "deslizador",
+    campo: "decodificacion_rapida", min: 0, max: 4, paso: 1,
+  },
+];
+
 /** El proceso: para todos los formatos, y de Apolo (sin opción de la herramienta). */
 export const CONTROLES_PROCESO: Control[] = [
   { clave: "enderezar", de: "proceso", marca: "", tipo: "interruptor", campo: "enderezar" },
@@ -380,11 +522,18 @@ export const CONTROLES_PROCESO: Control[] = [
 ];
 
 export function controlesDe(f: FormatoSalida): Control[] {
-  return f === "webp" ? CONTROLES_WEBP : f === "jpeg" ? CONTROLES_JPEG : f === "png" ? CONTROLES_PNG : [];
+  return { webp: CONTROLES_WEBP, jpeg: CONTROLES_JPEG, png: CONTROLES_PNG, qoi: [], avif: CONTROLES_AVIF, jxl: CONTROLES_JXL }[f];
 }
 
 /** Todos, para las pruebas (i18n y cobertura). */
-export const CONTROLES: Control[] = [...CONTROLES_WEBP, ...CONTROLES_JPEG, ...CONTROLES_PNG, ...CONTROLES_PROCESO];
+export const CONTROLES: Control[] = [
+  ...CONTROLES_WEBP,
+  ...CONTROLES_JPEG,
+  ...CONTROLES_PNG,
+  ...CONTROLES_AVIF,
+  ...CONTROLES_JXL,
+  ...CONTROLES_PROCESO,
+];
 
 /** Las opciones de cwebp que el panel cubre, para la prueba de cobertura. */
 export const OPCIONES_CUBIERTAS = new Set(CONTROLES_WEBP.map((c) => c.marca).filter(Boolean));

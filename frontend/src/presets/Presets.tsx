@@ -112,7 +112,19 @@ function Ficha({
         ? [t("presets.calidad", { valor: ajuste.jpeg.calidad[0] ?? 75 })]
         : ajuste.formato === "png"
           ? [t("presets.nivelPng", { valor: ajuste.png.nivel })]
-          : [];
+          : ajuste.formato === "avif"
+            ? [
+                ajuste.avif.sin_perdida ? t("presets.sinPerdida") : t("presets.calidad", { valor: ajuste.avif.calidad ?? 60 }),
+                t("presets.velocidad", { valor: ajuste.avif.velocidad ?? 6 }),
+              ]
+            : ajuste.formato === "jxl"
+              ? [
+                  ajuste.jxl.distancia !== null
+                    ? t("presets.distancia", { valor: ajuste.jxl.distancia })
+                    : t("presets.calidad", { valor: ajuste.jxl.calidad ?? 90 }),
+                  t("presets.esfuerzo", { valor: ajuste.jxl.esfuerzo ?? 7 }),
+                ]
+              : [];
   const rasgos = [
     nombreFormato(ajuste.formato),
     ...delFormato,
@@ -122,7 +134,7 @@ function Ficha({
     ...(pr.paleta ? [t("presets.paleta", { colores: pr.paleta.colores })] : []),
     ...(pr.enderezar || w.enderezar ? [t("presets.endereza")] : []),
   ];
-  const sub = { webp: "webp", jpeg: "jpeg", png: "png", qoi: "qoi" }[ajuste.formato];
+  const sub = { webp: "webp", jpeg: "jpeg", png: "png", qoi: "qoi", avif: "avif", jxl: "jxl" }[ajuste.formato];
 
   return (
     <section className="grupo ficha-preset" data-prueba="preset">

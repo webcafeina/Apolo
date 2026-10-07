@@ -17,7 +17,7 @@ use apolo_avifjxl::Herramienta;
 use crate::{Error, Resultado};
 
 /// Las opciones de cjxl. Lo que no está puesto es lo de cjxl.
-#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct OpcionesJxl {
     /// `-q` (0 a 100; 100 es sin pérdida, 90 «sin pérdida visible»).
@@ -33,9 +33,9 @@ pub struct OpcionesJxl {
     pub progresivo: bool,
     /// `-m 0|1`: VarDCT o modular.
     pub modular: Option<u8>,
-    /// `--lossless_jpeg=0|1`: con un JPEG, recomprimirlo sin pérdida (1, lo de
-    /// cjxl) o codificar sus píxeles (0).
-    pub jpeg_sin_perdida: Option<bool>,
+    /// `--lossless_jpeg=0|1`: con un JPEG, recomprimirlo sin pérdida (sí, lo
+    /// de cjxl) o codificar sus píxeles (no).
+    pub jpeg_sin_perdida: bool,
     /// `--photon_noise_iso`: grano de película, como una ISO.
     pub ruido_iso: Option<u32>,
     /// `--epf` (-1 a 3): el filtro que conserva los bordes.
@@ -48,6 +48,26 @@ pub struct OpcionesJxl {
     pub otras: Vec<String>,
     /// De Apolo: girar según la orientación EXIF.
     pub enderezar: bool,
+}
+
+impl Default for OpcionesJxl {
+    fn default() -> Self {
+        OpcionesJxl {
+            calidad: None,
+            distancia: None,
+            esfuerzo: None,
+            distancia_alfa: None,
+            progresivo: false,
+            modular: None,
+            jpeg_sin_perdida: true,
+            ruido_iso: None,
+            epf: None,
+            gaborish: None,
+            decodificacion_rapida: None,
+            otras: Vec::new(),
+            enderezar: false,
+        }
+    }
 }
 
 pub const ENDEREZAR: &str = "-apolo_enderezar";
@@ -81,8 +101,8 @@ impl OpcionesJxl {
         if self.progresivo {
             a.push("-p".into());
         }
-        if let Some(j) = self.jpeg_sin_perdida {
-            a.push(format!("--lossless_jpeg={}", u8::from(j)));
+        if !self.jpeg_sin_perdida {
+            a.push("--lossless_jpeg=0".into());
         }
         if let Some(n) = self.ruido_iso {
             a.push(format!("--photon_noise_iso={n}"));
@@ -268,7 +288,7 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesJxl, args: &[S]) -> Result
             "alpha_distance" => op.distancia_alfa = Some(decimal(&v, &a, 0.0, 25.0)?),
             "progressive" => op.progresivo = true,
             "modular" => op.modular = Some(entero(&v, &a, 0, 1)? as u8),
-            "lossless_jpeg" => op.jpeg_sin_perdida = Some(entero(&v, &a, 0, 1)? == 1),
+            "lossless_jpeg" => op.jpeg_sin_perdida = entero(&v, &a, 0, 1)? == 1,
             "photon_noise_iso" => op.ruido_iso = Some(entero(&v, &a, 0, u32::MAX as i64)? as u32),
             "epf" => op.epf = Some(entero(&v, &a, -1, 3)? as i8),
             "gaborish" => op.gaborish = Some(entero(&v, &a, 0, 1)? as u8),
@@ -312,6 +332,15 @@ pub fn texto(op: &OpcionesJxl, entrada: &str, salida: &str) -> String {
 
 /// Codifica un fichero PNG o JPEG (`ext`) como `cjxl entrada salida <opciones>`.
 pub fn codificar(entrada: &[u8], ext: &str, op: &OpcionesJxl) -> Resultado<Vec<u8>> {
+    // cjxl también falla, pero solo dice «terminó con el código 1».
+    let con_perdida =
+        op.distancia.is_some_and(|d| d != 0.0) || op.calidad.is_some_and(|q| q != 100.0);
+    if ext == "jpg" && op.jpeg_sin_perdida && con_perdida {
+        return Err(mal(
+            "con un JPEG, cjxl lo recomprime sin pérdida y no admite calidad: \
+             desactiva «JPEG sin pérdida» (--lossless_jpeg=0)",
+        ));
+    }
     apolo_avifjxl::convertir(Herramienta::Cjxl, entrada, ext, &op.orden(), "jxl")
         .map_err(Error::Codificacion)
 }
@@ -343,7 +372,7 @@ mod pruebas {
         assert_eq!(op.calidad, Some(85.0));
         assert_eq!(op.esfuerzo, Some(4));
         assert!(op.progresivo);
-        assert_eq!(op.jpeg_sin_perdida, Some(false));
+        assert!(!op.jpeg_sin_perdida);
         assert_eq!(op.epf, Some(2));
         assert_eq!(op.otras, ["-I", "50", "--resampling=2"]);
         assert_eq!(o.ignoradas, ["--quiet"]);

@@ -13,7 +13,7 @@
   },
   "estudio": {
     "soltar": "Arrastra una imagen aquí",
-    "soltarDetalle": "PNG, JPEG, HEIC (iPhone), WebP, TIFF, GIF, BMP, QOI o PNM",
+    "soltarDetalle": "PNG, JPEG, HEIC (iPhone), AVIF, JPEG XL, WebP, TIFF, GIF, BMP, QOI o PNM",
     "bienvenida": "Te damos la bienvenida a Apolo",
     "abrir": "Abrir una imagen…",
     "abrirOtra": "Abrir otra…",
@@ -43,7 +43,7 @@
     "copiar": "Copiar",
     "copiada": "Copiada",
     "editar": "Pegar orden…",
-    "pegar": "Pega una orden de cwebp, cjpeg, oxipng o qoiconv",
+    "pegar": "Pega una orden de cwebp, cjpeg, oxipng, qoiconv, avifenc o cjxl",
     "cargar": "Cargar",
     "cancelar": "Cancelar",
     "motivo": {
@@ -60,7 +60,6 @@
   "panel": {
     "etiqueta": "Ajustes de la compresión",
     "formato": "Formato",
-    "pronto": "pronto",
     "partida": "Partir de",
     "elegir": "Elegir…",
     "presetsCwebp": "Presets de cwebp",
@@ -121,7 +120,10 @@
     "sinAlfa": "La imagen no tiene transparencia, o se descarta.",
     "sinRedimension": "Solo cuenta al redimensionar.",
     "soloZopfli": "Solo con Zopfli encendido.",
-    "conZopfli": "Con Zopfli, la compresión la hace Zopfli."
+    "conZopfli": "Con Zopfli, la compresión la hace Zopfli.",
+    "solo420": "Solo con submuestreo 4:2:0.",
+    "jpegSinPerdida": "cjxl recomprime este JPEG sin pérdida: apaga «Recomprimir el JPEG sin pérdida» para elegir la calidad.",
+    "soloJpeg": "Solo cuenta si la imagen de entrada es un JPEG."
   },
   "opcion": {
     "calidad": "Calidad",
@@ -261,7 +263,57 @@
     "escala16Png": "De 16 a 8 bits",
     "escala16PngAyuda": "Pasa una imagen de 16 bits a 8, escalando. Pierde algo de precisión.",
     "forzarPng": "Escribir siempre",
-    "forzarPngAyuda": "Escribe el resultado aunque no gane nada frente al original."
+    "forzarPngAyuda": "Escribe el resultado aunque no gane nada frente al original.",
+    "calidadAvif": "Calidad",
+    "calidadAvifAyuda": "Más alta, más fiel y más pesada. 100 es sin pérdida. avifenc usa 60 si no se toca.",
+    "velocidadAvif": "Velocidad",
+    "velocidadAvifAyuda": "Más baja, más lenta y algo más pequeña. 6 es lo de avifenc; por debajo de 4 puede tardar mucho.",
+    "sinPerdidaAvif": "Sin pérdida",
+    "sinPerdidaAvifAyuda": "La imagen sale idéntica, en 4:4:4 y sin convertir el color. Pesa bastante más.",
+    "calidadAlfaAvif": "Calidad de la transparencia",
+    "calidadAlfaAvifAyuda": "La del canal alfa. Si no se toca, la misma que la del color.",
+    "submuestreoAvif": "Submuestreo del color",
+    "submuestreoAvifAyuda": "4:2:0 guarda el color a la mitad de resolución: pesa menos y casi no se nota en fotos. 4:4:4 lo guarda entero.",
+    "sharpyuvAvif": "Color nítido (sharp YUV)",
+    "sharpyuvAvifAyuda": "Una conversión a 4:2:0 más lenta que evita bordes de color sucios.",
+    "afinadoAvif": "Afinar para",
+    "afinadoAvifAyuda": "La medida que aom intenta mejorar. IQ, la de por defecto en imágenes fijas, busca lo que ve el ojo.",
+    "nitidezAvif": "Nitidez",
+    "nitidezAvifAyuda": "Prefiere conservar los bordes nítidos al repartir los bits (0 a 7).",
+    "progresivoAvif": "Progresivo",
+    "progresivoAvifAyuda": "Guarda una versión rápida antes de la completa, para que se vea mientras carga. Pesa algo más.",
+    "profundidadAvif": "Bits por canal",
+    "profundidadAvifAyuda": "10 o 12 bits dan degradados más finos y pesan algo más. Por defecto, los de la entrada.",
+    "rangoLimitadoAvif": "Rango limitado",
+    "rangoLimitadoAvifAyuda": "El rango de vídeo (16–235) en vez del completo. Solo para casos muy concretos.",
+    "premultiplicarAvif": "Premultiplicar el alfa",
+    "premultiplicarAvifAyuda": "Guarda el color ya multiplicado por la transparencia.",
+    "sinExifAvif": "Sin EXIF",
+    "sinExifAvifAyuda": "No copia los datos de la cámara (fecha, ubicación, orientación).",
+    "sinXmpAvif": "Sin XMP",
+    "sinXmpAvifAyuda": "No copia los metadatos XMP.",
+    "sinIccAvif": "Sin perfil de color",
+    "sinIccAvifAyuda": "No copia el perfil ICC. Los colores pueden cambiar si no era sRGB.",
+    "calidadJxl": "Calidad",
+    "calidadJxlAyuda": "90 es «sin pérdida visible», lo de cjxl. 100 es sin pérdida.",
+    "esfuerzoJxl": "Esfuerzo",
+    "esfuerzoJxlAyuda": "Más alto, más lento y algo más pequeño. 7 es lo de cjxl.",
+    "jpegSinPerdidaJxl": "Recomprimir el JPEG sin pérdida",
+    "jpegSinPerdidaJxlAyuda": "Guarda el mismo JPEG en menos espacio, y se puede recuperar byte a byte. Apagado, codifica sus píxeles con la calidad elegida.",
+    "distanciaAlfaJxl": "Distancia de la transparencia",
+    "distanciaAlfaJxlAyuda": "0 guarda el canal alfa sin pérdida, lo de cjxl. 1 es «sin pérdida visible».",
+    "progresivoJxl": "Progresivo",
+    "progresivoJxlAyuda": "Se ve antes mientras carga. Pesa algo más.",
+    "modularJxl": "Modo",
+    "modularJxlAyuda": "VarDCT es el de las fotos; modular, el de los gráficos y el sin pérdida. Por defecto lo elige cjxl.",
+    "ruidoJxl": "Grano (ISO)",
+    "ruidoJxlAyuda": "Añade al decodificar un grano como el de una foto a esa ISO: 100 es poco, 3200 mucho. Vacío, sin grano.",
+    "epfJxl": "Filtro de bordes",
+    "epfJxlAyuda": "La fuerza del filtro que suaviza sin borrar bordes. Por defecto lo elige cjxl.",
+    "gaborishJxl": "Filtro Gaborish",
+    "gaborishJxlAyuda": "Un filtro que disimula los bloques. Por defecto lo elige cjxl.",
+    "decodificacionRapidaJxl": "Decodificación rápida",
+    "decodificacionRapidaJxlAyuda": "Más alto, se abre antes a cambio de algo de calidad o de peso."
   },
   "valor": {
     "nivel": {
@@ -367,6 +419,42 @@
       "catmull_rom": "Catmull-Rom",
       "bilineal": "Bilineal",
       "vecino": "Vecino · pixel art"
+    },
+    "submuestreoAvif": {
+      "auto": "Como la entrada",
+      "444": "4:4:4",
+      "422": "4:2:2",
+      "420": "4:2:0",
+      "400": "Gris (4:0:0)"
+    },
+    "afinadoAvif": {
+      "defecto": "Lo de aom",
+      "iq": "Imagen (IQ)",
+      "ssim": "SSIM",
+      "psnr": "PSNR"
+    },
+    "profundidadAvif": {
+      "defecto": "Los de la entrada",
+      "8": "8",
+      "10": "10",
+      "12": "12"
+    },
+    "modularJxl": {
+      "defecto": "Lo elige cjxl",
+      "0": "VarDCT",
+      "1": "Modular"
+    },
+    "epfJxl": {
+      "defecto": "Lo elige cjxl",
+      "0": "0 · Apagado",
+      "1": "1",
+      "2": "2",
+      "3": "3 · El más fuerte"
+    },
+    "gaborishJxl": {
+      "defecto": "Lo elige cjxl",
+      "0": "Apagado",
+      "1": "Encendido"
     }
   },
   "lotes": {
@@ -470,7 +558,10 @@
     "renombrar": "Renombrar",
     "seguro": "¿Borrarlo?",
     "nivelPng": "Nivel {{valor}}",
-    "paleta": "{{colores}} colores"
+    "paleta": "{{colores}} colores",
+    "velocidad": "Velocidad {{valor}}",
+    "distancia": "Distancia {{valor}}",
+    "esfuerzo": "Esfuerzo {{valor}}"
   },
   "novedad": {
     "hay": "Hay una versión nueva:",
@@ -490,6 +581,8 @@
     "webp": "WebP",
     "jpeg": "JPEG (MozJPEG)",
     "png": "PNG (OxiPNG)",
-    "qoi": "QOI"
+    "qoi": "QOI",
+    "avif": "AVIF",
+    "jxl": "JPEG XL"
   }
 }

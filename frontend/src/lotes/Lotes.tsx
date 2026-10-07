@@ -36,8 +36,15 @@ interface SalidaLote {
   eleccion: string;
 }
 
-const EXTENSION: Record<FormatoSalida, string> = { webp: "webp", jpeg: "jpg", png: "png", qoi: "qoi" };
-const HERRAMIENTA: Record<FormatoSalida, string> = { webp: "cwebp", jpeg: "cjpeg", png: "oxipng", qoi: "qoiconv" };
+const EXTENSION: Record<FormatoSalida, string> = { webp: "webp", jpeg: "jpg", png: "png", qoi: "qoi", avif: "avif", jxl: "jxl" };
+const HERRAMIENTA: Record<FormatoSalida, string> = {
+  webp: "cwebp",
+  jpeg: "cjpeg",
+  png: "oxipng",
+  qoi: "qoiconv",
+  avif: "avifenc",
+  jxl: "cjxl",
+};
 
 export function ahorro(antes: number, despues: number): number {
   return antes > 0 ? Math.round((1 - despues / antes) * 100) : 0;
@@ -570,11 +577,6 @@ function FilaSalida({
             {FORMATOS.map((f) => (
               <option key={f} value={f}>
                 {t(`formatoSalida.${f}`)}
-              </option>
-            ))}
-            {["avif", "jxl"].map((f) => (
-              <option key={f} value={f} disabled>
-                {t(`formato.${f}`)} · {t("panel.pronto")}
               </option>
             ))}
           </select>

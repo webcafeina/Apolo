@@ -311,7 +311,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
 
       <Panel
         ajuste={editado}
-        contexto={{ alfa: info.alfa, ancho: info.ancho, alto: info.alto }}
+        contexto={{ alfa: info.alfa, ancho: info.ancho, alto: info.alto, jpeg: info.formato === "JPEG" }}
         presetsCwebp={inicio.presets_cwebp}
         guardados={guardados}
         cambiar={ponerAjuste}

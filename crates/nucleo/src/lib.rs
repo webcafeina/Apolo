@@ -6,6 +6,7 @@
 pub mod cwebp;
 pub mod entrada;
 pub mod error;
+pub mod lote;
 pub mod metadatos;
 pub mod motores;
 pub mod orientacion;

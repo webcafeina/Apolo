@@ -588,3 +588,40 @@ button.peligro { border-color: var(--error); color: var(--error); }
 /* Cuatro píxeles sobre una pista clara: aquí manda verse, y el oro sobre
    «--elevada» desaparecería (Esfinge). Va en la tinta del acento. */
 .barra-progreso i { display: block; height: 100%; background: var(--acento); transition: width 0.15s; }
+
+/* Lotes (ADR 0019) */
+
+.panel-ajustes.lotes { max-width: 720px; }
+.lotes .zona-soltar { min-height: 260px; padding: var(--espacio-5); flex: none; }
+.lotes .zona-soltar.compacta { min-height: 0; padding: var(--espacio-4); }
+.lotes .zona-soltar .pareja { margin-top: var(--espacio-3); }
+.lotes .zona-soltar .pareja .principal { margin-top: 0; }
+.pareja.centrada { justify-content: center; }
+.lotes .zona-soltar input { width: 340px; }
+.relleno-flex { flex: 1; }
+
+button.discreto { background: transparent; border-color: transparent; box-shadow: none; color: var(--apagado); padding: 0 var(--espacio-2); }
+button.discreto:hover:not(:disabled) { background: var(--elevada); color: var(--tinta); }
+
+.lista-entradas { list-style: none; margin: 0; padding: 0; }
+.lista-entradas li { display: flex; align-items: center; gap: var(--espacio-2); min-height: 32px; border-bottom: var(--linea) solid var(--filete); }
+.lista-entradas li:last-child { border-bottom: none; }
+.lista-entradas code { flex: 1; min-width: 0; font: 12px var(--mono); color: var(--tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.lotes code { font: 12px var(--mono); color: var(--tinta); }
+.ruta-salida { flex: 1; font-family: var(--mono); font-size: 12px; }
+
+.barra-progreso.ancha { max-width: none; height: 6px; border-radius: 3px; }
+.barra-progreso.ancha i { border-radius: 3px; }
+
+.ahorro-lote { font-size: var(--texto-grande); color: var(--cuerpo); }
+.ahorro-lote strong { color: var(--tinta); }
+.aviso-texto { color: var(--aviso); }
+
+.filas-lote { list-style: none; margin: 0; padding: 0; }
+.filas-lote li { display: grid; grid-template-columns: minmax(0, 1fr) auto 64px; gap: var(--espacio-3); align-items: center; min-height: 30px; border-bottom: var(--linea) solid var(--filete); font-size: var(--texto-chico); }
+.filas-lote li:last-child { border-bottom: none; }
+.filas-lote li.con-error { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+.filas-lote .nombre { color: var(--tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.filas-lote .cifra { text-align: right; font-variant-numeric: tabular-nums; color: var(--tinta); }
+.filas-lote .cifra.aviso-texto { color: var(--aviso); }

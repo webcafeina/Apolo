@@ -22,6 +22,10 @@ pub enum Error {
 
     #[error("Falta memoria")]
     Memoria,
+
+    /// Leer o escribir un fichero, con la ruta ya en el texto.
+    #[error("{0}")]
+    Fichero(String),
 }
 
 pub type Resultado<T> = std::result::Result<T, Error>;

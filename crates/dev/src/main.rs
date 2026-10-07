@@ -118,6 +118,24 @@ struct Forzar {
 }
 
 #[derive(Deserialize)]
+struct Entradas {
+    entradas: Vec<String>,
+}
+
+#[derive(Deserialize)]
+struct EmpezarLote {
+    entradas: Vec<String>,
+    opciones: OpcionesWebp,
+    salida: String,
+}
+
+#[derive(Deserialize)]
+struct EstadoLote {
+    id: u64,
+    desde: usize,
+}
+
+#[derive(Deserialize)]
 struct Guardar {
     preset: PresetGuardado,
 }
@@ -235,6 +253,36 @@ fn rutas(s: Arc<Servicio>) -> Router {
             "/api/borrar_preset",
             post(|State(s): Estado, Json(p): Json<Nombre>| async move {
                 s.borrar_preset(&p.nombre).map(Json).map_err(Error)
+            }),
+        )
+        .route(
+            "/api/recoger_lote",
+            post(|Json(p): Json<Entradas>| async move {
+                Json(bloqueante(move || apolo_servicio::recoger_lote(&p.entradas)).await)
+            }),
+        )
+        .route(
+            "/api/empezar_lote",
+            post(|State(s): Estado, Json(p): Json<EmpezarLote>| async move {
+                let r: R<_> =
+                    bloqueante(move || s.empezar_lote(&p.entradas, &p.opciones, &p.salida))
+                        .await
+                        .map(Json)
+                        .map_err(Error);
+                r
+            }),
+        )
+        .route(
+            "/api/estado_lote",
+            post(|State(s): Estado, Json(p): Json<EstadoLote>| async move {
+                s.estado_lote(p.id, p.desde).map(Json).map_err(Error)
+            }),
+        )
+        .route(
+            "/api/cancelar_lote",
+            post(|State(s): Estado, Json(p): Json<Id>| async move {
+                s.cancelar_lote(p.id);
+                Json(())
             }),
         )
         .route(

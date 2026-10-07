@@ -8,8 +8,8 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- ~~Publicar la v0.3.3~~ (hecho el 2026-10-07). **Sacar la v0.3.4** para ver una actualización de
-  verdad (deuda). La clave del actualizador se queda en el VPS por decisión del
+- **Publicar la v0.4.0** (Lotes) cuando el cliente lo diga: será la primera que llegue por el
+  actualizador a su Mac (deuda). La clave del actualizador se queda en el VPS por decisión del
   cliente (deuda).
 
 - **Montar la equivalencia con cwebp en CI para Windows y Linux arm64** (deuda). En un Mac con
@@ -17,8 +17,6 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
-- **Entrega 4 — Lotes.** Lo siguiente de código, tras la prueba guiada. Antes era la 3; la adelantó la Identidad. Arrastrar carpetas, preset con uno o varios formatos de salida, patrón de
-  nombre y carpeta, paralelo, cancelar, y el resumen con el ahorro y las peores imágenes.
 - **Entrega 5 — Resto de códecs y proceso.** MozJPEG, OxiPNG, AVIF, JPEG XL y QOI; redimensionar,
   recortar y reducir paleta. La ADR de AVIF (libavif + aom frente a ravif/rav1e) se decide midiendo.
 - **Entrega 6 — Métricas.** PSNR, SSIM escrito aquí, el mapa de diferencias y el mapa SSIM.
@@ -33,6 +31,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 - La traducción al inglés: con la i18n hecha, es traducir `es.json`.
 
 ## Cerrado
+
+- ~~**Entrega 4 — Lotes**~~: carpetas y ficheros, presets, salida con subcarpetas sin pisar nada,
+  en paralelo y cancelable, resumen con las que menos ahorran; `apolo lote` en la CLI. Cada imagen
+  da los mismos bytes que cwebp. Los varios formatos de salida llegan con la entrega 5. ADR 0019.
+  · 2026-10-07
 
 - ~~**Entrega 0 — Cimientos**~~: repositorio, documentos vivos, workspace, carcasa de la interfaz,
   tokens con contraste y CI en verde en los seis objetivos. · 2026-10-06

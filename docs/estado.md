@@ -36,20 +36,21 @@
 
 ### La siguiente acción, al retomar
 
-1. **La v0.3.3 está publicada como versión normal**
-   (https://github.com/webcafeina/Apolo/releases/tag/v0.3.3). Lleva:
-   - el actualizador ([ADR 0018](adr/0018-actualizarse-sola.md));
-   - los textos tras probar la v0.3.2.
-
-   El endpoint `releases/latest/download/latest.json` ya responde 0.3.3, con 14 plataformas y las
-   firmas verificadas.
-2. **El cliente la instala a mano**, una última vez.
-3. **Sacar una v0.3.4** (puede ser pequeña) para ver una actualización de verdad en su Mac. Es la
-   deuda más alta.
+1. **La entrega 4, Lotes, está hecha** ([ADR 0019](adr/0019-lotes.md)), como **v0.4.0 sin
+   publicar**. Todo está en `main`, con la puerta y las pruebas e2e en verde aquí.
+   - Una carpeta elegida, con las subcarpetas repetidas.
+   - Nunca se pisa nada: si el nombre existe, sale `foto-2.webp`.
+   - Las que crecen se guardan y se señalan.
+   - `apolo lote` en la CLI.
+   - Cada imagen da los mismos bytes que cwebp.
+2. **Publicarla cuando el cliente lo diga.** Es la primera que le llegará **por el actualizador**:
+   la v0.3.3 de su Mac debería avisar (al día siguiente, o con «Buscar ahora»), bajarla y
+   reiniciarse. Esa es la deuda más alta, la del actualizador.
+3. Después, que pruebe Lotes en la ventana: elegir carpetas, soltarlas, cancelar, «Mostrar en la
+   carpeta».
 4. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
-   cliente, con los riesgos dichos (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en
-   el chat.
-5. Después, **la entrega 4, Lotes**.
+   cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
+5. Después, **la entrega 5**: el resto de códecs y el proceso de imagen.
 
 ## Completado
 
@@ -64,6 +65,8 @@
 - Prueba guiada de las entregas 1 y 2 en el Mac del cliente, completa (2026-10-06).
 - v0.3.2: arreglos de la prueba y HEIC (2026-10-06). ADR 0017. Publicada el 2026-10-07.
 - v0.3.3: el actualizador (2026-10-07). ADR 0018. Publicada el mismo día, ya no como pre-release.
+  El cliente la instaló a mano, y «Buscar ahora» funciona.
+- Entrega 4, Lotes (2026-10-07). ADR 0019. v0.4.0, sin publicar.
 
 ## En curso
 

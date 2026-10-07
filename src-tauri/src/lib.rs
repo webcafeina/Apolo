@@ -10,7 +10,10 @@ use std::sync::Arc;
 use apolo_nucleo::Motor;
 use apolo_nucleo::presets::PresetGuardado;
 use apolo_nucleo::webp::{OpcionesWebp, Preset};
-use apolo_servicio::{Ajustes, Fallo, InfoImagen, Inicio, Servicio, Vista, empaquetar_pixeles};
+use apolo_servicio::{
+    Ajustes, EstadoLote, Fallo, InfoImagen, Inicio, LoteEmpezado, Recogida, Servicio, Vista,
+    empaquetar_pixeles,
+};
 use tauri::State;
 use tauri::http::{Response, StatusCode, header};
 
@@ -131,6 +134,32 @@ fn borrar_preset(s: Estado, nombre: String) -> Result<Vec<PresetGuardado>, Fallo
 }
 
 #[tauri::command]
+async fn recoger_lote(entradas: Vec<String>) -> Recogida {
+    bloqueante(move || apolo_servicio::recoger_lote(&entradas)).await
+}
+
+#[tauri::command]
+async fn empezar_lote(
+    s: Estado<'_>,
+    entradas: Vec<String>,
+    opciones: OpcionesWebp,
+    salida: String,
+) -> Result<LoteEmpezado, Fallo> {
+    let s = s.inner().clone();
+    bloqueante(move || s.empezar_lote(&entradas, &opciones, &salida)).await
+}
+
+#[tauri::command]
+fn estado_lote(s: Estado, id: u64, desde: usize) -> Result<EstadoLote, Fallo> {
+    s.estado_lote(id, desde)
+}
+
+#[tauri::command]
+fn cancelar_lote(s: Estado, id: u64) {
+    s.cancelar_lote(id)
+}
+
+#[tauri::command]
 fn ajustes(s: Estado) -> Ajustes {
     s.ajustes()
 }
@@ -180,6 +209,8 @@ pub fn arrancar() {
         // reinicia después.
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
+        // «Mostrar en la carpeta» al acabar un lote.
+        .plugin(tauri_plugin_opener::init())
         .manage(Arc::new(Servicio::con_carpeta_por_defecto()))
         .register_asynchronous_uri_scheme_protocol("apolo", |ctx, peticion, respuesta| {
             use tauri::Manager;
@@ -219,7 +250,11 @@ pub fn arrancar() {
             borrar_preset,
             ajustes,
             buscar_actualizaciones,
-            reservar_comprobacion
+            reservar_comprobacion,
+            recoger_lote,
+            empezar_lote,
+            estado_lote,
+            cancelar_lote
         ])
         .run(tauri::generate_context!())
         .expect("No se pudo arrancar Apolo");

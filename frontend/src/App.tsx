@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import * as actualizar from "./actualizar";
 import { Cabecera, Icono, IconoApp, Marca } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
+import { Lotes } from "./lotes/Lotes";
 import { BandaNovedad } from "./Novedad";
 import { Presets } from "./presets/Presets";
 import * as puente from "./puente";
@@ -85,20 +86,12 @@ export function App() {
         )}
         {/* El Estudio no se desmonta al cambiar de sección: conserva la imagen. */}
         <div hidden={seccion !== "estudio"} className="seccion">
-          {inicio && <Estudio inicio={inicio} />}
+          {inicio && <Estudio inicio={inicio} activo={seccion === "estudio"} />}
         </div>
-        {seccion === "lotes" && (
-          <div className="seccion columna">
-            <Cabecera titulo={t("nav.lotes")} />
-            <div className="contenido">
-              <section className="zona-soltar">
-                <Icono nombre="lotes" lado={40} />
-                <p className="zona-titulo">{t("lotes.soltar")}</p>
-                <p className="apagado">{t("lotes.pronto")}</p>
-              </section>
-            </div>
-          </div>
-        )}
+        {/* Lotes tampoco: un lote largo sigue contando mientras se mira otra cosa. */}
+        <div hidden={seccion !== "lotes"} className="seccion">
+          {inicio && <Lotes inicio={inicio} activo={seccion === "lotes"} />}
+        </div>
         {seccion === "presets" && <Presets carpeta={inicio?.carpeta_presets ?? null} irAlEstudio={() => setSeccion("estudio")} />}
         {seccion === "ajustes" && <Ajustes inicio={inicio} alEncontrar={setNovedad} />}
       </main>

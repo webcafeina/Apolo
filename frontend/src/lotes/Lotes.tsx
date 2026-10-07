@@ -406,10 +406,11 @@ function Progreso({
                 {r.fallidas > 0 && <p className="error">{t("lotes.fallidas", { count: r.fallidas })}</p>}
                 <p className="apagado">{t("lotes.dondeQuedo", { salida: momento.lote.salida })}</p>
                 <div className="pareja">
-                  {puente.enTauri() && momento.filas.find((f) => f.ruta) && (
-                    <button onClick={() => puente.mostrarEnCarpeta(momento.filas.find((f) => f.ruta)!.ruta!)}>
-                      {t("lotes.mostrar")}
-                    </button>
+                  {/* La carpeta de salida entera, seleccionada en el Finder. Antes
+                      señalaba la última imagen, y abría la subcarpeta en la que
+                      cayera (lo vio el cliente con la v0.4.0). */}
+                  {puente.enTauri() && r.convertidas > 0 && (
+                    <button onClick={() => puente.mostrarEnCarpeta(momento.lote.salida)}>{t("lotes.mostrar")}</button>
                   )}
                   <button className="principal" onClick={alOtro}>
                     {t("lotes.otro")}

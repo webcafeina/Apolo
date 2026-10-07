@@ -25,11 +25,22 @@ export function BandaNovedad({
   const [error, setError] = useState<string | null>(null);
   const version = novedad.version;
 
+  const porcentaje = (a: Avance) => (a.total > 0 ? Math.min(100, Math.round((a.bytes / a.total) * 100)) : null);
+
   async function descargar() {
     setError(null);
     setPaso({ es: "bajando", avance: { bytes: 0, total: 0 } });
+    // Llega un aviso por cada trozo: cientos por segundo. Redibujar con cada
+    // uno reiniciaba la animación de la barra, que iba a tirones y por detrás
+    // del número (v0.4.0). Solo se redibuja cuando cambia el porcentaje entero.
+    let ultimo: number | null = -1;
     try {
-      await novedad.descargar((avance) => setPaso({ es: "bajando", avance }));
+      await novedad.descargar((avance) => {
+        const p = porcentaje(avance);
+        if (p === ultimo) return;
+        ultimo = p;
+        setPaso({ es: "bajando", avance });
+      });
       setPaso({ es: "lista" });
     } catch (e) {
       setError(t("novedad.errorDescarga", { detalle: texto(e) }));
@@ -48,7 +59,6 @@ export function BandaNovedad({
     }
   }
 
-  const porcentaje = (a: Avance) => (a.total > 0 ? Math.min(100, Math.round((a.bytes / a.total) * 100)) : null);
 
   return (
     <div className="novedad" role="status" data-prueba="novedad">

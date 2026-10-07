@@ -587,7 +587,10 @@ button.peligro { border-color: var(--error); color: var(--error); }
 .barra-progreso { max-width: 320px; height: 4px; border-radius: 2px; background: var(--elevada); overflow: hidden; }
 /* Cuatro píxeles sobre una pista clara: aquí manda verse, y el oro sobre
    «--elevada» desaparecería (Esfinge). Va en la tinta del acento. */
-.barra-progreso i { display: block; height: 100%; background: var(--acento); transition: width 0.15s; }
+/* Sin animación: avanza a pasos de un 1 %, que ya se ven continuos. Con una
+   transición, cada paso la reiniciaba y la barra iba por detrás del número, a
+   tirones (v0.4.0, en el Mac del cliente). */
+.barra-progreso i { display: block; height: 100%; background: var(--acento); }
 
 /* Lotes (ADR 0019) */
 

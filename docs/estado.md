@@ -36,21 +36,13 @@
 
 ### La siguiente acción, al retomar
 
-1. **La entrega 4, Lotes, está publicada como v0.4.0**
-   (https://github.com/webcafeina/Apolo/releases/tag/v0.4.0) ([ADR 0019](adr/0019-lotes.md)). CI
-   en verde. En el borrador se revisó todo: 22 ficheros, las sumas, y `latest.json` con 14
-   plataformas y sus firmas válidas.
-   - Una carpeta elegida, con las subcarpetas repetidas.
-   - Nunca se pisa nada: si el nombre existe, sale `foto-2.webp`.
-   - Las que crecen se guardan y se señalan.
-   - `apolo lote` en la CLI.
-   - Cada imagen da los mismos bytes que cwebp.
-2. **Que el cliente actualice desde su v0.3.3.** Es la primera versión que le llega **por el
-   actualizador**:
-   la v0.3.3 de su Mac debería avisar (al día siguiente, o con «Buscar ahora»), bajarla y
-   reiniciarse. Esa es la deuda más alta, la del actualizador.
-3. Después, que pruebe Lotes en la ventana: elegir carpetas, soltarlas, cancelar, «Mostrar en la
-   carpeta».
+1. **La v0.4.0 (Lotes) está publicada**, y **el cliente se actualizó a ella desde la v0.3.3 con el
+   actualizador**, sin reinstalar. Es la primera actualización de verdad, y sale bien en macOS.
+2. Avisó de que **la barra de la descarga iba a tirones y por detrás del número**. Está arreglado
+   en `main`, sin publicar, y lo vigila una prueba. Ver trampas.md. Saldría como **v0.4.1**: sería
+   además la segunda actualización por la banda.
+3. Que el cliente pruebe **Lotes en la ventana**: elegir carpetas, soltarlas, cancelar, «Mostrar en
+   la carpeta».
 4. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
    cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
 5. Después, **la entrega 5**: el resto de códecs y el proceso de imagen.

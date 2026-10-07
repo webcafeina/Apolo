@@ -52,21 +52,28 @@ function deTauri(u: Update): Novedad {
   };
 }
 
+// Como la de verdad: 11 MB en trozos de 16 KB, cientos por segundo y a ritmo
+// desigual. Con diez pasos tranquilos, la barra parecía ir bien y en el Mac
+// iba a tirones (v0.4.0).
 function deMentira(version: string): Novedad {
   return {
     version,
     descargar: (alAvanzar) =>
       new Promise((listo) => {
-        const total = 10;
+        const total = 11_143_568;
         let bytes = 0;
+        alAvanzar({ bytes, total });
         const reloj = setInterval(() => {
-          bytes++;
-          alAvanzar({ bytes, total });
+          const rafaga = 1 + Math.floor(Math.random() * 6);
+          for (let i = 0; i < rafaga && bytes < total; i++) {
+            bytes = Math.min(total, bytes + 16_384);
+            alAvanzar({ bytes, total });
+          }
           if (bytes === total) {
             clearInterval(reloj);
             listo();
           }
-        }, 60);
+        }, 4);
       }),
     instalarYReiniciar: () => new Promise(() => {}),
   };

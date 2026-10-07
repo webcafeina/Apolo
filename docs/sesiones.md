@@ -4,6 +4,24 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-07 · La primera actualización de verdad, y su barra
+
+- El cliente **se actualizó de la v0.3.3 a la v0.4.0 desde la banda**, sin reinstalar. Saldada en
+  macOS la deuda más alta.
+- Avisó de que la barra de la descarga «no funciona bien»: avanzaba a saltos o iba por detrás.
+  - Primero se descartó lo evidente: GitHub manda `Content-Length` (11,1 MB) y el plugin pasa bien
+    los datos.
+  - Se reprodujo en el navegador haciendo la descarga simulada parecida a la real. Con eso, la barra
+    iba hasta 41 puntos por detrás del número.
+  - La causa: un aviso por trozo, cientos por segundo, y cada uno reiniciaba la transición CSS
+    ([trampas](trampas.md)).
+  - El arreglo: redibujar solo cuando cambia el porcentaje entero, y quitar la transición. Con una
+    transición de 80 ms aún iba 19 puntos por detrás.
+  - Una prueba e2e compara la barra pintada con el número.
+- Verificado: `make comprobar` y 31 pruebas e2e. Sin publicar: sería la v0.4.1.
+
+---
+
 ## 2026-10-07 · Entrega 4: Lotes (v0.4.0)
 
 - El cliente instaló la v0.3.3 a mano, y «Buscar ahora» dice «Ya tienes la última versión.». La

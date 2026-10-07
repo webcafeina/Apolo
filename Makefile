@@ -1,6 +1,12 @@
 # Apolo. `make` o `make ayuda` para ver los objetivos.
 SHELL := /bin/bash
 export PATH := $(HOME)/.cargo/bin:$(HOME)/.local/bin:$(PATH)
+# libjxl se compila con clang (ADR 0021). En el VPS, un LLVM 18 sin instalar,
+# que necesita su libtinfo.so.5 de pega (docs/trampas.md); en CI, clang-18.
+ifneq ($(wildcard $(HOME)/.local/llvm18/bin/clang),)
+export APOLO_CLANG := $(HOME)/.local/llvm18/bin
+export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
+endif
 
 .PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia iconos ventana-dmg
 
@@ -22,7 +28,7 @@ comprobar: interfaz rust
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
-RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev)
+RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-avifjxl -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev)
 
 rust:
 	cargo fmt --all --check

@@ -5,8 +5,9 @@
 //! transformaciones aplica, si entrega RGB o RGBA y de dónde saca los
 //! metadatos. Si los píxeles de partida no son exactamente los mismos, la
 //! salida tampoco lo es (ADR 0002). Lo que no es de cwebp (GIF, BMP, QOI) va
-//! por el crate `image`.
+//! por el crate `image`, y AVIF y JPEG XL por avifdec y djxl.
 
+mod avifjxl;
 mod heic;
 pub(crate) mod jpeg;
 mod otros;
@@ -33,6 +34,10 @@ pub enum Formato {
     Heic,
     /// YUV 4:2:0 crudo, con el tamaño dado aparte (`cwebp -s`).
     Yuv,
+    /// AVIF, con avifdec (ADR 0021).
+    Avif,
+    /// JPEG XL, con djxl (ADR 0021).
+    Jxl,
 }
 
 impl Formato {
@@ -48,6 +53,8 @@ impl Formato {
             Formato::Qoi => "QOI",
             Formato::Heic => "HEIC",
             Formato::Yuv => "YUV",
+            Formato::Avif => "AVIF",
+            Formato::Jxl => "JPEG XL",
         }
     }
 
@@ -59,6 +66,12 @@ impl Formato {
         }
         if apolo_heic::es_heic(datos) {
             return Some(Formato::Heic);
+        }
+        if apolo_avifjxl::es_avif(datos) {
+            return Some(Formato::Avif);
+        }
+        if apolo_avifjxl::es_jxl(datos) {
+            return Some(Formato::Jxl);
         }
         let be32 =
             |i: usize| u32::from_be_bytes([datos[i], datos[i + 1], datos[i + 2], datos[i + 3]]);
@@ -144,6 +157,7 @@ pub fn leer(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
         Formato::Tiff => tiff::leer(datos, lectura),
         Formato::WebP => webp::leer(datos, lectura),
         Formato::Heic => heic::leer(datos, lectura),
+        Formato::Avif | Formato::Jxl => avifjxl::leer(datos, formato, lectura),
         Formato::Pnm | Formato::Gif | Formato::Bmp | Formato::Qoi => {
             otros::leer(datos, formato, lectura)
         }

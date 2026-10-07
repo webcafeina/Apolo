@@ -77,9 +77,19 @@ fn yuv_a_rgba(d: &[u8], ancho: u32, alto: u32) -> (u32, u32, Vec<u8>) {
     (ancho, alto, s)
 }
 
-/// RGBA de un fichero de salida, para enseñarlo: WebP, JPEG, PNG o QOI.
+/// RGBA de un fichero de salida, para enseñarlo: WebP, JPEG, PNG, QOI, AVIF o
+/// JPEG XL.
 /// Sin corrección de gamma (como lo pinta un navegador).
 pub fn decodificar(datos: &[u8]) -> Resultado<(u32, u32, Vec<u8>)> {
+    if apolo_avifjxl::es_avif(datos) {
+        let png = apolo_avifjxl::avif_a_png(datos, true).map_err(|e| Error::lectura("AVIF", e))?;
+        return decodificar(&png);
+    }
+    if apolo_avifjxl::es_jxl(datos) {
+        let png =
+            apolo_avifjxl::jxl_a_png(datos, true).map_err(|e| Error::lectura("JPEG XL", e))?;
+        return decodificar(&png);
+    }
     match datos.get(..4) {
         Some(b"RIFF") => decodificar_webp(datos),
         Some(b"qoif") => {

@@ -4,3 +4,33 @@
 [submodule "crates/heic/vendor/libheif"]
 	path = crates/heic/vendor/libheif
 	url = https://github.com/strukturag/libheif.git
+[submodule "crates/avifjxl/vendor/libavif"]
+	path = crates/avifjxl/vendor/libavif
+	url = https://github.com/AOMediaCodec/libavif.git
+[submodule "crates/avifjxl/vendor/aom"]
+	path = crates/avifjxl/vendor/aom
+	url = https://aomedia.googlesource.com/aom
+[submodule "crates/avifjxl/vendor/libyuv"]
+	path = crates/avifjxl/vendor/libyuv
+	url = https://chromium.googlesource.com/libyuv/libyuv
+[submodule "crates/avifjxl/vendor/libjxl"]
+	path = crates/avifjxl/vendor/libjxl
+	url = https://github.com/libjxl/libjxl.git
+[submodule "crates/avifjxl/vendor/brotli"]
+	path = crates/avifjxl/vendor/brotli
+	url = https://github.com/google/brotli
+[submodule "crates/avifjxl/vendor/highway"]
+	path = crates/avifjxl/vendor/highway
+	url = https://github.com/google/highway
+[submodule "crates/avifjxl/vendor/skcms"]
+	path = crates/avifjxl/vendor/skcms
+	url = https://github.com/google/skcms
+[submodule "crates/avifjxl/vendor/sjpeg"]
+	path = crates/avifjxl/vendor/sjpeg
+	url = https://github.com/webmproject/sjpeg.git
+[submodule "crates/avifjxl/vendor/libpng"]
+	path = crates/avifjxl/vendor/libpng
+	url = https://github.com/glennrp/libpng.git
+[submodule "crates/avifjxl/vendor/zlib"]
+	path = crates/avifjxl/vendor/zlib
+	url = https://github.com/madler/zlib.git

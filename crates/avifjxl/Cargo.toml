@@ -1,0 +1,20 @@
+[package]
+name = "apolo-avifjxl"
+description = "AVIF y JPEG XL con libavif, aom y libjxl compiladas dentro, y sus herramientas"
+version.workspace = true
+edition.workspace = true
+# Apolo es GPL-3.0. libavif, aom, libyuv, libjxl y sus dependencias son BSD,
+# Apache-2.0, zlib y libpng: compatibles (ADR 0021).
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+links = "apolo_avifjxl"
+
+[dependencies]
+# El JPEG que leen avifenc y cjxl, y el sharpyuv de avifenc: los de Apolo.
+# Las mismas versiones que en apolo-nucleo, para que no haya dos.
+mozjpeg-sys = { version = "=2.2.3", features = ["icc_io"] }
+libwebp-sys = "=0.14.4"
+
+[build-dependencies]
+cmake = "0.1"

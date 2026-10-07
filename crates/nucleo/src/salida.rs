@@ -1,17 +1,18 @@
-//! Codificar a cualquier formato de salida (ADR 0020): WebP, JPEG, PNG o QOI,
-//! con el proceso delante si lo hay.
+//! Codificar a cualquier formato de salida (ADR 0020 y 0021): WebP, JPEG, PNG,
+//! QOI, AVIF o JPEG XL, con el proceso delante si lo hay.
 //!
 //! Sin proceso, cada formato va por su camino exacto, el que da el mismo
 //! fichero que su herramienta oficial: cwebp (`webp::codificar`), cjpeg (la
 //! imagen leída como cjpeg, desde los bytes originales), oxipng (el PNG tal
-//! cual) y qoiconv (el PNG leído como stb_image). Con proceso (o enderezando
+//! cual), qoiconv (el PNG leído como stb_image), y avifenc y cjxl (el PNG o
+//! el JPEG tal cual, a la herramienta compilada dentro). Con proceso (o enderezando
 //! en JPEG, PNG y QOI), se codifican los píxeles ya procesados, y la orden
 //! de la herramienta ya no da ese fichero: [`motivo`] dice por qué.
 
 use serde::{Deserialize, Serialize};
 
 use crate::entrada::{Formato, Imagen, Pixeles};
-use crate::formatos::{png, qoi};
+use crate::formatos::{avif, jxl, png, qoi};
 use crate::jpeg::{self, OpcionesJpeg};
 use crate::proceso::{self, Proceso};
 use crate::webp::{self, Estadisticas, Extras, OpcionesWebp, Progreso};
@@ -25,14 +26,18 @@ pub enum FormatoSalida {
     Jpeg,
     Png,
     Qoi,
+    Avif,
+    Jxl,
 }
 
 impl FormatoSalida {
-    pub const TODOS: [FormatoSalida; 4] = [
+    pub const TODOS: [FormatoSalida; 6] = [
         FormatoSalida::Webp,
         FormatoSalida::Jpeg,
         FormatoSalida::Png,
         FormatoSalida::Qoi,
+        FormatoSalida::Avif,
+        FormatoSalida::Jxl,
     ];
 
     pub fn extension(self) -> &'static str {
@@ -41,6 +46,8 @@ impl FormatoSalida {
             FormatoSalida::Jpeg => "jpg",
             FormatoSalida::Png => "png",
             FormatoSalida::Qoi => "qoi",
+            FormatoSalida::Avif => "avif",
+            FormatoSalida::Jxl => "jxl",
         }
     }
 
@@ -50,6 +57,8 @@ impl FormatoSalida {
             FormatoSalida::Jpeg => "JPEG",
             FormatoSalida::Png => "PNG",
             FormatoSalida::Qoi => "QOI",
+            FormatoSalida::Avif => "AVIF",
+            FormatoSalida::Jxl => "JPEG XL",
         }
     }
 
@@ -60,6 +69,8 @@ impl FormatoSalida {
             FormatoSalida::Jpeg => "cjpeg",
             FormatoSalida::Png => "oxipng",
             FormatoSalida::Qoi => "qoiconv",
+            FormatoSalida::Avif => "avifenc",
+            FormatoSalida::Jxl => "cjxl",
         }
     }
 
@@ -78,6 +89,7 @@ impl FormatoSalida {
             ),
             FormatoSalida::Jpeg => matches!(f, Formato::Png | Formato::Jpeg | Formato::Pnm),
             FormatoSalida::Png | FormatoSalida::Qoi => f == Formato::Png,
+            FormatoSalida::Avif | FormatoSalida::Jxl => matches!(f, Formato::Png | Formato::Jpeg),
         }
     }
 }
@@ -91,6 +103,8 @@ pub struct Ajuste {
     pub webp: OpcionesWebp,
     pub jpeg: OpcionesJpeg,
     pub png: png::OpcionesPng,
+    pub avif: avif::OpcionesAvif,
+    pub jxl: jxl::OpcionesJxl,
     pub proceso: Proceso,
 }
 
@@ -104,6 +118,8 @@ impl Ajuste {
                 FormatoSalida::Jpeg => self.jpeg.enderezar,
                 FormatoSalida::Png => self.png.enderezar,
                 FormatoSalida::Qoi => false,
+                FormatoSalida::Avif => self.avif.enderezar,
+                FormatoSalida::Jxl => self.jxl.enderezar,
             }
     }
 }
@@ -139,6 +155,8 @@ pub fn orden(a: &Ajuste, entrada: &str, salida: &str) -> String {
         FormatoSalida::Jpeg => jpeg::opciones::texto(&a.jpeg, entrada, salida),
         FormatoSalida::Png => png::texto(&a.png, entrada, salida),
         FormatoSalida::Qoi => qoi::texto(entrada, salida),
+        FormatoSalida::Avif => avif::texto(&a.avif, entrada, salida),
+        FormatoSalida::Jxl => jxl::texto(&a.jxl, entrada, salida),
     }
 }
 
@@ -149,6 +167,8 @@ pub fn argumentos(a: &Ajuste) -> Vec<String> {
         FormatoSalida::Jpeg => a.jpeg.orden_apolo(),
         FormatoSalida::Png => a.png.orden_apolo(),
         FormatoSalida::Qoi => Vec::new(),
+        FormatoSalida::Avif => a.avif.orden_apolo(),
+        FormatoSalida::Jxl => a.jxl.orden_apolo(),
     }
 }
 
@@ -277,10 +297,40 @@ pub fn codificar(
                 estadisticas: None,
             })
         }
+        FormatoSalida::Avif | FormatoSalida::Jxl => {
+            // El PNG o el JPEG original tal cual; si no, un PNG con los píxeles
+            // y el perfil.
+            let (fichero, ext, w, h) = match rgba_si_hace_falta(img, procesada, enderezar)? {
+                None if img.formato == Formato::Png => (datos.to_vec(), "png", img.ancho, img.alto),
+                None if img.formato == Formato::Jpeg => {
+                    (datos.to_vec(), "jpg", img.ancho, img.alto)
+                }
+                None => {
+                    let (w, h, rgba) = vista::rgba(img)?;
+                    let p = png::png_de_pixeles(w, h, &rgba, img.metadatos.icc.as_deref())?;
+                    (p, "png", w, h)
+                }
+                Some((w, h, rgba)) => {
+                    let p = png::png_de_pixeles(w, h, &rgba, img.metadatos.icc.as_deref())?;
+                    (p, "png", w, h)
+                }
+            };
+            let datos = if a.formato == FormatoSalida::Avif {
+                avif::codificar(&fichero, ext, &a.avif)?
+            } else {
+                jxl::codificar(&fichero, ext, &a.jxl)?
+            };
+            Ok(Codificado {
+                datos,
+                ancho: w,
+                alto: h,
+                estadisticas: None,
+            })
+        }
     }
 }
 
-/// Para JPEG, PNG y QOI: los píxeles procesados, o los enderezados, o nada
+/// Para todos menos WebP: los píxeles procesados, o los enderezados, o nada
 /// (y entonces se va por el camino exacto de la herramienta).
 fn rgba_si_hace_falta(
     img: &Imagen,

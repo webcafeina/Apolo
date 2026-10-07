@@ -30,6 +30,8 @@ imagequant = "4.4.1"
 png = "0.18"
 # HEIC (las fotos del iPhone), con libheif y libde265 compiladas dentro.
 apolo-heic.workspace = true
+# AVIF y JPEG XL, con avifenc, avifdec, cjxl y djxl compilados dentro (ADR 0021).
+apolo-avifjxl.workspace = true
 tiff = "0.11"
 image = { version = "0.25", default-features = false, features = ["gif", "bmp", "qoi", "pnm"] }
 serde.workspace = true

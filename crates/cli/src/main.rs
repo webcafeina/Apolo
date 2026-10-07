@@ -1,15 +1,17 @@
 //! `apolo`, la línea de comandos de Apolo.
 //!
 //! Misma lógica y mismos presets que la ventana. `apolo webp`, `apolo jpeg`,
-//! `apolo png` y `apolo qoi` aceptan las opciones de cwebp, cjpeg, oxipng y
-//! qoiconv tal cual y dan el mismo fichero (ADR 0002 y 0020), más las propias
-//! de Apolo con el prefijo `-apolo_`.
+//! `apolo png`, `apolo qoi`, `apolo avif` y `apolo jxl` aceptan las opciones de
+//! cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl tal cual y dan el mismo
+//! fichero (ADR 0002, 0020 y 0021), más las propias de Apolo con el prefijo
+//! `-apolo_`.
 
 use std::path::PathBuf;
 use std::process::ExitCode;
 
 use clap::{Parser, Subcommand};
 
+mod avifjxl;
 mod comun;
 mod jpeg;
 mod lote;
@@ -44,8 +46,8 @@ enum Accion {
     ///
     /// Las subcarpetas se repiten dentro de la salida, y nunca se sobrescribe
     /// nada: si un fichero existe, el nuevo lleva un número (foto-2.webp).
-    /// Con un solo formato, las opciones de su herramienta (cwebp, cjpeg u
-    /// oxipng) van detrás de «--», encima del preset.
+    /// Con un solo formato, las opciones de su herramienta (cwebp, cjpeg,
+    /// oxipng, avifenc o cjxl) van detrás de «--», encima del preset.
     ///
     /// Ejemplos:
     ///   apolo lote fotos/ --preset "Fotos web" -- -q 80
@@ -61,7 +63,7 @@ enum Accion {
         /// Un preset guardado (apolo presets los lista); se puede repetir
         #[arg(short, long)]
         preset: Vec<String>,
-        /// Formatos con sus opciones por defecto: webp, jpeg, png, qoi (separados por comas)
+        /// Formatos con sus opciones por defecto: webp, jpeg, png, qoi, avif, jxl (separados por comas)
         #[arg(short, long)]
         formato: Vec<String>,
         /// De cada imagen, guardar solo el formato que menos pese
@@ -76,6 +78,20 @@ enum Accion {
         /// Opciones de la herramienta, detrás de «--»
         #[arg(last = true, allow_hyphen_values = true)]
         herramienta: Vec<String>,
+    },
+
+    /// Codifica a AVIF: es avifenc de libavif 1.4.2 (apolo avif --help)
+    #[command(disable_help_flag = true)]
+    Avif {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
+    },
+
+    /// Codifica a JPEG XL: es cjxl de libjxl 0.12.0 (apolo jxl --help)
+    #[command(disable_help_flag = true)]
+    Jxl {
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        args: Vec<String>,
     },
 
     /// Codifica a JPEG con MozJPEG y las opciones de cjpeg (apolo jpeg -help)
@@ -137,10 +153,8 @@ fn main() -> ExitCode {
             for p in lista {
                 let f = p.ajuste.formato;
                 let sub = match f {
-                    apolo_nucleo::salida::FormatoSalida::Webp => "webp",
                     apolo_nucleo::salida::FormatoSalida::Jpeg => "jpeg",
-                    apolo_nucleo::salida::FormatoSalida::Png => "png",
-                    apolo_nucleo::salida::FormatoSalida::Qoi => "qoi",
+                    otro => otro.extension(),
                 };
                 println!(
                     "  {:<24} {:<5} apolo {sub} -apolo_preset {:?} {}",
@@ -175,6 +189,12 @@ fn main() -> ExitCode {
         Some(Accion::Jpeg { args }) => jpeg::ejecutar(&args),
         Some(Accion::Png { args }) => png::ejecutar(&args),
         Some(Accion::Qoi { args }) => qoi::ejecutar(&args),
+        Some(Accion::Avif { args }) => {
+            avifjxl::ejecutar(apolo_nucleo::salida::FormatoSalida::Avif, &args)
+        }
+        Some(Accion::Jxl { args }) => {
+            avifjxl::ejecutar(apolo_nucleo::salida::FormatoSalida::Jxl, &args)
+        }
         None => {
             use clap::CommandFactory;
             Orden::command().print_help().ok();

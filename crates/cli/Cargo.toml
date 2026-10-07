@@ -13,4 +13,5 @@ path = "src/main.rs"
 
 [dependencies]
 apolo-nucleo.workspace = true
+apolo-avifjxl.workspace = true
 clap = { version = "4", features = ["derive"] }

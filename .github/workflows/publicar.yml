@@ -113,7 +113,13 @@ jobs:
           dmg=$(ls target/${{ matrix.objetivo }}/release/bundle/dmg/*.dmg)
           empaquetado/macos/icono-volumen.sh "$dmg"
           if [ "$GITHUB_REF_TYPE" = tag ]; then
-            gh release upload "$GITHUB_REF_NAME" "$dmg" --clobber
+            # La API de GitHub da a veces un 502 pasajero al reemplazar un
+            # fichero de la Release (pasó con la v0.3.2): se reintenta.
+            for intento in 1 2 3 4; do
+              gh release upload "$GITHUB_REF_NAME" "$dmg" --clobber && break
+              [ "$intento" = 4 ] && exit 1
+              sleep $(( intento * 15 ))
+            done
           fi
 
       - name: Paquetes como artefacto

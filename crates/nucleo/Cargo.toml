@@ -23,6 +23,10 @@ libc = "0.2"
 # oxipng oficial. libdeflater y zopfli van fijadas en Cargo.lock a las del
 # oxipng publicado (1.26.0 y 0.8.3): con otras, otros bytes.
 oxipng = { version = "=10.2.1", default-features = false, features = ["parallel", "zopfli"] }
+# El proceso (ADR 0020): redimensionar (MIT/Apache) y reducir la paleta con
+# libimagequant, la de Squoosh (GPLv3, la de Apolo: ADR 0006).
+fast_image_resize = "6.1.0"
+imagequant = "4.4.1"
 png = "0.18"
 # HEIC (las fotos del iPhone), con libheif y libde265 compiladas dentro.
 apolo-heic.workspace = true

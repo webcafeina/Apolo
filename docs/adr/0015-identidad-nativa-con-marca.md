@@ -42,7 +42,8 @@ Decidida el 2026-10-06 y hecha el mismo día (entrega 3).
 
 - **Icono**: cuatro propuestas (`empaquetado/iconos/propuestas/`) en la misma familia que Esfinge,
   enseñadas en una página con cada una a 1024, 128, 64, 32 y 16 px, en claro y oscuro y en un Dock
-  junto a Esfinge. Hubo una segunda vuelta: en la primera, el sol y el arco se quedaban cortos y el
+  junto a Esfinge. La página, tal como la vio el cliente, se guarda de recuerdo en
+  `empaquetado/iconos/propuestas/propuestas-icono.html` (se abre sin conexión). Hubo una segunda vuelta: en la primera, el sol y el arco se quedaban cortos y el
   laurel parecía confeti. **Eligió el sol con la corona de laurel.**
 - **Oro del sol** `#ffc83d` como `--relleno`, con piedra encima (más de 9:1). Una prueba deja
   escrito que el blanco sobre el oro no llega ni a 3:1.

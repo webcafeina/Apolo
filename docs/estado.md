@@ -44,7 +44,12 @@
    Ya van dos cosas más, de esa prueba:
    - el desplegable «Formato» en Lotes, como el del Estudio, con WebP y los demás «pronto». Lo
      pidió el cliente;
-   - el texto de la CLI con las opciones por defecto.
+   - el texto de la CLI con las opciones por defecto;
+   - «Mostrar en la carpeta» enseña la carpeta de salida seleccionada. Antes abría la subcarpeta de
+     la última imagen.
+
+   Prueba de Lotes en el Mac del cliente: los pasos 1 a 6 (elegir, soltar sin que el Estudio se lo
+   quede, preset, convertir, mostrar y repetir sin pisar) salen bien.
    Será además la segunda actualización por la banda.
 3. Que el cliente pruebe **Lotes en la ventana**: elegir carpetas, soltarlas, cancelar, «Mostrar en
    la carpeta».

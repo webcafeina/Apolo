@@ -4,6 +4,18 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-07 · v0.3.2 publicada, tras un corte
+
+- La sesión se cortó con la v0.3.2 a medio publicar: el trabajo de macOS había caído por un **HTTP
+  502** de GitHub al volver a subir el `.dmg`. Con `gh run rerun --failed` pasaron los 11 trabajos.
+  `publicar.yml` reintenta ya esa subida.
+- Antes, la primera vez, macOS no enlazaba: `___cpu_indicator_init`. Era la detección de AVX2 de
+  libde265, que en macOS pide compiler-rt. Se apagó AVX2 en macOS y se compila para macOS 11.
+- Verificado: las sumas del `.dmg` y de la CLI cuadran con `SHA256SUMS.txt`, y la CLI de Linux
+  bajada de la Release pasa el HEIC de ejemplo a WebP.
+
+---
+
 ## 2026-10-06 (noche) · v0.3.2: los arreglos de la prueba y HEIC
 
 - **Los siete arreglos de la prueba**:

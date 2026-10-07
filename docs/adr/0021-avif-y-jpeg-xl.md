@@ -146,7 +146,7 @@ Las demás siguen iguales: cwebp, cjpeg, oxipng y qoiconv.
 - **Núcleo:** ida y vuelta de las dos órdenes, lo que se rechaza, y los seis formatos salen y se
   vuelven a leer.
 - **e2e:** la orden y los controles de los dos, exportar y volver a abrir un AVIF y un JPEG XL, y
-  pegar una orden de cjxl. Son 46 en total.
+  pegar una orden de cjxl. Son 49 en total (eran 43).
 - **Licencias**, todas compatibles con la GPLv3 (mirado el LICENSE de cada submódulo):
   - libavif, aom, libyuv, libjxl y skcms son BSD; aom, con su licencia de patentes de AOMedia;
   - highway y sjpeg, Apache-2.0;

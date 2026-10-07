@@ -243,3 +243,9 @@ genera su `pnglibconf.h` compilando un fichero que no recibe la carpeta de zlib.
 `pnglibconf.h.prebuilt`, que es la configuración por defecto. El proyecto de CMake pone
 `AWK=OFF` en Windows: `OFF` y no `NOTFOUND`, porque con `NOTFOUND` `find_program` vuelve a
 buscar. · 2026-10-07
+
+## Windows ARM64: «unresolved external symbol CopyRow_NEON»
+
+libyuv, al enlazar. Su CMake solo compila los ficheros NEON `if(NOT MSVC)`, y clang-cl cuenta como
+MSVC; sus cabeceras, en cambio, encienden los caminos NEON al ver `__aarch64__`. El proyecto de
+CMake define `LIBYUV_DISABLE_NEON`, `_SVE` y `_SME` en Windows ARM64, y libyuv usa su C. · 2026-10-07

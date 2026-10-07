@@ -129,7 +129,13 @@ input[type="range"] { accent-color: var(--relleno); }
   gap: var(--espacio-2);
   transition: background 0.12s, color 0.12s;
 }
-.segmentado button:hover:not(:disabled) { background: transparent; color: var(--tinta); }
+/* El hover solo para la opción no elegida, con un fondo suave propio: antes
+   ponía el fondo transparente y, al pasar el cursor por la elegida, esta
+   perdía su fondo y parecía que el clic no había hecho nada (v0.5.0). */
+.segmentado button:not([aria-checked="true"]):hover:not(:disabled) {
+  background: color-mix(in srgb, var(--lienzo) 55%, transparent);
+  color: var(--tinta);
+}
 .segmentado button[aria-checked="true"] {
   background: var(--lienzo);
   color: var(--tinta);
@@ -534,7 +540,8 @@ html, body, #raiz { overscroll-behavior: none; }
 .pesos .etiqueta { font-size: 11px; color: var(--apagado); letter-spacing: 0.2px; white-space: nowrap; }
 .peso .valor { color: var(--tinta); font-size: var(--texto-grande); }
 .peso strong.valor { font-weight: 600; }
-.ahorro-cifra { font-size: 22px; font-weight: 700; line-height: 1.1; color: var(--exito); letter-spacing: -0.02em; }
+/* nowrap: el «%» no puede bajar de línea (v0.5.0). */
+.ahorro-cifra { font-size: 22px; font-weight: 700; line-height: 1.1; color: var(--exito); letter-spacing: -0.02em; white-space: nowrap; }
 .ahorro.crece .ahorro-cifra { color: var(--error); }
 .barra-pesos {
   grid-column: 1 / -1;
@@ -638,7 +645,7 @@ button.discreto:hover:not(:disabled) { background: var(--elevada); color: var(--
 .segmentado.lados { display: flex; }
 .segmentado.lados button { flex: 1; justify-content: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .panel-original { padding: var(--espacio-4); display: flex; flex-direction: column; gap: var(--espacio-3); align-items: flex-start; color: var(--cuerpo); }
-.volver-original { align-self: flex-start; padding: 0; height: auto; color: var(--acento); }
+.volver-original { align-self: stretch; justify-content: center; }
 .panel-sin-opciones { padding: var(--espacio-4); }
 .proceso-control { display: flex; flex-direction: column; gap: var(--espacio-2); }
 .sub-control { display: flex; flex-direction: column; gap: 4px; font-size: var(--texto-chico); color: var(--cuerpo); }

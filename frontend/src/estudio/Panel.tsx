@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Icono } from "../componentes";
 import * as puente from "../puente";
 import {
   CONTROLES_PROCESO,
@@ -137,7 +138,8 @@ export function Panel(p: Props) {
       <div className="panel-cabeza">
         {selectorLado}
         {p.lado === 0 && (
-          <button className="discreto volver-original" onClick={() => p.usarFormatoIzquierda(false)}>
+          <button className="volver-original" onClick={() => p.usarFormatoIzquierda(false)} data-prueba="volver-original">
+            <Icono nombre="deslizador" lado={15} />
             {t("panel.volverOriginal")}
           </button>
         )}

@@ -142,6 +142,8 @@ jobs:
             target/${{ matrix.objetivo }}/release/bundle/nsis/*.exe
             target/${{ matrix.objetivo }}/release/bundle/deb/*.deb
             target/${{ matrix.objetivo }}/release/bundle/appimage/*.AppImage
+            target/${{ matrix.objetivo }}/release/bundle/macos/*.app.tar.gz
+            target/${{ matrix.objetivo }}/release/bundle/*/*.sig
           if-no-files-found: error
 
   # La línea de comandos `apolo`, suelta, para los mismos seis objetivos.

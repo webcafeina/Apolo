@@ -115,9 +115,18 @@ Esfinge es Go + Wails y lo hace todo a mano. Apolo es Tauri, que trae `tauri-plu
 - **Licencias** de lo que trae el plugin: MIT, Apache-2.0, BSD-3, ISC, Zlib y CDLA-Permissive-2.0
   (los certificados raíz de `webpki-roots`). Nada AGPL.
 
+- **CI**, con `publicar.yml` lanzado a mano y sin etiqueta: la ventana compila con los dos plugins en
+  los seis objetivos. Salen los **siete paquetes del actualizador con su `.sig`**:
+  - `Apolo.app.tar.gz` universal;
+  - los NSIS x64 y ARM64;
+  - los `.deb` y las AppImage amd64 y arm64.
+
+  Las siete firmas se comprobaron una a una contra la clave pública de `tauri.conf.json`, con un
+  verificador minisign escrito aparte (Ed25519 sobre el BLAKE2b del fichero, más el comentario de
+  confianza).
+
 **No verificado:**
 
-- la compilación de la ventana con el plugin (aquí no hay webkit: lo dirá CI);
-- que salgan los `.sig` y el `latest.json` (lo dirá la primera publicación);
+- el `latest.json` y el paso que lo repasa (solo corren con etiqueta: lo dirá la primera publicación);
 - una actualización de verdad en ningún sistema (hace falta la v0.3.4);
 - el caso traslocado en un Mac.

@@ -41,7 +41,9 @@
      antes de empezar Lotes;
    - los dos textos que pidió tras probar la v0.3.2.
 
-   Todo está en `main` y en verde aquí. Que la ventana compile con el plugin lo dice el CI.
+   Todo está en `main` y en verde, también en CI. Un `publicar.yml` lanzado a mano demostró dos
+   cosas: la ventana compila con el plugin en los seis objetivos, y salen las siete firmas del
+   actualizador, verificadas.
 2. **Publicarla cuando el cliente lo diga.**
    - Etiqueta `v0.3.3`.
    - `publicar.yml` comprueba solo que `latest.json` tiene las 12 plataformas.

@@ -8,9 +8,9 @@
 //! por el crate `image`.
 
 mod heic;
-mod jpeg;
+pub(crate) mod jpeg;
 mod otros;
-mod png;
+pub(crate) mod png;
 mod tiff;
 mod webp;
 

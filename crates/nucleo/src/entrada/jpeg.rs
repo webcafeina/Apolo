@@ -139,3 +139,66 @@ fn icc(marcas: &[(u8, Vec<u8>)]) -> Resultado<Option<Vec<u8>>> {
             .collect(),
     ))
 }
+
+/// Un JPEG como lo lee `cjpeg` (MozJPEG, `rdjpeg.c`): decodificado al espacio
+/// de color por defecto (gris en gris, YCbCr a RGB), y con **todos** los
+/// marcadores APPn y COM guardados en su orden, que cjpeg copia a la salida.
+pub(crate) fn leer_para_cjpeg(datos: &[u8]) -> Resultado<JpegCjpeg> {
+    let r = catch_unwind(AssertUnwindSafe(|| -> Resultado<JpegCjpeg> {
+        let d = Decompress::with_markers(mozjpeg::ALL_MARKERS)
+            .from_mem(datos)
+            .map_err(|e| Error::lectura(F, e))?;
+        let marcadores: Vec<(u8, Vec<u8>)> = d
+            .markers()
+            .map(|m| {
+                let codigo = match m.marker {
+                    Marker::APP(n) => 0xE0 + n,
+                    Marker::COM => 0xFE,
+                };
+                (codigo, m.data.to_vec())
+            })
+            .collect();
+        let (gris, mut inicio) = match d.image().map_err(|e| Error::lectura(F, e))? {
+            mozjpeg::decompress::Format::RGB(s) => (false, s),
+            mozjpeg::decompress::Format::Gray(s) => (true, s),
+            mozjpeg::decompress::Format::CMYK(_) => {
+                return Err(Error::lectura(
+                    F,
+                    "los JPEG en CMYK todavía no se pueden pasar a JPEG",
+                ));
+            }
+        };
+        let (ancho, alto) = (inicio.width() as u32, inicio.height() as u32);
+        let filas: Vec<u8> = inicio
+            .read_scanlines::<u8>()
+            .map_err(|e| Error::lectura(F, e))?;
+        inicio.finish().map_err(|e| Error::lectura(F, e))?;
+        if filas.len() != ancho as usize * alto as usize * if gris { 1 } else { 3 } {
+            return Err(Error::lectura(F, "faltan líneas"));
+        }
+        Ok(JpegCjpeg {
+            ancho,
+            alto,
+            gris,
+            filas,
+            marcadores,
+        })
+    }));
+    r.unwrap_or_else(|p| {
+        Err(Error::lectura(
+            F,
+            p.downcast_ref::<String>()
+                .cloned()
+                .unwrap_or_else(|| "el fichero está dañado".into()),
+        ))
+    })
+}
+
+pub(crate) struct JpegCjpeg {
+    pub ancho: u32,
+    pub alto: u32,
+    pub gris: bool,
+    pub filas: Vec<u8>,
+    /// (código del marcador, datos), en el orden del fichero.
+    pub marcadores: Vec<(u8, Vec<u8>)>,
+}

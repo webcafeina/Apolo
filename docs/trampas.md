@@ -144,6 +144,32 @@ descarga simulada eran diez pasos tranquilos. Ahora se redibuja solo cuando camb
 entero, la barra no tiene transición, y la simulación imita la real (trozos de 16 KB a ráfagas). Una
 prueba compara la barra pintada con el número. · 2026-10-07
 
+## «cmake_minimum_required … Compatibility with CMake < 3.5 has been removed»
+
+Al compilar el `cjpeg` oficial de MozJPEG 4.1.5 con CMake 4: su CMakeLists pide una versión tan
+vieja que CMake 4 se niega a configurar. Se pasa `-DCMAKE_POLICY_VERSION_MINIMUM=3.5` (lo dice el
+propio mensaje). Está en el objetivo `cjpeg-oficial` del Makefile. · 2026-10-07
+
+## «sorry, arithmetic coding not supported» en el cjpeg oficial
+
+MozJPEG 4.1.5 viene con la codificación aritmética **apagada** (`WITH_ARITH_ENC=OFF`, igual que
+la decodificación). Apolo la había encendido en `mozjpeg-sys` pensando que el oficial la traía, y
+`-arithmetic` daba un fichero donde cjpeg da error. Ahora Apolo la rechaza igual. · 2026-10-07
+
+## El JPEG de un PNG con `sRGB` sale 4 bytes más corto que el de cjpeg
+
+En todas las opciones, y solo con ese PNG. cjpeg incrusta su perfil sRGB mínimo (`tiny_srgb`, 536
+bytes) cuando el PNG trae el trozo `sRGB`; copiado a mano se perdieron cuatro ceros. Ahora el array
+sale del fuente con un script, como las tablas de cuantización. Lo cazó la prueba de equivalencia.
+· 2026-10-07
+
+## Una prueba a mano dice «IGUAL» y no ha comparado nada
+
+En zsh, `$o` con `o="-quality 80"` **no se parte** en palabras: los dos programas reciben un solo
+argumento raro, los dos fallan, y `cmp` compara los ficheros de la vuelta anterior. Hay que escribir
+`${=o}`, y borrar las salidas antes de cada caso para que un fallo no pase por igualdad.
+· 2026-10-07
+
 ## «HTTP 502: Server Error» al subir el `.dmg` a la Release
 
 Pasó con la v0.3.2: todo compilado, el icono del volumen puesto, y al reemplazar el `.dmg` en la

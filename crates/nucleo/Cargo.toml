@@ -14,6 +14,11 @@ libwebp-sys = "=0.14.4"
 # El decodificador de JPEG es el de libjpeg-turbo, el mismo que usa cwebp: con
 # otro, los píxeles de partida cambian y la salida deja de ser idéntica.
 mozjpeg = "0.10"
+# El de mozjpeg, con jpeg_write_icc_profile (-icc). Sin codificación
+# aritmética, como el cjpeg 4.1.5 oficial (WITH_ARITH_ENC viene apagado). La
+# misma versión que usa el crate mozjpeg: si no, habría dos.
+mozjpeg-sys = { version = "=2.2.3", features = ["icc_io"] }
+libc = "0.2"
 png = "0.18"
 # HEIC (las fotos del iPhone), con libheif y libde265 compiladas dentro.
 apolo-heic.workspace = true

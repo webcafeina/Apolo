@@ -48,8 +48,12 @@
    - «Mostrar en la carpeta» enseña la carpeta de salida seleccionada. Antes abría la subcarpeta de
      la última imagen.
 
-   Prueba de Lotes en el Mac del cliente: los pasos 1 a 6 (elegir, soltar sin que el Estudio se lo
-   quede, preset, convertir, mostrar y repetir sin pisar) salen bien.
+   - «Cancelar» en rojo (el estilo `peligro`, como «Borrar» en Presets), y el resumen de un lote
+     cancelado también. Lo pidió el cliente.
+
+   **Prueba de Lotes en el Mac del cliente, completa y bien.** Salieron bien siete pasos: elegir,
+   soltar sin que el Estudio se lo quede, preset, convertir, mostrar en la carpeta, repetir sin pisar
+   y cancelar. El octavo, la CLI, no se hizo: no tiene la de la Release.
    Será además la segunda actualización por la banda.
 3. Que el cliente pruebe **Lotes en la ventana**: elegir carpetas, soltarlas, cancelar, «Mostrar en
    la carpeta».

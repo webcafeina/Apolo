@@ -2,7 +2,7 @@
 // lo que se suelta, así que en desarrollo se escriben (el campo `ruta-dev`).
 
 import { expect, test } from "@playwright/test";
-import { existsSync, mkdtempSync, readdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdtempSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -59,4 +59,30 @@ test("una carpeta sin imágenes lo dice y no deja convertir", async ({ page }) =
   await expect(page.getByRole("button", { name: /^Convertir/ })).toBeDisabled();
   await page.getByRole("button", { name: `Quitar ${vacia}` }).click();
   await expect(page.getByTestId("entradas")).toHaveCount(0);
+});
+
+test("cancelar a medias para, y el botón y el resumen van en rojo", async ({ page }) => {
+  // Muchas copias de la foto del corpus, con un preset lento: da tiempo a cancelar.
+  const entrada = mkdtempSync(join(tmpdir(), "apolo-e2e-cancelar-"));
+  for (let i = 0; i < 60; i++) copyFileSync(join(corpus, "foto.webp"), join(entrada, `${String(i).padStart(2, "0")}.webp`));
+  const salida = join(mkdtempSync(join(tmpdir(), "apolo-e2e-cancelar-salida-")), "salida");
+  await page.goto("/");
+  await page.getByRole("button", { name: "Lotes" }).click();
+  await page.getByTestId("ruta-dev").fill(entrada);
+  await page.getByRole("button", { name: "Añadir", exact: true }).click();
+  await page.getByTestId("salida").fill(salida);
+  await page.getByTestId("preset-lote").selectOption({ label: "Dibujo" });
+  await page.getByRole("button", { name: "Convertir 60 imágenes" }).click();
+
+  const cancelar = page.getByRole("button", { name: "Cancelar" });
+  const rojo = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--error").trim());
+  await expect(cancelar).toHaveClass(/peligro/);
+  await cancelar.click();
+  const titulo = page.getByTestId("titulo-resumen");
+  await expect(titulo).toContainText("Cancelado:", { timeout: 30_000 });
+  await expect(titulo).toHaveClass(/cancelado/);
+  expect(rojo).not.toBe("");
+  const hechas = Number((await titulo.textContent())!.match(/Cancelado: (\d+)/)![1]);
+  expect(hechas).toBeLessThan(60);
+  expect(existsSync(salida) ? readdirSync(salida).length : 0).toBe(hechas);
 });

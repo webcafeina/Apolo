@@ -382,7 +382,7 @@ function Progreso({
               <div className="pareja">
                 <span className="apagado">{e ? duracion(e.segundos, t) : ""}</span>
                 <span className="relleno-flex" />
-                <button onClick={alCancelar} disabled={e?.cancelado}>
+                <button className="peligro" onClick={alCancelar} disabled={e?.cancelado}>
                   {e?.cancelado ? t("lotes.cancelando") : t("lotes.cancelar")}
                 </button>
               </div>
@@ -390,7 +390,7 @@ function Progreso({
           ) : (
             r && (
               <section className="grupo" data-prueba="resumen">
-                <p className="zona-titulo">
+                <p className={momento.estado.cancelado ? "zona-titulo cancelado" : "zona-titulo"} data-prueba="titulo-resumen">
                   {momento.estado.cancelado
                     ? t("lotes.canceladoTitulo", { hechas: r.convertidas, total })
                     : t("lotes.hechoTitulo", { count: r.convertidas, tiempo: duracion(momento.estado.segundos, t) })}

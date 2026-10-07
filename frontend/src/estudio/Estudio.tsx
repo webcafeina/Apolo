@@ -234,7 +234,7 @@ export function Estudio({ inicio }: { inicio: puente.Inicio }) {
               {t("estudio.exportar")}
             </button>
           </div>
-          <OrdenCwebp vista={vista} cambiar={setOpciones} />
+          <OrdenCwebp vista={vista} formato={info.formato} cambiar={setOpciones} />
           {vista?.motivo && (
             <p className="motivo apagado" data-prueba="motivo">
               {t(`orden.motivo.${vista.motivo}`)}
@@ -307,7 +307,15 @@ function Pesos({ info, vista }: { info: puente.InfoImagen; vista: puente.Vista |
 }
 
 /** La orden cwebp equivalente: se copia, y se puede pegar otra para cargarla. */
-function OrdenCwebp({ vista, cambiar }: { vista: puente.Vista | null; cambiar: (o: OpcionesWebp) => void }) {
+function OrdenCwebp({
+  vista,
+  formato,
+  cambiar,
+}: {
+  vista: puente.Vista | null;
+  formato: string;
+  cambiar: (o: OpcionesWebp) => void;
+}) {
   const { t } = useTranslation();
   const [editando, setEditando] = useState(false);
   const [texto, setTexto] = useState("");
@@ -341,7 +349,8 @@ function OrdenCwebp({ vista, cambiar }: { vista: puente.Vista | null; cambiar: (
       <code title={vista?.orden} data-prueba="orden">{vista?.orden ?? "cwebp …"}</code>
       {vista && vista.motivo && (
         <span className="aviso-orden" title={t(`orden.motivo.${vista.motivo}`)} data-prueba="no-equivalente">
-          {t("orden.noEquivalente")}
+          {/* Una frase corta según el caso; la explicación larga va debajo. */}
+          {t(`orden.aviso.${vista.motivo}`, { formato })}
         </span>
       )}
       <button

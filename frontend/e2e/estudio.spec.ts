@@ -88,7 +88,7 @@ test("una foto girada avisa, y enderezarla cambia las dimensiones y la orden", a
   await page.getByRole("button", { name: "Enderezar" }).click();
   await expect(page.getByTestId("aviso-orientacion")).toBeHidden();
   await expect(page.getByTestId("barra-estado")).toContainText("32 × 64");
-  await expect(page.getByTestId("no-equivalente")).toHaveText("Distinto de cwebp");
+  await expect(page.getByTestId("no-equivalente")).toHaveText("Enderezada: cwebp no la gira");
   await expect(page.getByTestId("motivo")).toContainText("cwebp no gira las fotos");
   await expect(page.getByRole("switch", { name: "Enderezar según EXIF" })).toBeChecked();
 });
@@ -140,7 +140,7 @@ test("el zoom del comparador no mueve la ventana, y la vista reducida lo avisa",
   // Alejando por debajo del 100 % sale el aviso, que lleva al 100 %.
   for (let i = 0; i < 8; i++) await page.getByRole("button", { name: "Alejar" }).click();
   const nota = page.getByTestId("nota-reducida");
-  await expect(nota).toContainText("Vista reducida");
+  await expect(nota).toContainText("clica aquí para ver al 100 %");
   await nota.click();
   await expect(page.getByTestId("zoom-100")).toHaveText("100 %");
   await expect(nota).toBeHidden();
@@ -153,6 +153,6 @@ test("abre una foto HEIC, y la orden cwebp avisa de que cwebp no la lee", async 
   await (await elegir).setFiles(join(import.meta.dirname, "../../crates/heic/vendor/libheif/examples/example.heic"));
   await expect(page.getByTestId("peso-resultado")).not.toHaveText("…");
   await expect(page.getByText("HEIC · 1280 × 854")).toBeVisible();
-  await expect(page.getByTestId("no-equivalente")).toHaveText("Distinto de cwebp");
+  await expect(page.getByTestId("no-equivalente")).toHaveText("cwebp no abre HEIC");
   await expect(page.getByTestId("motivo")).toContainText("cwebp no lee este formato");
 });

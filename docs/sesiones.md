@@ -4,6 +4,18 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-07 · Textos tras probar la v0.3.2
+
+- El cliente probó la v0.3.2 en su Mac: «está todo perfecto», incluida su foto HEIC del iPhone.
+- Pidió dos textos:
+  - «Distinto de cwebp» pasa a ser una frase corta según el caso: «Enderezada: cwebp no la gira» o
+    «cwebp no abre HEIC» (con el formato de la imagen);
+  - la nota de vista reducida pasa a decir «Vista reducida al XX %: clica aquí para ver al 100 % y
+    apreciar más detalle».
+- Saldada la deuda «HEIC sin probar con fotos reales» en macOS.
+
+---
+
 ## 2026-10-07 · v0.3.2 publicada, tras un corte
 
 - La sesión se cortó con la v0.3.2 a medio publicar: el trabajo de macOS había caído por un **HTTP

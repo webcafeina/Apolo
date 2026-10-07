@@ -1,6 +1,6 @@
 # Estado
 
-Última actualización: **2026-10-06** (noche)
+Última actualización: **2026-10-07**
 
 ## Dónde se paró, y por dónde se sigue
 
@@ -36,16 +36,23 @@
 
 ### La siguiente acción, al retomar
 
-1. **La v0.3.2 está publicada** (https://github.com/webcafeina/Apolo/releases/tag/v0.3.2): lo que
-   salió de la prueba guiada y **leer HEIC** (ADR 0017). libheif y libde265 compilan en los seis
-   sistemas, Windows ARM64 incluido. En macOS hubo que quitar AVX2 de libde265 (trampas.md). La CLI
-   bajada de la Release convierte un HEIC a WebP.
-2. Que el cliente la pruebe en su Mac:
-   - **una foto HEIC de su iPhone**, que no se ha probado con ninguna real;
-   - el zoom sin rebote;
-   - los pesos nuevos;
-   - la sección Presets.
-3. Después, **la entrega 4, Lotes**.
+1. **La v0.3.3 está hecha, sin publicar**: el cliente pidió esperar («Espera para publicar»). Lleva:
+   - **el actualizador** ([ADR 0018](adr/0018-actualizarse-sola.md)), como el de Esfinge, pedido
+     antes de empezar Lotes;
+   - los dos textos que pidió tras probar la v0.3.2.
+
+   Todo está en `main` y en verde aquí. Que la ventana compile con el plugin lo dice el CI.
+2. **Publicarla cuando el cliente lo diga.**
+   - Etiqueta `v0.3.3`.
+   - `publicar.yml` comprueba solo que `latest.json` tiene las 12 plataformas.
+   - Revisar el borrador y publicarlo **como versión normal**, no pre-release.
+   - El cliente la instala **a mano una última vez**.
+3. **Sacar una v0.3.4** (puede ser pequeña) para ver una actualización de verdad en su Mac. Es la
+   deuda más alta.
+4. **La clave del actualizador**: el cliente la guarda en su bóveda de Esfinge (la privada, su
+   contraseña y la pública, de `~/.config/apolo/claves/`), y después se borra la copia del VPS. **No
+   se escribe nunca en el chat.**
+5. Después, **la entrega 4, Lotes**.
 
 ## Completado
 
@@ -58,7 +65,8 @@
 - v0.3.0 publicada como pre-release (2026-10-06).
 - v0.3.1 publicada: ventana de Esfinge, disco y Windows (2026-10-06).
 - Prueba guiada de las entregas 1 y 2 en el Mac del cliente, completa (2026-10-06).
-- v0.3.2: arreglos de la prueba y HEIC (2026-10-06). ADR 0017.
+- v0.3.2: arreglos de la prueba y HEIC (2026-10-06). ADR 0017. Publicada el 2026-10-07.
+- v0.3.3: el actualizador (2026-10-07). ADR 0018. Sin publicar.
 
 ## En curso
 

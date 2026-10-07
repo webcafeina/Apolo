@@ -50,3 +50,14 @@ test("presets", async ({ page }, info) => {
   await page.waitForTimeout(300);
   await page.screenshot({ path: `capturas/presets-${info.project.name}.png` });
 });
+
+test("novedad", async ({ page }, info) => {
+  await page.goto("/?novedad=0.3.4");
+  await page.getByRole("button", { name: "Ajustes" }).click();
+  await page.getByRole("button", { name: "Buscar ahora" }).click();
+  await page.getByTestId("novedad").waitFor();
+  await page.screenshot({ path: `capturas/novedad-${info.project.name}.png` });
+  await page.getByRole("button", { name: "Descargar" }).click();
+  await page.getByRole("button", { name: "Instalar y reiniciar" }).waitFor();
+  await page.screenshot({ path: `capturas/novedad-lista-${info.project.name}.png` });
+});

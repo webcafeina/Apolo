@@ -1,6 +1,6 @@
 # Deuda y cabos sueltos
 
-Última actualización: **2026-10-06**
+Última actualización: **2026-10-07**
 
 Lo que sabemos que está a medias, mal o sin comprobar. Los bloqueantes primero. Lo saldado se tacha
 y se queda.
@@ -16,6 +16,8 @@ Lo más caro de esta lista no es lo que está mal, es lo que no sabemos si lo es
 | ~~**El vidrio y el `.dmg` de la entrega 3, sin ver en un Mac**~~ | Media | La barra translúcida, la ventana del `.dmg` y el icono en el Dock solo se habían visto en simulación | **Saldada el 2026-10-06**: el cliente los vio bien en su Mac con la v0.3.0 |
 | **El instalador de Windows, sin ver** | Media | (El icono del volumen ya lo vio bien el cliente en su Mac con la v0.3.1.) | El disco con el sol se pone en el `.dmg` después de que Tauri lo haga (`icono-volumen.sh`: pasarlo a escritura, montarlo, cambiar `.VolumeIcon.icns`, recomprimirlo); el NSIS en español con sus imágenes BMP. Ninguno se ha visto: el primero, en un Mac; el segundo, en un Windows | Abierto · 2026-10-06 (v0.3.1) |
 | ~~**La ventana del Estudio no se ha visto nunca**~~ | **Alta** | El Estudio se ha probado entero en Chromium contra `apolo-dev`, pero lo propio de la ventana —las órdenes de Tauri, el protocolo `apolo://` con los píxeles, los diálogos de abrir y guardar, arrastrar y soltar— solo se ha compilado en CI. Lo más dudoso: la URL del protocolo en Windows (`http://apolo.localhost/…`) y la CSP | **Saldada en macOS el 2026-10-06** con la prueba guiada sobre la v0.3.1 en el Mac del cliente: abrir arrastrando y con el diálogo, comparador, zoom, lado a lado, calidad en vivo, pegar orden, presets, exportar (**el fichero exportado es idéntico al de cwebp**) y enderezar una foto de iPhone. Queda Windows |
+| **El actualizador, sin ver actualizar nada** | **Alta** | La banda y los Ajustes están probados en el navegador con una novedad simulada, y la puerta de 24 h en Rust. Lo que hace el plugin de verdad —bajar, comprobar la firma, reemplazar el `.app`, lanzar el NSIS, `pkexec dpkg -i`, reiniciar— no se ha visto en ningún sistema. Hace falta la v0.3.4 instalada encima de la v0.3.3 (ADR 0018) | Abierto · 2026-10-07 |
+| **Caso traslocado en macOS, sin ver** | Baja | Si Apolo se abre sin moverla a Aplicaciones, la banda pide moverla en vez de ofrecer descargar. La detección (`/AppTranslocation/` en la ruta) no se ha probado en un Mac | Abierto · 2026-10-07 |
 | **La equivalencia con cwebp, sin probar en Windows ni en Linux arm64** | Baja | Ya está comprobada en Linux x86-64 (1015 de 1015) y **en un Mac con Apple Silicon (25 de 25, con PNG, WebP y JPEG, NEON incluido)**, por el cliente el 2026-10-06 con la CLI de la v0.2.0 y el cwebp 1.6.0 de Google para Mac ARM. Faltan Windows y Linux arm64; se puede montar en las máquinas de CI | Abierto, en parte saldado · 2026-10-06 |
 | **PNG entrelazado, sin probar** | Baja | El codificador del crate png no escribe Adam7, así que el corpus no tiene ninguno. El lector debería dar lo mismo (libpng y el crate desentrelazan igual), pero no se ha visto | Abierto · 2026-10-06 |
 | **PNG de 16 bits con `gAMA`, sin probar** | Baja | libpng corrige la gamma antes o después de bajar a 8 bits según su configuración interna; Apolo la aplica después. Un PNG así podría salir distinto | Abierto · 2026-10-06 |
@@ -35,6 +37,7 @@ Lo más caro de esta lista no es lo que está mal, es lo que no sabemos si lo es
 | **libwebp sin SSE4.1 ni AVX2** | Baja | `libwebp-sys` solo enciende SSE2 en x86-64 si no se le piden sus características `sse41`/`avx2`, y estas, encendidas, exigen la instrucción en la CPU de quien instala (no hay detección en tiempo de ejecución). La salida es la misma; la velocidad no se ha medido | Abierto · 2026-10-06 |
 | **Fotos grandes en la vista previa** | Media | Cada vista previa manda el resultado entero en RGBA a la interfaz: 96 MB para una foto de 24 MP, y otros tantos el original. Va por memoria local, pero no se ha medido con una foto así. Si va lento, se manda una versión reducida al tamaño de la pantalla y la entera solo al acercarse | Abierto · 2026-10-06 |
 | **Recortar en el comparador** | Baja | Con un recorte, el resultado tiene otra proporción y el comparador pasa a lado a lado con una escala aproximada. Lo suyo sería dibujar el recorte sobre el original, y elegirlo con el ratón | Abierto · 2026-10-06 |
+| **Copia de la clave del actualizador en el VPS** | Media | La clave privada minisign y su contraseña están en `~/.config/apolo/claves/` (modo 600) hasta que el cliente las guarde en su bóveda de Esfinge. Después se borran. Si se pierden las dos copias (VPS y bóveda), ninguna instalación aceptará otra versión (ADR 0018) | Abierto · 2026-10-07 |
 | **`-noasm` se ignora** | Baja | Apagar el SIMD de libwebp es cambiar un puntero global, que afecta a toda la aplicación y a los hilos que estén codificando. Se acepta la opción y se avisa | Abierto · 2026-10-06 |
 
 ## De producto

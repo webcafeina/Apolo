@@ -31,7 +31,12 @@ fn webp() -> String {
 /// (`~/.config` en Linux, `~/Library/Application Support` en macOS,
 /// `%APPDATA%` en Windows).
 pub fn carpeta() -> Option<PathBuf> {
-    dirs::config_dir().map(|d| d.join("Apolo").join("presets"))
+    carpeta_config().map(|d| d.join("presets"))
+}
+
+/// `…/Apolo`, la carpeta de configuración de Apolo: los presets y los ajustes.
+pub fn carpeta_config() -> Option<PathBuf> {
+    dirs::config_dir().map(|d| d.join("Apolo"))
 }
 
 /// El nombre de fichero de un preset: minúsculas, sin tildes, con guiones.

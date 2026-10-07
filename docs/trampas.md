@@ -119,6 +119,14 @@ para el mínimo de Apolo. Son avisos, pero dicen que la aplicación podría usar
 tiene. `crates/heic/build.rs` pasa `CMAKE_OSX_DEPLOYMENT_TARGET` (11.0, o `MACOSX_DEPLOYMENT_TARGET`
 si está puesto). Los mismos avisos salen de mozjpeg, sin plataforma, y son inofensivos. · 2026-10-06
 
+## «pegar una orden cwebp» falla en Playwright, y a mano funciona
+
+La orden se queda en `cwebp foto.webp -o foto-apolo.webp`, sin los ajustes pegados. No se pierden:
+la orden de la pantalla sale del resultado codificado, y `-lossless -z 9` tarda **4 s** con la
+compilación de depuración de `apolo-dev` (1,3 s en release). Con la máquina cargada por otros
+proyectos, se pasa de los 5 s de espera de Playwright. Esa espera lleva su propio plazo de 30 s.
+· 2026-10-07
+
 ## «HTTP 502: Server Error» al subir el `.dmg` a la Release
 
 Pasó con la v0.3.2: todo compilado, el icono del volumen puesto, y al reemplazar el `.dmg` en la

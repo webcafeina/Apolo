@@ -566,3 +566,25 @@ button.peligro { border-color: var(--error); color: var(--error); }
 .grupo.vacio { align-items: center; text-align: center; padding: var(--espacio-6) var(--espacio-4); color: var(--apagado); }
 .pie-presets { font-size: var(--texto-chico); }
 .pie-presets code { display: inline; }
+
+/* Versión nueva (ADR 0018). La banda va encima de la sección, en el marco de la
+   ventana y no en el trabajo: el mismo sitio cuenta que la hay, que se baja y
+   que está lista, como en Esfinge. */
+.novedad {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding: var(--espacio-2) var(--espacio-5);
+  min-height: 48px;
+  background: var(--suave);
+  border-bottom: var(--linea) solid var(--filete);
+  color: var(--cuerpo);
+  flex: none;
+}
+.novedad strong { color: var(--tinta); font-weight: 600; }
+.novedad .dice { display: flex; flex-direction: column; gap: var(--espacio-2); min-width: 0; flex: 1; }
+.barra-progreso { max-width: 320px; height: 4px; border-radius: 2px; background: var(--elevada); overflow: hidden; }
+/* Cuatro píxeles sobre una pista clara: aquí manda verse, y el oro sobre
+   «--elevada» desaparecería (Esfinge). Va en la tinta del acento. */
+.barra-progreso i { display: block; height: 100%; background: var(--acento); transition: width 0.15s; }

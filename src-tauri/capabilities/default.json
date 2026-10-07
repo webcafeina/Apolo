@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Lo que la ventana principal puede pedir: las órdenes de Apolo, arrastrar y soltar, mover la ventana desde la barra, y los diálogos de abrir y guardar",
+  "description": "Lo que la ventana principal puede pedir: las órdenes de Apolo, arrastrar y soltar, mover la ventana desde la barra, los diálogos de abrir y guardar, y actualizarse y reiniciar",
   "windows": [
     "principal"
   ],
@@ -10,6 +10,8 @@
     "dialog:allow-open",
     "dialog:allow-save",
     "dialog:allow-message",
-    "core:window:allow-start-dragging"
+    "core:window:allow-start-dragging",
+    "updater:default",
+    "process:allow-restart"
   ]
 }

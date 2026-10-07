@@ -18,6 +18,9 @@ use apolo_nucleo::webp::{self, Estadisticas, Extras, OpcionesWebp};
 use apolo_nucleo::{Error, cwebp, orientacion, vista};
 use serde::{Deserialize, Serialize};
 
+mod ajustes;
+pub use ajustes::Ajustes;
+
 /// Un error para la interfaz: el texto que hay que enseñar, y si fue una
 /// cancelación (que no se enseña).
 #[derive(Debug, Clone, Serialize)]
@@ -112,22 +115,40 @@ pub struct Servicio {
     /// peticiones parecerían viejas (docs/trampas.md).
     generaciones: Mutex<HashMap<u64, Arc<AtomicU64>>>,
     carpeta_presets: PathBuf,
+    ajustes: ajustes::Almacen,
 }
 
 impl Servicio {
-    pub fn nuevo(carpeta_presets: PathBuf) -> Self {
+    /// `carpeta` es la de configuración de Apolo: dentro van `presets/` y
+    /// `ajustes.json`.
+    pub fn nuevo(carpeta: PathBuf) -> Self {
         Servicio {
             abiertas: Mutex::default(),
             ultimos: Mutex::default(),
             siguiente: AtomicU64::new(1),
             generaciones: Mutex::default(),
-            carpeta_presets,
+            carpeta_presets: carpeta.join("presets"),
+            ajustes: ajustes::Almacen::abrir(carpeta.join("ajustes.json")),
         }
     }
 
-    /// Con la carpeta de presets de siempre (la misma que la CLI).
+    /// Con la carpeta de configuración de siempre (la misma que la CLI).
     pub fn con_carpeta_por_defecto() -> Self {
-        Servicio::nuevo(presets::carpeta().unwrap_or_else(|| PathBuf::from("presets")))
+        Servicio::nuevo(presets::carpeta_config().unwrap_or_else(|| PathBuf::from("apolo")))
+    }
+
+    pub fn ajustes(&self) -> Ajustes {
+        self.ajustes.leer()
+    }
+
+    /// La casilla «Avisarme cuando haya una versión nueva».
+    pub fn buscar_actualizaciones(&self, si: bool) -> Ajustes {
+        self.ajustes.buscar_actualizaciones(si)
+    }
+
+    /// Si toca preguntar a GitHub por una versión nueva (ADR 0018).
+    pub fn reservar_comprobacion(&self, forzar: bool) -> bool {
+        self.ajustes.reservar_comprobacion(forzar)
     }
 
     fn abierta(&self, id: u64) -> R<Arc<Abierta>> {
@@ -523,7 +544,7 @@ mod pruebas {
 
     #[test]
     fn la_generacion_vieja_se_cancela() {
-        let s = Servicio::nuevo(std::env::temp_dir().join("apolo-servicio-presets"));
+        let s = Servicio::nuevo(std::env::temp_dir().join("apolo-servicio"));
         let foto = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../pruebas/corpus/foto.webp");
         let info = s.abrir_ruta(&foto).unwrap();
         assert_eq!((info.ancho, info.alto, info.formato), (128, 128, "WebP"));

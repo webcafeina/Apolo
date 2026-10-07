@@ -97,10 +97,26 @@ export interface Plataforma {
   sistema: string;
   /** Si la ventana tiene vidrio detrás (ADR 0016): solo macOS, por ahora. */
   vidrio: boolean;
+  /** macOS la ejecuta desde una copia de solo lectura: no se puede actualizar sola. */
+  traslocada: boolean;
 }
 
 export const plataforma = (): Promise<Plataforma> =>
-  enTauri() ? orden<Plataforma>("plataforma") : Promise.resolve({ sistema: "web", vidrio: false });
+  enTauri()
+    ? orden<Plataforma>("plataforma")
+    : Promise.resolve({ sistema: "web", vidrio: false, traslocada: false });
+
+/** Lo que se guarda entre sesiones (ADR 0018). */
+export interface Ajustes {
+  buscar_actualizaciones: boolean;
+  /** Segundos Unix. */
+  ultima_comprobacion: number | null;
+}
+
+export const ajustes = () => orden<Ajustes>("ajustes");
+export const buscarActualizaciones = (si: boolean) => orden<Ajustes>("buscar_actualizaciones", { si });
+/** Si toca preguntar a GitHub: una vez al día, o ya si `forzar` («Buscar ahora»). */
+export const reservarComprobacion = (forzar: boolean) => orden<boolean>("reservar_comprobacion", { forzar });
 
 export const inicio = () => orden<Inicio>("inicio");
 export const motores = () => orden<Motor[]>("motores");

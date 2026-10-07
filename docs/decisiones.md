@@ -1,6 +1,6 @@
 # Decisiones
 
-Última actualización: **2026-10-06**
+Última actualización: **2026-10-07**
 
 Una ficha por decisión no trivial, en [adr/](adr/). Las que se superan **no se borran**: se marcan y
 se quedan, porque saber qué se pensaba antes explica por qué el código es como es.
@@ -26,7 +26,8 @@ con el cliente.
 | [0011](adr/0011-leer-como-cwebp.md) | Leer las imágenes como cwebp, con sus manías; sin orientación EXIF | 2026-10-06 | aceptada · matizada por la 0012 |
 | [0012](adr/0012-enderezar-como-opcion.md) | Enderezar según la orientación EXIF, como opción apagada por defecto | 2026-10-06 | aceptada · hecha en la entrega 2 |
 | [0013](adr/0013-el-estudio-por-dentro.md) | El Estudio: un servicio con dos transportes (Tauri y HTTP), píxeles crudos en canvas, generaciones por imagen | 2026-10-06 | aceptada |
-| [0014](adr/0014-versiones-y-publicacion.md) | Versiones 0.x como pre-release en borrador, con la CLI y las sumas en la Release | 2026-10-06 | aceptada |
+| [0014](adr/0014-versiones-y-publicacion.md) | Versiones 0.x como pre-release en borrador, con la CLI y las sumas en la Release | 2026-10-06 | aceptada · matizada por la 0018 (ya no pre-release) |
 | [0015](adr/0015-identidad-nativa-con-marca.md) | Nativa con marca, como Esfinge hoy; entrega «Identidad» antes de Lotes; sin licencia en el `.dmg` | 2026-10-06 | aceptada · hecha en la entrega 3 |
 | [0016](adr/0016-ventana-translucida.md) | Ventana translúcida en macOS con `macOSPrivateApi`; Windows y Linux opacos por ahora | 2026-10-06 | aceptada |
 | [0017](adr/0017-leer-heic.md) | Leer HEIC con libheif y libde265 compiladas dentro (submódulos); el EXIF se deja en orientación 1 | 2026-10-06 | aceptada |
+| [0018](adr/0018-actualizarse-sola.md) | Actualizarse desde la aplicación como Esfinge, con `tauri-plugin-updater`: puerta de 24 h, banda en dos pasos, `.deb` con contraseña; versiones normales, no pre-release | 2026-10-07 | aceptada |

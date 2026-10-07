@@ -10,7 +10,7 @@ use std::sync::Arc;
 use apolo_nucleo::Motor;
 use apolo_nucleo::presets::PresetGuardado;
 use apolo_nucleo::webp::{OpcionesWebp, Preset};
-use apolo_servicio::{Fallo, InfoImagen, Inicio, Servicio, Vista, empaquetar_pixeles};
+use apolo_servicio::{Ajustes, Fallo, InfoImagen, Inicio, Servicio, Vista, empaquetar_pixeles};
 use tauri::State;
 use tauri::http::{Response, StatusCode, header};
 
@@ -33,6 +33,10 @@ fn inicio(s: Estado) -> Inicio {
 struct Plataforma {
     sistema: &'static str,
     vidrio: bool,
+    /// macOS la está ejecutando desde una copia de solo lectura porque no se
+    /// arrastró a Aplicaciones (App Translocation). Así no se puede actualizar
+    /// sola: la interfaz pide moverla antes (ADR 0018).
+    traslocada: bool,
 }
 
 #[tauri::command]
@@ -42,6 +46,9 @@ fn plataforma() -> Plataforma {
         // Solo macOS, con el material de barra lateral (tauri.macos.conf.json).
         // En Windows y Linux la ventana es opaca: deuda.md.
         vidrio: cfg!(target_os = "macos"),
+        traslocada: cfg!(target_os = "macos")
+            && std::env::current_exe()
+                .is_ok_and(|r| r.to_string_lossy().contains("/AppTranslocation/")),
     }
 }
 
@@ -123,6 +130,21 @@ fn borrar_preset(s: Estado, nombre: String) -> Result<Vec<PresetGuardado>, Fallo
     s.borrar_preset(&nombre)
 }
 
+#[tauri::command]
+fn ajustes(s: Estado) -> Ajustes {
+    s.ajustes()
+}
+
+#[tauri::command]
+fn buscar_actualizaciones(s: Estado, si: bool) -> Ajustes {
+    s.buscar_actualizaciones(si)
+}
+
+#[tauri::command]
+fn reservar_comprobacion(s: Estado, forzar: bool) -> bool {
+    s.reservar_comprobacion(forzar)
+}
+
 /// `apolo://localhost/original/<id>?enderezar=1` y `…/resultado/<id>`: ancho
 /// y alto en u32 little-endian y el RGBA detrás. En Windows llega como
 /// `http://apolo.localhost/…`; la ruta es la misma.
@@ -153,6 +175,11 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
 pub fn arrancar() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        // Actualizarse desde la propia aplicación (ADR 0018): el plugin baja el
+        // instalador de la Release, comprueba su firma y lo instala; `process`
+        // reinicia después.
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(Arc::new(Servicio::con_carpeta_por_defecto()))
         .register_asynchronous_uri_scheme_protocol("apolo", |ctx, peticion, respuesta| {
             use tauri::Manager;
@@ -189,7 +216,10 @@ pub fn arrancar() {
             orden_opciones,
             presets,
             guardar_preset,
-            borrar_preset
+            borrar_preset,
+            ajustes,
+            buscar_actualizaciones,
+            reservar_comprobacion
         ])
         .run(tauri::generate_context!())
         .expect("No se pudo arrancar Apolo");

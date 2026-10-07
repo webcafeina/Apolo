@@ -1,6 +1,6 @@
 # ADR 0014 — Versiones 0.x como pre-release, con la CLI en la Release
 
-**Fecha:** 2026-10-06 · **Estado:** aceptada
+**Fecha:** 2026-10-06 · **Estado:** aceptada · matizada por la [0018](0018-actualizarse-sola.md): desde la v0.3.3, versiones normales y no pre-release, para que el actualizador las vea
 
 ## Contexto
 

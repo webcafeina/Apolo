@@ -31,9 +31,11 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   - la clave, firmando un fichero.
 - La prueba «pegar una orden» fallaba por tiempo con la máquina cargada: `-lossless -z 9` tarda 4 s
   en depuración ([trampas](trampas.md)). Ahora tiene su propio plazo.
+- CI en verde, también `publicar.yml` lanzado a mano: la ventana compila con el plugin, y los siete
+  paquetes del actualizador salen con su `.sig`. **Las siete firmas, verificadas** contra la clave
+  pública.
 - **No verificado**:
-  - la ventana con el plugin (CI);
-  - los `.sig` y `latest.json` (al publicar);
+  - `latest.json` (solo al publicar);
   - una actualización real (v0.3.4).
 
 ---

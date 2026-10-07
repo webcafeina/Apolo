@@ -19,6 +19,15 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
     transición de 80 ms aún iba 19 puntos por detrás.
   - Una prueba e2e compara la barra pintada con el número.
 - Verificado: `make comprobar` y 31 pruebas e2e. Sin publicar: sería la v0.4.1.
+- Para que el cliente pruebe Lotes en su Mac, `pruebas/lotes/generar.sh` fabrica con ffmpeg una
+  carpeta de prueba: 25 imágenes sintéticas en subcarpetas (JPG, PNG con alfa, HEIC, TIFF, BMP, GIF,
+  WebP), una rota, ocultos de macOS que no deben contar, y 48 fotos de 12 megapíxeles para cancelar.
+  Pasada por `apolo lote`:
+  - 24 convertidas y 1 fallida, 12,9 MB → 3,1 MB;
+  - el pixel art y el GIF de patrón pesan unas cuatro veces más en WebP con pérdida.
+
+  De ahí salió un arreglo pequeño de la CLI: con las opciones por defecto escribía «cwebp » con un
+  espacio colgando.
 
 ---
 

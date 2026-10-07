@@ -11,7 +11,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use apolo_nucleo::lote::{self, Hecho, Resumen};
-use apolo_nucleo::webp::OpcionesWebp;
+use apolo_nucleo::salida::{Ajuste, FormatoSalida};
 use serde::Serialize;
 
 use crate::{Fallo, R, Servicio};
@@ -21,6 +21,8 @@ use crate::{Fallo, R, Servicio};
 pub struct Recogida {
     pub imagenes: usize,
     pub bytes: u64,
+    /// La carpeta que se propone, sin el sufijo del formato: la interfaz le
+    /// añade «-webp», «-jpg»… o «-apolo» según lo que se pida.
     pub salida_sugerida: Option<String>,
     /// Las primeras, para enseñarlas.
     pub muestra: Vec<String>,
@@ -38,22 +40,38 @@ pub struct LoteEmpezado {
 pub struct Fila {
     pub relativa: String,
     pub bytes_entrada: u64,
-    pub bytes_salida: Option<u64>,
-    pub ruta: Option<String>,
+    /// Los ficheros que dejó, el más ligero primero.
+    pub salidas: Vec<FilaSalida>,
     pub error: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct FilaSalida {
+    pub formato: FormatoSalida,
+    pub bytes: u64,
+    pub ruta: String,
 }
 
 impl From<&Hecho> for Fila {
     fn from(h: &Hecho) -> Self {
+        let mut salidas: Vec<FilaSalida> = h
+            .resultado
+            .as_ref()
+            .map(|v| {
+                v.iter()
+                    .map(|s| FilaSalida {
+                        formato: s.formato,
+                        bytes: s.bytes,
+                        ruta: s.ruta.display().to_string(),
+                    })
+                    .collect()
+            })
+            .unwrap_or_default();
+        salidas.sort_by_key(|s| s.bytes);
         Fila {
             relativa: h.relativa.display().to_string(),
             bytes_entrada: h.bytes_entrada,
-            bytes_salida: h.resultado.as_ref().ok().map(|s| s.bytes),
-            ruta: h
-                .resultado
-                .as_ref()
-                .ok()
-                .map(|s| s.ruta.display().to_string()),
+            salidas,
             error: h.resultado.as_ref().err().cloned(),
         }
     }
@@ -92,7 +110,8 @@ pub fn recoger_lote(entradas: &[String]) -> Recogida {
     Recogida {
         imagenes: v.len(),
         bytes: v.iter().map(|e| e.bytes).sum(),
-        salida_sugerida: lote::salida_sugerida(&rutas).map(|p| p.display().to_string()),
+        salida_sugerida: lote::salida_sugerida(&rutas, "")
+            .map(|p| p.display().to_string().trim_end_matches('-').to_string()),
         muestra: v
             .iter()
             .take(8)
@@ -103,13 +122,19 @@ pub fn recoger_lote(entradas: &[String]) -> Recogida {
 
 impl Servicio {
     /// Empieza a convertir en otro hilo y vuelve en seguida.
+    /// Con `solo_mas_ligero`, de cada imagen se guarda solo el formato que
+    /// menos pese; si no, uno por ajuste.
     pub fn empezar_lote(
         &self,
         entradas: &[String],
-        opciones: &OpcionesWebp,
+        ajustes: &[Ajuste],
+        solo_mas_ligero: bool,
         salida: &str,
     ) -> R<LoteEmpezado> {
-        if !opciones.validar() {
+        if ajustes.is_empty() {
+            return Err(Fallo::nuevo("Falta al menos un formato de salida"));
+        }
+        if ajustes.iter().any(|a| !a.webp.validar()) {
             return Err(Fallo::nuevo("La configuración no es válida"));
         }
         if salida.trim().is_empty() {
@@ -130,13 +155,14 @@ impl Servicio {
             acabado: Mutex::default(),
         });
         self.lotes.lock().unwrap().insert(id, l.clone());
-        let opciones = opciones.clone();
+        let ajustes = ajustes.to_vec();
         let d = destino.clone();
         std::thread::spawn(move || {
             lote::ejecutar(
                 &elementos,
                 &d,
-                &opciones,
+                &ajustes,
+                solo_mas_ligero,
                 lote::hilos_por_defecto(),
                 &l.cancelado,
                 &|h| l.hechos.lock().unwrap().push(h),
@@ -202,12 +228,12 @@ mod pruebas {
 
         let r = recoger_lote(&e);
         assert_eq!(r.imagenes, 2);
-        let salida = r.salida_sugerida.unwrap();
+        let salida = format!("{}-webp", r.salida_sugerida.unwrap());
         assert!(salida.ends_with("fotos-webp"));
 
         let s = Servicio::nuevo(base.join("config"));
         let l = s
-            .empezar_lote(&e, &OpcionesWebp::default(), &salida)
+            .empezar_lote(&e, &[Ajuste::default()], false, &salida)
             .unwrap();
         assert_eq!(l.total, 2);
         let mut vistas = 0;

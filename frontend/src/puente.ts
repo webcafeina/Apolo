@@ -7,7 +7,7 @@
 // casos: llama a estas funciones y ya.
 
 import { invoke } from "@tauri-apps/api/core";
-import type { OpcionesWebp, Preset } from "./estudio/opciones";
+import type { Ajuste, FormatoSalida, OpcionesWebp, Preset } from "./estudio/opciones";
 
 export interface Motor {
   nombre: string;
@@ -38,26 +38,31 @@ export interface Estadisticas {
 
 export interface Vista {
   generacion: number;
+  /** El lado del comparador: 0 izquierdo, 1 derecho. */
+  lado: 0 | 1;
+  formato: FormatoSalida;
+  /** cwebp, cjpeg, oxipng o qoiconv. */
+  herramienta: string;
   bytes: number;
   ancho: number;
   alto: number;
   milisegundos: number;
-  estadisticas: Estadisticas;
+  /** Solo WebP las da. */
+  estadisticas: Estadisticas | null;
   orden: string;
   /** La misma orden con las rutas completas: la que se copia. */
   orden_completa: string;
   equivalente: boolean;
-  /** Por qué la orden cwebp no da este fichero, si no lo da. */
-  motivo: "enderezada" | "formato_sin_cwebp" | null;
+  /** Por qué la orden de la herramienta no da este fichero, si no lo da. */
+  motivo: "enderezada" | "procesada" | "formato_sin_herramienta" | null;
 }
 
-export interface PresetGuardado {
-  nombre: string;
-  formato: string;
-  webp: OpcionesWebp;
-}
+/** Un preset guardado: un nombre y un ajuste entero (ADR 0020). */
+export type PresetGuardado = { nombre: string } & Ajuste;
 
 export interface Inicio {
+  /** El ajuste por defecto: WebP, sin proceso, con todas las opciones. */
+  ajuste: Ajuste;
   opciones: OpcionesWebp;
   presets_cwebp: Preset[];
   carpeta_presets: string;
@@ -121,15 +126,17 @@ export const reservarComprobacion = (forzar: boolean) => orden<boolean>("reserva
 export const inicio = () => orden<Inicio>("inicio");
 export const motores = () => orden<Motor[]>("motores");
 export const cerrar = (id: number) => orden<void>("cerrar", { id });
-export const codificar = (id: number, opciones: OpcionesWebp, generacion: number) =>
-  orden<Vista>("codificar", { id, opciones, generacion });
+export const codificar = (id: number, ajuste: Ajuste, lado: 0 | 1, generacion: number) =>
+  orden<Vista>("codificar", { id, ajuste, lado, generacion });
 export const aplicarPreset = (opciones: OpcionesWebp, preset: Preset) =>
   orden<OpcionesWebp>("aplicar_preset", { opciones, preset });
 export const nivelSinPerdida = (opciones: OpcionesWebp, nivel: number) =>
   orden<OpcionesWebp>("nivel_sin_perdida", { opciones, nivel });
-export const leerOrden = (texto: string) => orden<OpcionesWebp>("leer_orden", { texto });
+/** Una orden pegada (de cwebp, cjpeg, oxipng o qoiconv), sobre el ajuste actual. */
+export const leerOrden = (texto: string, base: Ajuste) => orden<Ajuste>("leer_orden", { texto, base });
 export const presets = () => orden<PresetGuardado[]>("presets");
-export const ordenOpciones = (opciones: OpcionesWebp) => orden<string>("orden_opciones", { opciones });
+/** La orden de la herramienta que da un ajuste, sin ficheros. */
+export const ordenOpciones = (ajuste: Ajuste) => orden<string>("orden_opciones", { ajuste });
 export const guardarPreset = (preset: PresetGuardado) => orden<PresetGuardado[]>("guardar_preset", { preset });
 export const borrarPreset = (nombre: string) => orden<PresetGuardado[]>("borrar_preset", { nombre });
 
@@ -179,19 +186,25 @@ export async function alSoltar(f: (rutas: string[]) => void): Promise<() => void
  * sistema; en el navegador lo descarga. Devuelve el nombre o `null` si se
  * canceló.
  */
-export async function exportar(id: number, opciones: OpcionesWebp): Promise<string | null> {
-  const nombre = await orden<string>("nombre_salida", { id });
+const NOMBRE_FORMATO: Record<FormatoSalida, string> = { webp: "WebP", jpeg: "JPEG", png: "PNG", qoi: "QOI" };
+const EXTENSIONES: Record<FormatoSalida, string[]> = { webp: ["webp"], jpeg: ["jpg", "jpeg"], png: ["png"], qoi: ["qoi"] };
+
+export async function exportar(id: number, ajuste: Ajuste, lado: 0 | 1): Promise<string | null> {
+  const nombre = await orden<string>("nombre_salida", { id, formato: ajuste.formato });
   if (enTauri()) {
     const { save } = await import("@tauri-apps/plugin-dialog");
-    const ruta = await save({ defaultPath: nombre, filters: [{ name: "WebP", extensions: ["webp"] }] });
+    const ruta = await save({
+      defaultPath: nombre,
+      filters: [{ name: NOMBRE_FORMATO[ajuste.formato], extensions: EXTENSIONES[ajuste.formato] }],
+    });
     if (!ruta) return null;
-    await orden<number>("exportar", { id, opciones, ruta });
+    await orden<number>("exportar", { id, ajuste, lado, ruta });
     return ruta;
   }
   const r = await fetch("/api/exportar", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ id, opciones }),
+    body: JSON.stringify({ id, ajuste, lado }),
   });
   if (!r.ok) throw comoFallo(await r.json());
   const url = URL.createObjectURL(await r.blob());
@@ -222,7 +235,7 @@ async function pixeles(ruta: string): Promise<ImageData> {
 
 export const pixelesOriginal = (id: number, enderezar: boolean) =>
   pixeles(`original/${id}${enderezar ? "?enderezar=1" : ""}`);
-export const pixelesResultado = (id: number) => pixeles(`resultado/${id}`);
+export const pixelesResultado = (id: number, lado: 0 | 1) => pixeles(`resultado/${id}?lado=${lado}`);
 
 // ---------------------------------------------------------------- lotes (ADR 0019)
 
@@ -240,16 +253,30 @@ export interface LoteEmpezado {
   salida: string;
 }
 
+export interface FilaSalida {
+  formato: FormatoSalida;
+  bytes: number;
+  ruta: string;
+}
+
 export interface Fila {
   relativa: string;
   bytes_entrada: number;
-  bytes_salida: number | null;
-  ruta: string | null;
+  /** Los ficheros que dejó, el más ligero primero. */
+  salidas: FilaSalida[];
   error: string | null;
 }
 
 export interface Destacada {
   relativa: string;
+  formato: FormatoSalida;
+  bytes_entrada: number;
+  bytes_salida: number;
+}
+
+export interface PorFormato {
+  formato: FormatoSalida;
+  ficheros: number;
   bytes_entrada: number;
   bytes_salida: number;
 }
@@ -260,6 +287,7 @@ export interface Resumen {
   mayores: number;
   bytes_entrada: number;
   bytes_salida: number;
+  por_formato: PorFormato[];
   peores: Destacada[];
 }
 
@@ -274,8 +302,8 @@ export interface EstadoLote {
 }
 
 export const recogerLote = (entradas: string[]) => orden<Recogida>("recoger_lote", { entradas });
-export const empezarLote = (entradas: string[], opciones: OpcionesWebp, salida: string) =>
-  orden<LoteEmpezado>("empezar_lote", { entradas, opciones, salida });
+export const empezarLote = (entradas: string[], ajustes: Ajuste[], soloMasLigero: boolean, salida: string) =>
+  orden<LoteEmpezado>("empezar_lote", { entradas, ajustes, soloMasLigero, salida });
 export const estadoLote = (id: number, desde: number) => orden<EstadoLote>("estado_lote", { id, desde });
 export const cancelarLote = (id: number) => orden<void>("cancelar_lote", { id });
 

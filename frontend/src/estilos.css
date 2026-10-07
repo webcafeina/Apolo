@@ -632,3 +632,23 @@ button.discreto:hover:not(:disabled) { background: var(--elevada); color: var(--
 .filas-lote .nombre { color: var(--tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .filas-lote .cifra { text-align: right; font-variant-numeric: tabular-nums; color: var(--tinta); }
 .filas-lote .cifra.aviso-texto { color: var(--aviso); }
+
+/* Entrega 5: un formato por lado y el proceso (ADR 0020) */
+
+.segmentado.lados { display: flex; }
+.segmentado.lados button { flex: 1; justify-content: center; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.panel-original { padding: var(--espacio-4); display: flex; flex-direction: column; gap: var(--espacio-3); align-items: flex-start; color: var(--cuerpo); }
+.volver-original { align-self: flex-start; padding: 0; height: auto; color: var(--acento); }
+.panel-sin-opciones { padding: var(--espacio-4); }
+.proceso-control { display: flex; flex-direction: column; gap: var(--espacio-2); }
+.sub-control { display: flex; flex-direction: column; gap: 4px; font-size: var(--texto-chico); color: var(--cuerpo); }
+
+.salida-lote { display: flex; flex-direction: column; gap: var(--espacio-2); padding-bottom: var(--espacio-3); border-bottom: var(--linea) solid var(--filete); }
+.salida-lote .pareja { align-items: flex-end; flex-wrap: nowrap; }
+.campo.crece { flex: 1; min-width: 0; }
+.quitar-salida { height: 30px; }
+
+.por-formato { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.por-formato li { display: flex; align-items: baseline; gap: var(--espacio-2); }
+.por-formato strong { color: var(--tinta); }
+.por-formato .cifra { margin-left: auto; color: var(--tinta); font-variant-numeric: tabular-nums; }

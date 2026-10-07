@@ -9,22 +9,16 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
-use crate::webp::OpcionesWebp;
+use crate::salida::Ajuste;
 
-/// Un preset guardado.
+/// Un preset guardado: un nombre y un [`Ajuste`] (formato, opciones de cada
+/// formato y proceso), aplanado en el JSON. Un preset de antes de la v0.5
+/// (`{nombre, formato: "webp", webp}`) se sigue leyendo igual.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PresetGuardado {
     pub nombre: String,
-    /// El formato de salida. Por ahora solo `webp`; con la entrega 4 llegan
-    /// los demás, cada uno con su bloque de opciones.
-    #[serde(default = "webp")]
-    pub formato: String,
-    #[serde(default)]
-    pub webp: OpcionesWebp,
-}
-
-fn webp() -> String {
-    "webp".into()
+    #[serde(flatten)]
+    pub ajuste: Ajuste,
 }
 
 /// `…/Apolo/presets`, en la carpeta de configuración de cada sistema
@@ -128,17 +122,27 @@ mod pruebas {
         let _ = std::fs::remove_dir_all(&dir);
         let mut p = PresetGuardado {
             nombre: "Web".into(),
-            formato: "webp".into(),
-            webp: OpcionesWebp::default(),
+            ajuste: Default::default(),
         };
-        p.webp.calidad = 82.0;
+        p.ajuste.webp.calidad = 82.0;
         guardar(&dir, &p).unwrap();
         std::fs::write(dir.join("roto.json"), b"{no es json").unwrap();
         assert_eq!(listar(&dir), vec![p.clone()]);
-        assert_eq!(cargar(&dir, "web").unwrap().webp.calidad, 82.0);
+        assert_eq!(cargar(&dir, "web").unwrap().ajuste.webp.calidad, 82.0);
         borrar(&dir, "Web").unwrap();
         borrar(&dir, "Web").unwrap();
         assert!(cargar(&dir, "web").is_none());
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn un_preset_de_antes_se_sigue_leyendo() {
+        let p: PresetGuardado =
+            serde_json::from_str(r#"{"nombre":"Viejo","formato":"webp","webp":{"calidad":60.0}}"#)
+                .unwrap();
+        assert_eq!(p.ajuste.formato, crate::salida::FormatoSalida::Webp);
+        assert_eq!(p.ajuste.webp.calidad, 60.0);
+        let p: PresetGuardado = serde_json::from_str(r#"{"nombre":"Sin formato"}"#).unwrap();
+        assert_eq!(p.ajuste.formato, crate::salida::FormatoSalida::Webp);
     }
 }

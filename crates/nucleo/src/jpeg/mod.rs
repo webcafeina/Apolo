@@ -136,11 +136,12 @@ pub fn leer(datos: &[u8]) -> Resultado<EntradaJpeg> {
     }
 }
 
-/// Desde una imagen ya leída por Apolo, en color. PNM, BMP y GIF los lee
-/// cjpeg; el resto no.
+/// Desde una imagen ya leída por Apolo, en color.
 pub fn de_imagen(img: &Imagen) -> Resultado<EntradaJpeg> {
     let (ancho, alto, rgba) = vista::rgba(img)?;
     let mut e = EntradaJpeg::desde_rgba(ancho, alto, &rgba);
-    e.de_cjpeg = matches!(img.formato, Formato::Pnm | Formato::Bmp | Formato::Gif);
+    // cjpeg lee también BMP y GIF, pero no está comprobado que dé los mismos
+    // píxeles que Apolo: solo cuenta PNM, que sí.
+    e.de_cjpeg = img.formato == Formato::Pnm;
     Ok(e)
 }

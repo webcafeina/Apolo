@@ -14,14 +14,15 @@ use std::time::Instant;
 
 use apolo_nucleo::entrada::{self, Imagen, Lectura, Pixeles};
 use apolo_nucleo::presets::{self, PresetGuardado};
-use apolo_nucleo::webp::{self, Estadisticas, Extras, OpcionesWebp};
+use apolo_nucleo::salida::{self, Ajuste, FormatoSalida, Motivo};
+use apolo_nucleo::webp::{self, Estadisticas, OpcionesWebp};
 use apolo_nucleo::{Error, cwebp, orientacion, vista};
 use serde::{Deserialize, Serialize};
 
 mod ajustes;
 mod lotes;
 pub use ajustes::Ajustes;
-pub use lotes::{EstadoLote, Fila, LoteEmpezado, Recogida, recoger_lote};
+pub use lotes::{EstadoLote, Fila, FilaSalida, LoteEmpezado, Recogida, recoger_lote};
 
 /// Un error para la interfaz: el texto que hay que enseñar, y si fue una
 /// cancelación (que no se enseña).
@@ -74,12 +75,18 @@ pub struct InfoImagen {
 #[derive(Debug, Clone, Serialize)]
 pub struct Vista {
     pub generacion: u64,
+    /// El lado del comparador (0, izquierdo; 1, derecho).
+    pub lado: u8,
+    pub formato: FormatoSalida,
+    /// cwebp, cjpeg, oxipng o qoiconv: la herramienta de la orden.
+    pub herramienta: &'static str,
     pub bytes: usize,
     pub ancho: u32,
     pub alto: u32,
     pub milisegundos: u64,
-    pub estadisticas: Estadisticas,
-    /// La orden cwebp equivalente, con el nombre de la imagen: la que se ve.
+    /// Solo WebP las da.
+    pub estadisticas: Option<Estadisticas>,
+    /// La orden de la herramienta, con el nombre de la imagen: la que se ve.
     pub orden: String,
     /// La misma con las rutas completas: la que se copia, para que funcione
     /// pegada en cualquier carpeta. Sin ruta de disco, igual que `orden`.
@@ -95,27 +102,33 @@ struct Abierta {
     /// La ruta de disco, si se abrió de disco (en desarrollo llega por HTTP y
     /// no la hay). Sirve para la orden copiable con rutas completas.
     ruta: Option<PathBuf>,
+    /// Los bytes del fichero: cjpeg, oxipng y qoiconv leen el fichero, no
+    /// los píxeles de Apolo (ADR 0020).
+    datos: Vec<u8>,
     imagen: Imagen,
 }
 
 #[derive(Default)]
 struct Ultimo {
-    opciones: Option<OpcionesWebp>,
+    ajuste: Option<Ajuste>,
     datos: Vec<u8>,
     rgba: (u32, u32, Vec<u8>),
 }
 
+/// Imagen y lado del comparador.
+type Clave = (u64, u8);
+
 /// El estado del Estudio.
 pub struct Servicio {
     abiertas: Mutex<HashMap<u64, Arc<Abierta>>>,
-    ultimos: Mutex<HashMap<u64, Arc<Mutex<Ultimo>>>>,
+    ultimos: Mutex<HashMap<Clave, Arc<Mutex<Ultimo>>>>,
     siguiente: AtomicU64,
-    /// La generación más reciente pedida **para cada imagen**. Una
+    /// La generación más reciente pedida **para cada imagen y lado**. Una
     /// codificación en marcha con una generación anterior se cancela en el
     /// siguiente aviso de progreso. Va por imagen y no global: si la interfaz
     /// se recarga, vuelve a contar desde 1, y con un contador global todas sus
     /// peticiones parecerían viejas (docs/trampas.md).
-    generaciones: Mutex<HashMap<u64, Arc<AtomicU64>>>,
+    generaciones: Mutex<HashMap<Clave, Arc<AtomicU64>>>,
     carpeta_presets: PathBuf,
     ajustes: ajustes::Almacen,
     lotes: Mutex<HashMap<u64, Arc<lotes::Lote>>>,
@@ -164,8 +177,13 @@ impl Servicio {
             .ok_or_else(|| Fallo::nuevo("Esa imagen ya no está abierta"))
     }
 
-    fn ultimo(&self, id: u64) -> Arc<Mutex<Ultimo>> {
-        self.ultimos.lock().unwrap().entry(id).or_default().clone()
+    fn ultimo(&self, clave: Clave) -> Arc<Mutex<Ultimo>> {
+        self.ultimos
+            .lock()
+            .unwrap()
+            .entry(clave)
+            .or_default()
+            .clone()
     }
 
     /// Abre una imagen de disco.
@@ -219,6 +237,7 @@ impl Servicio {
             Arc::new(Abierta {
                 nombre: nombre.into(),
                 ruta,
+                datos,
                 imagen,
             }),
         );
@@ -228,8 +247,11 @@ impl Servicio {
     /// Cierra una imagen y libera su memoria.
     pub fn cerrar(&self, id: u64) {
         self.abiertas.lock().unwrap().remove(&id);
-        self.ultimos.lock().unwrap().remove(&id);
-        self.generaciones.lock().unwrap().remove(&id);
+        self.ultimos.lock().unwrap().retain(|(i, _), _| *i != id);
+        self.generaciones
+            .lock()
+            .unwrap()
+            .retain(|(i, _), _| *i != id);
     }
 
     /// Los píxeles del original, enderezados o no.
@@ -243,25 +265,26 @@ impl Servicio {
         Ok(vista::rgba(enderezada.as_ref().unwrap_or(&a.imagen))?)
     }
 
-    /// Los píxeles de la última vista previa.
-    pub fn pixeles_resultado(&self, id: u64) -> R<(u32, u32, Vec<u8>)> {
-        let u = self.ultimo(id);
+    /// Los píxeles de la última vista previa de un lado.
+    pub fn pixeles_resultado(&self, id: u64, lado: u8) -> R<(u32, u32, Vec<u8>)> {
+        let u = self.ultimo((id, lado));
         let u = u.lock().unwrap();
-        if u.opciones.is_none() {
+        if u.ajuste.is_none() {
             return Err(Fallo::nuevo("Todavía no hay resultado"));
         }
         Ok(u.rgba.clone())
     }
 
-    /// Codifica la vista previa. `generacion` crece con cada cambio de la
-    /// interfaz; lo que se esté codificando con una anterior se cancela.
-    pub fn codificar(&self, id: u64, opciones: &OpcionesWebp, generacion: u64) -> R<Vista> {
+    /// Codifica la vista previa de un lado del comparador. `generacion` crece
+    /// con cada cambio de ese lado; lo que se esté codificando con una
+    /// anterior se cancela.
+    pub fn codificar(&self, id: u64, ajuste: &Ajuste, lado: u8, generacion: u64) -> R<Vista> {
         let a = self.abierta(id)?;
         let ultima = self
             .generaciones
             .lock()
             .unwrap()
-            .entry(id)
+            .entry((id, lado))
             .or_default()
             .clone();
         ultima.fetch_max(generacion, Ordering::SeqCst);
@@ -269,68 +292,71 @@ impl Servicio {
         let mut seguir = move |_p: i32| actual.load(Ordering::SeqCst) == generacion;
 
         let reloj = Instant::now();
-        let r = webp::codificar(&a.imagen, opciones, Extras::default(), Some(&mut seguir))?;
+        let r = salida::codificar(&a.datos, &a.imagen, ajuste, Some(&mut seguir))?;
         let milisegundos = reloj.elapsed().as_millis() as u64;
         if ultima.load(Ordering::SeqCst) != generacion {
             return Err(Error::Cancelado.into());
         }
-        let rgba = vista::decodificar_webp(&r.datos)?;
+        let rgba = vista::decodificar(&r.datos)?;
 
+        let nombre = nombre_salida(&a.nombre, ajuste.formato);
+        let motivo = salida::motivo(a.imagen.formato, ajuste);
         let v = Vista {
             generacion,
+            lado,
+            formato: ajuste.formato,
+            herramienta: ajuste.formato.herramienta(),
             bytes: r.datos.len(),
             ancho: r.ancho,
             alto: r.alto,
             milisegundos,
             estadisticas: r.estadisticas,
-            orden: cwebp::texto(opciones, &a.nombre, &nombre_salida(&a.nombre)),
+            orden: salida::orden(ajuste, &a.nombre, &nombre),
             orden_completa: match &a.ruta {
-                Some(r) => cwebp::texto(
-                    opciones,
+                Some(r) => salida::orden(
+                    ajuste,
                     &r.display().to_string(),
-                    &r.with_file_name(nombre_salida(&a.nombre))
-                        .display()
-                        .to_string(),
+                    &r.with_file_name(&nombre).display().to_string(),
                 ),
-                None => cwebp::texto(opciones, &a.nombre, &nombre_salida(&a.nombre)),
+                None => salida::orden(ajuste, &a.nombre, &nombre),
             },
-            equivalente: motivo(a.imagen.formato, opciones).is_none(),
-            motivo: motivo(a.imagen.formato, opciones),
+            equivalente: motivo.is_none(),
+            motivo,
         };
-        let u = self.ultimo(id);
+        let u = self.ultimo((id, lado));
         *u.lock().unwrap() = Ultimo {
-            opciones: Some(opciones.clone()),
+            ajuste: Some(ajuste.clone()),
             datos: r.datos,
             rgba,
         };
         Ok(v)
     }
 
-    /// Los bytes del fichero final: el de la última vista previa si las
-    /// opciones no han cambiado, o uno nuevo.
-    pub fn bytes_finales(&self, id: u64, opciones: &OpcionesWebp) -> R<Vec<u8>> {
+    /// Los bytes del fichero final: el de la última vista previa de ese lado
+    /// si el ajuste no ha cambiado, o uno nuevo.
+    pub fn bytes_finales(&self, id: u64, ajuste: &Ajuste, lado: u8) -> R<Vec<u8>> {
         let a = self.abierta(id)?;
-        let u = self.ultimo(id);
+        let u = self.ultimo((id, lado));
         {
             let u = u.lock().unwrap();
-            if u.opciones.as_ref() == Some(opciones) {
+            if u.ajuste.as_ref() == Some(ajuste) {
                 return Ok(u.datos.clone());
             }
         }
-        Ok(webp::codificar(&a.imagen, opciones, Extras::default(), None)?.datos)
+        Ok(salida::codificar(&a.datos, &a.imagen, ajuste, None)?.datos)
     }
 
     /// Escribe el fichero final.
-    pub fn exportar(&self, id: u64, opciones: &OpcionesWebp, ruta: &Path) -> R<usize> {
-        let datos = self.bytes_finales(id, opciones)?;
+    pub fn exportar(&self, id: u64, ajuste: &Ajuste, lado: u8, ruta: &Path) -> R<usize> {
+        let datos = self.bytes_finales(id, ajuste, lado)?;
         std::fs::write(ruta, &datos)
             .map_err(|e| Fallo::nuevo(format!("No se puede escribir «{}»: {e}", ruta.display())))?;
         Ok(datos.len())
     }
 
     /// El nombre que se propone al exportar.
-    pub fn nombre_salida(&self, id: u64) -> R<String> {
-        Ok(nombre_salida(&self.abierta(id)?.nombre))
+    pub fn nombre_salida(&self, id: u64, formato: FormatoSalida) -> R<String> {
+        Ok(nombre_salida(&self.abierta(id)?.nombre, formato))
     }
 
     pub fn presets(&self) -> Vec<PresetGuardado> {
@@ -377,20 +403,62 @@ pub fn nivel_sin_perdida(opciones: &OpcionesWebp, nivel: i32) -> R<OpcionesWebp>
     Ok(o)
 }
 
-/// Una orden pegada por quien usa la interfaz: con o sin `cwebp` delante, con
-/// o sin entrada y salida. Devuelve las opciones que da.
-pub fn leer_orden(texto: &str) -> R<OpcionesWebp> {
+/// Una orden pegada por quien usa la interfaz: de cwebp, cjpeg, oxipng o
+/// qoiconv (o `apolo webp`, `apolo jpeg`, `apolo png`), con o sin ficheros.
+/// Devuelve el ajuste que da: el formato y sus opciones, sobre `base` (lo
+/// demás no se toca). Sin herramienta delante, se lee como del formato de
+/// `base`.
+pub fn leer_orden(texto: &str, base: &Ajuste) -> R<Ajuste> {
     let mut palabras = partir(texto);
-    if palabras
-        .first()
-        .is_some_and(|p| p == "cwebp" || p.ends_with("/cwebp") || p.ends_with("cwebp.exe"))
-    {
-        palabras.remove(0);
-    } else if palabras.len() >= 2 && palabras[0] == "apolo" && palabras[1] == "webp" {
-        palabras.drain(..2);
+    let es = |p: &str, h: &str| {
+        p == h || p.ends_with(&format!("/{h}")) || p.ends_with(&format!("{h}.exe"))
+    };
+    let formato = match palabras.first().map(String::as_str) {
+        Some(p) if es(p, "cwebp") => Some(FormatoSalida::Webp),
+        Some(p) if es(p, "cjpeg") => Some(FormatoSalida::Jpeg),
+        Some(p) if es(p, "oxipng") => Some(FormatoSalida::Png),
+        Some(p) if es(p, "qoiconv") => Some(FormatoSalida::Qoi),
+        Some("apolo") => match palabras.get(1).map(String::as_str) {
+            Some("webp") => Some(FormatoSalida::Webp),
+            Some("jpeg") => Some(FormatoSalida::Jpeg),
+            Some("png") => Some(FormatoSalida::Png),
+            Some("qoi") => Some(FormatoSalida::Qoi),
+            _ => None,
+        },
+        _ => None,
+    };
+    match (formato, palabras.first().map(String::as_str)) {
+        (Some(_), Some("apolo")) => {
+            palabras.drain(..2);
+        }
+        (Some(_), _) => {
+            palabras.remove(0);
+        }
+        _ => {}
     }
-    let o = cwebp::leer(&palabras).map_err(|e| Fallo::nuevo(e.0))?;
-    Ok(o.opciones)
+    let mut a = base.clone();
+    a.formato = formato.unwrap_or(base.formato);
+    match a.formato {
+        FormatoSalida::Webp => {
+            a.webp = cwebp::leer(&palabras)
+                .map_err(|e| Fallo::nuevo(e.0))?
+                .opciones;
+        }
+        FormatoSalida::Jpeg => {
+            a.jpeg = apolo_nucleo::jpeg::opciones::leer_orden(&palabras)
+                .map_err(Fallo::nuevo)?
+                .opciones;
+        }
+        FormatoSalida::Png => {
+            a.png = apolo_nucleo::formatos::png::leer_orden(&palabras)?.opciones;
+        }
+        FormatoSalida::Qoi => {
+            if palabras.len() > 2 {
+                return Err(Fallo::nuevo("qoiconv solo lleva la entrada y la salida"));
+            }
+        }
+    }
+    Ok(a)
 }
 
 /// Parte una orden en palabras como lo haría una shell sencilla: espacios,
@@ -424,55 +492,35 @@ fn partir(texto: &str) -> Vec<String> {
     v
 }
 
-/// Por qué la orden cwebp no da exactamente el fichero de Apolo.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Motivo {
-    /// La imagen está enderezada (ADR 0012): cwebp no gira las fotos.
-    Enderezada,
-    /// cwebp no lee este formato (GIF, BMP, QOI, HEIC): la orden sirve de
-    /// referencia, pero no se puede ejecutar tal cual.
-    FormatoSinCwebp,
-}
-
-fn motivo(formato: entrada::Formato, op: &OpcionesWebp) -> Option<Motivo> {
-    use entrada::Formato::*;
-    if !matches!(formato, Png | Jpeg | Tiff | WebP | Pnm | Yuv) {
-        Some(Motivo::FormatoSinCwebp)
-    } else if !cwebp::es_equivalente(op) {
-        Some(Motivo::Enderezada)
-    } else {
-        None
-    }
-}
-
-/// El nombre que se propone para el WebP. Si el original ya es un `.webp`,
-/// se le añade «-apolo»: con el mismo nombre, exportar o la orden cwebp
-/// sobrescribirían el original sin avisar.
-fn nombre_salida(nombre: &str) -> String {
+/// El nombre que se propone para el fichero de salida. Si el original ya
+/// tiene esa extensión, se le añade «-apolo»: con el mismo nombre, exportar
+/// o la orden de la herramienta sobrescribirían el original sin avisar.
+fn nombre_salida(nombre: &str, formato: FormatoSalida) -> String {
     let p = Path::new(nombre);
     let base = p
         .file_stem()
         .map(|s| s.to_string_lossy().into_owned())
         .unwrap_or_else(|| "imagen".into());
-    let ya_es_webp = p
-        .extension()
-        .is_some_and(|e| e.eq_ignore_ascii_case("webp"));
-    if ya_es_webp {
-        format!("{base}-apolo.webp")
+    let ext = formato.extension();
+    let misma = p.extension().is_some_and(|e| {
+        e.eq_ignore_ascii_case(ext)
+            || (formato == FormatoSalida::Jpeg && e.eq_ignore_ascii_case("jpeg"))
+    });
+    if misma {
+        format!("{base}-apolo.{ext}")
     } else {
-        format!("{base}.webp")
+        format!("{base}.{ext}")
     }
 }
 
-/// La orden de `apolo webp` que reproduce unas opciones (sin entrada ni
-/// salida), para enseñarla junto a cada preset.
-pub fn orden_opciones(opciones: &OpcionesWebp) -> String {
-    let a = cwebp::escribir_apolo(opciones);
+/// La orden de la herramienta que reproduce un ajuste (sin entrada ni
+/// salida), para enseñarla junto a cada preset y en Lotes.
+pub fn orden_opciones(ajuste: &Ajuste) -> String {
+    let a = salida::argumentos(ajuste);
     if a.is_empty() {
-        "(las opciones por defecto)".into()
+        ajuste.formato.herramienta().to_string()
     } else {
-        a.join(" ")
+        format!("{} {}", ajuste.formato.herramienta(), a.join(" "))
     }
 }
 
@@ -504,6 +552,8 @@ pub fn empaquetar_pixeles((ancho, alto, rgba): (u32, u32, Vec<u8>)) -> Vec<u8> {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Inicio {
     pub opciones: OpcionesWebp,
+    /// El ajuste por defecto (WebP, sin proceso), con todas las opciones.
+    pub ajuste: Ajuste,
     pub presets_cwebp: Vec<webp::Preset>,
     /// Dónde se guardan los presets con nombre, para decirlo en la interfaz.
     pub carpeta_presets: String,
@@ -515,6 +565,7 @@ impl Servicio {
     pub fn inicio(&self) -> Inicio {
         Inicio {
             opciones: OpcionesWebp::default(),
+            ajuste: Ajuste::default(),
             presets_cwebp: webp::Preset::TODOS.to_vec(),
             carpeta_presets: self.carpeta_presets.display().to_string(),
             version: env!("CARGO_PKG_VERSION"),
@@ -538,12 +589,34 @@ mod pruebas {
 
     #[test]
     fn leer_orden_pegada() {
-        let o = leer_orden("cwebp -preset photo -q 82 foto.jpg -o foto.webp").unwrap();
-        assert_eq!(o.calidad, 82.0);
-        assert_eq!(o.preset, Some(webp::Preset::Photo));
-        let o = leer_orden("apolo webp -lossless -apolo_enderezar").unwrap();
-        assert!(o.sin_perdida && o.enderezar);
-        assert!(leer_orden("cwebp -noexiste").is_err());
+        let base = Ajuste::default();
+        let a = leer_orden("cwebp -preset photo -q 82 foto.jpg -o foto.webp", &base).unwrap();
+        assert_eq!(a.webp.calidad, 82.0);
+        assert_eq!(a.webp.preset, Some(webp::Preset::Photo));
+        let a = leer_orden("apolo webp -lossless -apolo_enderezar", &base).unwrap();
+        assert!(a.webp.sin_perdida && a.webp.enderezar);
+        assert!(leer_orden("cwebp -noexiste", &base).is_err());
+        // Cada herramienta da su formato.
+        let a = leer_orden("cjpeg -quality 70 -outfile x.jpg 'mi foto.png'", &base).unwrap();
+        assert_eq!(
+            (a.formato, a.jpeg.calidad.clone()),
+            (FormatoSalida::Jpeg, vec![70.0])
+        );
+        let a = leer_orden("oxipng -o 4 --strip safe a.png", &base).unwrap();
+        assert_eq!((a.formato, a.png.nivel), (FormatoSalida::Png, 4));
+        assert_eq!(
+            leer_orden("qoiconv a.png a.qoi", &base).unwrap().formato,
+            FormatoSalida::Qoi
+        );
+        // Sin herramienta, las opciones del formato que ya había.
+        let jpeg = Ajuste {
+            formato: FormatoSalida::Jpeg,
+            ..Default::default()
+        };
+        assert_eq!(
+            leer_orden("-quality 50", &jpeg).unwrap().jpeg.calidad,
+            vec![50.0]
+        );
     }
 
     #[test]
@@ -552,7 +625,8 @@ mod pruebas {
         let foto = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../pruebas/corpus/foto.webp");
         let info = s.abrir_ruta(&foto).unwrap();
         assert_eq!((info.ancho, info.alto, info.formato), (128, 128, "WebP"));
-        let v = s.codificar(info.id, &OpcionesWebp::default(), 5).unwrap();
+        let a = Ajuste::default();
+        let v = s.codificar(info.id, &a, 0, 5).unwrap();
         assert_eq!(v.generacion, 5);
         assert!(v.equivalente);
         assert!(v.orden.starts_with("cwebp foto.webp"));
@@ -566,15 +640,31 @@ mod pruebas {
         );
         assert_eq!(v.motivo, None);
         // Una petición con generación anterior a la última ya no vale.
-        let r = s.codificar(info.id, &OpcionesWebp::default(), 3);
+        let r = s.codificar(info.id, &a, 0, 3);
         assert!(r.is_err_and(|f| f.cancelado));
-        let (w, h, px) = s.pixeles_resultado(info.id).unwrap();
+        // El otro lado lleva su propia cuenta.
+        assert!(s.codificar(info.id, &a, 1, 1).is_ok());
+        let (w, h, px) = s.pixeles_resultado(info.id, 0).unwrap();
         assert_eq!((w, h, px.len()), (128, 128, 128 * 128 * 4));
         // Exportar con las mismas opciones da los bytes de la vista previa.
-        let b = s.bytes_finales(info.id, &OpcionesWebp::default()).unwrap();
+        let b = s.bytes_finales(info.id, &a, 0).unwrap();
         assert_eq!(b.len(), v.bytes);
         // Otra imagen empieza su propia cuenta: su generación 1 no es vieja.
         let otra = s.abrir_ruta(&foto).unwrap();
-        assert!(s.codificar(otra.id, &OpcionesWebp::default(), 1).is_ok());
+        assert!(s.codificar(otra.id, &a, 0, 1).is_ok());
+        // En JPEG, la orden es de cjpeg y el nombre lleva .jpg.
+        let j = Ajuste {
+            formato: FormatoSalida::Jpeg,
+            ..Default::default()
+        };
+        let v = s.codificar(otra.id, &j, 1, 2).unwrap();
+        assert_eq!(v.herramienta, "cjpeg");
+        assert!(
+            v.orden.ends_with("-outfile foto.jpg foto.webp"),
+            "{}",
+            v.orden
+        );
+        // cjpeg no lee WebP: la orden no da ese fichero.
+        assert_eq!(v.motivo, Some(Motivo::FormatoSinHerramienta));
     }
 }

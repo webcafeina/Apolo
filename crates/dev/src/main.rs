@@ -12,6 +12,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use apolo_nucleo::presets::PresetGuardado;
+use apolo_nucleo::salida::{Ajuste, FormatoSalida};
 use apolo_nucleo::webp::{OpcionesWebp, Preset};
 use apolo_servicio::{Fallo, Servicio, empaquetar_pixeles};
 use axum::Json;
@@ -70,14 +71,30 @@ struct Id {
 #[derive(Deserialize)]
 struct PeticionCodificar {
     id: u64,
-    opciones: OpcionesWebp,
+    ajuste: Ajuste,
+    #[serde(default)]
+    lado: u8,
     generacion: u64,
 }
 
 #[derive(Deserialize)]
 struct PeticionExportar {
     id: u64,
-    opciones: OpcionesWebp,
+    ajuste: Ajuste,
+    #[serde(default)]
+    lado: u8,
+}
+
+#[derive(Deserialize)]
+struct PeticionNombre {
+    id: u64,
+    formato: FormatoSalida,
+}
+
+#[derive(Deserialize)]
+struct PeticionLeerOrden {
+    texto: String,
+    base: Ajuste,
 }
 
 #[derive(Deserialize)]
@@ -94,12 +111,7 @@ struct PeticionNivel {
 
 #[derive(Deserialize)]
 struct PeticionOrden {
-    opciones: OpcionesWebp,
-}
-
-#[derive(Deserialize)]
-struct Texto {
-    texto: String,
+    ajuste: Ajuste,
 }
 
 #[derive(Deserialize)]
@@ -122,10 +134,14 @@ struct Entradas {
     entradas: Vec<String>,
 }
 
+/// En camelCase, como los manda la interfaz (Tauri los pasa a snake_case solo).
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct EmpezarLote {
     entradas: Vec<String>,
-    opciones: OpcionesWebp,
+    ajustes: Vec<Ajuste>,
+    #[serde(default)]
+    solo_mas_ligero: bool,
     salida: String,
 }
 
@@ -144,6 +160,12 @@ struct Guardar {
 struct Enderezar {
     #[serde(default)]
     enderezar: u8,
+}
+
+#[derive(Deserialize)]
+struct Lado {
+    #[serde(default)]
+    lado: u8,
 }
 
 fn rutas(s: Arc<Servicio>) -> Router {
@@ -185,10 +207,11 @@ fn rutas(s: Arc<Servicio>) -> Router {
             "/api/codificar",
             post(
                 |State(s): Estado, Json(p): Json<PeticionCodificar>| async move {
-                    let r: R<_> = bloqueante(move || s.codificar(p.id, &p.opciones, p.generacion))
-                        .await
-                        .map(Json)
-                        .map_err(Error);
+                    let r: R<_> =
+                        bloqueante(move || s.codificar(p.id, &p.ajuste, p.lado, p.generacion))
+                            .await
+                            .map(Json)
+                            .map_err(Error);
                     r
                 },
             ),
@@ -197,7 +220,7 @@ fn rutas(s: Arc<Servicio>) -> Router {
             "/api/exportar",
             post(
                 |State(s): Estado, Json(p): Json<PeticionExportar>| async move {
-                    let r: R<_> = bloqueante(move || s.bytes_finales(p.id, &p.opciones))
+                    let r: R<_> = bloqueante(move || s.bytes_finales(p.id, &p.ajuste, p.lado))
                         .await
                         .map(binario)
                         .map_err(Error);
@@ -207,9 +230,11 @@ fn rutas(s: Arc<Servicio>) -> Router {
         )
         .route(
             "/api/nombre_salida",
-            post(|State(s): Estado, Json(p): Json<Id>| async move {
-                s.nombre_salida(p.id).map(Json).map_err(Error)
-            }),
+            post(
+                |State(s): Estado, Json(p): Json<PeticionNombre>| async move {
+                    s.nombre_salida(p.id, p.formato).map(Json).map_err(Error)
+                },
+            ),
         )
         .route(
             "/api/aplicar_preset",
@@ -227,8 +252,8 @@ fn rutas(s: Arc<Servicio>) -> Router {
         )
         .route(
             "/api/leer_orden",
-            post(|Json(p): Json<Texto>| async move {
-                apolo_servicio::leer_orden(&p.texto)
+            post(|Json(p): Json<PeticionLeerOrden>| async move {
+                apolo_servicio::leer_orden(&p.texto, &p.base)
                     .map(Json)
                     .map_err(Error)
             }),
@@ -240,7 +265,7 @@ fn rutas(s: Arc<Servicio>) -> Router {
         .route(
             "/api/orden_opciones",
             post(|Json(p): Json<PeticionOrden>| async move {
-                Json(apolo_servicio::orden_opciones(&p.opciones))
+                Json(apolo_servicio::orden_opciones(&p.ajuste))
             }),
         )
         .route(
@@ -264,11 +289,12 @@ fn rutas(s: Arc<Servicio>) -> Router {
         .route(
             "/api/empezar_lote",
             post(|State(s): Estado, Json(p): Json<EmpezarLote>| async move {
-                let r: R<_> =
-                    bloqueante(move || s.empezar_lote(&p.entradas, &p.opciones, &p.salida))
-                        .await
-                        .map(Json)
-                        .map_err(Error);
+                let r: R<_> = bloqueante(move || {
+                    s.empezar_lote(&p.entradas, &p.ajustes, p.solo_mas_ligero, &p.salida)
+                })
+                .await
+                .map(Json)
+                .map_err(Error);
                 r
             }),
         )
@@ -315,11 +341,13 @@ fn rutas(s: Arc<Servicio>) -> Router {
         )
         .route(
             "/pixeles/resultado/{id}",
-            get(|State(s): Estado, Path(id): Path<u64>| async move {
-                s.pixeles_resultado(id)
-                    .map(|p| binario(empaquetar_pixeles(p)))
-                    .map_err(Error)
-            }),
+            get(
+                |State(s): Estado, Path(id): Path<u64>, Query(q): Query<Lado>| async move {
+                    s.pixeles_resultado(id, q.lado)
+                        .map(|p| binario(empaquetar_pixeles(p)))
+                        .map_err(Error)
+                },
+            ),
         )
         .layer(DefaultBodyLimit::max(512 * 1024 * 1024))
         .with_state(s)

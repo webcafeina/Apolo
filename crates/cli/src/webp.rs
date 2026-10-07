@@ -34,7 +34,7 @@ pub fn ejecutar(args: &[String]) -> ExitCode {
                 return ExitCode::FAILURE;
             };
             match presets::cargar(&carpeta, nombre) {
-                Some(p) => base = p.webp,
+                Some(p) => base = p.ajuste.webp,
                 None => {
                     eprintln!(
                         "Error: no hay ningún preset «{nombre}» en {}",

@@ -22,9 +22,9 @@ test("convierte una carpeta, la resume, y repetirlo no pisa nada", async ({ page
   await expect(page.getByTestId("salida")).toHaveValue(/corpus-webp$/);
   await page.getByTestId("salida").fill(salida);
 
-  // El formato: hoy solo WebP; los demás, a la vista pero sin elegir.
+  // El formato: WebP por defecto; AVIF y JPEG XL, a la vista como «pronto».
   await expect(page.getByTestId("formato-lote")).toHaveValue("webp");
-  await expect(page.getByTestId("formato-lote").locator("option:disabled")).toHaveCount(5);
+  await expect(page.getByTestId("formato-lote").locator("option:disabled")).toHaveCount(2);
 
   await page.getByTestId("preset-lote").selectOption({ label: "Foto" });
   await expect(page.getByTestId("orden-lote")).toContainText("-preset photo");
@@ -85,4 +85,37 @@ test("cancelar a medias para, y el botón y el resumen van en rojo", async ({ pa
   const hechas = Number((await titulo.textContent())!.match(/Cancelado: (\d+)/)![1]);
   expect(hechas).toBeLessThan(60);
   expect(existsSync(salida) ? readdirSync(salida).length : 0).toBe(hechas);
+});
+
+test("varios formatos: un fichero de cada, o solo el más ligero", async ({ page }) => {
+  const base = mkdtempSync(join(tmpdir(), "apolo-e2e-formatos-"));
+  await page.goto("/");
+  await page.getByRole("button", { name: "Lotes" }).click();
+  await page.getByTestId("ruta-dev").fill(corpus);
+  await page.getByRole("button", { name: "Añadir", exact: true }).click();
+  await expect(page.getByTestId("recogida")).toContainText("2 imágenes");
+  await page.getByTestId("anadir-formato").click();
+  await page.getByTestId("formato-lote-1").selectOption("png");
+  await expect(page.getByTestId("orden-lote-1")).toHaveText("oxipng");
+  // Con dos formatos, la carpeta propuesta acaba en -apolo.
+  await expect(page.getByTestId("salida")).toHaveValue(/corpus-apolo$/);
+
+  const todos = join(base, "todos");
+  await page.getByTestId("salida").fill(todos);
+  await page.getByRole("button", { name: "Convertir 2 imágenes" }).click();
+  await expect(page.getByTestId("resumen")).toContainText("2 imágenes convertidas", { timeout: 30_000 });
+  await expect(page.getByTestId("por-formato").locator("li")).toHaveCount(2);
+  expect(readdirSync(todos).sort()).toEqual(["foto.png", "foto.webp", "orientacion-6.png", "orientacion-6.webp"]);
+
+  await page.getByRole("button", { name: "Otro lote" }).click();
+  await page.getByTestId("ruta-dev").fill(corpus);
+  await page.getByRole("button", { name: "Añadir", exact: true }).click();
+  await page.getByTestId("anadir-formato").click();
+  await page.getByTestId("formato-lote-1").selectOption("png");
+  await page.getByTestId("mas-ligero").getByRole("checkbox").check();
+  const ligero = join(base, "ligero");
+  await page.getByTestId("salida").fill(ligero);
+  await page.getByRole("button", { name: "Convertir 2 imágenes" }).click();
+  await expect(page.getByTestId("resumen")).toContainText("2 imágenes convertidas", { timeout: 30_000 });
+  expect(readdirSync(ligero)).toHaveLength(2);
 });

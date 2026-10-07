@@ -75,12 +75,16 @@ impl Default for Paleta {
 #[derive(Debug, Clone, Copy, PartialEq, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Proceso {
+    /// Girar según la orientación EXIF, antes que todo lo demás. No cuenta
+    /// para [`Proceso::vacio`]: tiene su propio aviso.
+    pub enderezar: bool,
     pub recorte: Option<Recorte>,
     pub redimension: Option<Redimension>,
     pub paleta: Option<Paleta>,
 }
 
 impl Proceso {
+    /// Si no recorta, ni redimensiona, ni reduce la paleta.
     pub fn vacio(&self) -> bool {
         self.recorte.is_none() && self.redimension.is_none() && self.paleta.is_none()
     }
@@ -228,7 +232,7 @@ mod pruebas {
                 ancho: Some(50),
                 ..Default::default()
             }),
-            paleta: None,
+            ..Default::default()
         };
         assert_eq!(p.medidas(400, 300), (50, 25));
         let (w, h, px) = aplicar(&p, 400, 300, &degradado(400, 300)).unwrap();

@@ -43,6 +43,13 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   - `make equivalencia` (las cuatro herramientas);
   - 43 pruebas e2e;
   - capturas.
+- **Prueba guiada en el Mac del cliente**, con la v0.5.0 recibida por el actualizador y la carpeta
+  de prueba regenerada. Salieron bien los cinco pasos: JPEG, PNG y QOI, comparar formatos,
+  redimensionar, y un lote con dos formatos y «el más ligero».
+  - Pidió tres retoques, hechos para la v0.5.1:
+    - el «%» del ahorro que bajaba de línea;
+    - el hover de los selectores segmentados, que pisaba el fondo de la opción elegida;
+    - «Volver al original» como botón.
 - **Publicada la v0.5.0** cuando el cliente lo dijo. Antes de publicar:
   - CI y los 11 trabajos de publicar, en verde;
   - las sumas cuadran;

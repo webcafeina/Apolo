@@ -51,19 +51,17 @@
    - 22 ficheros, y las sumas cuadran;
    - `latest.json` con 14 plataformas, todas con firma válida;
    - la CLI de la Release da lo mismo que cjpeg.
-2. **Prueba guiada en el Mac del cliente**, que ya se actualizó a la v0.5.0. Los pasos 1 (JPEG),
-   2 (PNG y QOI) y 3 (comparar formatos) salieron bien. Pidió tres retoques, hechos en `main` para
-   la v0.5.1:
-   - que el «%» del ahorro no baje de línea;
-   - que el selector de lado no pierda la marca con el cursor encima (pasaba también en
-     «Deslizador / Lado a lado»);
-   - que «Volver al original» sea un botón de verdad.
-
-   Lo que se iba a probar:
-   - un JPEG y un PNG desde el Estudio;
-   - comparar WebP contra JPEG;
+2. **La prueba guiada de la v0.5.0 en el Mac del cliente salió bien entera**:
+   - JPEG;
+   - PNG y QOI;
+   - comparar dos formatos;
    - redimensionar;
-   - un lote con dos formatos.
+   - un lote con dos formatos y «solo el más ligero».
+
+   Pidió tres retoques, hechos en `main`. Saldrán en la **v0.5.1** cuando lo diga:
+   - el «%» que bajaba de línea;
+   - el selector de lado, que perdía la marca con el cursor encima;
+   - «Volver al original» como botón.
 3. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
    cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
 4. La carpeta de prueba de Lotes está en `~/apolo-pruebas-lotes` del VPS. Se regenera con

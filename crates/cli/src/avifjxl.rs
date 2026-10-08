@@ -69,7 +69,8 @@ fn hace_falta_apolo(formato: FormatoSalida, args: &[String]) -> bool {
 }
 
 fn correr(formato: FormatoSalida, args: &[String]) -> Result<(), String> {
-    let (preset, resto) = comun::preset(args)?;
+    let (objetivo, args) = comun::objetivo(args)?;
+    let (preset, resto) = comun::preset(&args)?;
     let mut ajuste = Ajuste {
         formato,
         ..Default::default()
@@ -105,7 +106,9 @@ fn correr(formato: FormatoSalida, args: &[String]) -> Result<(), String> {
             formato.herramienta()
         );
     }
+    ajuste.objetivo = objetivo;
     let r = salida::codificar(&datos, &img, &ajuste, None).map_err(|e| e.to_string())?;
+    comun::informar_hallada(r.hallada, objetivo);
     std::fs::write(destino, &r.datos)
         .map_err(|e| format!("no se puede escribir «{destino}»: {e}"))?;
     eprintln!("{entrada}: {} → {} bytes", datos.len(), r.datos.len());
@@ -117,6 +120,7 @@ Propias de Apolo:
 
   -apolo_preset NOMBRE   partir de un preset guardado (apolo presets)
   -apolo_enderezar       girar según la orientación EXIF
+  -apolo_objetivo NOTA   buscar la calidad más baja que da esa nota SSIMULACRA 2
 
 Con una entrada que la herramienta no abre (WebP, HEIC, TIFF…), Apolo la lee
 y le pasa un PNG con sus píxeles.";

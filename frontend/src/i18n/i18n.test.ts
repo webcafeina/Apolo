@@ -48,7 +48,14 @@ describe("i18n de los controles", () => {
     const faltan: string[] = [];
     for (const c of CONTROLES) {
       for (const k of [`opcion.${c.clave}`, `opcion.${c.clave}Ayuda`]) if (typeof buscar(es, k) !== "string") faltan.push(k);
-      if (c.porQue && typeof buscar(es, c.porQue) !== "string") faltan.push(c.porQue);
+      // Un porQue que depende del ajuste se prueba en sus dos casos: sin
+      // pérdida y con nota objetivo, que es de lo que dependen.
+      const casos = [
+        { avif: { sin_perdida: true }, objetivo: null },
+        { avif: { sin_perdida: false }, objetivo: 80 },
+      ] as unknown as Parameters<Extract<typeof c.porQue, (a: never) => string>>[0][];
+      const porQues = typeof c.porQue === "function" ? casos.map((x) => (c.porQue as (a: unknown) => string)(x)) : c.porQue ? [c.porQue] : [];
+      for (const k of porQues) if (typeof buscar(es, k) !== "string") faltan.push(k);
       if (c.tipo === "lista")
         for (const v of c.valores) if (typeof buscar(es, `valor.${c.clave}.${v}`) !== "string") faltan.push(`valor.${c.clave}.${v}`);
     }

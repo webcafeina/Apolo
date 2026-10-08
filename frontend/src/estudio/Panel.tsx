@@ -54,6 +54,20 @@ function leerPlegado(): Plegado {
   return base;
 }
 
+/**
+ * La banda de una nota SSIMULACRA 2, según la explicación de su autor (la
+ * ayuda de la herramienta `ssimulacra2`): 90 no se distingue ni alternándolas,
+ * 80 no se distingue lado a lado, 70 es alta calidad, 50 media, 30 baja.
+ */
+export function banda(nota: number): string {
+  if (nota >= 90) return "invisible";
+  if (nota >= 80) return "muyAlta";
+  if (nota >= 70) return "alta";
+  if (nota >= 50) return "media";
+  if (nota >= 30) return "baja";
+  return "muyBaja";
+}
+
 /** Nombre corto de un formato de salida, para la interfaz. */
 export function nombreFormato(f: FormatoSalida): string {
   return { webp: "WebP", jpeg: "JPEG", png: "PNG", qoi: "QOI", avif: "AVIF", jxl: "JPEG XL" }[f];
@@ -331,7 +345,7 @@ function Fila({ control: c, ajuste: a, contexto, cambiar, nivelSinPerdida }: Pro
         {c.marca ? <code className="cwebp">{c.marca}</code> : <span className="marca-apolo">{t("panel.soloApolo")}</span>}
       </div>
       {entrada}
-      <p className="ayuda">{activo ? ayuda : t(c.porQue ?? "")}</p>
+      <p className="ayuda">{activo ? ayuda : t(typeof c.porQue === "function" ? c.porQue(a) : (c.porQue ?? ""))}</p>
     </div>
   );
 }
@@ -539,6 +553,43 @@ function Especial({
             (["x", "y", "ancho", "alto"] as const).map((k) => (
               <input key={k} type="number" min={0} value={r[k]} aria-label={t(`panel.${k}`)} title={t(`panel.${k}`)} onChange={(e) => proceso({ recorte: { ...r, [k]: num(e.target.value) } })} />
             ))}
+        </div>
+      );
+    }
+    case "notaObjetivo": {
+      // La nota que tiene que alcanzar la calidad que busca Apolo (ADR 0022).
+      // 80 por defecto: «no se distingue del original lado a lado».
+      const nota = a.objetivo;
+      return (
+        <div className="proceso-control">
+          <input
+            id={id}
+            type="checkbox"
+            role="switch"
+            checked={nota !== null}
+            disabled={!activo}
+            onChange={(e) => cambiar({ ...a, objetivo: e.target.checked ? 80 : null })}
+            aria-label={t("opcion.notaObjetivo")}
+          />
+          {nota !== null && (
+            <label className="sub-control">
+              <span>{t("panel.nota")}</span>
+              <div className="deslizador">
+                <input
+                  type="range"
+                  min={30}
+                  max={95}
+                  step={1}
+                  value={nota}
+                  disabled={!activo}
+                  onChange={(e) => cambiar({ ...a, objetivo: Number(e.target.value) })}
+                  data-prueba="nota-objetivo"
+                />
+                <output>{nota}</output>
+              </div>
+              <span className="apagado">{t(`nota.${banda(nota)}`)}</span>
+            </label>
+          )}
         </div>
       );
     }

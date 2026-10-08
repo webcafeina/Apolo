@@ -12,11 +12,21 @@ use apolo_nucleo::cwebp::{self, Ayuda, OrdenCwebp};
 use apolo_nucleo::presets;
 use apolo_nucleo::webp::{self, Codificado, Medida};
 
+use crate::comun;
+
 pub fn ejecutar(args: &[String]) -> ExitCode {
     if args.is_empty() {
         ayuda_corta();
         return ExitCode::FAILURE;
     }
+    let (objetivo, args) = match comun::objetivo(args) {
+        Ok(x) => x,
+        Err(e) => {
+            eprintln!("Error: {e}");
+            return ExitCode::FAILURE;
+        }
+    };
+    let args = &args[..];
     // `-apolo_preset <nombre>`: un preset guardado (en el Estudio o a mano) es
     // el punto de partida, y el resto de opciones se leen encima, como si
     // cwebp ya las tuviera puestas.
@@ -71,13 +81,52 @@ pub fn ejecutar(args: &[String]) -> ExitCode {
         println!("{}", apolo_nucleo::motores::version_libwebp());
         return ExitCode::SUCCESS;
     }
-    match codificar(&orden) {
+    let r = match objetivo {
+        Some(nota) => con_objetivo(&orden, nota),
+        None => codificar(&orden),
+    };
+    match r {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
             eprintln!("Error: {e}");
             ExitCode::FAILURE
         }
     }
+}
+
+/// Con `-apolo_objetivo`: la calidad la busca Apolo (ADR 0022), por el mismo
+/// camino que el Estudio. La orden de cwebp con la calidad encontrada da el
+/// mismo fichero.
+fn con_objetivo(o: &OrdenCwebp, nota: f32) -> Result<(), String> {
+    let Some(ruta) = &o.entrada else {
+        return Err("Falta el fichero de entrada".into());
+    };
+    if o.opciones.sin_perdida {
+        return Err(
+            "-apolo_objetivo es para la calidad: sin pérdida no hay nada que buscar".into(),
+        );
+    }
+    let datos = std::fs::read(ruta).map_err(|e| format!("No se puede leer «{ruta}»: {e}"))?;
+    let img = comun::leer(&datos)?;
+    let ajuste = apolo_nucleo::salida::Ajuste {
+        formato: apolo_nucleo::salida::FormatoSalida::Webp,
+        webp: o.opciones.clone(),
+        objetivo: Some(nota),
+        ..Default::default()
+    };
+    let r = apolo_nucleo::salida::codificar(&datos, &img, &ajuste, None)
+        .map_err(|e| format!("«{ruta}»: {e}"))?;
+    comun::informar_hallada(r.hallada, Some(nota));
+    match o.salida.as_deref() {
+        Some("-") => std::io::stdout()
+            .write_all(&r.datos)
+            .map_err(|e| e.to_string())?,
+        Some(s) => {
+            std::fs::write(s, &r.datos).map_err(|e| format!("No se puede escribir «{s}»: {e}"))?
+        }
+        None => eprintln!("Sin -o: se codifica, pero el resultado no se guarda."),
+    }
+    Ok(())
 }
 
 fn codificar(o: &OrdenCwebp) -> Result<(), String> {
@@ -400,6 +449,8 @@ fichero sale idéntico byte a byte. Entradas: PNG, JPEG, TIFF, WebP y PNM
 
 Propias de Apolo (cwebp no las tiene):
   -apolo_preset <nombre> . partir de un preset guardado (apolo presets)
+  -apolo_objetivo <nota> . buscar la calidad más baja que da esa nota
+                           SSIMULACRA 2 (de 0 a 100)
   -apolo_enderezar ....... girar según la orientación EXIF; con ella, la
                            salida ya no es la de cwebp
 

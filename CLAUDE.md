@@ -43,7 +43,7 @@ Tauri 2 + Rust, con la interfaz en React + Vite + TypeScript ([ADR 0001](docs/ad
 | `crates/servicio` | El Estudio sin ventana: lo usan la aplicación y el servidor de desarrollo |
 | `crates/dev` | `apolo-dev`: el Estudio por HTTP, para probar la interfaz en un navegador |
 | `crates/tema` | La paleta, el cálculo de contraste y el generador de `frontend/src/tokens.css` |
-| `crates/cli` | El binario `apolo`, para scripts. `apolo webp`, `jpeg` y `png` aceptan las opciones de `cwebp`, `cjpeg` y `oxipng`; `apolo avif` y `jxl` son `avifenc` y `cjxl` |
+| `crates/cli` | El binario `apolo`, para scripts. `apolo webp`, `jpeg` y `png` aceptan las opciones de `cwebp`, `cjpeg` y `oxipng`; `apolo avif` y `jxl` son `avifenc` y `cjxl`; `apolo medir` da la nota SSIMULACRA 2 |
 | `src-tauri` | La aplicación de ventana: órdenes de Tauri sobre el núcleo |
 | `frontend` | La interfaz. Los textos, en `src/i18n/es.json`, nunca escritos a mano en un componente |
 | `pruebas/corpus` | Imágenes de prueba para la equivalencia con `cwebp` |

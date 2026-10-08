@@ -12,7 +12,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export type Modo = "deslizador" | "ladoALado";
+/** «diferencias» pinta un solo panel: el mapa de dónde se pierde (ADR 0022). */
+export type Modo = "deslizador" | "ladoALado" | "diferencias";
 
 interface Props {
   /** El original o el resultado del lado izquierdo. */
@@ -21,6 +22,8 @@ interface Props {
   rotulos: [string, string];
   ocupados: [boolean, boolean];
   modo: Modo;
+  /** Va donde el rótulo izquierdo en el modo diferencias (el tipo de mapa). */
+  extra?: React.ReactNode;
 }
 
 interface Vista {
@@ -39,7 +42,7 @@ function color(nombre: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(nombre).trim() || "#ccc";
 }
 
-export function Comparador({ izquierda: original, derecha: resultado, rotulos, ocupados, modo }: Props) {
+export function Comparador({ izquierda: original, derecha: resultado, rotulos, ocupados, modo, extra }: Props) {
   const { t } = useTranslation();
   const caja = useRef<HTMLDivElement>(null);
   const lienzo = useRef<HTMLCanvasElement>(null);
@@ -55,7 +58,7 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
   const ref = original ?? resultado;
   const mismaProporcion =
     !original || !resultado || Math.abs(original.width / original.height - resultado.width / resultado.height) < 0.01;
-  const modoReal: Modo = mismaProporcion ? modo : "ladoALado";
+  const modoReal: Modo = modo === "diferencias" ? modo : mismaProporcion ? modo : "ladoALado";
 
   useEffect(() => {
     let vivo = true;
@@ -75,8 +78,8 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
 
   const panel = useCallback(
     (lado: 0 | 1) => {
-      // En lado a lado, cada mitad es un panel; en deslizador, uno solo.
-      if (modoReal === "deslizador") return { x0: 0, w: tamano.w };
+      // En lado a lado, cada mitad es un panel; en deslizador y diferencias, uno solo.
+      if (modoReal !== "ladoALado") return { x0: 0, w: tamano.w };
       const w = tamano.w / 2;
       return { x0: lado * w, w };
     },
@@ -152,7 +155,9 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
       g.restore();
     };
 
-    if (modoReal === "deslizador") {
+    if (modoReal === "diferencias") {
+      pintar(b, 0, tamano.w, 0, tamano.w);
+    } else if (modoReal === "deslizador") {
       const xc = corte * tamano.w;
       pintar(a, 0, tamano.w, 0, xc);
       pintar(b ?? a, 0, tamano.w, xc, tamano.w);
@@ -283,10 +288,14 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
         aria-label={t("comparador.etiqueta")}
         role="img"
       />
-      <span className="rotulo izquierda" data-prueba="rotulo-izquierda">
-        {rotulos[0]}
-        {ocupados[0] && <span className="girando" aria-label={t("comparador.codificando")} />}
-      </span>
+      {modoReal !== "diferencias" ? (
+        <span className="rotulo izquierda" data-prueba="rotulo-izquierda">
+          {rotulos[0]}
+          {ocupados[0] && <span className="girando" aria-label={t("comparador.codificando")} />}
+        </span>
+      ) : (
+        extra && <div className="rotulo izquierda con-control">{extra}</div>
+      )}
       <span className="rotulo derecha" data-prueba="rotulo-derecha">
         {rotulos[1]}
         {ocupados[1] && <span className="girando" aria-label={t("comparador.codificando")} />}

@@ -50,6 +50,10 @@ pub struct FilaSalida {
     pub formato: FormatoSalida,
     pub bytes: u64,
     pub ruta: String,
+    /// La nota SSIMULACRA 2, si se midió (ADR 0022).
+    pub nota: Option<f64>,
+    /// Con nota objetivo, la calidad encontrada.
+    pub calidad: Option<u8>,
 }
 
 impl From<&Hecho> for Fila {
@@ -63,6 +67,8 @@ impl From<&Hecho> for Fila {
                         formato: s.formato,
                         bytes: s.bytes,
                         ruta: s.ruta.display().to_string(),
+                        nota: s.nota,
+                        calidad: s.calidad,
                     })
                     .collect()
             })
@@ -123,12 +129,14 @@ pub fn recoger_lote(entradas: &[String]) -> Recogida {
 impl Servicio {
     /// Empieza a convertir en otro hilo y vuelve en seguida.
     /// Con `solo_mas_ligero`, de cada imagen se guarda solo el formato que
-    /// menos pese; si no, uno por ajuste.
+    /// menos pese; si no, uno por ajuste. Con `medir`, cada fichero lleva su
+    /// nota (ADR 0022), y el lote tarda más.
     pub fn empezar_lote(
         &self,
         entradas: &[String],
         ajustes: &[Ajuste],
         solo_mas_ligero: bool,
+        medir: bool,
         salida: &str,
     ) -> R<LoteEmpezado> {
         if ajustes.is_empty() {
@@ -163,6 +171,7 @@ impl Servicio {
                 &d,
                 &ajustes,
                 solo_mas_ligero,
+                medir,
                 lote::hilos_por_defecto(),
                 &l.cancelado,
                 &|h| l.hechos.lock().unwrap().push(h),
@@ -233,7 +242,7 @@ mod pruebas {
 
         let s = Servicio::nuevo(base.join("config"));
         let l = s
-            .empezar_lote(&e, &[Ajuste::default()], false, &salida)
+            .empezar_lote(&e, &[Ajuste::default()], false, false, &salida)
             .unwrap();
         assert_eq!(l.total, 2);
         let mut vistas = 0;

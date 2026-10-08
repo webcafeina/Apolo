@@ -6,6 +6,7 @@
 #   APOLO_JPEG         las cabeceras de mozjpeg-sys (la biblioteca la enlaza Rust)
 #   APOLO_SHARPYUV     las cabeceras de sharpyuv (el código viene de libwebp-sys)
 #   APOLO_PUENTE       c/puente.c
+#   APOLO_MEDIR        c/medir.cc
 cmake_minimum_required(VERSION 3.16)
 project(apolo_avifjxl C CXX)
 
@@ -86,7 +87,17 @@ foreach(t apolo_cjxl apolo_djxl)
   target_include_directories(${t} PRIVATE "${APOLO_LIBJXL}")
 endforeach()
 
+# Las medidas (ADR 0022): SSIMULACRA 2 de las herramientas de libjxl.
+add_library(apolo_medir STATIC
+  "${APOLO_MEDIR}"
+  "${APOLO_LIBJXL}/tools/ssimulacra2.cc"
+  # packed_image_convert y compañía: la parte de extras que usa lo interno
+  # de libjxl, que cjxl no necesita y no va en jxl_extras_codec.
+  $<TARGET_OBJECTS:jxl_extras_internal-obj>)
+target_link_libraries(apolo_medir PRIVATE jxl_gauss_blur jxl_extras_codec jxl_tool jxl_cms)
+target_include_directories(apolo_medir PRIVATE "${APOLO_LIBJXL}")
+
 add_custom_target(apolo ALL)
-add_dependencies(apolo apolo_avif apolo_cjxl apolo_djxl avif_apps avif aom yuv
+add_dependencies(apolo apolo_avif apolo_cjxl apolo_djxl apolo_medir jxl_gauss_blur avif_apps avif aom yuv
   jxl jxl_cms jxl_threads jxl_extras_codec jxl_tool hwy brotlienc brotlidec
   brotlicommon png_static zlibstatic sjpeg)

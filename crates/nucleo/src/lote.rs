@@ -210,6 +210,10 @@ pub struct Salida {
     pub ruta: PathBuf,
     pub bytes: u64,
     pub milisegundos: u64,
+    /// La nota SSIMULACRA 2, si se pidió medir o buscar una nota (ADR 0022).
+    pub nota: Option<f64>,
+    /// Con una nota objetivo, la calidad que se encontró para esta imagen.
+    pub calidad: Option<u8>,
 }
 
 /// Lee una imagen para convertirla: con metadatos si se puede, y sin ellos
@@ -227,29 +231,49 @@ fn leer(datos: &[u8]) -> Resultado<Imagen> {
 }
 
 /// Convierte una imagen con cada ajuste y escribe en `destino`, sin pisar
-/// nada. Con `solo_mas_ligero`, escribe solo el que menos pese.
+/// nada. Con `solo_mas_ligero`, escribe solo el que menos pese. Con `medir`,
+/// mide la nota de lo que escribe (ADR 0022).
 pub fn convertir(
     e: &Elemento,
     destino: &Path,
     ajustes: &[Ajuste],
     solo_mas_ligero: bool,
+    medir: bool,
     seguir: &mut dyn FnMut(i32) -> bool,
 ) -> Resultado<Vec<Salida>> {
     let datos = std::fs::read(&e.origen)
         .map_err(|x| Error::Fichero(format!("No se puede leer «{}»: {x}", e.origen.display())))?;
     let img = leer(&datos)?;
-    let mut hechos: Vec<(FormatoSalida, Vec<u8>, u64)> = Vec::new();
+    let mut hechos: Vec<(&Ajuste, salida::Codificado, u64)> = Vec::new();
     for a in ajustes {
         let reloj = Instant::now();
         let r = salida::codificar(&datos, &img, a, Some(&mut *seguir))?;
-        hechos.push((a.formato, r.datos, reloj.elapsed().as_millis() as u64));
+        hechos.push((a, r, reloj.elapsed().as_millis() as u64));
     }
-    if solo_mas_ligero && let Some(i) = (0..hechos.len()).min_by_key(|&i| hechos[i].1.len()) {
+    if solo_mas_ligero && let Some(i) = (0..hechos.len()).min_by_key(|&i| hechos[i].1.datos.len()) {
         let elegido = hechos.swap_remove(i);
         hechos = vec![elegido];
     }
     let mut salidas = Vec::new();
-    for (formato, bytes, ms) in hechos {
+    for (a, r, ms) in hechos {
+        // Solo se mide lo que se escribe; con nota objetivo, ya está medida.
+        let nota = match r.hallada {
+            Some(h) => Some(h.nota),
+            None if medir => {
+                if !seguir(0) {
+                    return Err(Error::Cancelado);
+                }
+                let (w, h, referencia) = salida::referencia(&img, a)?;
+                let (rw, rh, rgba) = crate::vista::decodificar(&r.datos)?;
+                if (rw, rh) == (w, h) {
+                    crate::medir::nota(&referencia, &rgba, w, h)?
+                } else {
+                    None
+                }
+            }
+            None => None,
+        };
+        let (formato, bytes, calidad) = (a.formato, r.datos, r.hallada.map(|h| h.calidad));
         let ruta = destino
             .join(&e.relativa)
             .with_extension(formato.extension());
@@ -261,6 +285,8 @@ pub fn convertir(
             ruta,
             bytes: bytes.len() as u64,
             milisegundos: ms,
+            nota,
+            calidad,
         });
     }
     Ok(salidas)
@@ -278,11 +304,13 @@ pub fn hilos_por_defecto() -> usize {
 /// Convierte todo el lote en paralelo. `avisar` se llama con cada imagen al
 /// terminar, en el orden en que terminan. Con `cancelado` puesto, la imagen a
 /// medias se aborta y las que faltan no empiezan: no salen en `avisar`.
+#[allow(clippy::too_many_arguments)]
 pub fn ejecutar(
     elementos: &[Elemento],
     destino: &Path,
     ajustes: &[Ajuste],
     solo_mas_ligero: bool,
+    medir: bool,
     hilos: usize,
     cancelado: &AtomicBool,
     avisar: &(dyn Fn(Hecho) + Sync),
@@ -298,7 +326,7 @@ pub fn ejecutar(
                     let i = siguiente.fetch_add(1, Ordering::Relaxed);
                     let Some(e) = elementos.get(i) else { return };
                     let mut seguir = |_| !cancelado.load(Ordering::Relaxed);
-                    let r = convertir(e, destino, ajustes, solo_mas_ligero, &mut seguir);
+                    let r = convertir(e, destino, ajustes, solo_mas_ligero, medir, &mut seguir);
                     if matches!(r, Err(Error::Cancelado)) {
                         return;
                     }
@@ -350,18 +378,38 @@ pub struct Resumen {
     /// Las que menos ahorran (o más crecen), de peor a mejor, por su fichero
     /// más ligero. Como mucho cinco.
     pub peores: Vec<Destacada>,
+    /// Con notas (medir o nota objetivo): la media de los ficheros escritos y
+    /// los de peor nota, de peor a mejor, como mucho cinco.
+    pub nota_media: Option<f64>,
+    pub peores_notas: Vec<ConNota>,
+}
+
+/// Un fichero del resumen por su nota.
+#[derive(Debug, Clone, Serialize, PartialEq)]
+pub struct ConNota {
+    pub relativa: PathBuf,
+    pub formato: FormatoSalida,
+    pub nota: f64,
 }
 
 impl Resumen {
     pub fn de(hechos: &[Hecho]) -> Resumen {
         let mut r = Resumen::default();
         let mut ok = Vec::new();
+        let mut notas: Vec<ConNota> = Vec::new();
         for h in hechos {
             let Ok(salidas) = &h.resultado else {
                 r.fallidas += 1;
                 continue;
             };
             for s in salidas {
+                if let Some(nota) = s.nota {
+                    notas.push(ConNota {
+                        relativa: h.relativa.clone(),
+                        formato: s.formato,
+                        nota,
+                    });
+                }
                 match r.por_formato.iter_mut().find(|p| p.formato == s.formato) {
                     Some(p) => {
                         p.ficheros += 1;
@@ -394,6 +442,12 @@ impl Resumen {
         ok.sort_by(|a, b| proporcion(b).total_cmp(&proporcion(a)));
         ok.truncate(5);
         r.peores = ok;
+        if !notas.is_empty() {
+            r.nota_media = Some(notas.iter().map(|n| n.nota).sum::<f64>() / notas.len() as f64);
+            notas.sort_by(|a, b| a.nota.total_cmp(&b.nota));
+            notas.truncate(5);
+            r.peores_notas = notas;
+        }
         r
     }
 }
@@ -511,6 +565,7 @@ mod pruebas {
             &salida,
             &ajustes,
             false,
+            false,
             3,
             &AtomicBool::new(false),
             &|h| hechos.lock().unwrap().push(h),
@@ -546,6 +601,7 @@ mod pruebas {
             &salida,
             &ajustes,
             false,
+            false,
             1,
             &AtomicBool::new(false),
             &|h| hechos2.lock().unwrap().push(h),
@@ -576,6 +632,7 @@ mod pruebas {
             &todos,
             &ajustes,
             false,
+            false,
             2,
             &AtomicBool::new(false),
             &|h| hechos.lock().unwrap().push(h),
@@ -602,6 +659,7 @@ mod pruebas {
             &ligero,
             &ajustes,
             true,
+            false,
             2,
             &AtomicBool::new(false),
             &|h| hechos2.lock().unwrap().push(h),
@@ -642,6 +700,7 @@ mod pruebas {
             &d.with_file_name("medias-salida"),
             &[a],
             false,
+            false,
             2,
             &cancelado,
             &|_| {
@@ -662,6 +721,7 @@ mod pruebas {
             &elementos,
             &d.with_file_name("salida"),
             &[Ajuste::default()],
+            false,
             false,
             2,
             &AtomicBool::new(true),

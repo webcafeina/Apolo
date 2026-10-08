@@ -216,3 +216,43 @@ pub fn versiones() -> [(&'static str, String); 3] {
         ),
     ]
 }
+
+unsafe extern "C" {
+    fn apolo_ssimulacra2(
+        original: *const u8,
+        distorsionada: *const u8,
+        ancho: usize,
+        alto: usize,
+        canales: c_int,
+    ) -> f64;
+}
+
+/// La nota SSIMULACRA 2 de libjxl (de −∞ a 100; 100 es idéntica) de
+/// `distorsionada` frente a `original`: píxeles sRGB de 8 bits, del mismo
+/// tamaño, con 3 canales (RGB) o 4 (RGBA). Con transparencia, la peor nota
+/// sobre fondo oscuro y claro, como la herramienta `ssimulacra2`. `None` si
+/// no se puede medir (menos de 8×8, o tamaños que no cuadran).
+pub fn ssimulacra2(
+    original: &[u8],
+    distorsionada: &[u8],
+    ancho: u32,
+    alto: u32,
+    canales: u8,
+) -> Option<f64> {
+    let n = ancho as usize * alto as usize * canales as usize;
+    if original.len() != n || distorsionada.len() != n {
+        return None;
+    }
+    // SAFETY: los dos búferes tienen exactamente ancho × alto × canales bytes,
+    // y la función solo los lee.
+    let nota = unsafe {
+        apolo_ssimulacra2(
+            original.as_ptr(),
+            distorsionada.as_ptr(),
+            ancho as usize,
+            alto as usize,
+            c_int::from(canales),
+        )
+    };
+    (!nota.is_nan()).then_some(nota)
+}

@@ -4,6 +4,27 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-08 · Entrega 6: medir la pérdida (v0.7.0, sin publicar)
+
+- Al plantearla, salió que libjxl, dentro desde la 5b, trae **SSIMULACRA 2** (y Butteraugli) con
+  licencia BSD. El cliente eligió SSIMULACRA 2 con PSNR y SSIM, un modo «Diferencias», medir opcional
+  en Lotes y **la calidad por nota en esta misma entrega** ([ADR 0022](adr/0022-medir-la-perdida.md)).
+- **SSIMULACRA 2**: `crates/avifjxl/c/medir.cc` compila `tools/ssimulacra2.cc` de libjxl y la llama
+  con píxeles en memoria. **Igual a 8 decimales que la herramienta oficial**: 56 de 56 en
+  `make equivalencia`.
+  - Cuesta 4 s y 1,75 GB con 12 MP en el VPS, como la oficial. Por eso se mide una a la vez en todo
+    Apolo, y en el Estudio después de la vista previa, cancelable por generación.
+- **PSNR, SSIM y los dos mapas**, escritos en `crates/nucleo/src/medir.rs`. El de estructura saturaba
+  con ×4 y pasó a ×2, al verlo en una captura.
+- **La calidad por nota**: búsqueda binaria de 0 a 100 en `salida::codificar`; la orden lleva la
+  calidad encontrada. Se cambió para no probar la 100 la primera: era lenta, y avifenc avisaba con
+  `-q 100`.
+- Servicio (`medir`, mapa por píxeles), Tauri y `apolo-dev`; Lotes con nota por fila, nota media y
+  las de peor nota; CLI con `apolo medir`, `-apolo_objetivo` y `apolo lote --medir --objetivo`.
+- En la interfaz, el selector del mapa apretaba la cabecera y ocultaba el nombre: pasó dentro del
+  comparador.
+- Verificado: `make comprobar`, `make equivalencia` (la nota, 56 de 56), 53 pruebas e2e y capturas.
+
 ## 2026-10-08 · v0.6.0 y v0.6.1 publicadas
 
 - **v0.6.0 publicada** tras revisar el borrador: 22 ficheros con sus sumas, 14 firmas válidas en

@@ -1,6 +1,6 @@
 # ADR 0005 — Redimensionar, reducir paleta, la CLI y el mapa de diferencias
 
-**Fecha:** 2026-10-06 · **Estado:** aceptada · redimensionar, recortar y reducir paleta hechos en la [0020](0020-mas-formatos-y-proceso.md)
+**Fecha:** 2026-10-06 · **Estado:** aceptada · redimensionar, recortar y reducir paleta hechos en la [0020](0020-mas-formatos-y-proceso.md); el mapa de diferencias y las medidas, en la [0022](0022-medir-la-perdida.md), con SSIMULACRA 2 de libjxl como nota principal
 
 ## Contexto
 

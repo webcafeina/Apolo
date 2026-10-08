@@ -48,3 +48,45 @@ pub fn avisar_ignoradas(ignoradas: &[String]) {
         );
     }
 }
+
+/// Quita `-apolo_objetivo <nota>` de los argumentos (ADR 0022): la nota
+/// SSIMULACRA 2 que tiene que alcanzar la calidad que busque Apolo.
+pub fn objetivo(args: &[String]) -> Result<(Option<f32>, Vec<String>), String> {
+    let mut resto = Vec::with_capacity(args.len());
+    let mut nota = None;
+    let mut i = 0;
+    while i < args.len() {
+        if args[i] == "-apolo_objetivo" {
+            let v = args
+                .get(i + 1)
+                .ok_or("-apolo_objetivo necesita una nota (de 0 a 100)")?;
+            let n: f32 = v
+                .replace(',', ".")
+                .parse()
+                .ok()
+                .filter(|n| (0.0..=100.0).contains(n))
+                .ok_or_else(|| format!("-apolo_objetivo {v}: la nota va de 0 a 100"))?;
+            nota = Some(n);
+            i += 2;
+            continue;
+        }
+        resto.push(args[i].clone());
+        i += 1;
+    }
+    Ok((nota, resto))
+}
+
+/// Cuenta en la salida de errores la calidad que encontró la búsqueda.
+pub fn informar_hallada(h: Option<apolo_nucleo::salida::Hallada>, objetivo: Option<f32>) {
+    if let (Some(h), Some(o)) = (h, objetivo) {
+        let nota = format!("{:.1}", h.nota).replace('.', ",");
+        if h.alcanzada {
+            eprintln!(
+                "Calidad {} para una nota de {o} (SSIMULACRA 2 {nota}, {} pruebas)",
+                h.calidad, h.pruebas
+            );
+        } else {
+            eprintln!("Ni con calidad 100 se llega a {o}: se queda en 100 (SSIMULACRA 2 {nota})");
+        }
+    }
+}

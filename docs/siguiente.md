@@ -20,7 +20,7 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 - **Comprobar AVIF y JPEG XL en Windows** contra los binarios oficiales (deuda): en CI, con el
   `windows-artifacts.zip` de libavif y el `jxl-x64-windows-static.zip` de libjxl. AVIF en Mac ya
   está (16 de 16, 2026-10-08).
-- **Entrega 6 — Métricas.** PSNR, SSIM escrito aquí, el mapa de diferencias y el mapa SSIM.
+- ~~**Entrega 6 — Métricas.**~~ Hecha como v0.7.0 (ver Cerrado).
 - **Entrega 7 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas. (La
   actualización automática se adelantó a la v0.3.3: ADR 0018.)
 
@@ -39,11 +39,15 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     - un token de GitHub con permiso solo sobre ese repositorio, como secreto.
 
 - WebP animado: `gif2webp` e `img2webp`.
-- Butteraugli.
+- Butteraugli. Ya está dentro con libjxl (ADR 0022), pero es lenta; SSIMULACRA 2 cubre lo mismo.
 - Firmar y notarizar ([ADR 0009](adr/0009-sin-firmar.md)).
 - La traducción al inglés: con la i18n hecha, es traducir `es.json`.
 
 ## Cerrado
+
+- ~~**Entrega 6 — Métricas**~~ (v0.7.0, sin publicar todavía): SSIMULACRA 2 de libjxl (la misma
+  nota que su herramienta, 56 de 56), PSNR y SSIM; el modo «Diferencias» con dos mapas; medir en
+  Lotes; la calidad por nota en el Estudio, Lotes y la CLI; `apolo medir`. ADR 0022. · 2026-10-08
 
 - ~~**Entrega 5b — AVIF y JPEG XL**~~ (v0.6.0, publicada el 2026-10-08): avifenc 1.4.2 y cjxl 0.12.0
   compilados dentro, con sus `main`; libjxl con clang. **376 de 376 iguales con avifenc y 280 de

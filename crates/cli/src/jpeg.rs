@@ -31,7 +31,8 @@ fn correr(args: &[String]) -> Result<(), String> {
         println!("{AYUDA}");
         return Ok(());
     }
-    let (preset, resto) = comun::preset(args)?;
+    let (objetivo, args) = comun::objetivo(args)?;
+    let (preset, resto) = comun::preset(&args)?;
     let base = preset
         .as_ref()
         .map(|p| p.ajuste.jpeg.clone())
@@ -57,11 +58,12 @@ fn correr(args: &[String]) -> Result<(), String> {
     if let Some(p) = &preset {
         ajuste.proceso = p.ajuste.proceso;
     }
+    ajuste.objetivo = objetivo;
     let icc = match &o.icc {
         Some(r) => Some(std::fs::read(r).map_err(|e| format!("no se puede leer «{r}»: {e}"))?),
         None => None,
     };
-    let resultado = if ajuste.proceso.vacio() && !ajuste.enderezar() {
+    let resultado = if ajuste.proceso.vacio() && !ajuste.enderezar() && objetivo.is_none() {
         // El camino de cjpeg tal cual, con -icc y -strict.
         let e = jpeg::leer(&datos).map_err(|e| e.to_string())?;
         if !e.de_cjpeg {
@@ -75,14 +77,14 @@ fn correr(args: &[String]) -> Result<(), String> {
     } else {
         if icc.is_some() || o.estricto {
             return Err(
-                "-icc y -strict no se pueden combinar con el proceso ni con -apolo_enderezar"
+                "-icc y -strict no se pueden combinar con el proceso, -apolo_enderezar ni -apolo_objetivo"
                     .into(),
             );
         }
         let img = comun::leer(&datos)?;
-        salida::codificar(&datos, &img, &ajuste, None)
-            .map_err(|e| e.to_string())?
-            .datos
+        let r = salida::codificar(&datos, &img, &ajuste, None).map_err(|e| e.to_string())?;
+        comun::informar_hallada(r.hallada, objetivo);
+        r.datos
     };
     match &o.salida {
         Some(s) => {
@@ -116,5 +118,6 @@ Propias de Apolo:
 
   -apolo_preset NOMBRE   partir de un preset guardado (apolo presets)
   -apolo_enderezar       girar según la orientación EXIF
+  -apolo_objetivo NOTA   buscar la calidad más baja que da esa nota SSIMULACRA 2
 
 No están: -arithmetic (tampoco en el cjpeg oficial), -qtables y -scans.";

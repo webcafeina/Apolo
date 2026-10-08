@@ -84,6 +84,19 @@ async fn codificar(
     bloqueante(move || s.codificar(id, &ajuste, lado, generacion)).await
 }
 
+/// Las medidas de la pérdida de un lado (ADR 0022). Tarda: va aparte de la
+/// vista previa, para no retrasarla.
+#[tauri::command]
+async fn medir(
+    s: Estado<'_>,
+    id: u64,
+    lado: u8,
+    generacion: u64,
+) -> Result<apolo_nucleo::medir::Medidas, Fallo> {
+    let s = s.inner().clone();
+    bloqueante(move || s.medir(id, lado, generacion)).await
+}
+
 #[tauri::command]
 async fn exportar(
     s: Estado<'_>,
@@ -147,10 +160,11 @@ async fn empezar_lote(
     entradas: Vec<String>,
     ajustes: Vec<Ajuste>,
     solo_mas_ligero: bool,
+    medir: bool,
     salida: String,
 ) -> Result<LoteEmpezado, Fallo> {
     let s = s.inner().clone();
-    bloqueante(move || s.empezar_lote(&entradas, &ajustes, solo_mas_ligero, &salida)).await
+    bloqueante(move || s.empezar_lote(&entradas, &ajustes, solo_mas_ligero, medir, &salida)).await
 }
 
 #[tauri::command]
@@ -178,7 +192,8 @@ fn reservar_comprobacion(s: Estado, forzar: bool) -> bool {
     s.reservar_comprobacion(forzar)
 }
 
-/// `apolo://localhost/original/<id>?enderezar=1` y `…/resultado/<id>`: ancho
+/// `apolo://localhost/original/<id>?enderezar=1`, `…/resultado/<id>?lado=1` y
+/// `…/mapa/<id>?lado=1&tipo=estructura` (ADR 0022): ancho
 /// y alto en u32 little-endian y el RGBA detrás. En Windows llega como
 /// `http://apolo.localhost/…`; la ruta es la misma.
 fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, Fallo> {
@@ -200,6 +215,16 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
         Some(&"resultado") => {
             let lado = consulta.is_some_and(|q| q.split('&').any(|p| p == "lado=1")) as u8;
             s.pixeles_resultado(id()?, lado).map(empaquetar_pixeles)
+        }
+        Some(&"mapa") => {
+            let tiene = |x: &str| consulta.is_some_and(|q| q.split('&').any(|p| p == x));
+            let tipo = if tiene("tipo=estructura") {
+                apolo_nucleo::medir::TipoMapa::Estructura
+            } else {
+                apolo_nucleo::medir::TipoMapa::Diferencia
+            };
+            s.pixeles_mapa(id()?, tiene("lado=1") as u8, tipo)
+                .map(empaquetar_pixeles)
         }
         _ => Err(Fallo {
             mensaje: "Ruta no válida".into(),
@@ -246,6 +271,7 @@ pub fn arrancar() {
             abrir,
             cerrar,
             codificar,
+            medir,
             exportar,
             nombre_salida,
             aplicar_preset,

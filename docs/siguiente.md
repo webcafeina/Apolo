@@ -17,9 +17,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
-- **Comprobar AVIF y JPEG XL en macOS y Windows** contra los binarios oficiales de esos sistemas
-  (deuda): en CI, con los `macOS-artifacts.zip` y `windows-artifacts.zip` de libavif y el
-  `jxl-x64-windows-static.zip` de libjxl.
+- **Comprobar AVIF y JPEG XL en Windows** contra los binarios oficiales (deuda): en CI, con el
+  `windows-artifacts.zip` de libavif y el `jxl-x64-windows-static.zip` de libjxl. AVIF en Mac ya
+  está (16 de 16, 2026-10-08).
 - **Entrega 6 — Métricas.** PSNR, SSIM escrito aquí, el mapa de diferencias y el mapa SSIM.
 - **Entrega 7 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas. (La
   actualización automática se adelantó a la v0.3.3: ADR 0018.)

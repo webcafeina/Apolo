@@ -20,6 +20,17 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   cambia ni una línea de los codificadores de WebP, JPEG, PNG y QOI ni del proceso, y la
   equivalencia y las e2e de esos formatos siguen en verde.
 - **v0.6.1 publicada** con los dos arreglos, revisada igual.
+- **Prueba guiada con la v0.6.1, completa**:
+  - AVIF y sus controles («Sin pérdida» ya sin error);
+  - JPEG XL con un JPEG, sin pérdida y con calidad;
+  - comparar AVIF con WebP;
+  - exportar y volver a abrir AVIF y JPEG XL con transparencia;
+  - Lotes con WebP y AVIF y «el más ligero», con los mismos números que en el VPS.
+  - El cliente notó que el lado izquierdo nuevo copia los ajustes del derecho (los de AVIF del paso
+    1): es así a propósito, y le pareció bien.
+- **AVIF en Mac, igual que el oficial**: `apolo avif` de la v0.6.1 frente al avifenc 1.4.2 de
+  `macOS-artifacts.zip`, 16 de 16, en el Mac del cliente con un script de bash pegado en la
+  Terminal (descargado con curl, sin cuarentena).
 
 ## 2026-10-07 (noche) · Entrega 5b: AVIF y JPEG XL (v0.6.0, sin publicar)
 

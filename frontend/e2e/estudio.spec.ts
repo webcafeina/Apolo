@@ -250,6 +250,8 @@ test("la calidad se mide, se puede buscar por nota, y el mapa enseña dónde se 
   // Con nota objetivo, la calidad la busca Apolo y la orden la lleva.
   await page.getByTestId("formato").selectOption("jpeg");
   await page.getByTestId("control-notaObjetivo").getByRole("switch").check();
+  // Mientras busca, se dice (v0.7.0: «pueden pasar 4-5 segundos sin saber»).
+  await expect(page.getByTestId("buscando")).toContainText("Buscando la calidad para una nota de 80");
   await expect(page.getByTestId("hallada")).toContainText("encontrada", { timeout: 60_000 });
   const hallada = (await page.getByTestId("hallada").textContent())!.match(/Calidad (\d+)/)![1];
   await expect(page.getByTestId("orden")).toContainText(`cjpeg -quality ${hallada} `);

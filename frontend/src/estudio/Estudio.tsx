@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { Cabecera, Icono, IconoApp, Marca } from "../componentes";
 import * as puente from "../puente";
 import { Comparador, type Modo } from "./Comparador";
-import type { Ajuste, Preset } from "./opciones";
+import { admiteObjetivo, type Ajuste, type Contexto, type Preset } from "./opciones";
 import { banda, nombreFormato, Panel, type Lado } from "./Panel";
 
 const RETARDO_MS = 120;
@@ -259,7 +259,13 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
     );
   }
 
+  const contexto: Contexto = { alfa: info.alfa, ancho: info.ancho, alto: info.alto, jpeg: info.formato === "JPEG" };
   const medidas = lados[ladoActivo].medidas;
+  // Con nota objetivo, la vista previa es la búsqueda: varias pruebas que
+  // pueden tardar segundos. Se dice, para que no parezca parado (v0.7.0).
+  const ajusteActivo = lados[ladoActivo].ajuste!;
+  const buscando =
+    lados[ladoActivo].ocupado && ajusteActivo.objetivo !== null && admiteObjetivo(ajusteActivo, contexto) ? ajusteActivo.objetivo : null;
   const rotulo = (l: Lado) => {
     const v = lados[l].vista;
     if (!lados[l].ajuste) return t("comparador.original");
@@ -332,12 +338,13 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
         <footer className="barra-estado" data-prueba="barra-estado">
           <div className="fila-estado">
             <Pesos info={info} vista={vista} />
-            <span className="separador" />
-            {vista && <Medicion vista={vista} medidas={medidas} />}
-            <button className="principal" onClick={exportar} disabled={!vista} data-prueba="exportar">
-              <Icono nombre="exportar" />
-              {t("estudio.exportar")}
-            </button>
+            <div className="derecha-estado">
+              <Medicion vista={vista} medidas={medidas} buscando={buscando} />
+              <button className="principal" onClick={exportar} disabled={!vista} data-prueba="exportar">
+                <Icono nombre="exportar" />
+                {t("estudio.exportar")}
+              </button>
+            </div>
           </div>
           <OrdenHerramienta vista={vista} formato={info.formato} ajuste={lados[ladoActivo].ajuste!} cambiar={ponerAjuste} />
           {vista?.motivo && (
@@ -355,7 +362,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
 
       <Panel
         ajuste={editado}
-        contexto={{ alfa: info.alfa, ancho: info.ancho, alto: info.alto, jpeg: info.formato === "JPEG" }}
+        contexto={contexto}
         presetsCwebp={inicio.presets_cwebp}
         guardados={guardados}
         cambiar={ponerAjuste}
@@ -422,12 +429,37 @@ function Pesos({ info, vista }: { info: puente.InfoImagen; vista: puente.Vista |
  * Las medidas del lado que se edita (ADR 0022): la nota SSIMULACRA 2 con lo
  * que significa, PSNR y SSIM; y, con nota objetivo, la calidad encontrada.
  */
-function Medicion({ vista, medidas }: { vista: puente.Vista; medidas: EstadoLado["medidas"] }) {
+function Medicion({
+  vista,
+  medidas,
+  buscando,
+}: {
+  vista: puente.Vista | null;
+  medidas: EstadoLado["medidas"];
+  /** La nota que se está buscando, mientras se busca. */
+  buscando: number | null;
+}) {
   const { t } = useTranslation();
+  if (buscando !== null) {
+    return (
+      <div className="medicion" data-prueba="medidas">
+        <span className="trabajando" role="status" data-prueba="buscando">
+          <span className="girando" aria-hidden="true" />
+          {t("medidas.buscando", { nota: buscando })}
+        </span>
+      </div>
+    );
+  }
+  if (!vista) return null;
   const h = vista.hallada;
   return (
     <div className="medicion" data-prueba="medidas">
-      {medidas === "midiendo" && <span className="apagado">{t("medidas.midiendo")}</span>}
+      {medidas === "midiendo" && (
+        <span className="trabajando" role="status">
+          <span className="girando" aria-hidden="true" />
+          {t("medidas.midiendo")}
+        </span>
+      )}
       {medidas && medidas !== "midiendo" && "fallo" in medidas && (
         <span className="apagado" title={medidas.fallo}>
           {t("medidas.sinMedida")}
@@ -437,13 +469,17 @@ function Medicion({ vista, medidas }: { vista: puente.Vista; medidas: EstadoLado
         <>
           {medidas.ssimulacra2 !== null && (
             <span className="nota" title={t("medidas.ayudaNota")}>
-              <span className="etiqueta">{t("medidas.nota")}</span>
-              <strong data-prueba="nota">{cifra(medidas.ssimulacra2, 1)}</strong>
-              <span className="apagado">{t(`nota.${banda(medidas.ssimulacra2)}`)}</span>
+              <span className="etiqueta entera">{t("medidas.nota")}</span>
+              <strong className="entera" data-prueba="nota">
+                {cifra(medidas.ssimulacra2, 1)}
+              </strong>
+              <span className="apagado entera">{t(`nota.${banda(medidas.ssimulacra2)}`)}</span>
             </span>
           )}
           <span className="apagado" title={t("medidas.ayudaTecnicas")}>
-            {medidas.psnr === null ? t("medidas.identicas") : `PSNR ${cifra(medidas.psnr, 1)} dB`} · SSIM {cifra(medidas.ssim, 4)}
+            <span className="entera">{medidas.psnr === null ? t("medidas.identicas") : `PSNR ${cifra(medidas.psnr, 1)} dB`}</span>
+            {" · "}
+            <span className="entera">SSIM {cifra(medidas.ssim, 4)}</span>
           </span>
         </>
       )}
@@ -455,7 +491,11 @@ function Medicion({ vista, medidas }: { vista: puente.Vista; medidas: EstadoLado
         </span>
       )}
       <span className="apagado">
-        {vista.ancho} × {vista.alto} · {vista.milisegundos} ms
+        <span className="entera">
+          {vista.ancho} × {vista.alto}
+        </span>
+        {" · "}
+        <span className="entera">{vista.milisegundos} ms</span>
       </span>
     </div>
   );

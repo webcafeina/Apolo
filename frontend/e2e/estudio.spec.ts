@@ -191,6 +191,14 @@ test("AVIF y JPEG XL enseñan la orden de avifenc y cjxl, y sus controles la cam
   await expect(page.getByTestId("no-equivalente")).toContainText("avifenc no abre WebP");
   await page.locator("#control-calidadAvif").fill("40");
   await expect(page.getByTestId("orden")).toContainText("avifenc -q 40 foto.webp foto.avif");
+  // Sin pérdida apaga la calidad, y la que había no va en la orden: avifenc la
+  // rechazaría (lo vio el cliente con la v0.6.0).
+  await page.locator("#control-sinPerdidaAvif").check();
+  await expect(page.getByTestId("orden")).toContainText("avifenc -l foto.webp foto.avif");
+  await expect(page.getByTestId("pesos")).toContainText("Resultado · AVIF", { timeout: 30_000 });
+  await expect(page.getByText("No se pudo codificar")).toHaveCount(0);
+  await page.locator("#control-sinPerdidaAvif").uncheck();
+  await expect(page.getByTestId("orden")).toContainText("avifenc -q 40 foto.webp foto.avif");
   await formato.selectOption("jxl");
   await expect(page.getByTestId("orden")).toContainText("cjxl foto.webp foto.jxl");
   await expect(page.getByTestId("pesos")).toContainText("Resultado · JPEG XL", { timeout: 30_000 });

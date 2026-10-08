@@ -148,15 +148,26 @@ pub fn motivo(entrada: Formato, a: &Ajuste) -> Option<Motivo> {
     }
 }
 
-/// La orden de la herramienta, para enseñarla o copiarla.
-pub fn orden(a: &Ajuste, entrada: &str, salida: &str) -> String {
+/// La orden de la herramienta, para enseñarla o copiarla. `formato` es el de
+/// la imagen de entrada: con un JPEG, cjxl no lleva lo que no cuenta.
+pub fn orden(a: &Ajuste, formato: Formato, entrada: &str, salida: &str) -> String {
     match a.formato {
         FormatoSalida::Webp => cwebp::texto(&a.webp, entrada, salida),
         FormatoSalida::Jpeg => jpeg::opciones::texto(&a.jpeg, entrada, salida),
         FormatoSalida::Png => png::texto(&a.png, entrada, salida),
         FormatoSalida::Qoi => qoi::texto(entrada, salida),
         FormatoSalida::Avif => avif::texto(&a.avif, entrada, salida),
-        FormatoSalida::Jxl => jxl::texto(&a.jxl, entrada, salida),
+        FormatoSalida::Jxl => jxl::texto(&jxl_efectivas(a, formato), entrada, salida),
+    }
+}
+
+/// Las opciones de cjxl que cuentan: si recibe el JPEG original tal cual (sin
+/// proceso ni enderezar) y lo recomprime sin pérdida, sin calidad ni grano.
+fn jxl_efectivas(a: &Ajuste, formato: Formato) -> jxl::OpcionesJxl {
+    if formato == Formato::Jpeg && motivo(formato, a).is_none() {
+        a.jxl.para_jpeg()
+    } else {
+        a.jxl.clone()
     }
 }
 
@@ -318,7 +329,12 @@ pub fn codificar(
             let datos = if a.formato == FormatoSalida::Avif {
                 avif::codificar(&fichero, ext, &a.avif)?
             } else {
-                jxl::codificar(&fichero, ext, &a.jxl)?
+                let op = if ext == "jpg" {
+                    a.jxl.para_jpeg()
+                } else {
+                    a.jxl.clone()
+                };
+                jxl::codificar(&fichero, ext, &op)?
             };
             Ok(Codificado {
                 datos,

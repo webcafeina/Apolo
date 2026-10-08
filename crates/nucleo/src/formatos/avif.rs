@@ -59,22 +59,32 @@ fn mal(t: impl Into<String>) -> Error {
 
 impl OpcionesAvif {
     /// Los argumentos de avifenc, sin los ficheros.
+    ///
+    /// Con `-l`, lo que el panel apaga no se escribe: la calidad, el
+    /// submuestreo (salvo 4:4:4 o gris), sharp YUV, el afinado y la nitidez.
+    /// avifenc rechaza la calidad junto a `-l`, y así la que se puso antes de
+    /// encenderlo no rompe la orden ni se pierde al apagarlo.
     pub fn orden(&self) -> Vec<String> {
         let mut a: Vec<String> = Vec::new();
+        let con_perdida = !self.sin_perdida;
         let mut par = |k: &str, v: String| {
             a.push(k.into());
             a.push(v);
         };
-        if let Some(q) = self.calidad {
+        if let Some(q) = self.calidad.filter(|_| con_perdida) {
             par("-q", q.to_string());
         }
-        if let Some(q) = self.calidad_alfa {
+        if let Some(q) = self.calidad_alfa.filter(|_| con_perdida) {
             par("--qalpha", q.to_string());
         }
         if let Some(s) = self.velocidad {
             par("-s", s.to_string());
         }
-        if let Some(y) = &self.submuestreo {
+        if let Some(y) = self
+            .submuestreo
+            .as_ref()
+            .filter(|y| con_perdida || matches!(y.as_str(), "444" | "400"))
+        {
             par("-y", y.clone());
         }
         if let Some(d) = self.profundidad {
@@ -83,16 +93,16 @@ impl OpcionesAvif {
         if self.rango_limitado {
             par("-r", "limited".into());
         }
-        if let Some(t) = &self.afinado {
+        if let Some(t) = self.afinado.as_ref().filter(|_| con_perdida) {
             par("-a", format!("tune={t}"));
         }
-        if let Some(n) = self.nitidez {
+        if let Some(n) = self.nitidez.filter(|_| con_perdida) {
             par("-a", format!("sharpness={n}"));
         }
         if self.sin_perdida {
             a.push("-l".into());
         }
-        if self.sharpyuv {
+        if self.sharpyuv && con_perdida {
             a.push("--sharpyuv".into());
         }
         if self.premultiplicar {
@@ -387,6 +397,31 @@ mod pruebas {
         let otra = leer_orden(&op.orden()).unwrap();
         assert_eq!(&otra.opciones, op);
         assert!(otra.ficheros.is_empty());
+    }
+
+    #[test]
+    fn sin_perdida_no_lleva_lo_que_el_panel_apaga() {
+        let op = OpcionesAvif {
+            calidad: Some(40),
+            calidad_alfa: Some(30),
+            submuestreo: Some("420".into()),
+            sharpyuv: true,
+            afinado: Some("ssim".into()),
+            nitidez: Some(2),
+            sin_perdida: true,
+            ..Default::default()
+        };
+        assert_eq!(op.orden(), ["-l"]);
+        let gris = OpcionesAvif {
+            submuestreo: Some("400".into()),
+            ..op.clone()
+        };
+        assert_eq!(gris.orden(), ["-y", "400", "-l"]);
+        let con = OpcionesAvif {
+            sin_perdida: false,
+            ..op
+        };
+        assert!(con.orden().contains(&"-q".to_string()));
     }
 
     #[test]

@@ -47,8 +47,14 @@ test("medidas y diferencias", async ({ page }, info) => {
   await page.getByText("foto.webp", { exact: true }).waitFor();
   await page.getByTestId("formato").selectOption("jpeg");
   await page.getByTestId("control-notaObjetivo").getByRole("switch").check();
+  await page.getByTestId("buscando").waitFor();
+  await page.screenshot({ path: `capturas/buscando-${info.project.name}.png` });
   await page.getByTestId("nota").waitFor({ timeout: 60_000 });
   await page.screenshot({ path: `capturas/medidas-${info.project.name}.png` });
+  // La nota más alta: «Ni con calidad 100…», el texto más largo, junto a Exportar.
+  await page.getByTestId("nota-objetivo").fill("95");
+  await page.getByTestId("hallada").filter({ hasText: "No llega" }).waitFor({ timeout: 60_000 });
+  await page.screenshot({ path: `capturas/no-alcanzada-${info.project.name}.png` });
   await page.getByRole("radio", { name: "Diferencias" }).click();
   await page.waitForTimeout(1500);
   await page.screenshot({ path: `capturas/diferencias-${info.project.name}.png` });

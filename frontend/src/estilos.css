@@ -372,7 +372,18 @@ input[type="range"] { accent-color: var(--relleno); }
 .pesos .flecha { color: var(--apagado); }
 .datos { font-variant-numeric: tabular-nums; white-space: nowrap; }
 /* Las medidas de la pérdida (ADR 0022): la nota grande, lo técnico en gris. */
-.medicion { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: var(--texto-chico); }
+/* Se estrecha y parte líneas antes que empujar «Exportar» fuera (v0.7.0). */
+.medicion { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-variant-numeric: tabular-nums; font-size: var(--texto-chico); flex-shrink: 0; text-align: right; }
+/* Si no caben en una línea con los pesos, las medidas y Exportar bajan
+   juntos a la siguiente, a la derecha: nada se pisa ni se corta (v0.7.0). */
+.fila-estado { flex-wrap: wrap; row-gap: var(--espacio-2); }
+.derecha-estado { display: flex; align-items: center; gap: var(--espacio-3); margin-left: auto; }
+/* Si falta sitio, las líneas parten entre piezas enteras (.entera), nunca a
+   mitad de «SSIMULACRA 2» ni de una cifra. */
+.medicion .entera { white-space: nowrap; }
+.medicion .nota { justify-content: flex-end; }
+.medicion .trabajando { display: flex; align-items: center; gap: 6px; color: var(--cuerpo); }
+.derecha-estado > .principal { flex-shrink: 0; }
 .medicion .nota { display: flex; align-items: baseline; gap: 6px; }
 .medicion .nota strong { font-size: var(--texto-grande); color: var(--tinta); }
 /* El selector del mapa va donde el rótulo izquierdo: así no aprieta la cabecera. */

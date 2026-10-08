@@ -615,7 +615,8 @@
     "ayudaTecnicas": "PSNR (en decibelios) y SSIM (de 0 a 1): las medidas técnicas de siempre. Más alto, más parecido.",
     "identicas": "Idéntica",
     "hallada": "Calidad {{calidad}} encontrada ({{pruebas}} pruebas)",
-    "noAlcanzada": "Ni con calidad 100 se llega a la nota"
+    "noAlcanzada": "No llega ni con calidad 100",
+    "buscando": "Buscando la calidad para una nota de {{nota}}…"
   },
   "nota": {
     "invisible": "no se distingue",

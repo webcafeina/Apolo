@@ -51,7 +51,12 @@
    - CI: comprobar, e2e y equivalencia en verde. Los instaladores salen en macOS, Windows x64 y los
      dos Linux, y en Windows ARM64 tras apagar el NEON de libyuv: **los seis objetivos compilan**
      (ejecución 37687128943).
-2. **Después de publicar, prueba guiada en el Mac del cliente**: elegir AVIF y JPEG XL en el Estudio
+   - **v0.6.1 publicada el mismo día** con dos arreglos de la prueba: AVIF «Sin pérdida» con la
+     calidad tocada antes daba «avifenc terminó con el código 1» (la orden llevaba lo que el panel
+     apaga), y la barra de la descarga se veía llena antes de empezar. Revisada igual: 22
+     ficheros, sumas, 14 firmas, y la CLI igual que avifenc y cjxl en 8 de 8.
+2. **Prueba guiada en el Mac del cliente, recomenzando con la v0.6.1** (en la v0.6.0 se paró en el
+   paso 1 por el error de «Sin pérdida»). Los pasos: elegir AVIF y JPEG XL en el Estudio
    y moverse por sus controles; exportar y volver a abrir los dos; comparar AVIF con WebP; un JPEG a
    JPEG XL (recomprimido sin pérdida, y con la calidad al apagarlo); un lote con AVIF y «solo el más
    ligero»; `apolo avif` y `apolo jxl` frente a los oficiales de Mac, si los tiene.

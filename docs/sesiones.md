@@ -4,6 +4,23 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-08 · v0.6.0 y v0.6.1 publicadas
+
+- **v0.6.0 publicada** tras revisar el borrador: 22 ficheros con sus sumas, 14 firmas válidas en
+  `latest.json` (verificador de minisign rehecho en Python), y la CLI de la Release igual que
+  avifenc y cjxl.
+- Al revisarla, un JPEG hecho con ffmpeg (empieza con un comentario, `FF D8 FF FE`) no se pasa a
+  píxeles en cjxl, ni en el oficial: a la deuda. Y la comparación a mano con `$o` sin partir en zsh
+  dio falsos «distintos», trampa ya conocida (`${=o}`).
+- **Prueba guiada, paso 1:** «Sin pérdida» en AVIF después de bajar la calidad daba «avifenc
+  terminó con el código 1». La orden llevaba `-q 40 -l`, que avifenc rechaza. Arreglado: un control
+  apagado no cuenta en la orden (AVIF con `-l`; cjxl con un JPEG que recomprime sin pérdida), con
+  una prueba e2e de su recorrido. Y la barra de la descarga ya no se ve llena antes de empezar.
+- El cliente preguntó si AVIF y JPEG XL habían tocado la 5a: no. Entre la v0.5.0 y la v0.6.0 no
+  cambia ni una línea de los codificadores de WebP, JPEG, PNG y QOI ni del proceso, y la
+  equivalencia y las e2e de esos formatos siguen en verde.
+- **v0.6.1 publicada** con los dos arreglos, revisada igual.
+
 ## 2026-10-07 (noche) · Entrega 5b: AVIF y JPEG XL (v0.6.0, sin publicar)
 
 - El cliente eligió **las bibliotecas enlazadas dentro**, la opción recomendada, frente a llevar los

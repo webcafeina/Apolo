@@ -153,8 +153,16 @@ Las demás siguen iguales: cwebp, cjpeg, oxipng y qoiconv.
   - brotli, MIT;
   - libpng y zlib, las suyas.
 
+**Después, en el Mac del cliente** (2026-10-08, Apple Silicon, v0.6.1):
+- la prueba guiada entera en la ventana: AVIF y sus controles, JPEG XL con un JPEG (sin pérdida y
+  con calidad), comparar AVIF con WebP, exportar y volver a abrir con transparencia, y un lote con
+  WebP y AVIF y «el más ligero» (24 convertidas, 18 WebP y 6 AVIF, como en el VPS);
+- `apolo avif` frente al avifenc 1.4.2 oficial de Mac: **16 de 16 iguales**.
+- La prueba sacó un error: «Sin pérdida» con la calidad tocada antes. Arreglado en la v0.6.1 (un
+  control apagado no cuenta en la orden).
+
 **No verificado:**
-- **La equivalencia en macOS y Windows.** Allí libjxl sale del clang de Apple y de clang-cl, que no
+- **La equivalencia de JPEG XL en macOS, y la de los dos en Windows.** Allí libjxl sale del clang de Apple y de clang-cl, que no
   son el clang 18 del cjxl oficial de Linux. Hay binarios oficiales de avifenc para macOS y Windows,
   y de cjxl para Windows, con los que se podría comprobar en CI.
 - **Rutas con caracteres no ASCII en Windows.** Los `main` abren los ficheros temporales con

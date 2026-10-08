@@ -55,15 +55,16 @@
      calidad tocada antes daba «avifenc terminó con el código 1» (la orden llevaba lo que el panel
      apaga), y la barra de la descarga se veía llena antes de empezar. Revisada igual: 22
      ficheros, sumas, 14 firmas, y la CLI igual que avifenc y cjxl en 8 de 8.
-2. **Prueba guiada en el Mac del cliente, recomenzando con la v0.6.1** (en la v0.6.0 se paró en el
-   paso 1 por el error de «Sin pérdida»). Los pasos: elegir AVIF y JPEG XL en el Estudio
+2. ~~**Prueba guiada en el Mac del cliente**~~ **completa el 2026-10-08 con la v0.6.1**: los seis
+   pasos bien, y `apolo avif` igual que el avifenc oficial de Mac en 16 de 16. Los pasos fueron: elegir AVIF y JPEG XL en el Estudio
    y moverse por sus controles; exportar y volver a abrir los dos; comparar AVIF con WebP; un JPEG a
    JPEG XL (recomprimido sin pérdida, y con la calidad al apagarlo); un lote con AVIF y «solo el más
    ligero»; `apolo avif` y `apolo jxl` frente a los oficiales de Mac, si los tiene.
 3. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
    cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
 4. La carpeta de prueba de Lotes se regenera con `pruebas/lotes/generar.sh <destino>`.
-5. Luego, **la entrega 6: métricas** (siguiente.md).
+5. **Lo siguiente: la entrega 6, métricas** (siguiente.md). Empieza por decidir con el cliente qué
+   enseña y cómo.
 
 ## Completado
 
@@ -85,7 +86,9 @@
   (2026-10-07). ADR 0020. v0.5.0 publicada el mismo día.
 - Prueba guiada de la v0.5.0 en el Mac del cliente, completa (2026-10-07), con tres retoques.
 - Entrega 5b: AVIF y JPEG XL con avifenc y cjxl compilados dentro (2026-10-07). ADR 0021. v0.6.0
-  publicada el 2026-10-08.
+  publicada el 2026-10-08, y la v0.6.1 con los arreglos de la prueba.
+- Prueba guiada de la v0.6.1 en el Mac del cliente, completa (2026-10-08), con AVIF igual que el
+  avifenc oficial de Mac en 16 de 16.
 
 ## En curso
 

@@ -4,6 +4,27 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-08 (tarde) · v0.7.0 publicada, y la prueba guiada hasta el paso 3
+
+- **v0.7.0 publicada**. CI falló primero en la ventana porque los cambios de `src-tauri` se
+  quedaron fuera del commit (trampa); con ellos, los seis objetivos en verde. Borrador revisado: 22
+  ficheros, sumas, 14 firmas, y la CLI con la misma nota que `ssimulacra2` (81,19 en las dos).
+- **Prueba guiada en el Mac del cliente**: pasos 1 (la nota), 2 (calidad por nota) y 3
+  (Diferencias), bien. Tres apuntes, arreglados en `main` para la v0.7.1:
+  - Exportar se cortaba por la derecha con medidas largas. Se probó a estrechar las medidas (partían
+    «SSIMULACRA / 2») y a que cedieran los pesos (se pisaban). Al final, medidas y Exportar van juntos
+    y bajan a otra línea si no caben, partiendo solo entre piezas enteras.
+  - Pasaban 4-5 s sin señal mientras buscaba la calidad: ahora hay una rueda y «Buscando la calidad
+    para una nota de 80…», con su prueba e2e.
+  - El aviso «Vista reducida» pisaba el selector y el rótulo de Diferencias: va abajo, sobre el zoom.
+- Con la nota en 95, JPEG no llegaba en `captura-1.png`: es lo esperado (como mucho 89,8).
+- **Se sigue el lunes por el paso 4** (Lotes midiendo). El texto que se le dio:
+  1. Lotes, carpeta `vacaciones`, una salida WebP por defecto.
+  2. En Calidad, «Medir la calidad» encendido; «Buscar la calidad por nota», apagado.
+  3. Al terminar: nota en cada fila, «Nota media (SSIMULACRA 2)» en el resumen y «Las de peor nota».
+  4. Opcional: otro lote con «Buscar la calidad por nota» a 80. Cada fila con «calidad N», media de
+     80 o algo más; alguna foto con ruido de color puede no llegar en WebP y quedarse en 100.
+
 ## 2026-10-08 · Entrega 6: medir la pérdida (v0.7.0, sin publicar)
 
 - Al plantearla, salió que libjxl, dentro desde la 5b, trae **SSIMULACRA 2** (y Butteraugli) con

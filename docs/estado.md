@@ -65,7 +65,22 @@
 4. La carpeta de prueba de Lotes se regenera con `pruebas/lotes/generar.sh <destino>`.
 5. **La entrega 6, métricas, está publicada como v0.7.0** (2026-10-08) ([ADR 0022](adr/0022-medir-la-perdida.md)).
    Borrador revisado como siempre (22 ficheros, sumas, 14 firmas; la CLI busca y mide, y su nota
-   coincide con la de `ssimulacra2`). **Falta la prueba guiada en el Mac del cliente.**
+   coincide con la de `ssimulacra2`).
+6. **Prueba guiada de la v0.7.0 en el Mac del cliente, a medias: se sigue el lunes 2026-10-12 por el
+   paso 4.** Los pasos 1 (la nota), 2 (calidad por nota) y 3 (Diferencias) salieron bien.
+   - El paso 4 es **Lotes midiendo**: `vacaciones` en WebP con «Medir la calidad» (nota por fila,
+     nota media, «Las de peor nota»), y opcional otro lote con «Buscar la calidad por nota» a 80.
+     El texto del paso está en sesiones.md (2026-10-08, tarde).
+   - Después, el paso 5 (opcional): la CLI, con `apolo medir` y `apolo jpeg -apolo_objetivo 80`.
+   - **Tres arreglos de la prueba, ya en `main` y sin publicar**, para una **v0.7.1** al terminar:
+     - Exportar se cortaba con medidas largas: ahora medidas y Exportar bajan juntos de línea si no
+       caben;
+     - no se veía que buscaba o medía: ahora hay una rueda y «Buscando la calidad para una nota de
+       80…» o «Midiendo la calidad…»;
+     - el aviso «Vista reducida» pisaba el selector y el rótulo de Diferencias: ahora va abajo,
+       sobre el zoom.
+   - Lo que salió y no era fallo: con la nota en 95, JPEG «no llega ni con calidad 100» en
+     `captura-1.png` (llega como mucho a 89,8). Con 80 llega con calidad 90.
    El cliente eligió SSIMULACRA 2 con PSNR y SSIM, el modo «Diferencias», medir opcional en Lotes y
    **la calidad por nota en esta entrega**.
    - La nota es la de la herramienta `ssimulacra2` de libjxl: 56 de 56 con `make equivalencia`.

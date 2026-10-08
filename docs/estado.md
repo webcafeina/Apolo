@@ -36,9 +36,13 @@
 
 ### La siguiente acción, al retomar
 
-1. **La entrega 5b está hecha y la v0.6.0, preparada sin publicar** ([ADR 0021](adr/0021-avif-y-jpeg-xl.md)).
-   Lleva también los tres retoques de la v0.5.1. **Se publica cuando lo diga el cliente**: etiqueta
-   `v0.6.0`, revisar el borrador (sumas, `latest.json` con sus firmas) y publicarlo.
+1. **La entrega 5b está publicada como v0.6.0** (2026-10-08,
+   https://github.com/webcafeina/Apolo/releases/tag/v0.6.0) ([ADR 0021](adr/0021-avif-y-jpeg-xl.md)).
+   Lleva también los tres retoques de la v0.5.1. Antes de publicar se revisó el borrador:
+   - 22 ficheros, y las sumas cuadran;
+   - `latest.json` con 14 plataformas, todas con firma válida (`verificar.py`, minisign con la
+     clave pública de `tauri.conf.json`);
+   - la CLI de Linux de la Release da los mismos bytes que avifenc y cjxl oficiales: 23 de 23.
    - **AVIF y JPEG XL** dan el mismo fichero que **avifenc 1.4.2 y cjxl 0.12.0**: 376 de 376 y 280
      de 280 con `make equivalencia`, también en CI.
    - Van compilados dentro (`crates/avifjxl`): sus `main`, con los argumentos de la orden. libjxl,
@@ -76,7 +80,7 @@
   (2026-10-07). ADR 0020. v0.5.0 publicada el mismo día.
 - Prueba guiada de la v0.5.0 en el Mac del cliente, completa (2026-10-07), con tres retoques.
 - Entrega 5b: AVIF y JPEG XL con avifenc y cjxl compilados dentro (2026-10-07). ADR 0021. v0.6.0
-  preparada, sin publicar.
+  publicada el 2026-10-08.
 
 ## En curso
 

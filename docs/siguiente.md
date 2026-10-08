@@ -45,7 +45,7 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Cerrado
 
-- ~~**Entrega 5b — AVIF y JPEG XL**~~ (v0.6.0, sin publicar todavía): avifenc 1.4.2 y cjxl 0.12.0
+- ~~**Entrega 5b — AVIF y JPEG XL**~~ (v0.6.0, publicada el 2026-10-08): avifenc 1.4.2 y cjxl 0.12.0
   compilados dentro, con sus `main`; libjxl con clang. **376 de 376 iguales con avifenc y 280 de
   280 con cjxl.** Se abren AVIF y JXL; Estudio, Lotes, pegar órdenes, `apolo avif` y `apolo jxl`.
   ADR 0021. · 2026-10-07

@@ -69,6 +69,21 @@ struct Id {
 }
 
 #[derive(Deserialize)]
+struct PeticionMedir {
+    id: u64,
+    #[serde(default)]
+    lado: u8,
+    generacion: u64,
+}
+
+#[derive(Deserialize)]
+struct PeticionMapa {
+    #[serde(default)]
+    lado: u8,
+    tipo: apolo_nucleo::medir::TipoMapa,
+}
+
+#[derive(Deserialize)]
 struct PeticionCodificar {
     id: u64,
     ajuste: Ajuste,
@@ -142,6 +157,8 @@ struct EmpezarLote {
     ajustes: Vec<Ajuste>,
     #[serde(default)]
     solo_mas_ligero: bool,
+    #[serde(default)]
+    medir: bool,
     salida: String,
 }
 
@@ -290,7 +307,13 @@ fn rutas(s: Arc<Servicio>) -> Router {
             "/api/empezar_lote",
             post(|State(s): Estado, Json(p): Json<EmpezarLote>| async move {
                 let r: R<_> = bloqueante(move || {
-                    s.empezar_lote(&p.entradas, &p.ajustes, p.solo_mas_ligero, &p.salida)
+                    s.empezar_lote(
+                        &p.entradas,
+                        &p.ajustes,
+                        p.solo_mas_ligero,
+                        p.medir,
+                        &p.salida,
+                    )
                 })
                 .await
                 .map(Json)
@@ -332,6 +355,30 @@ fn rutas(s: Arc<Servicio>) -> Router {
             get(
                 |State(s): Estado, Path(id): Path<u64>, Query(q): Query<Enderezar>| async move {
                     let r: R<_> = bloqueante(move || s.pixeles_original(id, q.enderezar == 1))
+                        .await
+                        .map(|p| binario(empaquetar_pixeles(p)))
+                        .map_err(Error);
+                    r
+                },
+            ),
+        )
+        .route(
+            "/api/medir",
+            post(
+                |State(s): Estado, Json(p): Json<PeticionMedir>| async move {
+                    let r: R<_> = bloqueante(move || s.medir(p.id, p.lado, p.generacion))
+                        .await
+                        .map(Json)
+                        .map_err(Error);
+                    r
+                },
+            ),
+        )
+        .route(
+            "/pixeles/mapa/{id}",
+            get(
+                |State(s): Estado, Path(id): Path<u64>, Query(q): Query<PeticionMapa>| async move {
+                    let r: R<_> = bloqueante(move || s.pixeles_mapa(id, q.lado, q.tipo))
                         .await
                         .map(|p| binario(empaquetar_pixeles(p)))
                         .map_err(Error);

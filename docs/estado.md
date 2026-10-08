@@ -63,8 +63,12 @@
 3. **La clave del actualizador se queda en el VPS** (`~/.config/apolo/claves/`), por decisión del
    cliente (ADR 0018 y deuda). **No borrarla.** Tampoco se escribe nunca en el chat.
 4. La carpeta de prueba de Lotes se regenera con `pruebas/lotes/generar.sh <destino>`.
-5. **Lo siguiente: la entrega 6, métricas** (siguiente.md). Empieza por decidir con el cliente qué
-   enseña y cómo.
+5. **La entrega 6, métricas, está hecha como v0.7.0, sin publicar** ([ADR 0022](adr/0022-medir-la-perdida.md)).
+   El cliente eligió SSIMULACRA 2 con PSNR y SSIM, el modo «Diferencias», medir opcional en Lotes y
+   **la calidad por nota en esta entrega**.
+   - La nota es la de la herramienta `ssimulacra2` de libjxl: 56 de 56 con `make equivalencia`.
+   - Al publicar: etiqueta `v0.7.0`, revisar el borrador como siempre, y prueba guiada en el Mac
+     (la nota, la calidad por nota, Diferencias, un lote midiendo).
 
 ## Completado
 
@@ -89,6 +93,7 @@
   publicada el 2026-10-08, y la v0.6.1 con los arreglos de la prueba.
 - Prueba guiada de la v0.6.1 en el Mac del cliente, completa (2026-10-08), con AVIF igual que el
   avifenc oficial de Mac en 16 de 16.
+- Entrega 6, métricas (2026-10-08). ADR 0022. v0.7.0 preparada, sin publicar.
 
 ## En curso
 

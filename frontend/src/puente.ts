@@ -55,7 +55,28 @@ export interface Vista {
   equivalente: boolean;
   /** Por qué la orden de la herramienta no da este fichero, si no lo da. */
   motivo: "enderezada" | "procesada" | "formato_sin_herramienta" | null;
+  /** Con una nota objetivo, la calidad que se encontró (la orden la lleva). */
+  hallada: Hallada | null;
 }
+
+/** Lo que encontró la búsqueda de una nota objetivo (ADR 0022). */
+export interface Hallada {
+  calidad: number;
+  nota: number;
+  alcanzada: boolean;
+  pruebas: number;
+}
+
+/** Las medidas de la pérdida (ADR 0022). */
+export interface Medidas {
+  /** SSIMULACRA 2, de −∞ a 100; null si la imagen es menor de 8×8. */
+  ssimulacra2: number | null;
+  /** dB; null si son idénticas. */
+  psnr: number | null;
+  ssim: number;
+}
+
+export type TipoMapa = "diferencia" | "estructura";
 
 /** Un preset guardado: un nombre y un ajuste entero (ADR 0020). */
 export type PresetGuardado = { nombre: string } & Ajuste;
@@ -252,6 +273,10 @@ async function pixeles(ruta: string): Promise<ImageData> {
 export const pixelesOriginal = (id: number, enderezar: boolean) =>
   pixeles(`original/${id}${enderezar ? "?enderezar=1" : ""}`);
 export const pixelesResultado = (id: number, lado: 0 | 1) => pixeles(`resultado/${id}?lado=${lado}`);
+export const pixelesMapa = (id: number, lado: 0 | 1, tipo: TipoMapa) => pixeles(`mapa/${id}?lado=${lado}&tipo=${tipo}`);
+
+/** Mide el último resultado de un lado. Se cancela si ya hay otra vista previa. */
+export const medir = (id: number, lado: 0 | 1, generacion: number) => orden<Medidas>("medir", { id, lado, generacion });
 
 // ---------------------------------------------------------------- lotes (ADR 0019)
 
@@ -273,6 +298,10 @@ export interface FilaSalida {
   formato: FormatoSalida;
   bytes: number;
   ruta: string;
+  /** SSIMULACRA 2, si se midió. */
+  nota: number | null;
+  /** Con nota objetivo, la calidad encontrada. */
+  calidad: number | null;
 }
 
 export interface Fila {
@@ -305,6 +334,8 @@ export interface Resumen {
   bytes_salida: number;
   por_formato: PorFormato[];
   peores: Destacada[];
+  nota_media: number | null;
+  peores_notas: { relativa: string; formato: FormatoSalida; nota: number }[];
 }
 
 export interface EstadoLote {
@@ -318,8 +349,8 @@ export interface EstadoLote {
 }
 
 export const recogerLote = (entradas: string[]) => orden<Recogida>("recoger_lote", { entradas });
-export const empezarLote = (entradas: string[], ajustes: Ajuste[], soloMasLigero: boolean, salida: string) =>
-  orden<LoteEmpezado>("empezar_lote", { entradas, ajustes, soloMasLigero, salida });
+export const empezarLote = (entradas: string[], ajustes: Ajuste[], soloMasLigero: boolean, medir: boolean, salida: string) =>
+  orden<LoteEmpezado>("empezar_lote", { entradas, ajustes, soloMasLigero, medir, salida });
 export const estadoLote = (id: number, desde: number) => orden<EstadoLote>("estado_lote", { id, desde });
 export const cancelarLote = (id: number) => orden<void>("cancelar_lote", { id });
 

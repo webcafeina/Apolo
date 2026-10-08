@@ -132,6 +132,7 @@ function Ficha({
       ? [t("presets.redimension", { ancho: pr.redimension.ancho ?? "auto", alto: pr.redimension.alto ?? "auto" })]
       : []),
     ...(pr.paleta ? [t("presets.paleta", { colores: pr.paleta.colores })] : []),
+    ...(ajuste.objetivo !== null && ajuste.objetivo !== undefined ? [t("presets.objetivo", { nota: ajuste.objetivo })] : []),
     ...(pr.enderezar || w.enderezar ? [t("presets.endereza")] : []),
   ];
   const sub = { webp: "webp", jpeg: "jpeg", png: "png", qoi: "qoi", avif: "avif", jxl: "jxl" }[ajuste.formato];

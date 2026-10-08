@@ -50,6 +50,7 @@ fn main() {
         .define("APOLO_JPEG", &jpeg)
         .define("APOLO_SHARPYUV", raiz.join("cabeceras"))
         .define("APOLO_PUENTE", raiz.join("c").join("puente.c"))
+        .define("APOLO_MEDIR", raiz.join("c").join("medir.cc"))
         // aom y libyuv salen de vendor/, nunca de la red.
         .define("FETCHCONTENT_FULLY_DISCONNECTED", "ON")
         .define("FETCHCONTENT_SOURCE_DIR_LIBAOM", vendor.join("aom"))
@@ -96,8 +97,10 @@ fn main() {
         "apolo_avif",
         "apolo_cjxl",
         "apolo_djxl",
+        "apolo_medir",
         "jxl_tool",
         "jxl_extras_codec",
+        "jxl_gauss_blur",
         "jxl_threads",
         "jxl",
         "jxl_cms",

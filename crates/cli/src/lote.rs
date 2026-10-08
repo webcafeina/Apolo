@@ -30,6 +30,10 @@ pub struct Peticion {
     /// De cada imagen, solo el formato que menos pese.
     pub mas_ligero: bool,
     pub hilos: Option<usize>,
+    /// Medir la nota de cada fichero (ADR 0022).
+    pub medir: bool,
+    /// Buscar, imagen a imagen, la calidad que da esta nota.
+    pub objetivo: Option<f32>,
     /// Las opciones de la herramienta, detrás de `--`: solo con un formato.
     pub herramienta: Vec<String>,
     pub silencio: bool,
@@ -137,6 +141,11 @@ fn ajustes(p: &Peticion) -> Result<Vec<Ajuste>, String> {
             }
         }
     }
+    if let Some(nota) = p.objetivo {
+        for a in &mut v {
+            a.objetivo = Some(nota);
+        }
+    }
     if v.iter().any(|a| !a.webp.validar()) {
         return Err("La configuración no es válida".into());
     }
@@ -199,6 +208,7 @@ pub fn ejecutar(p: Peticion) -> ExitCode {
         &salida,
         &ajustes,
         p.mas_ligero,
+        p.medir,
         p.hilos.unwrap_or_else(lote::hilos_por_defecto),
         &AtomicBool::new(false),
         &|h| {
@@ -210,12 +220,19 @@ pub fn ejecutar(p: Peticion) -> ExitCode {
                         let partes: Vec<String> = salidas
                             .iter()
                             .map(|s| {
-                                format!(
+                                let mut t = format!(
                                     "{} {} {}",
                                     s.formato.nombre(),
                                     bytes(s.bytes),
                                     ahorro(h.bytes_entrada, s.bytes)
-                                )
+                                );
+                                if let Some(q) = s.calidad {
+                                    t.push_str(&format!(" calidad {q}"));
+                                }
+                                if let Some(n) = s.nota {
+                                    t.push_str(&format!(" nota {}", nota(n)));
+                                }
+                                t
                             })
                             .collect();
                         eprintln!(
@@ -277,6 +294,18 @@ fn imprimir(r: &Resumen, segundos: f64) {
         1 => println!("1 no se pudo convertir"),
         n => println!("{n} no se pudieron convertir"),
     }
+    if let Some(m) = r.nota_media {
+        println!("Nota media (SSIMULACRA 2): {}", nota(m));
+        println!("Las de peor nota:");
+        for d in &r.peores_notas {
+            println!(
+                "  {} ({})  {}",
+                d.relativa.display(),
+                d.formato.nombre(),
+                nota(d.nota)
+            );
+        }
+    }
     if r.convertidas > r.peores.len() {
         println!("Las que menos ahorran:");
         for d in &r.peores {
@@ -290,4 +319,8 @@ fn imprimir(r: &Resumen, segundos: f64) {
             );
         }
     }
+}
+
+fn nota(n: f64) -> String {
+    format!("{n:.1}").replace('.', ",")
 }

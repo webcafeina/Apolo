@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { Cabecera, Icono } from "../componentes";
 import { EVENTO_PRESETS, formatoBytes } from "../estudio/Estudio";
 import { FORMATOS, type Ajuste, type FormatoSalida, type Preset } from "../estudio/opciones";
-import { nombreFormato } from "../estudio/Panel";
+import { banda, nombreFormato } from "../estudio/Panel";
 import * as puente from "../puente";
 
 const CADA_MS = 250;
@@ -68,6 +68,9 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
   const [ajustes, setAjustes] = useState<Ajuste[]>([inicio.ajuste]);
   const [ordenes, setOrdenes] = useState<string[]>([]);
   const [soloMasLigero, setSoloMasLigero] = useState(false);
+  // Medir la calidad y buscar una nota (ADR 0022): apagados, que alargan el lote.
+  const [medir, setMedir] = useState(false);
+  const [objetivo, setObjetivo] = useState<number | null>(null);
   const [guardados, setGuardados] = useState<puente.PresetGuardado[]>([]);
   const [momento, setMomento] = useState<Momento>({ es: "preparando" });
   const [error, setError] = useState<string | null>(null);
@@ -188,7 +191,9 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
   async function convertir() {
     setError(null);
     try {
-      const lote = await puente.empezarLote(entradas, ajustes, soloMasLigero && ajustes.length > 1, salida);
+      // La nota objetivo vale para todas las salidas, encima de su preset.
+      const conObjetivo = objetivo === null ? ajustes : ajustes.map((a) => ({ ...a, objetivo }));
+      const lote = await puente.empezarLote(entradas, conObjetivo, soloMasLigero && ajustes.length > 1, medir, salida);
       setMomento({ es: "convirtiendo", lote, estado: null, filas: [] });
     } catch (e) {
       setError((e as puente.Fallo).mensaje);
@@ -333,6 +338,36 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
               </section>
 
               <section className="grupo">
+                <h2>{t("lotes.calidad")}</h2>
+                <label className="casilla" data-prueba="medir-lote">
+                  <input type="checkbox" checked={medir} onChange={(e) => setMedir(e.target.checked)} />
+                  {t("lotes.medir")}
+                </label>
+                <p className="apagado">{t("lotes.medirDetalle")}</p>
+                <label className="casilla" data-prueba="objetivo-lote">
+                  <input type="checkbox" checked={objetivo !== null} onChange={(e) => setObjetivo(e.target.checked ? 80 : null)} />
+                  {t("lotes.objetivo")}
+                </label>
+                {objetivo !== null && (
+                  <div className="deslizador objetivo-lote">
+                    <input
+                      type="range"
+                      min={30}
+                      max={95}
+                      step={1}
+                      value={objetivo}
+                      onChange={(e) => setObjetivo(Number(e.target.value))}
+                      aria-label={t("panel.nota")}
+                      data-prueba="nota-objetivo-lote"
+                    />
+                    <output>{objetivo}</output>
+                    <span className="apagado">{t(`nota.${banda(objetivo)}`)}</span>
+                  </div>
+                )}
+                <p className="apagado">{t("lotes.objetivoDetalle")}</p>
+              </section>
+
+              <section className="grupo">
                 <h2>{t("lotes.donde")}</h2>
                 <div className="pareja">
                   <input
@@ -446,6 +481,12 @@ function Progreso({
                     ))}
                   </ul>
                 )}
+                {r.nota_media !== null && (
+                  <p data-prueba="nota-media">
+                    {t("lotes.notaMedia")} <strong>{r.nota_media.toLocaleString("es", { maximumFractionDigits: 1, minimumFractionDigits: 1 })}</strong>
+                    <span className="apagado"> · {t(`nota.${banda(r.nota_media)}`)}</span>
+                  </p>
+                )}
                 {r.mayores > 0 && <p className="aviso-texto">{t("lotes.mayores", { count: r.mayores })}</p>}
                 {r.fallidas > 0 && <p className="error">{t("lotes.fallidas", { count: r.fallidas })}</p>}
                 <p className="apagado">{t("lotes.dondeQuedo", { salida: momento.lote.salida })}</p>
@@ -476,10 +517,28 @@ function Progreso({
                     fila={{
                       relativa: p.relativa,
                       bytes_entrada: p.bytes_entrada,
-                      salidas: [{ formato: p.formato, bytes: p.bytes_salida, ruta: "" }],
+                      salidas: [{ formato: p.formato, bytes: p.bytes_salida, ruta: "", nota: null, calidad: null }],
                       error: null,
                     }}
                   />
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {r && r.peores_notas.length > 0 && r.convertidas > r.peores_notas.length && (
+            <section className="grupo" data-prueba="peores-notas">
+              <h2>{t("lotes.peoresNotas")}</h2>
+              <p className="apagado">{t("lotes.peoresNotasDetalle")}</p>
+              <ul className="filas-lote">
+                {r.peores_notas.map((p) => (
+                  <li key={`${p.relativa}-${p.formato}`}>
+                    <span className="nombre" title={p.relativa}>
+                      {p.relativa}
+                    </span>
+                    <span className="apagado">{nombreFormato(p.formato)}</span>
+                    <span className="cifra">{p.nota.toLocaleString("es", { maximumFractionDigits: 1, minimumFractionDigits: 1 })}</span>
+                  </li>
                 ))}
               </ul>
             </section>
@@ -530,6 +589,15 @@ function FilaLote({ fila }: { fila: puente.Fila }) {
             {formatoBytes(fila.bytes_entrada)} → {principal && `${nombreFormato(principal.formato)} `}
             {formatoBytes(bytesSalida)}
             {fila.salidas.length > 1 && " …"}
+            {principal?.calidad != null && ` · ${t("lotes.calidadHallada", { calidad: principal.calidad })}`}
+            {principal?.nota != null && (
+              <>
+                {" · "}
+                <span data-prueba="nota-fila">
+                  {t("lotes.nota", { nota: principal.nota.toLocaleString("es", { maximumFractionDigits: 1, minimumFractionDigits: 1 }) })}
+                </span>
+              </>
+            )}
           </span>
           <span className={crece ? "aviso-texto cifra" : "cifra"}>
             {crece

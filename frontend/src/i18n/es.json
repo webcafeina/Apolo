@@ -37,7 +37,13 @@
     "acercar": "Acercar",
     "alejar": "Alejar",
     "ajustar": "Ajustar",
-    "reducida": "Vista reducida al {{porcentaje}} %: clica aquí para ver al 100 % y apreciar más detalle"
+    "reducida": "Vista reducida al {{porcentaje}} %: clica aquí para ver al 100 % y apreciar más detalle",
+    "diferencias": "Diferencias",
+    "tipoMapa": "Qué marca el mapa",
+    "mapa": {
+      "diferencia": "Píxeles que cambian",
+      "estructura": "Detalle que se pierde"
+    }
   },
   "orden": {
     "copiar": "Copiar",
@@ -91,7 +97,8 @@
     "filtro": "Filtro",
     "lineal": "Mezclar en RGB lineal",
     "colores": "Colores",
-    "tramado": "Tramado"
+    "tramado": "Tramado",
+    "nota": "Nota"
   },
   "formato": {
     "avif": "AVIF",
@@ -123,7 +130,9 @@
     "conZopfli": "Con Zopfli, la compresión la hace Zopfli.",
     "solo420": "Solo con submuestreo 4:2:0.",
     "jpegSinPerdida": "cjxl recomprime este JPEG sin pérdida: apaga «Recomprimir el JPEG sin pérdida» para elegir la calidad.",
-    "soloJpeg": "Solo cuenta si la imagen de entrada es un JPEG."
+    "soloJpeg": "Solo cuenta si la imagen de entrada es un JPEG.",
+    "sinCalidad": "Este formato no tiene calidad que buscar (sin pérdida).",
+    "laBuscaApolo": "La busca Apolo para llegar a la nota."
   },
   "opcion": {
     "calidad": "Calidad",
@@ -313,7 +322,9 @@
     "gaborishJxl": "Filtro Gaborish",
     "gaborishJxlAyuda": "Un filtro que disimula los bloques. Por defecto lo elige cjxl.",
     "decodificacionRapidaJxl": "Decodificación rápida",
-    "decodificacionRapidaJxlAyuda": "Más alto, se abre antes a cambio de algo de calidad o de peso."
+    "decodificacionRapidaJxlAyuda": "Más alto, se abre antes a cambio de algo de calidad o de peso.",
+    "notaObjetivo": "Calidad por nota",
+    "notaObjetivoAyuda": "Apolo prueba calidades y se queda con la más baja que llega a esta nota SSIMULACRA 2. La orden lleva la calidad encontrada. Tarda varias pruebas."
   },
   "valor": {
     "nivel": {
@@ -514,7 +525,17 @@
     "todosDetalle": "De cada imagen se guarda un fichero por formato.",
     "sinOpciones": "Sin opciones",
     "ficheros_one": "1 fichero",
-    "ficheros_other": "{{count}} ficheros"
+    "ficheros_other": "{{count}} ficheros",
+    "calidad": "Calidad",
+    "medir": "Medir la calidad",
+    "medirDetalle": "Cada imagen lleva su nota SSIMULACRA 2, y el resumen señala las de peor nota. El lote tarda más.",
+    "objetivo": "Buscar la calidad por nota",
+    "objetivoDetalle": "Para cada imagen, la calidad más baja que llega a la nota, en los formatos con pérdida. Hace varias pruebas por imagen: tarda bastante más.",
+    "notaMedia": "Nota media (SSIMULACRA 2):",
+    "peoresNotas": "Las de peor nota",
+    "peoresNotasDetalle": "Las que más se alejan de su original.",
+    "calidadHallada": "calidad {{calidad}}",
+    "nota": "nota {{nota}}"
   },
   "ajustes": {
     "borrar": "Borrar",
@@ -561,7 +582,8 @@
     "paleta": "{{colores}} colores",
     "velocidad": "Velocidad {{valor}}",
     "distancia": "Distancia {{valor}}",
-    "esfuerzo": "Esfuerzo {{valor}}"
+    "esfuerzo": "Esfuerzo {{valor}}",
+    "objetivo": "Nota objetivo {{nota}}"
   },
   "novedad": {
     "hay": "Hay una versión nueva:",
@@ -584,5 +606,23 @@
     "qoi": "QOI",
     "avif": "AVIF",
     "jxl": "JPEG XL"
+  },
+  "medidas": {
+    "midiendo": "Midiendo la calidad…",
+    "sinMedida": "Sin medida",
+    "nota": "SSIMULACRA 2",
+    "ayudaNota": "Cuánto se parece al original, como lo vería una persona: de 100 (idéntica) hacia abajo. 90 no se distingue ni alternándolas, 80 no se distingue lado a lado, 70 es alta calidad.",
+    "ayudaTecnicas": "PSNR (en decibelios) y SSIM (de 0 a 1): las medidas técnicas de siempre. Más alto, más parecido.",
+    "identicas": "Idéntica",
+    "hallada": "Calidad {{calidad}} encontrada ({{pruebas}} pruebas)",
+    "noAlcanzada": "Ni con calidad 100 se llega a la nota"
+  },
+  "nota": {
+    "invisible": "no se distingue",
+    "muyAlta": "muy alta",
+    "alta": "alta",
+    "media": "media",
+    "baja": "baja",
+    "muyBaja": "muy baja"
   }
 }

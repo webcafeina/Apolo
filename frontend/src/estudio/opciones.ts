@@ -189,6 +189,8 @@ export interface Ajuste {
   avif: OpcionesAvif;
   jxl: OpcionesJxl;
   proceso: Proceso;
+  /** Buscar la calidad más baja que da esta nota SSIMULACRA 2 (ADR 0022). */
+  objetivo: number | null;
 }
 
 // ------------------------------------------------------------- los controles
@@ -219,8 +221,8 @@ interface Base {
   marca: string;
   /** Si no se cumple, el control se ve apagado y explica por qué. */
   cuando?: Cuando;
-  /** Clave i18n de por qué está apagado. */
-  porQue?: string;
+  /** Clave i18n de por qué está apagado (o una función, si depende del ajuste). */
+  porQue?: string | ((a: Ajuste) => string);
   /** Campos que se quitan (null) al tocar este: -q y -d de cjxl se excluyen. */
   limpiar?: string[];
 }
@@ -245,16 +247,41 @@ export type Control =
         | "calidadJpeg"
         | "procesoRecorte"
         | "procesoRedimension"
-        | "procesoPaleta";
+        | "procesoPaleta"
+        | "notaObjetivo";
     });
 
 const conPerdida: Cuando = (a) => !a.webp.sin_perdida;
+
+/** Si el formato del ajuste admite buscar una nota (salida::admite_objetivo). */
+export const admiteObjetivo: Cuando = (a, c) =>
+  a.formato === "webp"
+    ? !a.webp.sin_perdida
+    : a.formato === "jpeg"
+      ? true
+      : a.formato === "avif"
+        ? !a.avif.sin_perdida
+        : a.formato === "jxl"
+          ? !(c.jpeg && a.jxl.jpeg_sin_perdida)
+          : false;
+
+/** La nota objetivo: en Básico de los formatos con pérdida. Es de Apolo. */
+const NOTA_OBJETIVO = (de: De): Control => ({
+  clave: "notaObjetivo", nivel: "basico", de, marca: "", tipo: "especial", especial: "notaObjetivo",
+  cuando: admiteObjetivo, porQue: "porQue.sinCalidad",
+});
+const sinObjetivo = (a: Ajuste) => a.objetivo === null;
 const sinPerdida: Cuando = (a) => a.webp.sin_perdida;
 const conAlfa: Cuando = (a, c) => c.alfa && !a.webp.sin_alfa;
 
 export const CONTROLES_WEBP: Control[] = [
   // Básico
-  { clave: "calidad", nivel: "basico", de: "webp", marca: "-q", tipo: "deslizador", campo: "calidad", min: 0, max: 100, paso: 1 },
+  NOTA_OBJETIVO("webp"),
+  {
+    clave: "calidad", nivel: "basico", de: "webp", marca: "-q", tipo: "deslizador", campo: "calidad", min: 0, max: 100, paso: 1,
+    // Sin pérdida es el esfuerzo, y ahí la nota no cuenta.
+    cuando: (a) => sinObjetivo(a) || a.webp.sin_perdida, porQue: "porQue.laBuscaApolo",
+  },
   { clave: "sinPerdida", nivel: "basico", de: "webp", marca: "-lossless", tipo: "interruptor", campo: "sin_perdida" },
 
   // Avanzado
@@ -353,7 +380,11 @@ export const CONTROLES_WEBP: Control[] = [
 
 export const CONTROLES_JPEG: Control[] = [
   // Básico
-  { clave: "calidadJpeg", nivel: "basico", de: "jpeg", marca: "-quality", tipo: "especial", especial: "calidadJpeg" },
+  NOTA_OBJETIVO("jpeg"),
+  {
+    clave: "calidadJpeg", nivel: "basico", de: "jpeg", marca: "-quality", tipo: "especial", especial: "calidadJpeg",
+    cuando: sinObjetivo, porQue: "porQue.laBuscaApolo",
+  },
   { clave: "colorJpeg", nivel: "basico", de: "jpeg", marca: "-grayscale", tipo: "lista", campo: "color", valores: ["auto", "gris", "rgb"] },
   {
     clave: "escaneoJpeg", nivel: "basico", de: "jpeg", marca: "-baseline", tipo: "lista", campo: "escaneo",
@@ -427,9 +458,11 @@ const avifConAlfa: Cuando = (a, c) => c.alfa && !a.avif.sin_perdida;
 
 export const CONTROLES_AVIF: Control[] = [
   // Básico
+  NOTA_OBJETIVO("avif"),
   {
     clave: "calidadAvif", nivel: "basico", de: "avif", marca: "-q", tipo: "deslizador", campo: "calidad", min: 0, max: 100, paso: 1,
-    defecto: 60, cuando: avifConPerdida, porQue: "porQue.soloConPerdida",
+    defecto: 60, cuando: (a, c) => avifConPerdida(a, c) && sinObjetivo(a),
+    porQue: (a) => (a.avif.sin_perdida ? "porQue.soloConPerdida" : "porQue.laBuscaApolo"),
   },
   { clave: "velocidadAvif", nivel: "basico", de: "avif", marca: "-s", tipo: "deslizador", campo: "velocidad", min: 0, max: 10, paso: 1, defecto: 6 },
   { clave: "sinPerdidaAvif", nivel: "basico", de: "avif", marca: "-l", tipo: "interruptor", campo: "sin_perdida" },
@@ -475,9 +508,11 @@ const jxlConCalidad: Cuando = (a, c) => !(c.jpeg && a.jxl.jpeg_sin_perdida);
 
 export const CONTROLES_JXL: Control[] = [
   // Básico
+  NOTA_OBJETIVO("jxl"),
   {
     clave: "calidadJxl", nivel: "basico", de: "jxl", marca: "-q", tipo: "deslizador", campo: "calidad", min: 0, max: 100, paso: 1,
-    defecto: 90, limpiar: ["distancia"], cuando: jxlConCalidad, porQue: "porQue.jpegSinPerdida",
+    defecto: 90, limpiar: ["distancia"], cuando: (a, c) => jxlConCalidad(a, c) && sinObjetivo(a),
+    porQue: (a) => (a.objetivo !== null ? "porQue.laBuscaApolo" : "porQue.jpegSinPerdida"),
   },
   { clave: "esfuerzoJxl", nivel: "basico", de: "jxl", marca: "-e", tipo: "deslizador", campo: "esfuerzo", min: 1, max: 10, paso: 1, defecto: 7 },
   {

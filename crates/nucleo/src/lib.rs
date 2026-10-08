@@ -9,6 +9,7 @@ pub mod error;
 pub mod formatos;
 pub mod jpeg;
 pub mod lote;
+pub mod medir;
 pub mod metadatos;
 pub mod motores;
 pub mod orientacion;

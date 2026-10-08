@@ -14,7 +14,7 @@ ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
 	@echo "make tokens     regenera frontend/src/tokens.css desde crates/tema"
 	@echo "make contraste  solo la prueba de contraste"
-	@echo "make equivalencia  mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl, byte a byte"
+	@echo "make equivalencia  mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl, y la misma nota que ssimulacra2"
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
 	@echo "make app        compila la aplicación (necesita libwebkit2gtk-4.1-dev en Linux)"
 	@echo "make dev        la aplicación con recarga en caliente"
@@ -184,6 +184,8 @@ equivalencia: $(CWEBP) $(CJPEG) $(OXIPNG) $(QOICONV) $(AVIFENC) $(CJXL)
 		cargo test --release -p apolo-nucleo --test equivalencia_png_qoi -- --nocapture
 	APOLO_AVIFENC=$(abspath $(AVIFENC)) APOLO_CJXL=$(abspath $(CJXL)) APOLO_REFERENCIAS_OBLIGATORIAS=1 \
 		cargo test --release -p apolo-nucleo --test equivalencia_avif_jxl -- --nocapture
+	APOLO_SSIMULACRA2=$(abspath $(CJXL_DIR)/tools/ssimulacra2) APOLO_REFERENCIAS_OBLIGATORIAS=1 \
+		cargo test --release -p apolo-nucleo --test equivalencia_ssimulacra2 -- --nocapture
 
 # La marca: de los SVG de empaquetado/ a los PNG (Chromium de Playwright, como
 # Esfinge) y de ahí a los iconos de cada sistema. Los PNG van a git.

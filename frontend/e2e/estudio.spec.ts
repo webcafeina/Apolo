@@ -240,6 +240,33 @@ test("pegar una orden de cjxl pasa a JPEG XL con sus opciones", async ({ page })
   });
 });
 
+test("la calidad se mide, se puede buscar por nota, y el mapa enseña dónde se pierde", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  // La nota llega después de la vista previa.
+  await expect(page.getByTestId("nota")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId("medidas")).toContainText("PSNR");
+  await expect(page.getByTestId("medidas")).toContainText("SSIM");
+
+  // Con nota objetivo, la calidad la busca Apolo y la orden la lleva.
+  await page.getByTestId("formato").selectOption("jpeg");
+  await page.getByTestId("control-notaObjetivo").getByRole("switch").check();
+  await expect(page.getByTestId("hallada")).toContainText("encontrada", { timeout: 60_000 });
+  const hallada = (await page.getByTestId("hallada").textContent())!.match(/Calidad (\d+)/)![1];
+  await expect(page.getByTestId("orden")).toContainText(`cjpeg -quality ${hallada} `);
+  await expect(page.getByTestId("control-calidadJpeg")).toHaveClass(/apagado/);
+  // Y la nota medida llega a la pedida (80).
+  await expect(page.getByTestId("nota")).toBeVisible({ timeout: 30_000 });
+  const nota = Number((await page.getByTestId("nota").textContent())!.replace(",", "."));
+  expect(nota).toBeGreaterThanOrEqual(80);
+
+  // El modo diferencias: un solo panel, con el tipo de mapa a elegir.
+  await page.getByRole("radio", { name: "Diferencias" }).click();
+  await expect(page.getByTestId("rotulo-derecha")).toContainText("Píxeles que cambian");
+  await page.getByTestId("tipo-mapa").selectOption("estructura");
+  await expect(page.getByTestId("rotulo-derecha")).toContainText("Detalle que se pierde");
+  await expect(page.getByTestId("rotulo-izquierda")).toHaveCount(0);
+});
+
 test("pegar una orden de cjpeg pasa a JPEG con sus opciones", async ({ page }) => {
   await abrir(page, "foto.webp");
   await page.getByRole("button", { name: "Pegar orden…" }).click();

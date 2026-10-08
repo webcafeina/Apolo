@@ -119,3 +119,22 @@ test("varios formatos: un fichero de cada, o solo el más ligero", async ({ page
   await expect(page.getByTestId("resumen")).toContainText("2 imágenes convertidas", { timeout: 30_000 });
   expect(readdirSync(ligero)).toHaveLength(2);
 });
+
+test("medir la calidad y buscar una nota en un lote", async ({ page }) => {
+  const salida = join(mkdtempSync(join(tmpdir(), "apolo-e2e-medir-")), "salida");
+  await page.goto("/");
+  await page.getByRole("button", { name: "Lotes" }).click();
+  await page.getByTestId("ruta-dev").fill(corpus);
+  await page.getByRole("button", { name: "Añadir", exact: true }).click();
+  await expect(page.getByTestId("recogida")).toContainText("2 imágenes");
+  await page.getByTestId("salida").fill(salida);
+  await page.getByTestId("medir-lote").getByRole("checkbox").check();
+  await page.getByTestId("objetivo-lote").getByRole("checkbox").check();
+  await page.getByTestId("nota-objetivo-lote").fill("75");
+  await page.getByRole("button", { name: "Convertir 2 imágenes" }).click();
+  await expect(page.getByTestId("resumen")).toContainText("2 imágenes convertidas", { timeout: 60_000 });
+  // Cada fila lleva la calidad encontrada y su nota, y el resumen la media.
+  await expect(page.getByTestId("nota-fila")).toHaveCount(2);
+  await expect(page.getByTestId("filas")).toContainText("calidad ");
+  await expect(page.getByTestId("nota-media")).toContainText("Nota media");
+});

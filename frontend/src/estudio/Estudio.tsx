@@ -11,7 +11,7 @@ import { Cabecera, Icono, IconoApp, Marca } from "../componentes";
 import * as puente from "../puente";
 import { Comparador, type Modo } from "./Comparador";
 import type { Ajuste, Preset } from "./opciones";
-import { nombreFormato, Panel, type Lado } from "./Panel";
+import { banda, nombreFormato, Panel, type Lado } from "./Panel";
 
 const RETARDO_MS = 120;
 
@@ -32,9 +32,15 @@ interface EstadoLado {
   vista: puente.Vista | null;
   pixeles: ImageData | null;
   ocupado: boolean;
+  /** Las medidas de esa vista: se piden después, sin retrasarla (ADR 0022).
+   *  Un texto, si no se pudo medir (por qué). */
+  medidas: puente.Medidas | "midiendo" | { fallo: string } | null;
 }
 
-const ladoVacio = (ajuste: Ajuste | null): EstadoLado => ({ ajuste, vista: null, pixeles: null, ocupado: false });
+const ladoVacio = (ajuste: Ajuste | null): EstadoLado => ({ ajuste, vista: null, pixeles: null, ocupado: false, medidas: null });
+
+/** Un número con coma y `d` decimales. */
+const cifra = (n: number, d: number) => n.toLocaleString("es", { minimumFractionDigits: d, maximumFractionDigits: d });
 
 export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boolean }) {
   const { t } = useTranslation();
@@ -46,6 +52,8 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   const [error, setError] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [modo, setModo] = useState<Modo>("deslizador");
+  const [tipoMapa, setTipoMapa] = useState<puente.TipoMapa>("diferencia");
+  const [mapa, setMapa] = useState<ImageData | null>(null);
   const [guardados, setGuardados] = useState<puente.PresetGuardado[]>([]);
   const [sobre, setSobre] = useState(false);
   const generaciones = useRef<[number, number]>([0, 0]);
@@ -84,8 +92,8 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
         const nueva = typeof fuente === "string" ? await puente.abrirRuta(fuente) : await puente.abrirFichero(fuente);
         if (info) void puente.cerrar(info.id);
         setLados((x) => [
-          { ...x[0], vista: null, pixeles: null },
-          { ...x[1], vista: null, pixeles: null },
+          { ...x[0], vista: null, pixeles: null, medidas: null },
+          { ...x[1], vista: null, pixeles: null, medidas: null },
         ]);
         setInfo(nueva);
       } catch (e) {
@@ -134,8 +142,17 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
         if (g !== generaciones.current[l]) return;
         const px = await puente.pixelesResultado(info.id, l);
         if (g !== generaciones.current[l]) return;
-        cambiarLado(l, { vista: v, pixeles: px, ocupado: false });
+        cambiarLado(l, { vista: v, pixeles: px, ocupado: false, medidas: "midiendo" });
         setError(null);
+        // Medir va después: con una foto grande tarda segundos, y Rust lo
+        // cancela si entretanto llega otra vista previa de este lado.
+        try {
+          const m = await puente.medir(info.id, l, g);
+          if (g === generaciones.current[l]) cambiarLado(l, { medidas: m });
+        } catch (e) {
+          const f = e as puente.Fallo;
+          if (g === generaciones.current[l] && !f.cancelado) cambiarLado(l, { medidas: { fallo: f.mensaje } });
+        }
       } catch (e) {
         const f = e as puente.Fallo;
         if (g !== generaciones.current[l] || f.cancelado) return;
@@ -167,6 +184,22 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
 
   const ladoActivo: Lado = lados[editando].ajuste ? editando : 1;
   const vista = lados[ladoActivo].vista;
+
+  // El mapa de diferencias del lado que se edita, cuando se mira.
+  useEffect(() => {
+    if (!info || modo !== "diferencias" || !vista) {
+      setMapa(null);
+      return;
+    }
+    let vivo = true;
+    puente.pixelesMapa(info.id, ladoActivo, tipoMapa).then(
+      (p) => vivo && setMapa(p),
+      (e: puente.Fallo) => vivo && !e.cancelado && setError(e.mensaje),
+    );
+    return () => {
+      vivo = false;
+    };
+  }, [info, modo, vista, ladoActivo, tipoMapa]);
 
   const exportar = async () => {
     if (!info) return;
@@ -226,12 +259,13 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
     );
   }
 
-  const psnr = vista?.estadisticas?.psnr[3];
-  const sinPerdida = vista?.formato === "webp" && lados[ladoActivo].ajuste!.webp.sin_perdida;
+  const medidas = lados[ladoActivo].medidas;
   const rotulo = (l: Lado) => {
     const v = lados[l].vista;
     if (!lados[l].ajuste) return t("comparador.original");
-    return v ? `${nombreFormato(v.formato)} · ${formatoBytes(v.bytes)}` : nombreFormato(lados[l].ajuste!.formato);
+    const m = lados[l].medidas;
+    const nota = m && m !== "midiendo" && "ssim" in m && m.ssimulacra2 !== null ? ` · ${cifra(m.ssimulacra2, 1)}` : "";
+    return v ? `${nombreFormato(v.formato)} · ${formatoBytes(v.bytes)}${nota}` : nombreFormato(lados[l].ajuste!.formato);
   };
 
   return (
@@ -242,7 +276,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
           antetitulo={`${info.formato} · ${info.ancho} × ${info.alto}${info.alfa ? ` · ${t("estudio.conAlfa")}` : ""}`}
         >
           <div className="segmentado con-iconos" role="radiogroup" aria-label={t("comparador.modo")}>
-            {(["deslizador", "ladoALado"] as const).map((m) => (
+            {(["deslizador", "ladoALado", "diferencias"] as const).map((m) => (
               <button key={m} role="radio" aria-checked={modo === m} onClick={() => setModo(m)}>
                 <Icono nombre={m} lado={15} />
                 {t(`comparador.${m}`)}
@@ -274,22 +308,32 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
 
         <Comparador
           izquierda={lados[0].ajuste ? lados[0].pixeles : original}
-          derecha={lados[1].pixeles}
-          rotulos={[rotulo(0), rotulo(1)]}
-          ocupados={[lados[0].ocupado, lados[1].ocupado]}
+          derecha={modo === "diferencias" ? mapa : lados[1].pixeles}
+          rotulos={
+            modo === "diferencias"
+              ? ["", `${t(`comparador.mapa.${tipoMapa}`)} · ${rotulo(ladoActivo)}`]
+              : [rotulo(0), rotulo(1)]
+          }
+          ocupados={modo === "diferencias" ? [false, lados[ladoActivo].ocupado || (!!vista && !mapa)] : [lados[0].ocupado, lados[1].ocupado]}
           modo={modo}
+          extra={
+            <select
+              value={tipoMapa}
+              onChange={(e) => setTipoMapa(e.target.value as puente.TipoMapa)}
+              aria-label={t("comparador.tipoMapa")}
+              data-prueba="tipo-mapa"
+            >
+              <option value="diferencia">{t("comparador.mapa.diferencia")}</option>
+              <option value="estructura">{t("comparador.mapa.estructura")}</option>
+            </select>
+          }
         />
 
         <footer className="barra-estado" data-prueba="barra-estado">
           <div className="fila-estado">
             <Pesos info={info} vista={vista} />
             <span className="separador" />
-            {vista && (
-              <div className="datos apagado">
-                {vista.ancho} × {vista.alto} · {vista.milisegundos} ms
-                {psnr !== undefined && !sinPerdida && ` · PSNR ${psnr.toLocaleString("es", { maximumFractionDigits: 1 })} dB`}
-              </div>
-            )}
+            {vista && <Medicion vista={vista} medidas={medidas} />}
             <button className="principal" onClick={exportar} disabled={!vista} data-prueba="exportar">
               <Icono nombre="exportar" />
               {t("estudio.exportar")}
@@ -370,6 +414,49 @@ function Pesos({ info, vista }: { info: puente.InfoImagen; vista: puente.Vista |
       >
         <span className="barra-resultado" style={{ width: `${Math.max(proporcion * 100, 1.5)}%` }} />
       </div>
+    </div>
+  );
+}
+
+/**
+ * Las medidas del lado que se edita (ADR 0022): la nota SSIMULACRA 2 con lo
+ * que significa, PSNR y SSIM; y, con nota objetivo, la calidad encontrada.
+ */
+function Medicion({ vista, medidas }: { vista: puente.Vista; medidas: EstadoLado["medidas"] }) {
+  const { t } = useTranslation();
+  const h = vista.hallada;
+  return (
+    <div className="medicion" data-prueba="medidas">
+      {medidas === "midiendo" && <span className="apagado">{t("medidas.midiendo")}</span>}
+      {medidas && medidas !== "midiendo" && "fallo" in medidas && (
+        <span className="apagado" title={medidas.fallo}>
+          {t("medidas.sinMedida")}
+        </span>
+      )}
+      {medidas && medidas !== "midiendo" && "ssim" in medidas && (
+        <>
+          {medidas.ssimulacra2 !== null && (
+            <span className="nota" title={t("medidas.ayudaNota")}>
+              <span className="etiqueta">{t("medidas.nota")}</span>
+              <strong data-prueba="nota">{cifra(medidas.ssimulacra2, 1)}</strong>
+              <span className="apagado">{t(`nota.${banda(medidas.ssimulacra2)}`)}</span>
+            </span>
+          )}
+          <span className="apagado" title={t("medidas.ayudaTecnicas")}>
+            {medidas.psnr === null ? t("medidas.identicas") : `PSNR ${cifra(medidas.psnr, 1)} dB`} · SSIM {cifra(medidas.ssim, 4)}
+          </span>
+        </>
+      )}
+      {h && (
+        <span className={h.alcanzada ? "apagado" : "aviso-texto"} data-prueba="hallada">
+          {h.alcanzada
+            ? t("medidas.hallada", { calidad: h.calidad, pruebas: h.pruebas })
+            : t("medidas.noAlcanzada")}
+        </span>
+      )}
+      <span className="apagado">
+        {vista.ancho} × {vista.alto} · {vista.milisegundos} ms
+      </span>
     </div>
   );
 }

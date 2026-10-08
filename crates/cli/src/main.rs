@@ -42,6 +42,18 @@ enum Accion {
     /// Lista los presets guardados y dónde están
     Presets,
 
+    /// Mide cuánto se aleja una imagen de su original: SSIMULACRA 2, PSNR y SSIM
+    ///
+    /// SSIMULACRA 2 va de −∞ a 100: 90 o más no se distingue del original, 70
+    /// es alta calidad, 50 se nota. Es la misma nota que la herramienta
+    /// ssimulacra2 de libjxl.
+    Medir {
+        /// La imagen original
+        original: PathBuf,
+        /// La imagen a medir, del mismo tamaño
+        resultado: PathBuf,
+    },
+
     /// Convierte carpetas e imágenes enteras, en paralelo, a uno o varios formatos
     ///
     /// Las subcarpetas se repiten dentro de la salida, y nunca se sobrescribe
@@ -69,6 +81,12 @@ enum Accion {
         /// De cada imagen, guardar solo el formato que menos pese
         #[arg(long)]
         mas_ligero: bool,
+        /// Medir la nota (SSIMULACRA 2) de cada fichero; el lote tarda más
+        #[arg(long)]
+        medir: bool,
+        /// Buscar, en cada imagen, la calidad más baja que da esta nota SSIMULACRA 2
+        #[arg(long, value_name = "NOTA")]
+        objetivo: Option<f32>,
         /// Cuántas a la vez (por defecto, una por núcleo, hasta ocho)
         #[arg(short = 'j', long)]
         hilos: Option<usize>,
@@ -167,12 +185,18 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         Some(Accion::Webp { args }) => webp::ejecutar(&args),
+        Some(Accion::Medir {
+            original,
+            resultado,
+        }) => medir(&original, &resultado),
         Some(Accion::Lote {
             entradas,
             salida,
             preset,
             formato,
             mas_ligero,
+            medir,
+            objetivo,
             hilos,
             quiet,
             herramienta,
@@ -182,6 +206,8 @@ fn main() -> ExitCode {
             presets: preset,
             formatos: formato,
             mas_ligero,
+            medir,
+            objetivo,
             hilos,
             herramienta,
             silencio: quiet,
@@ -200,6 +226,42 @@ fn main() -> ExitCode {
             Orden::command().print_help().ok();
             println!();
             ExitCode::SUCCESS
+        }
+    }
+}
+
+fn medir(original: &std::path::Path, resultado: &std::path::Path) -> ExitCode {
+    let leer = |r: &std::path::Path| -> Result<(u32, u32, Vec<u8>), String> {
+        let datos =
+            std::fs::read(r).map_err(|e| format!("no se puede leer «{}»: {e}", r.display()))?;
+        let img = comun::leer(&datos)?;
+        apolo_nucleo::vista::rgba(&img).map_err(|e| e.to_string())
+    };
+    let r = (|| -> Result<apolo_nucleo::medir::Medidas, String> {
+        let (w, h, a) = leer(original)?;
+        let (w2, h2, b) = leer(resultado)?;
+        if (w, h) != (w2, h2) {
+            return Err(format!("no miden lo mismo: {w} × {h} y {w2} × {h2}"));
+        }
+        apolo_nucleo::medir::medir(&a, &b, w, h).map_err(|e| e.to_string())
+    })();
+    match r {
+        Ok(m) => {
+            let coma = |s: String| s.replace('.', ",");
+            match m.ssimulacra2 {
+                Some(n) => println!("SSIMULACRA 2  {}", coma(format!("{n:.2}"))),
+                None => println!("SSIMULACRA 2  (la imagen es menor de 8 × 8)"),
+            }
+            match m.psnr {
+                Some(p) => println!("PSNR          {} dB", coma(format!("{p:.2}"))),
+                None => println!("PSNR          ∞ (idénticas)"),
+            }
+            println!("SSIM          {}", coma(format!("{:.4}", m.ssim)));
+            ExitCode::SUCCESS
+        }
+        Err(e) => {
+            eprintln!("Error: {e}");
+            ExitCode::FAILURE
         }
     }
 }

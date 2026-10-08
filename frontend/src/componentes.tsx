@@ -79,6 +79,14 @@ const DIBUJOS: Record<string, ReactNode> = {
       <rect x="9.8" y="4" width="6.2" height="10" rx="1.4" />
     </>
   ),
+  // El mapa de diferencias: un marco con una mancha de calor.
+  diferencias: (
+    <>
+      <rect x="2.5" y="3.5" width="13" height="11" rx="2" />
+      <circle cx="10.5" cy="8.5" r="2.6" />
+      <circle cx="10.5" cy="8.5" r="0.8" />
+    </>
+  ),
   guardar: <path d="M4 2.5h8l2.5 2.5v9.5a1 1 0 0 1-1 1h-9.5a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1zM6 2.5V6h5V2.5M5.5 15.5V11h7v4.5" />,
 };
 

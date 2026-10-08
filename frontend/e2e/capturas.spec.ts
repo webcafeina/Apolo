@@ -39,6 +39,24 @@ test("avif y jpeg xl", async ({ page }, info) => {
   }
 });
 
+test("medidas y diferencias", async ({ page }, info) => {
+  await page.goto("/");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/corpus/foto.webp"));
+  await page.getByText("foto.webp", { exact: true }).waitFor();
+  await page.getByTestId("formato").selectOption("jpeg");
+  await page.getByTestId("control-notaObjetivo").getByRole("switch").check();
+  await page.getByTestId("nota").waitFor({ timeout: 60_000 });
+  await page.screenshot({ path: `capturas/medidas-${info.project.name}.png` });
+  await page.getByRole("radio", { name: "Diferencias" }).click();
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: `capturas/diferencias-${info.project.name}.png` });
+  await page.getByTestId("tipo-mapa").selectOption("estructura");
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: `capturas/estructura-${info.project.name}.png` });
+});
+
 test("vacío", async ({ page }, info) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Abrir una imagen…" }).waitFor();

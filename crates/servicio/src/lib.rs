@@ -13,6 +13,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use apolo_nucleo::entrada::{self, Imagen, Lectura, Pixeles};
+use apolo_nucleo::medir::{self, Medidas, TipoMapa};
 use apolo_nucleo::presets::{self, PresetGuardado};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida, Motivo};
 use apolo_nucleo::webp::{self, Estadisticas, OpcionesWebp};
@@ -95,6 +96,9 @@ pub struct Vista {
     pub equivalente: bool,
     /// Por qué no lo da, si no lo da (la interfaz lo explica).
     pub motivo: Option<Motivo>,
+    /// Con una nota objetivo, la calidad que se encontró (y que lleva la
+    /// orden).
+    pub hallada: Option<salida::Hallada>,
 }
 
 struct Abierta {
@@ -113,6 +117,9 @@ struct Ultimo {
     ajuste: Option<Ajuste>,
     datos: Vec<u8>,
     rgba: (u32, u32, Vec<u8>),
+    /// La imagen que recibió el codificador, para medir: se calcula al pedir
+    /// la primera medida o el primer mapa.
+    referencia: Option<Arc<(u32, u32, Vec<u8>)>>,
 }
 
 /// Imagen y lado del comparador.
@@ -275,6 +282,73 @@ impl Servicio {
         Ok(u.rgba.clone())
     }
 
+    /// El resultado de un lado y su referencia (la imagen que recibió el
+    /// codificador), del mismo tamaño, para medir o pintar el mapa.
+    #[allow(clippy::type_complexity)]
+    fn par_para_medir(
+        &self,
+        id: u64,
+        lado: u8,
+    ) -> R<(Arc<(u32, u32, Vec<u8>)>, (u32, u32, Vec<u8>))> {
+        let a = self.abierta(id)?;
+        let u = self.ultimo((id, lado));
+        let (ajuste, resultado, referencia) = {
+            let u = u.lock().unwrap();
+            let Some(ajuste) = u.ajuste.clone() else {
+                return Err(Fallo::nuevo("Todavía no hay resultado"));
+            };
+            (ajuste, u.rgba.clone(), u.referencia.clone())
+        };
+        let referencia = match referencia {
+            Some(r) => r,
+            None => {
+                let r = Arc::new(salida::referencia(&a.imagen, &ajuste)?);
+                let mut g = u.lock().unwrap();
+                // Si entretanto llegó otra vista previa, esta referencia ya no
+                // es la suya: no se guarda, pero sirve para esta medida.
+                if g.ajuste.as_ref() == Some(&ajuste) {
+                    g.referencia = Some(r.clone());
+                }
+                r
+            }
+        };
+        if (referencia.0, referencia.1) != (resultado.0, resultado.1) {
+            return Err(Fallo::nuevo(format!(
+                "No se puede medir: el resultado mide {} × {} y lo que recibió el codificador, {} × {} (cwebp redimensiona o recorta por su cuenta)",
+                resultado.0, resultado.1, referencia.0, referencia.1
+            )));
+        }
+        Ok((referencia, resultado))
+    }
+
+    /// Las medidas de la pérdida del último resultado de un lado (ADR 0022).
+    /// Puede tardar unos segundos con una foto grande, así que si entretanto
+    /// se ha pedido otra vista previa de ese lado (`generacion` ya no es la
+    /// última), se cancela antes de lo caro.
+    pub fn medir(&self, id: u64, lado: u8, generacion: u64) -> R<Medidas> {
+        let vigente = || {
+            self.generaciones
+                .lock()
+                .unwrap()
+                .get(&(id, lado))
+                .is_none_or(|g| g.load(Ordering::SeqCst) == generacion)
+        };
+        if !vigente() {
+            return Err(Error::Cancelado.into());
+        }
+        let (referencia, (w, h, resultado)) = self.par_para_medir(id, lado)?;
+        if !vigente() {
+            return Err(Error::Cancelado.into());
+        }
+        Ok(medir::medir(&referencia.2, &resultado, w, h)?)
+    }
+
+    /// El mapa de diferencias del último resultado de un lado, para pintar.
+    pub fn pixeles_mapa(&self, id: u64, lado: u8, tipo: TipoMapa) -> R<(u32, u32, Vec<u8>)> {
+        let (referencia, (w, h, resultado)) = self.par_para_medir(id, lado)?;
+        Ok((w, h, medir::mapa(&referencia.2, &resultado, w, h, tipo)?))
+    }
+
     /// Codifica la vista previa de un lado del comparador. `generacion` crece
     /// con cada cambio de ese lado; lo que se esté codificando con una
     /// anterior se cancela.
@@ -301,6 +375,13 @@ impl Servicio {
 
         let nombre = nombre_salida(&a.nombre, ajuste.formato);
         let motivo = salida::motivo(a.imagen.formato, ajuste);
+        // Con una nota objetivo, la orden lleva la calidad encontrada: da el
+        // mismo fichero que la vista previa.
+        let efectivo = match r.hallada {
+            Some(h) => salida::con_calidad(ajuste, h.calidad),
+            None => ajuste.clone(),
+        };
+        let ajuste_orden = &efectivo;
         let v = Vista {
             generacion,
             lado,
@@ -311,24 +392,26 @@ impl Servicio {
             alto: r.alto,
             milisegundos,
             estadisticas: r.estadisticas,
-            orden: salida::orden(ajuste, a.imagen.formato, &a.nombre, &nombre),
+            orden: salida::orden(ajuste_orden, a.imagen.formato, &a.nombre, &nombre),
             orden_completa: match &a.ruta {
                 Some(r) => salida::orden(
-                    ajuste,
+                    ajuste_orden,
                     a.imagen.formato,
                     &r.display().to_string(),
                     &r.with_file_name(&nombre).display().to_string(),
                 ),
-                None => salida::orden(ajuste, a.imagen.formato, &a.nombre, &nombre),
+                None => salida::orden(ajuste_orden, a.imagen.formato, &a.nombre, &nombre),
             },
             equivalente: motivo.is_none(),
             motivo,
+            hallada: r.hallada,
         };
         let u = self.ultimo((id, lado));
         *u.lock().unwrap() = Ultimo {
             ajuste: Some(ajuste.clone()),
             datos: r.datos,
             rgba,
+            referencia: None,
         };
         Ok(v)
     }

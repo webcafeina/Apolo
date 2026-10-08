@@ -59,6 +59,10 @@ test("medidas y diferencias", async ({ page }, info) => {
   await page.waitForTimeout(1500);
   await page.screenshot({ path: `capturas/diferencias-${info.project.name}.png` });
   await page.getByTestId("tipo-mapa").selectOption("estructura");
+  // Alejada, con el aviso de vista reducida: no tiene que pisar el selector ni el rótulo.
+  for (let i = 0; i < 8; i++) await page.getByRole("button", { name: "Alejar" }).click();
+  await page.getByTestId("nota-reducida").waitFor();
+  await page.screenshot({ path: `capturas/diferencias-reducida-${info.project.name}.png` });
   await page.waitForTimeout(1500);
   await page.screenshot({ path: `capturas/estructura-${info.project.name}.png` });
 });

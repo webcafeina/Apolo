@@ -525,11 +525,13 @@ html, body, #raiz { overscroll-behavior: none; }
 .herramientas { height: auto; min-height: 64px; padding-top: var(--espacio-3); padding-bottom: var(--espacio-2); }
 .titulos { gap: 2px; }
 
-/* La nota de vista reducida: arriba en el centro, discreta, y es un botón que
-   lleva al 100 %. */
+/* La nota de vista reducida: discreta, y es un botón que lleva al 100 %.
+   Abajo, sobre el zoom: arriba pisaba el selector y el rótulo del modo
+   Diferencias (v0.7.0). «Otra proporción», que usa el mismo sitio, nunca sale
+   a la vez: esa solo con otra proporción, y esta solo con la misma. */
 .nota-reducida {
   position: absolute;
-  top: 10px;
+  bottom: 56px;
   left: 50%;
   transform: translateX(-50%);
   height: 24px;

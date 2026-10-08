@@ -45,7 +45,7 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Cerrado
 
-- ~~**Entrega 6 — Métricas**~~ (v0.7.0, sin publicar todavía): SSIMULACRA 2 de libjxl (la misma
+- ~~**Entrega 6 — Métricas**~~ (v0.7.0, publicada el 2026-10-08): SSIMULACRA 2 de libjxl (la misma
   nota que su herramienta, 56 de 56), PSNR y SSIM; el modo «Diferencias» con dos mapas; medir en
   Lotes; la calidad por nota en el Estudio, Lotes y la CLI; `apolo medir`. ADR 0022. · 2026-10-08
 

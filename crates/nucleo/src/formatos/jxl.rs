@@ -330,6 +330,23 @@ pub fn texto(op: &OpcionesJxl, entrada: &str, salida: &str) -> String {
     partes.join(" ")
 }
 
+impl OpcionesJxl {
+    /// Las opciones que cuentan cuando cjxl recibe un JPEG tal cual: si lo
+    /// recomprime sin pérdida, ni la calidad, ni la distancia ni el grano, que
+    /// el panel apaga y que cjxl rechazaría.
+    pub fn para_jpeg(&self) -> OpcionesJxl {
+        if !self.jpeg_sin_perdida {
+            return self.clone();
+        }
+        OpcionesJxl {
+            calidad: None,
+            distancia: None,
+            ruido_iso: None,
+            ..self.clone()
+        }
+    }
+}
+
 /// Codifica un fichero PNG o JPEG (`ext`) como `cjxl entrada salida <opciones>`.
 pub fn codificar(entrada: &[u8], ext: &str, op: &OpcionesJxl) -> Resultado<Vec<u8>> {
     // cjxl también falla, pero solo dice «terminó con el código 1».
@@ -388,6 +405,22 @@ mod pruebas {
             (None, Some(1.5))
         );
         assert_eq!(o.opciones.orden(), ["-d", "1.5"]);
+    }
+
+    #[test]
+    fn con_un_jpeg_sin_perdida_no_lleva_calidad() {
+        let op = OpcionesJxl {
+            calidad: Some(80.0),
+            ruido_iso: Some(400),
+            esfuerzo: Some(5),
+            ..Default::default()
+        };
+        assert_eq!(op.para_jpeg().orden(), ["-e", "5"]);
+        let pixeles = OpcionesJxl {
+            jpeg_sin_perdida: false,
+            ..op
+        };
+        assert_eq!(pixeles.para_jpeg(), pixeles);
     }
 
     #[test]

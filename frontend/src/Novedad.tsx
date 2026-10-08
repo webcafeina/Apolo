@@ -83,7 +83,8 @@ export function BandaNovedad({
         )}
         {paso.es === "bajando" && (
           <div className="barra-progreso">
-            <i style={{ width: `${porcentaje(paso.avance) ?? 100}%` }} />
+            {/* Hasta saber el tamaño, vacía: llena parecía que ya había acabado (v0.6.0). */}
+            <i style={{ width: `${porcentaje(paso.avance) ?? 0}%` }} />
           </div>
         )}
       </div>

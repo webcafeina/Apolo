@@ -311,14 +311,15 @@ impl Servicio {
             alto: r.alto,
             milisegundos,
             estadisticas: r.estadisticas,
-            orden: salida::orden(ajuste, &a.nombre, &nombre),
+            orden: salida::orden(ajuste, a.imagen.formato, &a.nombre, &nombre),
             orden_completa: match &a.ruta {
                 Some(r) => salida::orden(
                     ajuste,
+                    a.imagen.formato,
                     &r.display().to_string(),
                     &r.with_file_name(&nombre).display().to_string(),
                 ),
-                None => salida::orden(ajuste, &a.nombre, &nombre),
+                None => salida::orden(ajuste, a.imagen.formato, &a.nombre, &nombre),
             },
             equivalente: motivo.is_none(),
             motivo,

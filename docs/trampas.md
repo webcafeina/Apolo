@@ -249,3 +249,10 @@ buscar. · 2026-10-07
 libyuv, al enlazar. Su CMake solo compila los ficheros NEON `if(NOT MSVC)`, y clang-cl cuenta como
 MSVC; sus cabeceras, en cambio, encienden los caminos NEON al ver `__aarch64__`. El proyecto de
 CMake define `LIBYUV_DISABLE_NEON`, `_SVE` y `_SME` en Windows ARM64, y libyuv usa su C. · 2026-10-07
+
+## CI: «this method takes 5 arguments but 4 arguments were supplied» en `src-tauri`
+
+El VPS no compila `src-tauri` (no hay webkit), así que un cambio ahí no lo ve ni `make comprobar`.
+Pasó al hacer commit nombrando carpetas a mano (`git add crates frontend …`): los cambios de
+`src-tauri/src/lib.rs` se quedaron fuera, y CI falló en la ventana mientras la CLI compilaba. Antes de
+cada commit, `git status --short` no tiene que enseñar nada sin añadir. · 2026-10-08

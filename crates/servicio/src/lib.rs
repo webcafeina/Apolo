@@ -353,6 +353,30 @@ impl Servicio {
     /// con cada cambio de ese lado; lo que se esté codificando con una
     /// anterior se cancela.
     pub fn codificar(&self, id: u64, ajuste: &Ajuste, lado: u8, generacion: u64) -> R<Vista> {
+        self.codificar_con(id, ajuste, lado, generacion, &|_| {})
+    }
+
+    /// Cancela lo que se esté codificando de ese lado (ADR 0023): sube su
+    /// generación, y la codificación en marcha se para en su siguiente aviso.
+    pub fn cancelar(&self, id: u64, lado: u8) {
+        self.generaciones
+            .lock()
+            .unwrap()
+            .entry((id, lado))
+            .or_default()
+            .fetch_add(1, Ordering::SeqCst);
+    }
+
+    /// Como `codificar`, y `avisar` recibe el progreso (de 0 a 100): el de
+    /// libwebp, o las pruebas hechas al buscar una nota.
+    pub fn codificar_con(
+        &self,
+        id: u64,
+        ajuste: &Ajuste,
+        lado: u8,
+        generacion: u64,
+        avisar: &(dyn Fn(i32) + Sync),
+    ) -> R<Vista> {
         let a = self.abierta(id)?;
         let ultima = self
             .generaciones
@@ -363,7 +387,10 @@ impl Servicio {
             .clone();
         ultima.fetch_max(generacion, Ordering::SeqCst);
         let actual = ultima.clone();
-        let mut seguir = move |_p: i32| actual.load(Ordering::SeqCst) == generacion;
+        let mut seguir = move |p: i32| {
+            avisar(p);
+            actual.load(Ordering::SeqCst) == generacion
+        };
 
         let reloj = Instant::now();
         let r = salida::codificar(&a.datos, &a.imagen, ajuste, Some(&mut seguir))?;

@@ -7,6 +7,7 @@
  * reservado se pierde: pasa solo con órdenes que la herramienta rechaza. */
 
 #include <setjmp.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -72,6 +73,34 @@ static int ejecutar(Principal principal, int argc, char ** argv, int callado)
     }
     return resultado;
 }
+
+/* Para un servidor que habla por la salida estándar (apolo-mcp, ADR 0023):
+ * guarda una copia del fd 1, que será la del protocolo, y apunta el fd 1 a la
+ * salida de errores. Así lo que cualquier biblioteca escriba en el fd 1 (avifenc
+ * con printf, por ejemplo) va a stderr y no rompe los mensajes. Va en C, y no en
+ * Rust, para que en Windows toque la misma tabla de descriptores del CRT que
+ * libavif y libjxl. Devuelve la copia, o -1 si no se pudo. */
+int apolo_apartar_salida(void)
+{
+    fflush(stdout);
+    int real = dup(1);
+    if (real < 0) {
+        return -1;
+    }
+    if (dup2(2, 1) < 0) {
+        close(real);
+        return -1;
+    }
+#if defined(_WIN32)
+    _setmode(real, _O_BINARY);
+#endif
+    return real;
+}
+
+#if defined(_WIN32)
+/* El HANDLE de Windows de un descriptor del CRT de este mismo módulo. */
+intptr_t apolo_manejador(int fd) { return _get_osfhandle(fd); }
+#endif
 
 int apolo_avifenc_main(int argc, char ** argv);
 int apolo_avifdec_main(int argc, char ** argv);

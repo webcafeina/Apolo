@@ -293,7 +293,9 @@ fn buscar_nota(
         if let Some((_, _, n)) = probadas.iter().find(|(c, _, _)| *c == q) {
             return Ok(*n);
         }
-        if !progreso.as_mut().is_none_or(|f| f(0)) {
+        // El progreso, por pruebas hechas de las ocho que hace como mucho.
+        let hechas = (probadas.len() * 100 / 8).min(99) as i32;
+        if !progreso.as_mut().is_none_or(|f| f(hechas)) {
             return Err(crate::Error::Cancelado);
         }
         let c = codificar_tal_cual(datos, img, &con_calidad(a, q), None)?;

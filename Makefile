@@ -8,7 +8,7 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli app dev dev-web e2e capturas equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp catalogo-mcp app dev dev-web e2e capturas equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -16,6 +16,8 @@ ayuda:
 	@echo "make contraste  solo la prueba de contraste"
 	@echo "make equivalencia  mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl, y la misma nota que ssimulacra2"
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
+	@echo "make mcp        compila el servidor MCP para agentes (target/release/apolo-mcp)"
+	@echo "make catalogo-mcp  regenera docs/mcp/catalogo.md desde crates/mcp"
 	@echo "make app        compila la aplicación (necesita libwebkit2gtk-4.1-dev en Linux)"
 	@echo "make dev        la aplicación con recarga en caliente"
 	@echo "make dev-web    el Estudio en el navegador, sin ventana (http://127.0.0.1:5173)"
@@ -28,7 +30,7 @@ comprobar: interfaz rust
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
-RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-avifjxl -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev)
+RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-avifjxl -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev -p apolo-mcp)
 
 rust:
 	cargo fmt --all --check
@@ -48,6 +50,12 @@ tokens:
 
 cli:
 	cargo build --release -p apolo-cli
+
+mcp:
+	cargo build --release -p apolo-mcp
+
+catalogo-mcp:
+	APOLO_REGENERAR=1 cargo test -q -p apolo-mcp --test catalogo
 
 app:
 	pnpm install --frozen-lockfile

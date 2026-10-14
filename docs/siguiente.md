@@ -1,12 +1,26 @@
 # Lo siguiente
 
-Última actualización: **2026-10-07**
+Última actualización: **2026-10-14**
 
 El plan entero salió de la sesión del 2026-10-06, decidido con el cliente en cuatro rondas de
 preguntas (ver [decisiones.md](decisiones.md)). Va **por entregas**; cada una se cierra con sus
 pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
+
+- **Entrega 7 — Agentes por MCP** (v0.8.0, [ADR 0023](adr/0023-mcp.md)). En tres partes:
+  - ~~**7a**~~: `crates/mcp` con las diez herramientas, pruebas, catálogo y el paseo con Claude Code
+    (2026-10-14, sin versión publicada).
+  - **7b**: el empaquetado. `crates/mcpb` (`armar-mcpb`, manifiesto 0.3 con las herramientas sacadas
+    de `apolo_mcp::ServidorApolo::herramientas()`); el sidecar `apolo-mcp` en los instaladores
+    (`src-tauri/tauri.mcp.conf.json`, que se fusiona **solo al empaquetar**); el relevo de la copia
+    del `.mcpb` al binario instalado (`APOLO_MCP_DESDE_PAQUETE`); la pestaña «Agentes» en Ajustes
+    (`crates/servicio/src/agentes.rs`, órdenes `agentes` y `crear_mcpb`, `Agentes.tsx`), con su
+    e2e; `apolo-mcp` en el paquete de la CLI; `publicar.yml`; README. Después, **la v0.8.0** (solo
+    cuando lo diga el cliente) y la prueba guiada en su Mac con Claude Desktop y el `.mcpb`.
+  - **7c**: la evaluación con unos 25 escenarios de `claude -p` (`scripts/evaluar-mcp.mjs`, informe
+    en `docs/mcp/evaluacion.md`), con uno adversario («sobrescribe el original»). Los arreglos van a
+    las descripciones, no a los escenarios. v0.8.1 si cambia algo.
 
 - ~~Publicar la v0.4.0~~ (2026-10-07). **Que el cliente actualice desde la v0.3.3** con el
   actualizador: es la primera vez que se ve de verdad (deuda). La clave del actualizador se queda en el VPS por decisión del
@@ -21,8 +35,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
   `windows-artifacts.zip` de libavif y el `jxl-x64-windows-static.zip` de libjxl. AVIF en Mac ya
   está (16 de 16, 2026-10-08).
 - ~~**Entrega 6 — Métricas.**~~ Hecha como v0.7.0 (ver Cerrado).
-- **Entrega 7 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas. (La
-  actualización automática se adelantó a la v0.3.3: ADR 0018.)
+- **Entrega 8 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas. (La
+  actualización automática se adelantó a la v0.3.3: ADR 0018.) Era la 7 hasta el 2026-10-14, cuando
+  el cliente metió delante los agentes por MCP.
 
 ## Baja
 

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/heic", "crates/avifjxl", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "src-tauri"]
+members = ["crates/heic", "crates/avifjxl", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "crates/mcp", "src-tauri"]
 
 [workspace.package]
 version = "0.7.1"

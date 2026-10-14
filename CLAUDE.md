@@ -43,12 +43,13 @@ Tauri 2 + Rust, con la interfaz en React + Vite + TypeScript ([ADR 0001](docs/ad
 | `crates/servicio` | El Estudio sin ventana: lo usan la aplicación y el servidor de desarrollo |
 | `crates/dev` | `apolo-dev`: el Estudio por HTTP, para probar la interfaz en un navegador |
 | `crates/tema` | La paleta, el cálculo de contraste y el generador de `frontend/src/tokens.css` |
+| `crates/mcp` | `apolo-mcp`: Apolo para agentes de IA (Claude, Cursor…) por MCP, con diez herramientas ([ADR 0023](docs/adr/0023-mcp.md)) |
 | `crates/cli` | El binario `apolo`, para scripts. `apolo webp`, `jpeg` y `png` aceptan las opciones de `cwebp`, `cjpeg` y `oxipng`; `apolo avif` y `jxl` son `avifenc` y `cjxl`; `apolo medir` da la nota SSIMULACRA 2 |
 | `src-tauri` | La aplicación de ventana: órdenes de Tauri sobre el núcleo |
 | `frontend` | La interfaz. Los textos, en `src/i18n/es.json`, nunca escritos a mano en un componente |
 | `pruebas/corpus` | Imágenes de prueba para la equivalencia con `cwebp` |
 
-Dos caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, con los mismos presets.
+Tres caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, y lo hace un agente por MCP, con los mismos presets.
 
 ## Cómo se compila
 
@@ -64,6 +65,7 @@ Dos caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, con los
 - `make equivalencia`: el mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl (`make
   referencias` las prepara: cjpeg y libpng se compilan desde la fuente).
 - `make cli`: el binario `apolo`.
+- `make mcp`: el servidor `apolo-mcp`. `make catalogo-mcp` regenera `docs/mcp/catalogo.md`.
 - `make tokens`: regenera `frontend/src/tokens.css` desde `crates/tema`. **No se edita a mano.**
 - `make app`: la aplicación. En Linux necesita `libwebkit2gtk-4.1-dev`; si la máquina no lo tiene, la
   ventana se compila en CI y aquí solo el núcleo y la CLI.

@@ -68,8 +68,9 @@
    coincide con la de `ssimulacra2`).
 6. ~~**Prueba guiada de la v0.7.0 en el Mac del cliente**~~ **completa el 2026-10-14**: los cinco
    pasos bien. En el paso 5, la CLI de Mac dio lo mismo que el VPS con `playa-1.jpg` (calidad 90 para
-   la nota 80, SSIMULACRA 2 83,2). **Falta publicar la v0.7.1** con los tres arreglos, cuando lo diga
-   el cliente. Los pasos 1 (la nota), 2 (calidad por nota) y 3 (Diferencias) salieron bien.
+   la nota 80, SSIMULACRA 2 83,2). **v0.7.1 publicada el 2026-10-14** con los tres arreglos; borrador
+   revisado (22 ficheros, sumas, 14 firmas, la CLI busca, mide y da el mismo AVIF que avifenc).
+   **Lo siguiente es la entrega 7, la 1.0** (siguiente.md): decidirla con el cliente. Los pasos 1 (la nota), 2 (calidad por nota) y 3 (Diferencias) salieron bien.
    - El paso 4 es **Lotes midiendo**: `vacaciones` en WebP con «Medir la calidad» (nota por fila,
      nota media, «Las de peor nota»), y opcional otro lote con «Buscar la calidad por nota» a 80.
      El texto del paso está en sesiones.md (2026-10-08, tarde).

@@ -10,7 +10,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - En el 5, `apolo jpeg -apolo_objetivo 80` con `playa-1.jpg` dio en el Mac lo mismo que en el VPS:
   calidad 90 y SSIMULACRA 2 83,2 (`apolo medir`: 83,17). El cliente no tenía que instalar nada: el
   bloque de bash baja la CLI con curl, sin cuarentena.
-- Queda publicar la v0.7.1 con los tres arreglos de la prueba.
+- **v0.7.1 publicada** con los tres arreglos, revisada como siempre (22 ficheros, sumas, 14 firmas,
+  y la CLI de Linux de la Release: misma calidad hallada y el mismo AVIF que avifenc). El verificador
+  de firmas se rehízo otra vez: vive en la carpeta temporal y se pierde entre sesiones.
 
 ## 2026-10-08 (tarde) · v0.7.0 publicada, y la prueba guiada hasta el paso 3
 

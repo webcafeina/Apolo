@@ -4,6 +4,14 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-14 · La prueba guiada de la v0.7.0, completa
+
+- Pasos 4 (Lotes midiendo y buscando la nota) y 5 (la CLI de Mac), bien.
+- En el 5, `apolo jpeg -apolo_objetivo 80` con `playa-1.jpg` dio en el Mac lo mismo que en el VPS:
+  calidad 90 y SSIMULACRA 2 83,2 (`apolo medir`: 83,17). El cliente no tenía que instalar nada: el
+  bloque de bash baja la CLI con curl, sin cuarentena.
+- Queda publicar la v0.7.1 con los tres arreglos de la prueba.
+
 ## 2026-10-08 (tarde) · v0.7.0 publicada, y la prueba guiada hasta el paso 3
 
 - **v0.7.0 publicada**. CI falló primero en la ventana porque los cambios de `src-tauri` se

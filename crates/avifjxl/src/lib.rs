@@ -133,10 +133,14 @@ pub fn convertir(
         }
     }
     // cjxl y djxl se callan con --quiet; avifenc y avifdec, con el puente.
-    if matches!(herramienta, Herramienta::Cjxl | Herramienta::Djxl) {
+    // Solo estos dos tocan el fd 1: van con el mismo candado, y así nunca se
+    // callan dos a la vez. Si cjxl también lo tocara, un AVIF y un JXL a la vez
+    // podrían dejar el fd 1 en /dev/null para siempre (docs/trampas.md).
+    let jxl = matches!(herramienta, Herramienta::Cjxl | Herramienta::Djxl);
+    if jxl {
         todos.push("--quiet".into());
     }
-    let codigo = ejecutar_con(herramienta, &todos, true);
+    let codigo = ejecutar_con(herramienta, &todos, !jxl);
     if codigo != 0 {
         return Err(format!(
             "{} terminó con el código {codigo}",
@@ -255,4 +259,39 @@ pub fn ssimulacra2(
         )
     };
     (!nota.is_nan()).then_some(nota)
+}
+
+unsafe extern "C" {
+    fn apolo_apartar_salida() -> c_int;
+    #[cfg(windows)]
+    fn apolo_manejador(fd: c_int) -> isize;
+}
+
+/// Para un servidor que habla por la salida estándar (apolo-mcp, ADR 0023):
+/// devuelve una copia de la salida estándar para el protocolo, y apunta el fd 1
+/// a la salida de errores. Lo que escriba cualquier biblioteca de C (avifenc con
+/// `printf`) o un `println!` va a stderr y no rompe los mensajes. Se llama una
+/// vez, al arrancar, antes de nada más.
+pub fn apartar_salida() -> std::io::Result<std::fs::File> {
+    // SAFETY: sin argumentos; solo duplica descriptores del propio proceso.
+    let fd = unsafe { apolo_apartar_salida() };
+    if fd < 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    #[cfg(unix)]
+    {
+        use std::os::fd::FromRawFd;
+        // SAFETY: `fd` es una copia nueva, y solo la tiene este File.
+        Ok(unsafe { std::fs::File::from_raw_fd(fd) })
+    }
+    #[cfg(windows)]
+    {
+        use std::os::windows::io::FromRawHandle;
+        // SAFETY: el HANDLE del descriptor que se acaba de duplicar.
+        let h = unsafe { apolo_manejador(fd) };
+        if h == -1 {
+            return Err(std::io::Error::last_os_error());
+        }
+        Ok(unsafe { std::fs::File::from_raw_handle(h as _) })
+    }
 }

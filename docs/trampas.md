@@ -256,3 +256,43 @@ El VPS no compila `src-tauri` (no hay webkit), así que un cambio ahí no lo ve 
 Pasó al hacer commit nombrando carpetas a mano (`git add crates frontend …`): los cambios de
 `src-tauri/src/lib.rs` se quedaron fuera, y CI falló en la ventana mientras la CLI compilaba. Antes de
 cada commit, `git status --short` no tiene que enseñar nada sin añadir. · 2026-10-08
+
+## Un MCP por stdio que se rompe «a veces»: «Unexpected token» o el cliente se desconecta
+
+El cliente lee la salida estándar del servidor como mensajes JSON-RPC, uno por línea, y **cualquier
+otra cosa** que llegue por ahí lo rompe: un `printf` de avifenc, un `println!` de depuración. Pasa
+solo con algunas operaciones, así que parece aleatorio. `apolo-mcp` llama a
+`apolo_avifjxl::apartar_salida()` **antes de nada**: copia el fd 1 para el protocolo y apunta el fd 1
+a stderr. Tiene que ir en C (`puente.c`): en Windows, las bibliotecas de C escriben por la tabla de
+descriptores del CRT, y un `SetStdHandle` desde Rust no la cambia. `crates/avifjxl/tests/salida.rs`
+lo vigila (ADR 0023). · 2026-10-14
+
+## El fd 1 se queda en `/dev/null` tras convertir AVIF y JXL a la vez
+
+Callar un `main` de C es apuntar el fd 1 a `/dev/null` y devolverlo al acabar. Si dos llamadas con
+candados distintos (AVIF y JXL) lo hacen a la vez, la segunda guarda como «original» el `/dev/null`
+de la primera y lo restaura al final: el fd 1 se queda en `/dev/null` para siempre. En la ventana no
+se ve; en `apolo lote --formato avif,jxl` la CLI se queda muda, y en un MCP sería el protocolo. Solo
+se callan avifenc y avifdec, que comparten candado; cjxl y djxl van con `--quiet`. · 2026-10-14
+
+## Un nombre de herramienta MCP con ñ o tildes
+
+Los nombres de herramienta solo admiten `[a-zA-Z0-9_-]`, y algunos clientes ni avisan: la
+herramienta no aparece. Por eso `ver_imagen`, `tamano` y nada de `año`. Tampoco hace falta prefijo:
+el cliente ya las llama `mcp__apolo__…`. La prueba `tests/tuberia.rs` lo comprueba. · 2026-10-14
+
+## `make catalogo-mcp` y la prueba del catálogo
+
+`docs/mcp/catalogo.md` sale de las descripciones del código (los comentarios `///` de cada
+herramienta y de cada campo). Cambiar una descripción sin regenerarlo hace fallar `make comprobar`
+con «docs/mcp/catalogo.md no está al día». Se arregla con `make catalogo-mcp`. · 2026-10-14
+
+## El agente no ve los avisos de una herramienta MCP, aunque están en la respuesta
+
+Una herramienta que devuelve texto y `structuredContent` a la vez: Claude Code le pasa al modelo
+**solo el `structuredContent`**, en JSON, y el texto preparado para él (avisos, pistas, la orden
+equivalente) no le llega. No da ningún error: el agente simplemente no sabe lo que dice el texto, y
+propone hacer lo que ya se hizo. En `apolo-mcp`, el texto va también como `resumen` dentro de
+`structuredContent` (`lib.rs::resultado`), y `tests/tuberia.rs` lo comprueba. Cronos responde
+igual, con texto y datos, y probablemente le pase lo mismo. Salió en el paseo
+([mcp/paseo.md](mcp/paseo.md)). · 2026-10-14

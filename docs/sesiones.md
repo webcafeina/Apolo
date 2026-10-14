@@ -4,6 +4,35 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-14 (tarde) · Entrega 7a: Apolo para agentes de IA por MCP
+
+- **Planteamiento en modo plan con el cliente.** Se analizaron los dos MCP de la casa: Cronos
+  (remoto, herramientas por intención, texto con datos y pistas) y Esfinge (local, dentro del
+  instalador, puente a la app abierta). Se toma la arquitectura de Esfinge sin el puente, y el
+  diseño de herramientas de Cronos. Diez decisiones en una ronda de preguntas: locales ahora y
+  remoto después, `apolo-mcp` independiente, nunca sobrescribir, miniatura bajo demanda, unas diez
+  herramientas, dentro del instalador, rmcp, sin interruptor, nota 80 por defecto y enderezar por
+  defecto. Pasa a ser la **entrega 7 (v0.8.0)**; la 1.0, la 8. ADR 0023.
+- **Arreglos previos**: una carrera en `crates/avifjxl` que podía dejar el fd 1 en `/dev/null`
+  (cjxl y djxl ya no se callan: llevan `--quiet`); `apartar_salida()` en `puente.c`;
+  `Servicio::cancelar` y `codificar_con` con progreso.
+- **`crates/mcp`**: el binario `apolo-mcp` con rmcp 3.5.1 y las diez herramientas, como funciones
+  puras sobre `Servicio`; progreso y cancelación del protocolo; errores con código y `PISTAS:`;
+  rutas con `~`, `file://` y comillas; el catálogo generado (`make catalogo-mcp`) y `make mcp`.
+- Verificado: 13 pruebas de las herramientas, la del protocolo por tuberías (AVIF y JXL a la vez,
+  cada línea de stdout es JSON-RPC), la del fd 1 con un `printf` de verdad, el catálogo al día,
+  `make comprobar` y `make equivalencia` sin cambios.
+- **Paseo con Claude Code** ([mcp/paseo.md](mcp/paseo.md)): seis peticiones, una adversaria, las
+  seis bien y los 28 originales intactos. Salió que **Claude Code solo le da al modelo el
+  `structuredContent`** (trampa): el texto va ahora también como `resumen`. Y tres retoques más
+  (zonas en PNG, qué hacer si no se llega a la nota, aviso del lote), comprobados repitiendo dos
+  escenarios.
+- Decidido al hacerlo: sin `outputSchema` ni el trait `Almacen` todavía (deuda y ADR).
+- **No verificado**: nada fuera de Linux, ni con Claude Desktop, Cursor o VS Code.
+- Lo siguiente: la 7b (empaquetado, pestaña «Agentes», CI, v0.8.0 cuando lo diga el cliente).
+
+---
+
 ## 2026-10-14 · La prueba guiada de la v0.7.0, completa
 
 - Pasos 4 (Lotes midiendo y buscando la nota) y 5 (la CLI de Mac), bien.

@@ -18,3 +18,8 @@ libwebp-sys = "=0.14.4"
 
 [build-dependencies]
 cmake = "0.1"
+
+# Se relanza a sí misma: sin el arnés de pruebas, que escribe en stdout.
+[[test]]
+name = "salida"
+harness = false

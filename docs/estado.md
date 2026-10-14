@@ -1,6 +1,6 @@
 # Estado
 
-Última actualización: **2026-10-07**
+Última actualización: **2026-10-14**
 
 ## Dónde se paró, y por dónde se sigue
 
@@ -36,6 +36,16 @@
 
 ### La siguiente acción, al retomar
 
+0. **Entrega 7, agentes por MCP** ([ADR 0023](adr/0023-mcp.md)), decidida con el cliente el
+   2026-10-14 en modo plan. Pasa delante de la 1.0, que queda como entrega 8.
+   - **La 7a está hecha** (sin versión publicada): `crates/mcp` con el binario `apolo-mcp` y las
+     diez herramientas, sus pruebas (las herramientas, el protocolo por tuberías con AVIF y JXL a la
+     vez, el fd 1), el catálogo generado ([mcp/catalogo.md](mcp/catalogo.md)) y el paseo con Claude
+     Code ([mcp/paseo.md](mcp/paseo.md)).
+   - **Lo siguiente es la 7b**: el empaquetado (sidecar, `.mcpb`, relevo), la pestaña «Agentes», CI
+     y la v0.8.0, que **solo se publica cuando lo diga el cliente**. El detalle, en siguiente.md.
+   - Probarlo a mano: `make mcp`, y en Claude Code
+     `claude mcp add --scope user apolo -- ~/proyectos/apolo/target/release/apolo-mcp`.
 1. **La entrega 5b está publicada como v0.6.0** (2026-10-08,
    https://github.com/webcafeina/Apolo/releases/tag/v0.6.0) ([ADR 0021](adr/0021-avif-y-jpeg-xl.md)).
    Lleva también los tres retoques de la v0.5.1. Antes de publicar se revisó el borrador:
@@ -70,7 +80,7 @@
    pasos bien. En el paso 5, la CLI de Mac dio lo mismo que el VPS con `playa-1.jpg` (calidad 90 para
    la nota 80, SSIMULACRA 2 83,2). **v0.7.1 publicada el 2026-10-14** con los tres arreglos; borrador
    revisado (22 ficheros, sumas, 14 firmas, la CLI busca, mide y da el mismo AVIF que avifenc).
-   **Lo siguiente es la entrega 7, la 1.0** (siguiente.md): decidirla con el cliente. Los pasos 1 (la nota), 2 (calidad por nota) y 3 (Diferencias) salieron bien.
+   ~~Lo siguiente era la entrega 7, la 1.0~~: el cliente metió antes los agentes por MCP (punto 0), y la 1.0 es la entrega 8. Los pasos 1 (la nota), 2 (calidad por nota) y 3 (Diferencias) salieron bien.
    - El paso 4 es **Lotes midiendo**: `vacaciones` en WebP con «Medir la calidad» (nota por fila,
      nota media, «Las de peor nota»), y opcional otro lote con «Buscar la calidad por nota» a 80.
      El texto del paso está en sesiones.md (2026-10-08, tarde).
@@ -114,7 +124,9 @@
 - Prueba guiada de la v0.6.1 en el Mac del cliente, completa (2026-10-08), con AVIF igual que el
   avifenc oficial de Mac en 16 de 16.
 - Entrega 6, métricas (2026-10-08). ADR 0022. v0.7.0 publicada el mismo día.
+- Prueba guiada de la v0.7.0, completa, y v0.7.1 publicada (2026-10-14).
+- Entrega 7a: `apolo-mcp`, el servidor MCP con diez herramientas (2026-10-14). ADR 0023.
 
 ## En curso
 
-- Nada a medias en el código.
+- Entrega 7 (MCP): hecha la 7a; faltan la 7b (empaquetado y pestaña) y la 7c (evaluación).

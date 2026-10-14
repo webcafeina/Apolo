@@ -12,7 +12,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   bloque de bash baja la CLI con curl, sin cuarentena.
 - **v0.7.1 publicada** con los tres arreglos, revisada como siempre (22 ficheros, sumas, 14 firmas,
   y la CLI de Linux de la Release: misma calidad hallada y el mismo AVIF que avifenc). El verificador
-  de firmas se rehízo otra vez: vive en la carpeta temporal y se pierde entre sesiones.
+  de firmas se rehízo otra vez (vivía en la carpeta temporal) y pasa al repositorio:
+  `pruebas/referencias/verificar_firmas.py`.
 
 ## 2026-10-08 (tarde) · v0.7.0 publicada, y la prueba guiada hasta el paso 3
 

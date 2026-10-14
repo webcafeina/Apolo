@@ -47,9 +47,19 @@
      las instrucciones, la fila «MCP» encima de Ajustes con la pestaña «Agentes de IA», CI, README y
      las notas de la v0.8.0. Lo pidió el cliente antes de empezarla: que se actualice sola, que diga
      su versión y la fila en la barra.
-   - **Lo siguiente**: empujar, ver CI y una publicación de prueba (`workflow_dispatch`) con los
-     instaladores y los `.mcpb`; luego la v0.8.0, que **solo se publica cuando lo diga el
-     cliente**, y la prueba guiada en su Mac (siguiente.md).
+   - **Al parar (2026-10-14)**: empujado. `Comprobar` en verde (la ventana compila, e2e y
+     equivalencia). Publicación de prueba **38558247128** (sin etiqueta): Linux y Windows bien. El
+     `.deb` lleva `/usr/bin/apolo-mcp`, y el de la CI responde a `acerca_de_apolo`. El instalador de
+     Windows x64 pasa de 9 a 16 MiB, que es `apolo-mcp.exe`. Hay `.mcpb` de Linux y de Windows (11
+     herramientas), y la CLI trae `apolo-mcp`. **El Mac seguía compilando al parar.**
+   - **Lo siguiente, mañana**:
+     1. Mirar cómo acabó el trabajo `macos-universal` de esa ejecución (`gh run view 38558247128`).
+        Si salió bien, bajar `apolo-macos-universal` y comprobar dentro del `.dmg`
+        `Apolo.app/Contents/MacOS/apolo-mcp` (universal, con `lipo -info` si hay Mac) y el `.mcpb`
+        de macOS.
+     2. Después, la v0.8.0, que **solo se publica cuando lo diga el cliente**: subir la versión, la
+        etiqueta, revisar el borrador como siempre (sumas, firmas, y ahora los `.mcpb`).
+     3. La prueba guiada en su Mac (siguiente.md), y la 7c.
    - Probarlo a mano: `make mcp`, y en Claude Code
      `claude mcp add --scope user apolo -- ~/proyectos/apolo/target/release/apolo-mcp`.
 1. **La entrega 5b está publicada como v0.6.0** (2026-10-08,

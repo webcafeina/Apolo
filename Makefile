@@ -8,7 +8,7 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp catalogo-mcp app dev dev-web e2e capturas equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp app dev dev-web e2e capturas equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -18,6 +18,7 @@ ayuda:
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
 	@echo "make mcp        compila el servidor MCP para agentes (target/release/apolo-mcp)"
 	@echo "make catalogo-mcp  regenera docs/mcp/catalogo.md desde crates/mcp"
+	@echo "make mcpb       el paquete .mcpb de Claude Desktop para este sistema (target/mcpb/)"
 	@echo "make app        compila la aplicación (necesita libwebkit2gtk-4.1-dev en Linux)"
 	@echo "make dev        la aplicación con recarga en caliente"
 	@echo "make dev-web    el Estudio en el navegador, sin ventana (http://127.0.0.1:5173)"
@@ -30,7 +31,7 @@ comprobar: interfaz rust
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
-RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-avifjxl -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev -p apolo-mcp)
+RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-avifjxl -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev -p apolo-mcp -p apolo-mcpb)
 
 rust:
 	cargo fmt --all --check
@@ -57,9 +58,24 @@ mcp:
 catalogo-mcp:
 	APOLO_REGENERAR=1 cargo test -q -p apolo-mcp --test catalogo
 
-app:
+SISTEMA := $(shell uname -s | sed 's/Darwin/macos/; s/Linux/linux/')
+VERSION := $(shell sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
+
+mcpb: mcp
+	cargo run -q --release -p apolo-mcpb -- target/release/apolo-mcp $(VERSION) $(SISTEMA) target/mcpb
+
+# El sidecar de la aplicación (ADR 0023): Tauri lo busca como
+# src-tauri/binaries/apolo-mcp-<triple> y solo al empaquetar, con
+# --config src-tauri/tauri.mcp.conf.json (trampas.md).
+TRIPLE := $(shell rustc -vV 2>/dev/null | sed -n 's/^host: //p')
+
+sidecar: mcp
+	mkdir -p src-tauri/binaries
+	cp target/release/apolo-mcp src-tauri/binaries/apolo-mcp-$(TRIPLE)
+
+app: sidecar
 	pnpm install --frozen-lockfile
-	pnpm tauri build
+	pnpm tauri build --config src-tauri/tauri.mcp.conf.json
 
 dev:
 	pnpm install --frozen-lockfile
@@ -73,12 +89,12 @@ dev-web:
 	trap 'kill 0' EXIT; target/debug/apolo-dev & pnpm -C frontend exec vite --host 127.0.0.1
 
 e2e:
-	cargo build -p apolo-dev
+	cargo build -p apolo-dev -p apolo-mcp
 	pnpm -C frontend install --frozen-lockfile
 	pnpm -C frontend exec playwright test
 
 capturas:
-	cargo build -p apolo-dev
+	cargo build -p apolo-dev -p apolo-mcp
 	CAPTURAS=1 pnpm -C frontend exec playwright test capturas
 
 # La prueba de la ADR 0002 contra el cwebp oficial de Google, de la misma

@@ -147,3 +147,16 @@ test("lotes-formatos", async ({ page }, info) => {
   await page.waitForTimeout(300);
   await page.screenshot({ path: `capturas/lotes-formatos-${info.project.name}.png`, fullPage: true });
 });
+
+test("agentes", async ({ page }, info) => {
+  test.setTimeout(90_000);
+  await page.goto("/");
+  await page.getByRole("button", { name: "MCP" }).click();
+  await page.getByTestId("orden-claude-code").waitFor();
+  await page.getByRole("button", { name: "Crear la extensión" }).click();
+  await page.getByTestId("mcpb-creada").waitFor({ timeout: 60_000 });
+  await page.screenshot({ path: `capturas/agentes-${info.project.name}.png` });
+  await page.getByText("VS Code", { exact: true }).click();
+  await page.getByTestId("agentes").evaluate((e) => e.closest(".contenido")!.scrollTo(0, 10_000));
+  await page.screenshot({ path: `capturas/agentes-abajo-${info.project.name}.png` });
+});

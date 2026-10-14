@@ -214,7 +214,7 @@ input[type="range"] { accent-color: var(--relleno); }
 
 .zona { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; background: var(--lienzo); }
 .seccion { flex: 1; min-height: 0; display: flex; }
-.seccion[hidden] { display: none; }
+.seccion[hidden], .panel-ajustes[hidden] { display: none; }
 .seccion > * { flex: 1; min-width: 0; }
 .seccion.columna { flex-direction: column; }
 .seccion.columna > .herramientas { flex: none; }
@@ -476,6 +476,15 @@ input[type="range"] { accent-color: var(--relleno); }
 .motores div { display: flex; gap: var(--espacio-3); height: 30px; align-items: center; border-bottom: var(--linea) solid var(--filete); }
 .motores dt { color: var(--tinta); min-width: 120px; }
 .motores dd { margin: 0; font-variant-numeric: tabular-nums; }
+
+/* Ajustes › Agentes (ADR 0023) */
+.pestanas-ajustes { align-self: flex-start; margin-bottom: var(--espacio-4); }
+.con-icono { display: flex; align-items: center; gap: var(--espacio-2); }
+.para-copiar { display: flex; align-items: flex-start; gap: var(--espacio-2); background: var(--elevada); border-radius: var(--radio); padding: var(--espacio-2) var(--espacio-3); }
+.para-copiar code, .para-copiar pre { flex: 1; min-width: 0; margin: 0; font: 12px var(--mono); color: var(--tinta); overflow-wrap: anywhere; white-space: pre-wrap; align-self: center; }
+.para-copiar button { flex: none; }
+.grupo details summary { cursor: pointer; color: var(--tinta); padding: var(--espacio-1) 0; }
+.grupo details[open] { display: flex; flex-direction: column; gap: var(--espacio-2); }
 
 /* El vidrio (ADR 0016). Solo en macOS, con data-vidrio="si" (lo pone main.tsx
    según la orden `plataforma`): la barra lateral y el fondo de la ventana se

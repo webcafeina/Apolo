@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as actualizar from "./actualizar";
+import { Agentes } from "./ajustes/Agentes";
 import { Cabecera, Icono, IconoApp, Marca } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
 import { Lotes } from "./lotes/Lotes";
@@ -8,7 +9,9 @@ import { BandaNovedad } from "./Novedad";
 import { Presets } from "./presets/Presets";
 import * as puente from "./puente";
 
-type Seccion = "estudio" | "lotes" | "presets" | "ajustes";
+// «mcp» no es una sección: es una puerta a Ajustes por el bloque de los
+// agentes, como la fila «MCP» de Esfinge (lo pidió el cliente, ADR 0023).
+type Seccion = "estudio" | "lotes" | "presets" | "mcp" | "ajustes";
 
 // La ventana, con la anatomía de la de Esfinge: la barra lateral de 225 px con
 // el hueco de los semáforos, el sello y las secciones (Ajustes abajo del todo),
@@ -67,6 +70,7 @@ export function App() {
         </div>
         <nav aria-label={t("app.nombre")}>{(["estudio", "lotes", "presets"] as const).map(fila)}</nav>
         <nav className="abajo" aria-label={t("nav.ajustes")}>
+          {fila("mcp")}
           {fila("ajustes")}
         </nav>
         {inicio && (
@@ -93,7 +97,9 @@ export function App() {
           {inicio && <Lotes inicio={inicio} activo={seccion === "lotes"} />}
         </div>
         {seccion === "presets" && <Presets carpeta={inicio?.carpeta_presets ?? null} irAlEstudio={() => setSeccion("estudio")} />}
-        {seccion === "ajustes" && <Ajustes inicio={inicio} alEncontrar={setNovedad} />}
+        {(seccion === "ajustes" || seccion === "mcp") && (
+          <Ajustes inicio={inicio} alEncontrar={setNovedad} porLosAgentes={seccion === "mcp"} />
+        )}
       </main>
     </div>
   );
@@ -102,22 +108,37 @@ export function App() {
 function Ajustes({
   inicio,
   alEncontrar,
+  porLosAgentes,
 }: {
   inicio: puente.Inicio | null;
   alEncontrar: (n: actualizar.Novedad) => void;
+  /** Se ha entrado por la fila «MCP»: se abre en la pestaña de los agentes. */
+  porLosAgentes: boolean;
 }) {
   const { t } = useTranslation();
   const [lista, setLista] = useState<puente.Motor[] | null>(null);
+  const [pestana, setPestana] = useState<"general" | "agentes">(porLosAgentes ? "agentes" : "general");
 
   useEffect(() => {
     puente.motores().then(setLista, () => setLista([]));
   }, []);
+  // Pasar de «Ajustes» a «MCP» (o al revés) con la pantalla abierta también
+  // cambia de pestaña: no se vuelve a montar.
+  useEffect(() => setPestana(porLosAgentes ? "agentes" : "general"), [porLosAgentes]);
 
   return (
     <div className="seccion columna">
       <Cabecera titulo={t("nav.ajustes")} />
       <div className="contenido">
-        <div className="panel-ajustes">
+        <div className="segmentado pestanas-ajustes" role="radiogroup" aria-label={t("ajustes.pestanas.etiqueta")}>
+          {(["general", "agentes"] as const).map((p) => (
+            <button key={p} role="radio" aria-checked={pestana === p} onClick={() => setPestana(p)}>
+              {t(`ajustes.pestanas.${p}`)}
+            </button>
+          ))}
+        </div>
+        {pestana === "agentes" && <Agentes />}
+        <div className="panel-ajustes" hidden={pestana !== "general"}>
           <section className="grupo">
             <h2>{t("ajustes.acercaDe")}</h2>
             <div className="ficha">

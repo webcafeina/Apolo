@@ -61,7 +61,8 @@
         "languages": [
           "Spanish"
         ],
-        "displayLanguageSelector": false
+        "displayLanguageSelector": false,
+        "installerHooks": "../empaquetado/windows/ganchos.nsh"
       }
     },
     "createUpdaterArtifacts": true

@@ -23,7 +23,8 @@
 ## Descargas
 
 En [Releases](https://github.com/webcafeina/Apolo/releases): la aplicación (`.dmg`, instalador de
-Windows, `.deb` y AppImage) y la línea de comandos `apolo` para cada sistema, con `SHA256SUMS.txt`.
+Windows, `.deb` y AppImage), la línea de comandos `apolo` para cada sistema, la extensión `.mcpb` de
+Claude Desktop y `SHA256SUMS.txt`.
 
 ## Qué es
 
@@ -42,6 +43,24 @@ pesa y dónde se pierde calidad, y ajustas hasta que te convence.
 - **Abre las fotos del iPhone** (HEIC) directamente, además de PNG, JPEG, WebP, TIFF, GIF, BMP,
   QOI y PNM.
 - Nativo, ligero y sin conexión: tus imágenes no salen de tu ordenador.
+
+## Con un agente de IA
+
+Apolo se puede usar desde **Claude, Cursor, VS Code** y cualquier agente que hable
+[MCP](https://modelcontextprotocol.io): el agente analiza, optimiza, compara formatos a la misma
+calidad percibida, mide la pérdida, mira las imágenes y convierte carpetas, con los motores de
+Apolo y en tu ordenador. **Nunca sobrescribe ni borra**: siempre escribe ficheros nuevos.
+
+El servidor, `apolo-mcp`, va dentro de la aplicación y **se actualiza con ella**. En Apolo, la fila
+**MCP** de la barra lateral lleva a lo que hay que copiar para cada agente y a la extensión de Claude
+Desktop, que se instala una vez. Para Claude Code:
+
+```sh
+claude mcp add --scope user apolo -- "/Applications/Apolo.app/Contents/MacOS/apolo-mcp"
+```
+
+Las herramientas, en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que el agente pide (rutas,
+nombres, miniaturas) entra en su conversación y lo ve el proveedor del modelo.
 
 ## Plataformas
 
@@ -64,7 +83,8 @@ Hace falta Rust (estable), Node 22, pnpm, CMake, nasm y un compilador de C++. En
 ```sh
 make comprobar   # pruebas
 make cli         # la línea de comandos
-make app         # la aplicación
+make mcp         # el servidor para agentes, apolo-mcp
+make app         # la aplicación (con apolo-mcp dentro)
 ```
 
 ## Licencia

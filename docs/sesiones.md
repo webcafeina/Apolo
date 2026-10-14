@@ -4,6 +4,32 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-14 (noche) · Entrega 7b: el conector en los instaladores, que se actualiza solo
+
+- Antes de empezar, el cliente pidió tres cosas: que el conector **se actualice solo** con Apolo sin
+  reinstalar, que **diga su versión**, y **una fila «MCP» encima de Ajustes** que lleve a todo, como
+  en Esfinge. Las tres, en el ADR 0023.
+- **Relevo** (`crates/mcp/src/relevo.rs`, copiado de Esfinge): la copia del `.mcpb` le cede el turno a
+  la Apolo instalada. **Versión**: al principio de las instrucciones y en `acerca_de_apolo`, la
+  undécima herramienta.
+- **`crates/mcpb`** (`armar-mcpb` y el botón de la aplicación); **`agentes.rs`** en el servicio; las
+  órdenes `agentes` y `crear_mcpb` en la ventana y en `apolo-dev`; **la fila «MCP»** con el logotipo
+  y **Ajustes con pestañas** (General, Agentes de IA).
+- **Empaquetado**: el sidecar por `tauri.mcp.conf.json` solo al empaquetar (`make sidecar`, `make
+  app`); el gancho de NSIS que cierra `apolo-mcp.exe` antes de actualizar; `publicar.yml` con el
+  sidecar, un `.mcpb` por objetivo y `apolo-mcp` en el paquete de la CLI; `make mcpb`; README; las
+  notas de la v0.8.0.
+- Verificado: el relevo con los binarios de verdad; `mcpb validate` oficial; un agente por la
+  extensión dice su versión y que se actualiza con la aplicación; 59 pruebas e2e (las nuevas en
+  claro y oscuro) y capturas; `make comprobar`.
+- Salió que crear el `.mcpb` desde `apolo-dev` tardaba 43 s (trampa): 0,9 s con el perfil `dev`
+  optimizando zlib-rs y comprimiendo a nivel 1.
+- **No verificado**: nada de los instaladores (solo CI y un Windows o Mac lo dirán), ni Claude Desktop
+  de verdad. `src-tauri` no compila en el VPS: lo comprobará CI.
+- Lo siguiente: empujar, CI, una publicación de prueba, y la v0.8.0 cuando lo diga el cliente.
+
+---
+
 ## 2026-10-14 (tarde) · Entrega 7a: Apolo para agentes de IA por MCP
 
 - **Planteamiento en modo plan con el cliente.** Se analizaron los dos MCP de la casa: Cronos

@@ -1,4 +1,4 @@
-//! Las diez herramientas (ADR 0023), como funciones que no saben nada del
+//! Las once herramientas (ADR 0023), como funciones que no saben nada del
 //! protocolo ni del transporte: reciben lo que pide el agente y devuelven una
 //! `Respuesta` o un `ErrorMcp`. La capa de rmcp (lib.rs) solo las envuelve.
 //!
@@ -1303,4 +1303,53 @@ pub fn guardar_preset(cx: &Contexto, e: EntradaGuardarPreset) -> Hecho<Respuesta
         d.nombre
     );
     Ok(Respuesta::nueva(texto, &d))
+}
+
+// ─── 11. acerca_de_apolo ─────────────────────────────────────────────────────
+
+pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
+    use crate::relevo::{DESDE_PAQUETE, RELEVADO_DESDE};
+    let version = env!("CARGO_PKG_VERSION");
+    let ejecutable = std::env::current_exe()
+        .map(|e| e.display().to_string())
+        .unwrap_or_default();
+    let relevado_desde = std::env::var(RELEVADO_DESDE).ok();
+    let del_paquete = std::env::var_os(DESDE_PAQUETE).is_some();
+    let origen = match (&relevado_desde, del_paquete) {
+        (Some(v), _) => format!(
+            "La extensión de Claude Desktop (paquete {v}) ha cedido el turno a la aplicación instalada: se actualiza con ella."
+        ),
+        (None, true) => "Es la copia del paquete .mcpb y no se ha encontrado Apolo instalado: esta copia no se actualiza sola. Instalar Apolo lo arregla.".into(),
+        (None, false) => "Es el de la aplicación (o el de la línea de órdenes): se actualiza con ella.".into(),
+    };
+    let motores = apolo_nucleo::motores();
+    let texto = format!(
+        "Apolo {version} · {ejecutable}\n{origen}\nMotores: {}\nPresets en {}, fuera de la aplicación: actualizar no los toca.",
+        motores
+            .iter()
+            .map(|m| format!("{} {}", m.nombre, m.version))
+            .collect::<Vec<_>>()
+            .join(", "),
+        cx.servicio.carpeta_presets().display()
+    );
+    #[derive(Serialize)]
+    struct Datos {
+        version: &'static str,
+        ejecutable: String,
+        relevado_desde: Option<String>,
+        copia_del_paquete_sin_aplicacion: bool,
+        motores: Vec<apolo_nucleo::Motor>,
+        carpeta_presets: String,
+    }
+    Ok(Respuesta::nueva(
+        texto,
+        &Datos {
+            version,
+            ejecutable,
+            copia_del_paquete_sin_aplicacion: del_paquete && relevado_desde.is_none(),
+            relevado_desde,
+            motores,
+            carpeta_presets: cx.servicio.carpeta_presets().display().to_string(),
+        },
+    ))
 }

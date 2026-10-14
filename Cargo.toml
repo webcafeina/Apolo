@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/heic", "crates/avifjxl", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "crates/mcp", "src-tauri"]
+members = ["crates/heic", "crates/avifjxl", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "crates/mcp", "crates/mcpb", "src-tauri"]
 
 [workspace.package]
 version = "0.7.1"
@@ -15,6 +15,8 @@ apolo-heic = { path = "crates/heic" }
 apolo-avifjxl = { path = "crates/avifjxl" }
 apolo-tema = { path = "crates/tema" }
 apolo-servicio = { path = "crates/servicio" }
+apolo-mcp = { path = "crates/mcp" }
+apolo-mcpb = { path = "crates/mcpb" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
@@ -22,3 +24,14 @@ serde_json = "1"
 lto = "thin"
 codegen-units = 1
 strip = true
+
+# El .mcpb de apolo-dev comprime un apolo-mcp de depuración (unos 200 MB): sin
+# optimizar, deflate tarda más que una prueba e2e entera.
+[profile.dev.package.zlib-rs]
+opt-level = 3
+[profile.dev.package.flate2]
+opt-level = 3
+[profile.dev.package.crc32fast]
+opt-level = 3
+[profile.dev.package.zip]
+opt-level = 3

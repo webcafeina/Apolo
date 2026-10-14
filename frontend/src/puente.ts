@@ -380,3 +380,18 @@ export async function mostrarEnCarpeta(ruta: string): Promise<void> {
   const { revealItemInDir } = await import("@tauri-apps/plugin-opener");
   await revealItemInDir(ruta);
 }
+
+/** Ajustes › Agentes (ADR 0023): la versión, la ruta de apolo-mcp y lo que se copia. */
+export interface Agentes {
+  version: string;
+  ruta: string | null;
+  /** Por qué no hay ruta. */
+  aviso: "appimage" | "traslocada" | "no_encontrado" | null;
+  claude_code: string | null;
+  json_mcp_servers: string | null;
+  json_vscode: string | null;
+}
+
+export const agentes = () => orden<Agentes>("agentes");
+/** El .mcpb de Claude Desktop, en Descargas. Devuelve la ruta. */
+export const crearMcpb = () => orden<string>("crear_mcpb");

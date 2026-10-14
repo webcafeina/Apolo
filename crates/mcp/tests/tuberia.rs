@@ -83,9 +83,15 @@ fn una_sesion_entera_por_las_tuberias() {
             .unwrap()
             .contains("nunca sobrescribe")
     );
+    // El modelo no ve serverInfo: la versión va en las instrucciones.
+    let instrucciones = init["instructions"].as_str().unwrap();
+    assert!(
+        instrucciones.contains(env!("CARGO_PKG_VERSION")),
+        "{instrucciones}"
+    );
 
     let herramientas = respuestas[&2]["result"]["tools"].as_array().unwrap();
-    assert_eq!(herramientas.len(), 10);
+    assert_eq!(herramientas.len(), 11);
     for h in herramientas {
         let nombre = h["name"].as_str().unwrap();
         assert!(

@@ -9,15 +9,32 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 ## Alta
 
 - **Entrega 7 — Agentes por MCP** (v0.8.0, [ADR 0023](adr/0023-mcp.md)). En tres partes:
-  - ~~**7a**~~: `crates/mcp` con las diez herramientas, pruebas, catálogo y el paseo con Claude Code
+  - ~~**7a**~~: `crates/mcp` con las diez herramientas (once desde la 7b), pruebas, catálogo y el paseo con Claude Code
     (2026-10-14, sin versión publicada).
-  - **7b**: el empaquetado. `crates/mcpb` (`armar-mcpb`, manifiesto 0.3 con las herramientas sacadas
+  - **7b**, hecha en el código el 2026-10-14 y sin empujar: el empaquetado. `crates/mcpb` (`armar-mcpb`, manifiesto 0.3 con las herramientas sacadas
     de `apolo_mcp::ServidorApolo::herramientas()`); el sidecar `apolo-mcp` en los instaladores
     (`src-tauri/tauri.mcp.conf.json`, que se fusiona **solo al empaquetar**); el relevo de la copia
     del `.mcpb` al binario instalado (`APOLO_MCP_DESDE_PAQUETE`); la pestaña «Agentes» en Ajustes
     (`crates/servicio/src/agentes.rs`, órdenes `agentes` y `crear_mcpb`, `Agentes.tsx`), con su
-    e2e; `apolo-mcp` en el paquete de la CLI; `publicar.yml`; README. Después, **la v0.8.0** (solo
-    cuando lo diga el cliente) y la prueba guiada en su Mac con Claude Desktop y el `.mcpb`.
+    e2e; `apolo-mcp` en el paquete de la CLI; `publicar.yml`; README. **Lo que falta**: empujar y
+    ver CI (comprobar, e2e y una publicación a mano con `workflow_dispatch` para ver los
+    instaladores con el sidecar y los `.mcpb`); después, **la v0.8.0** (solo cuando lo diga el
+    cliente: subir la versión en `Cargo.toml`, las notas ya están en `.github/notas/v0.8.0.md`) y la
+    prueba guiada en su Mac: la fila MCP, crear la extensión e instalarla en Claude Desktop,
+    preguntarle la versión, optimizar algo, y actualizar Apolo para ver que el agente sigue y dice la
+    versión nueva.
+  - **Pedido por el cliente el 2026-10-14 para la 7b** (hecho; ver ADR 0023):
+    - **El conector se actualiza solo con Apolo**, sin reinstalar nada. Claude Code, Cursor y VS
+      Code apuntan al binario instalado, que el actualizador reemplaza. El `.mcpb` de Claude Desktop
+      cede el turno al instalado (el relevo de Esfinge, `internal/mcpb/relevo.go`). En Windows, el
+      instalador NSIS cierra el `apolo-mcp.exe` en marcha antes de copiar (gancho
+      `NSIS_HOOK_PREINSTALL`), o no podría reemplazarlo. La pantalla avisa de que los agentes se
+      quedan con la lista de herramientas al conectar: lo nuevo aparece en la conversación siguiente.
+    - **El agente sabe decir su versión**: va en las `instructions` y en una herramienta
+      `acerca_de_apolo` (versión, de dónde arranca, si viene del `.mcpb` y cedió el turno, y las
+      versiones de los motores). La sección de Apolo enseña la misma versión.
+    - **Una fila «MCP» en la barra lateral, encima de Ajustes**, que abre Ajustes por el bloque de
+      los agentes, donde está todo. Como Esfinge: no es una pantalla aparte, es una puerta a Ajustes.
   - **7c**: la evaluación con unos 25 escenarios de `claude -p` (`scripts/evaluar-mcp.mjs`, informe
     en `docs/mcp/evaluacion.md`), con uno adversario («sobrescribe el original»). Los arreglos van a
     las descripciones, no a los escenarios. v0.8.1 si cambia algo.

@@ -26,7 +26,11 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   optimizando zlib-rs y comprimiendo a nivel 1.
 - **No verificado**: nada de los instaladores (solo CI y un Windows o Mac lo dirán), ni Claude Desktop
   de verdad. `src-tauri` no compila en el VPS: lo comprobará CI.
-- Lo siguiente: empujar, CI, una publicación de prueba, y la v0.8.0 cuando lo diga el cliente.
+- Empujado con permiso del cliente. `Comprobar` en verde: `src-tauri` compila, e2e y equivalencia
+  pasan. Publicación de prueba 38558247128: Linux (amd64 y arm64) y Windows (x64 y ARM64) bien, y
+  las cinco CLI. El `.deb` lleva `/usr/bin/apolo-mcp`, que responde; los `.mcpb` llevan el servidor;
+  el instalador de Windows crece lo que pesa `apolo-mcp.exe`. El Mac seguía compilando al parar: se
+  mira mañana (estado.md).
 
 ---
 

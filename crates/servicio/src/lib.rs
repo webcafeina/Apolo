@@ -20,6 +20,7 @@ use apolo_nucleo::webp::{self, Estadisticas, OpcionesWebp};
 use apolo_nucleo::{Error, cwebp, orientacion, vista};
 use serde::{Deserialize, Serialize};
 
+pub mod agentes;
 mod ajustes;
 mod lotes;
 pub use ajustes::Ajustes;

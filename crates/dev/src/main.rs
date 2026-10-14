@@ -396,6 +396,32 @@ fn rutas(s: Arc<Servicio>) -> Router {
                 },
             ),
         )
+        .route(
+            "/api/agentes",
+            post(|| async { Json(apolo_servicio::agentes::de_esta()) }),
+        )
+        .route(
+            "/api/crear_mcpb",
+            // Junto a la configuración y no en Descargas: el servidor de
+            // desarrollo (y las pruebas e2e) no tocan las carpetas de nadie.
+            post(|State(s): Estado| async move {
+                let carpeta = s
+                    .carpeta_presets()
+                    .parent()
+                    .map(|c| c.join("descargas"))
+                    .unwrap_or_else(apolo_mcpb::carpeta_descargas);
+                let r: R<_> = bloqueante(move || apolo_mcpb::crear_en(&carpeta))
+                    .await
+                    .map(|r| Json(r.display().to_string()))
+                    .map_err(|mensaje| {
+                        Error(Fallo {
+                            mensaje,
+                            cancelado: false,
+                        })
+                    });
+                r
+            }),
+        )
         .layer(DefaultBodyLimit::max(512 * 1024 * 1024))
         .with_state(s)
 }

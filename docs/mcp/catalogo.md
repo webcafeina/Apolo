@@ -7,6 +7,14 @@
 
 Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. Las rutas, absolutas o con ~. Responde en el idioma de quien pregunta.
 
+## `acerca_de_apolo` — Acerca de Apolo
+
+*solo lee · no destruye · idempotente · todo en este ordenador*
+
+Qué versión de Apolo responde, desde dónde arranca (la aplicación, o la extensión de Claude Desktop cediéndole el turno) y los motores que lleva (libwebp, MozJPEG, oxipng, avifenc, cjxl). Para cuando pregunten por la versión o algo no cuadre con lo esperado.
+
+Sin argumentos.
+
 ## `analizar_imagen` — Analizar una imagen o carpeta
 
 *solo lee · no destruye · idempotente · todo en este ordenador*

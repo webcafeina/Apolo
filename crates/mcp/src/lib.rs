@@ -9,6 +9,7 @@ pub mod catalogo;
 pub mod entrada;
 pub mod errores;
 pub mod herramientas;
+pub mod relevo;
 pub mod respuesta;
 pub mod rutas;
 
@@ -32,6 +33,15 @@ use crate::respuesta::Respuesta;
 
 /// Lo que el modelo lee al conectarse: qué es Apolo y el flujo habitual.
 pub const INSTRUCCIONES: &str = "Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. Las rutas, absolutas o con ~. Responde en el idioma de quien pregunta.";
+
+/// Las instrucciones con la versión delante: el modelo no ve `serverInfo`, y
+/// así sabe decir en qué versión está (el cliente lo pidió, ADR 0023).
+pub fn instrucciones() -> String {
+    format!(
+        "Esta es Apolo {}; acerca_de_apolo da el detalle. {INSTRUCCIONES}",
+        env!("CARGO_PKG_VERSION")
+    )
+}
 
 /// El servidor MCP de Apolo.
 #[derive(Clone)]
@@ -316,6 +326,22 @@ impl ServidorApolo {
         bloqueante(move || herramientas::listar_presets(&cx)).await
     }
 
+    /// Qué versión de Apolo responde, desde dónde arranca (la aplicación, o
+    /// la extensión de Claude Desktop cediéndole el turno) y los motores que
+    /// lleva (libwebp, MozJPEG, oxipng, avifenc, cjxl). Para cuando pregunten
+    /// por la versión o algo no cuadre con lo esperado.
+    #[tool(annotations(
+        title = "Acerca de Apolo",
+        read_only_hint = true,
+        destructive_hint = false,
+        idempotent_hint = true,
+        open_world_hint = false
+    ))]
+    async fn acerca_de_apolo(&self) -> CallToolResult {
+        let cx = self.cx.clone();
+        bloqueante(move || herramientas::acerca_de_apolo(&cx)).await
+    }
+
     /// Guarda una combinación de formato y opciones como preset nuevo, para
     /// usarla en Apolo, en la línea de órdenes o aquí. No sobrescribe: si el
     /// nombre existe, es un error (cambiar o borrar presets se hace en
@@ -344,6 +370,6 @@ impl ServerHandler for ServidorApolo {
             .with_server_info(
                 Implementation::new("apolo", env!("CARGO_PKG_VERSION")).with_title("Apolo"),
             )
-            .with_instructions(INSTRUCCIONES)
+            .with_instructions(instrucciones())
     }
 }

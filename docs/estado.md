@@ -42,8 +42,14 @@
      diez herramientas, sus pruebas (las herramientas, el protocolo por tuberías con AVIF y JXL a la
      vez, el fd 1), el catálogo generado ([mcp/catalogo.md](mcp/catalogo.md)) y el paseo con Claude
      Code ([mcp/paseo.md](mcp/paseo.md)).
-   - **Lo siguiente es la 7b**: el empaquetado (sidecar, `.mcpb`, relevo), la pestaña «Agentes», CI
-     y la v0.8.0, que **solo se publica cuando lo diga el cliente**. El detalle, en siguiente.md.
+   - **La 7b está hecha en el código** (sin empujar): `apolo-mcp` dentro de cada instalador, el
+     `.mcpb` con el relevo a la Apolo instalada, la herramienta `acerca_de_apolo` y la versión en
+     las instrucciones, la fila «MCP» encima de Ajustes con la pestaña «Agentes de IA», CI, README y
+     las notas de la v0.8.0. Lo pidió el cliente antes de empezarla: que se actualice sola, que diga
+     su versión y la fila en la barra.
+   - **Lo siguiente**: empujar, ver CI y una publicación de prueba (`workflow_dispatch`) con los
+     instaladores y los `.mcpb`; luego la v0.8.0, que **solo se publica cuando lo diga el
+     cliente**, y la prueba guiada en su Mac (siguiente.md).
    - Probarlo a mano: `make mcp`, y en Claude Code
      `claude mcp add --scope user apolo -- ~/proyectos/apolo/target/release/apolo-mcp`.
 1. **La entrega 5b está publicada como v0.6.0** (2026-10-08,
@@ -126,7 +132,8 @@
 - Entrega 6, métricas (2026-10-08). ADR 0022. v0.7.0 publicada el mismo día.
 - Prueba guiada de la v0.7.0, completa, y v0.7.1 publicada (2026-10-14).
 - Entrega 7a: `apolo-mcp`, el servidor MCP con diez herramientas (2026-10-14). ADR 0023.
+- Entrega 7b en el código: empaquetado, relevo, versión y la fila «MCP» (2026-10-14).
 
 ## En curso
 
-- Entrega 7 (MCP): hecha la 7a; faltan la 7b (empaquetado y pestaña) y la 7c (evaluación).
+- Entrega 7 (MCP): hechas la 7a y la 7b en el código; faltan CI, la v0.8.0 con su prueba guiada y la 7c (evaluación).

@@ -11,6 +11,7 @@ publish = false
 [dependencies]
 apolo-servicio.workspace = true
 apolo-nucleo.workspace = true
+apolo-mcpb.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 axum = "0.8"

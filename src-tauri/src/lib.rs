@@ -192,6 +192,27 @@ fn reservar_comprobacion(s: Estado, forzar: bool) -> bool {
     s.reservar_comprobacion(forzar)
 }
 
+/// Ajustes › Agentes (ADR 0023): la versión, la ruta de `apolo-mcp` y lo que se
+/// copia para cada agente.
+#[tauri::command]
+fn agentes() -> apolo_servicio::agentes::Agentes {
+    apolo_servicio::agentes::de_esta()
+}
+
+/// El `.mcpb` para Claude Desktop, en Descargas. Devuelve dónde ha quedado.
+#[tauri::command]
+async fn crear_mcpb() -> Result<String, Fallo> {
+    bloqueante(|| {
+        apolo_mcpb::crear_en(&apolo_mcpb::carpeta_descargas())
+            .map(|r| r.display().to_string())
+            .map_err(|mensaje| Fallo {
+                mensaje,
+                cancelado: false,
+            })
+    })
+    .await
+}
+
 /// `apolo://localhost/original/<id>?enderezar=1`, `…/resultado/<id>?lado=1` y
 /// `…/mapa/<id>?lado=1&tipo=estructura` (ADR 0022): ancho
 /// y alto en u32 little-endian y el RGBA detrás. En Windows llega como
@@ -287,7 +308,9 @@ pub fn arrancar() {
             recoger_lote,
             empezar_lote,
             estado_lote,
-            cancelar_lote
+            cancelar_lote,
+            agentes,
+            crear_mcpb
         ])
         .run(tauri::generate_context!())
         .expect("No se pudo arrancar Apolo");

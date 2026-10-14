@@ -91,6 +91,30 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm -C frontend install --frozen-lockfile
 
+      # apolo-mcp va dentro de cada instalador (ADR 0023), junto a la
+      # aplicación: así un agente que apunta ahí se actualiza con ella. Tauri lo
+      # busca como src-tauri/binaries/apolo-mcp-<triple> y solo con
+      # tauri.mcp.conf.json, que se fusiona aquí (trampas.md).
+      - name: apolo-mcp, el servidor para agentes
+        shell: bash
+        run: |
+          mkdir -p src-tauri/binaries
+          if [ "${{ matrix.nombre }}" = macos-universal ]; then
+            cargo build --release -p apolo-mcp --target aarch64-apple-darwin
+            cargo build --release -p apolo-mcp --target x86_64-apple-darwin
+            lipo -create -output src-tauri/binaries/apolo-mcp-universal-apple-darwin \
+              target/aarch64-apple-darwin/release/apolo-mcp target/x86_64-apple-darwin/release/apolo-mcp
+            # Tauri compila cada arquitectura por separado y cada una puede
+            # buscar el suyo: van los tres.
+            for a in aarch64 x86_64; do
+              cp target/$a-apple-darwin/release/apolo-mcp src-tauri/binaries/apolo-mcp-$a-apple-darwin
+            done
+          else
+            E=${{ runner.os == 'Windows' && '.exe' || '' }}
+            cargo build --release -p apolo-mcp --target ${{ matrix.objetivo }}
+            cp target/${{ matrix.objetivo }}/release/apolo-mcp$E src-tauri/binaries/apolo-mcp-${{ matrix.objetivo }}$E
+          fi
+
       - uses: tauri-apps/tauri-action@v0
         id: tauri
         env:
@@ -117,7 +141,32 @@ jobs:
           # En Windows solo hay NSIS, pero si algún día hay .msi, el
           # actualizador sigue con el instalador con el que se instaló.
           updaterJsonPreferNsis: true
-          args: --target ${{ matrix.objetivo }}
+          args: --target ${{ matrix.objetivo }} --config src-tauri/tauri.mcp.conf.json
+
+      # El paquete de Claude Desktop, con el mismo apolo-mcp. Instalado una vez,
+      # le cede el turno al de la aplicación (relevo.rs), que es el que se
+      # actualiza. Uno por objetivo: Apolo-0.8.0-windows-arm64.mcpb.
+      - name: El .mcpb de Claude Desktop
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
+          case "$RUNNER_OS" in macOS) S=macos;; Windows) S=windows;; *) S=linux;; esac
+          B=$(ls src-tauri/binaries/apolo-mcp-* | grep -v -e aarch64-apple -e x86_64-apple)
+          # Con el objetivo del sidecar, ya compilado: sin él, cargo lo
+          # rehace todo (libjxl incluida) para la máquina.
+          T=${{ matrix.nombre == 'macos-universal' && 'aarch64-apple-darwin' || matrix.objetivo }}
+          hecho=$(cargo run -q --release -p apolo-mcpb --target $T -- "$B" "$V" $S mcpb)
+          N=mcpb/Apolo-$V-${{ matrix.nombre == 'macos-universal' && 'macos' || matrix.nombre }}.mcpb
+          mv "$hecho" "$N"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            for intento in 1 2 3 4; do
+              gh release upload "$GITHUB_REF_NAME" "$N" --clobber && break
+              [ "$intento" = 4 ] && exit 1
+              sleep $(( intento * 15 ))
+            done
+          fi
 
       # El icono del volumen montado: el disco con el sol, como Esfinge. Tauri
       # pone el de la aplicación y no deja elegir otro, así que se cambia en el
@@ -152,6 +201,7 @@ jobs:
             target/${{ matrix.objetivo }}/release/bundle/appimage/*.AppImage
             target/${{ matrix.objetivo }}/release/bundle/macos/*.app.tar.gz
             target/${{ matrix.objetivo }}/release/bundle/*/*.sig
+            mcpb/*.mcpb
           if-no-files-found: error
 
   # La línea de comandos `apolo`, suelta, para los mismos seis objetivos.
@@ -206,14 +256,21 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
+          # La CLI y, con ella, apolo-mcp: quien use la CLI sin la aplicación
+          # también puede dárselo a un agente (ADR 0023).
           if [ "${{ matrix.nombre }}" = macos-universal ]; then
-            cargo build --release -p apolo-cli --target aarch64-apple-darwin
-            cargo build --release -p apolo-cli --target x86_64-apple-darwin
-            lipo -create -output dist/apolo \
-              target/aarch64-apple-darwin/release/apolo target/x86_64-apple-darwin/release/apolo
+            for b in apolo-cli apolo-mcp; do
+              cargo build --release -p $b --target aarch64-apple-darwin
+              cargo build --release -p $b --target x86_64-apple-darwin
+            done
+            for f in apolo apolo-mcp; do
+              lipo -create -output dist/$f \
+                target/aarch64-apple-darwin/release/$f target/x86_64-apple-darwin/release/$f
+            done
           else
-            cargo build --release -p apolo-cli --target ${{ matrix.objetivo }}
-            cp target/${{ matrix.objetivo }}/release/apolo${{ runner.os == 'Windows' && '.exe' || '' }} dist/
+            E=${{ runner.os == 'Windows' && '.exe' || '' }}
+            cargo build --release -p apolo-cli -p apolo-mcp --target ${{ matrix.objetivo }}
+            cp target/${{ matrix.objetivo }}/release/apolo$E target/${{ matrix.objetivo }}/release/apolo-mcp$E dist/
           fi
 
       - name: Empaquetar
@@ -225,9 +282,9 @@ jobs:
           cp LICENSE dist/
           cd dist
           if [ "$RUNNER_OS" = Windows ]; then
-            7z a "../$N.zip" apolo.exe LICENSE > /dev/null
+            7z a "../$N.zip" apolo.exe apolo-mcp.exe LICENSE > /dev/null
           else
-            tar czf "../$N.tar.gz" apolo LICENSE
+            tar czf "../$N.tar.gz" apolo apolo-mcp LICENSE
           fi
 
       - uses: actions/upload-artifact@v4

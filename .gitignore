@@ -10,6 +10,8 @@ frontend/playwright-report/
 
 # Lo que Tauri genera en cada compilación
 src-tauri/gen/
+# El sidecar apolo-mcp-<triple>, que se compila antes de empaquetar (make sidecar).
+src-tauri/binaries/
 
 # Salidas de pruebas a mano
 *.webp.tmp

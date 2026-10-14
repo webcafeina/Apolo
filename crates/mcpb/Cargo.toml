@@ -1,0 +1,21 @@
+[package]
+name = "apolo-mcpb"
+description = "El paquete .mcpb de apolo-mcp para Claude Desktop (ADR 0023)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "armar-mcpb"
+path = "src/main.rs"
+
+[dependencies]
+apolo-mcp.workspace = true
+apolo-nucleo.workspace = true
+apolo-servicio.workspace = true
+dirs = "6"
+serde_json.workspace = true
+# zip es MIT. Solo deflate: el .mcpb es un zip normal.
+zip = { version = "4.6", default-features = false, features = ["deflate"] }

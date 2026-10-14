@@ -296,3 +296,19 @@ propone hacer lo que ya se hizo. En `apolo-mcp`, el texto va también como `resu
 `structuredContent` (`lib.rs::resultado`), y `tests/tuberia.rs` lo comprueba. Cronos responde
 igual, con texto y datos, y probablemente le pase lo mismo. Salió en el paseo
 ([mcp/paseo.md](mcp/paseo.md)). · 2026-10-14
+
+## `src-tauri` deja de compilar si `externalBin` está en `tauri.conf.json` y falta el binario
+
+(Sabido de la documentación de Tauri, no visto aquí: se evitó de entrada.) Con `externalBin` en `tauri.conf.json`, el `build.rs` de Tauri exige el binario en
+`src-tauri/binaries/apolo-mcp-<triple>` **en cada compilación**, también en `cargo clippy`, en
+`tauri dev` y en CI de comprobar, donde no hace falta. Por eso el sidecar va en
+`src-tauri/tauri.mcp.conf.json`, que solo se fusiona al empaquetar (`--config`, en `make app` y en
+`publicar.yml`), y `make sidecar` lo pone antes. El nombre lleva el triple de destino; en macOS
+universal se ponen el universal y los dos de cada arquitectura (ADR 0023). · 2026-10-14
+
+## Crear el `.mcpb` desde `apolo-dev` tarda medio minuto
+
+En depuración, `apolo-mcp` pesa unos 200 MB, y comprimirlo con zlib-rs sin optimizar tardaba 43 s:
+más que una prueba e2e. El perfil `dev` optimiza `zlib-rs`, `flate2`, `crc32fast` y `zip`, y el
+paquete se comprime con nivel 1: 0,9 s. Ojo, el motor de deflate de `zip` 4 es **zlib-rs**, no
+miniz_oxide: optimizar el que no es no cambia nada. · 2026-10-14

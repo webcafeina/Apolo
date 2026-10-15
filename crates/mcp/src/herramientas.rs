@@ -512,10 +512,10 @@ pub struct EntradaComparar {
     /// Carpeta donde guardar. Por defecto, junto a la original.
     #[serde(default)]
     pub salida: Option<String>,
-    /// Redimensionar a este ancho, en píxeles (con alto solo, proporcional).
+    /// Ancho máximo, en píxeles: reduce si es mayor y nunca agranda (con alto solo, proporcional).
     #[serde(default)]
     pub ancho: Option<u32>,
-    /// Redimensionar a este alto, en píxeles (con ancho solo, proporcional).
+    /// Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional).
     #[serde(default)]
     pub alto: Option<u32>,
     /// Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí.
@@ -930,10 +930,10 @@ pub struct EntradaLote {
     /// Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son.
     #[serde(default)]
     pub sin_perdida: bool,
-    /// Redimensionar a este ancho, en píxeles (con alto solo, proporcional).
+    /// Ancho máximo, en píxeles: reduce si es mayor y nunca agranda (con alto solo, proporcional).
     #[serde(default)]
     pub ancho: Option<u32>,
-    /// Redimensionar a este alto, en píxeles (con ancho solo, proporcional).
+    /// Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional).
     #[serde(default)]
     pub alto: Option<u32>,
     /// Girar cada foto según su orientación EXIF si lo necesita. Por defecto, sí.
@@ -1210,6 +1210,35 @@ struct DatosPreset {
     formato: FormatoSalida,
     orden: String,
     nota_objetivo: Option<f32>,
+    /// Lo que hace antes de codificar (recortar, redimensionar, paleta), que
+    /// no sale en la orden: sin esto, un preset que reduce a 1600 px parecía
+    /// uno cualquiera (salió en la evaluación de la 7c).
+    proceso: Option<String>,
+}
+
+/// El proceso de un ajuste, para leerlo: «recorta 800×600 en 10,20 · ancho 1600 px · 64 colores».
+fn texto_proceso(p: &Proceso) -> Option<String> {
+    let mut v = Vec::new();
+    if let Some(r) = &p.recorte {
+        v.push(format!("recorta {}×{} en {},{}", r.ancho, r.alto, r.x, r.y));
+    }
+    if let Some(r) = &p.redimension {
+        v.push(match (r.ancho, r.alto) {
+            (Some(a), Some(h)) => format!("redimensiona a {a}×{h} px"),
+            (Some(a), None) if r.solo_reducir => format!("ancho máx. {a} px"),
+            (None, Some(h)) if r.solo_reducir => format!("alto máx. {h} px"),
+            (Some(a), None) => format!("ancho {a} px"),
+            (None, Some(h)) => format!("alto {h} px"),
+            (None, None) => "redimensiona".into(),
+        });
+    }
+    if let Some(pa) = &p.paleta {
+        v.push(format!("paleta de {} colores", pa.colores));
+    }
+    if !p.enderezar {
+        v.push("sin enderezar".into());
+    }
+    (!v.is_empty()).then(|| v.join(" · "))
 }
 
 fn datos_preset(p: &PresetGuardado) -> DatosPreset {
@@ -1218,6 +1247,7 @@ fn datos_preset(p: &PresetGuardado) -> DatosPreset {
         formato: p.ajuste.formato,
         orden: apolo_servicio::orden_opciones(&p.ajuste),
         nota_objetivo: p.ajuste.objetivo,
+        proceso: texto_proceso(&p.ajuste.proceso),
     }
 }
 
@@ -1238,6 +1268,9 @@ pub fn listar_presets(cx: &Contexto) -> Hecho<Respuesta> {
         ));
         if let Some(n) = p.nota_objetivo {
             texto.push_str(&format!(" · nota objetivo {}", coma(n as f64, 0)));
+        }
+        if let Some(pr) = &p.proceso {
+            texto.push_str(&format!(" · {pr}"));
         }
     }
     #[derive(Serialize)]
@@ -1291,8 +1324,16 @@ pub fn guardar_preset(cx: &Contexto, e: EntradaGuardarPreset) -> Hecho<Respuesta
     let p = PresetGuardado { nombre, ajuste };
     cx.servicio.guardar_preset(&p)?;
     let d = datos_preset(&p);
+    let detalle = [
+        d.nota_objetivo
+            .map(|n| format!(" · nota objetivo {}", coma(n as f64, 0))),
+        d.proceso.as_ref().map(|pr| format!(" · {pr}")),
+    ]
+    .into_iter()
+    .flatten()
+    .collect::<String>();
     let texto = format!(
-        "Preset «{}» guardado: {} · {}\nSe usa en Apolo, en empezar_lote con preset, o con apolo {} -apolo_preset \"{}\".",
+        "Preset «{}» guardado: {} · {}{detalle}\nSe usa en Apolo, en empezar_lote con preset, o con apolo {} -apolo_preset \"{}\".",
         d.nombre,
         d.formato.nombre(),
         d.orden,
@@ -1324,7 +1365,7 @@ pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
     };
     let motores = apolo_nucleo::motores();
     let texto = format!(
-        "Apolo {version} · {ejecutable}\n{origen}\nMotores: {}\nPresets en {}, fuera de la aplicación: actualizar no los toca.",
+        "Apolo {version} · {ejecutable}\n{origen} Corre en este mismo ordenador, con la cuenta de quien usa el agente.\nMotores: {}\nPresets en {}, fuera de la aplicación: actualizar no los toca.",
         motores
             .iter()
             .map(|m| format!("{} {}", m.nombre, m.version))

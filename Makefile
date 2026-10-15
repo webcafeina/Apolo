@@ -8,7 +8,7 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp app dev dev-web e2e capturas equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -19,6 +19,7 @@ ayuda:
 	@echo "make mcp        compila el servidor MCP para agentes (target/release/apolo-mcp)"
 	@echo "make catalogo-mcp  regenera docs/mcp/catalogo.md desde crates/mcp"
 	@echo "make mcpb       el paquete .mcpb de Claude Desktop para este sistema (target/mcpb/)"
+	@echo "make evaluar-mcp  los escenarios de agente con claude -p (docs/mcp/evaluacion.md; tarda y gasta)"
 	@echo "make app        compila la aplicación (necesita libwebkit2gtk-4.1-dev en Linux)"
 	@echo "make dev        la aplicación con recarga en caliente"
 	@echo "make dev-web    el Estudio en el navegador, sin ventana (http://127.0.0.1:5173)"
@@ -57,6 +58,11 @@ mcp:
 
 catalogo-mcp:
 	APOLO_REGENERAR=1 cargo test -q -p apolo-mcp --test catalogo
+
+# Los escenarios de la 7c con Claude Code (claude -p, la suscripción de quien lo lanza). Las
+# imágenes, de pruebas/lotes/generar.sh (APOLO_EVAL_FUENTE, o ~/apolo-pruebas-lotes/vacaciones).
+evaluar-mcp: mcp
+	node scripts/evaluar-mcp.mjs --modelo sonnet --informe
 
 SISTEMA := $(shell uname -s | sed 's/Darwin/macos/; s/Linux/linux/')
 VERSION := $(shell sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)

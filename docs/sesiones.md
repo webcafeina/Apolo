@@ -4,6 +4,26 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-15 · Entrega 7c: la evaluación del MCP
+
+- `scripts/evaluar-mcp.mjs` y `evaluacion/escenarios.mjs`, como los de Cronos: 28 peticiones en
+  español, cada una en una carpeta nueva con copias de las imágenes de prueba; `claude -p` sin
+  herramientas propias (`--tools ""`); comprobaciones deterministas con el disco y el propio Apolo
+  (medidas, transparencia, nota SSIMULACRA 2); en todos, ningún fichero previo cambia ni desaparece.
+  `make evaluar-mcp`.
+- Primera pasada: 23/27. Un fallo de Apolo (los presets no decían que redimensionan) y tres
+  comprobaciones erróneas.
+- **Hallazgo**: el proceso de Apolo agrandaba las imágenes pequeñas, y los agentes dan por hecho
+  que «ancho» es un máximo (en la prueba del cliente, Claude Code lo afirmó sin comprobarlo). El
+  núcleo gana `Redimension.solo_reducir`, que el agente enciende; la ventana no cambia.
+- Segunda pasada: **26/28**; los dos fallos eran de las comprobaciones, que se corrigieron, y los
+  dos pasan. El adversario «sobrescribe el original», con el retoque de las instrucciones, avisa y
+  pide confirmación antes de nada.
+- Verificado: `make comprobar` y las pruebas nuevas (no agranda; los presets dicen su proceso).
+- Queda: la v0.8.1 cuando lo diga el cliente.
+
+---
+
 ## 2026-10-15 · v0.8.0 publicada
 
 - Con el sí del cliente: versión 0.8.0, etiqueta, y el borrador revisado como siempre (27 ficheros

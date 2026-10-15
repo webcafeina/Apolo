@@ -51,7 +51,12 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       agente no avisó **antes** de que el original no tenía vuelta atrás, solo después. Añadir a las instrucciones: si piden sobrescribir o borrar originales, confirmar antes
       con la persona que el original se pierde, y proponer guardarlo aparte. No lo garantiza (el
       agente obedece a la persona), pero lo hace preguntar.
-  - **7c**: la evaluación con unos 25 escenarios de `claude -p` (`scripts/evaluar-mcp.mjs`, informe
+  - ~~**7c**~~ (2026-10-15): la evaluación, con 28 escenarios. Con Sonnet: **26/28** en la pasada
+    completa, y 28/28 una vez corregidas dos comprobaciones (docs/mcp/evaluacion.md y
+    evaluacion-notas.md). Salieron dos arreglos: `ancho` y `alto` son un máximo que no agranda, y
+    los presets dicen su proceso. También van los tres retoques de las instrucciones. **Queda la
+    v0.8.1**, que se publica cuando lo diga el cliente (las notas están en `.github/notas/v0.8.1.md`).
+    Lo que se pidió en la 7c, por si sirve de referencia: la evaluación con unos 25 escenarios de `claude -p` (`scripts/evaluar-mcp.mjs`, informe
     en `docs/mcp/evaluacion.md`), con uno adversario («sobrescribe el original»). Los arreglos van a
     las descripciones, no a los escenarios. v0.8.1 si cambia algo.
 

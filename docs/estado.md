@@ -75,8 +75,15 @@
         las comprobaciones (corregidas, y pasan). Arreglos en Apolo: `ancho` y `alto` son un máximo
         que no agranda (`Redimension.solo_reducir`); los presets dicen su proceso; los tres retoques
         de las instrucciones.
-     6. **La v0.8.1**, con el sí del cliente (2026-10-15). Antes de publicarla, a petición suya,
-        lleva el aviso de reinicio: Claude Desktop mantiene el servidor viejo hasta reiniciarse. Las notas están en
+     6. ~~La v0.8.1~~: **publicada el 2026-10-15** (https://github.com/webcafeina/Apolo/releases/tag/v0.8.1),
+        con el sí del cliente y, a petición suya, el aviso de reinicio (Claude Desktop mantiene el
+        servidor viejo hasta reiniciarse). Borrador revisado: 27 ficheros, 26 sumas, 7 `.sig` y 14
+        plataformas en `latest.json` con firma válida; CLI y `apolo-mcp` en 0.8.1; cinco `.mcpb` en
+        0.8.1 con su servidor ejecutable; el mismo AVIF que avifenc en 3 de 3.
+     7. **Lo siguiente**: que el cliente actualice y reinicie Claude Desktop (la 0.8.0 no avisa); en
+        la siguiente actualización, ver el aviso en Claude Desktop (deuda). Después: recortar con
+        el ratón en el Estudio, recortar y paleta desde el agente, y el CI a `macos-15` antes del 2
+        de noviembre. Las notas están en
         `.github/notas/v0.8.1.md`. Después: recortar con el ratón en el Estudio, y recortar y paleta
         desde el agente; pasar el CI a `macos-15` antes del 2 de noviembre (deuda).
    - Probarlo a mano: `make mcp`, y en Claude Code

@@ -480,6 +480,7 @@ input[type="range"] { accent-color: var(--relleno); }
 /* Ajustes › Agentes (ADR 0023) */
 .pestanas-ajustes { align-self: flex-start; margin-bottom: var(--espacio-4); }
 .con-icono { display: flex; align-items: center; gap: var(--espacio-2); }
+.aviso.reiniciar { margin: 0; flex-direction: column; align-items: flex-start; gap: var(--espacio-1); background: var(--elevada); }
 .para-copiar { display: flex; align-items: flex-start; gap: var(--espacio-2); background: var(--elevada); border-radius: var(--radio); padding: var(--espacio-2) var(--espacio-3); }
 .para-copiar code, .para-copiar pre { flex: 1; min-width: 0; margin: 0; font: 12px var(--mono); color: var(--tinta); overflow-wrap: anywhere; white-space: pre-wrap; align-self: center; }
 .para-copiar button { flex: none; }

@@ -73,6 +73,12 @@ export function Agentes() {
         <p data-prueba="version-conector">
           <strong>{t("agentes.version", { version: a.version })}</strong> {t("agentes.seActualiza")}
         </p>
+        {/* Destacado: lo pidió el cliente. Claude Desktop sigue con el servidor
+            viejo hasta reiniciarse, y es lo que más se olvida (ADR 0023). */}
+        <div className="aviso reiniciar" role="note" data-prueba="aviso-reiniciar">
+          <strong>{t("agentes.reiniciarTitulo")}</strong>
+          <span>{t("agentes.reiniciarTexto")}</span>
+        </div>
         {a.aviso && (
           <p className="error" role="alert" data-prueba="aviso-agentes">
             {aviso[a.aviso]}

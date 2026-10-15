@@ -5,6 +5,7 @@
 //! datos de la respuesta, el progreso y la cancelación. Otro transporte
 //! (HTTP, para lo remoto) reutilizaría todo lo de abajo.
 
+pub mod actualizado;
 pub mod catalogo;
 pub mod entrada;
 pub mod errores;
@@ -68,13 +69,22 @@ impl ServidorApolo {
 /// los datos en `structuredContent` y, si la hay, la imagen.
 fn resultado(r: Hecho<Respuesta>) -> CallToolResult {
     match r {
-        Ok(resp) => {
+        Ok(mut resp) => {
+            // Si Apolo se ha actualizado con este servidor en marcha, se dice
+            // en cada respuesta (actualizado.rs).
+            let aviso = actualizado::aviso();
+            if let Some(a) = &aviso {
+                resp.texto = format!("{}\n{a}", resp.texto);
+            }
             // Claude Code le da al modelo `structuredContent` en vez del
             // texto cuando lo hay: el resumen va también ahí, o se pierden
             // los avisos y la orden equivalente (ADR 0023).
             let mut datos = resp.datos;
             if let Some(o) = datos.as_object_mut() {
                 o.insert("resumen".into(), resp.texto.clone().into());
+                if let Some(a) = aviso {
+                    o.insert("aviso_actualizacion".into(), a.into());
+                }
             }
             let mut contenidos = vec![ContentBlock::text(resp.texto)];
             if let Some(img) = resp.imagen {

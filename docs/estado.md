@@ -67,7 +67,10 @@
         Actualizó a la 0.8.0; la extensión, en Claude Desktop, cede el turno a la aplicación y el
         agente dice «Apolo 0.8.0»; optimizó un PNG con transparencia (AVIF −94 % a nota 80,1)
         mirando el mapa y zonas, sin tocar el original. Dos retoques para la 7c (siguiente.md).
-     4. Lo siguiente: **probar Claude Code** con el cliente, y la 7c.
+     4. ~~Probar Claude Code con el cliente~~: **bien el 2026-10-15** (Sonnet 5.5, esfuerzo medio):
+        rutas relativas, comparar, redimensionar, dos lotes. En la adversaria, **Claude Code borró el
+        original con su shell** (Apolo no sobrescribió): retoque de instrucciones para la 7c.
+     5. Lo siguiente: **la 7c** con los tres retoques de siguiente.md.
    - Probarlo a mano: `make mcp`, y en Claude Code
      `claude mcp add --scope user apolo -- ~/proyectos/apolo/target/release/apolo-mcp`.
 1. **La entrega 5b está publicada como v0.6.0** (2026-10-08,

@@ -4,6 +4,18 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-15 · v0.8.1 publicada, con el aviso de reiniciar
+
+- El cliente vio que la extensión de Claude Desktop solo se actualiza al reiniciar Claude Desktop:
+  mantiene en marcha el servidor con el que arrancó. Desde Apolo no tiene arreglo; se avisa. Desde
+  esta versión, `apolo-mcp` nota si su fichero cambia de versión con él en marcha y lo dice en cada
+  respuesta (`actualizado.rs`, `tests/actualizado.rs`). La sección de Agentes y las notas lo explican
+  («en la conversación siguiente» era falso para Claude Desktop).
+- v0.8.1 publicada con eso y la 7c. Borrador revisado como siempre (27 ficheros, sumas, firmas,
+  `latest.json`, versiones, `.mcpb`, AVIF igual que avifenc).
+
+---
+
 ## 2026-10-15 · Entrega 7c: la evaluación del MCP
 
 - `scripts/evaluar-mcp.mjs` y `evaluacion/escenarios.mjs`, como los de Cronos: 28 peticiones en

@@ -16,6 +16,10 @@ test("la fila «MCP» abre los agentes, con la versión y todo lo que se copia",
   await expect(agentes.getByTestId("version-conector")).toContainText(/Conector apolo-mcp \d+\.\d+\.\d+/);
   await expect(agentes.getByTestId("version-conector")).toContainText("Se actualiza solo con Apolo");
   await expect(agentes.getByTestId("aviso-agentes")).toHaveCount(0);
+  // Lo de reiniciar Claude Desktop, destacado y en negrita.
+  await expect(agentes.getByTestId("aviso-reiniciar").locator("strong")).toHaveText(
+    "Después de actualizar Apolo, cierra y vuelve a abrir Claude Desktop.",
+  );
 
   // Los tres fragmentos nombran el mismo binario.
   const ruta = (await agentes.getByTestId("ruta-mcp").locator("code").textContent())!;

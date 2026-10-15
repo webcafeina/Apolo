@@ -69,6 +69,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
+- **En `main` para la próxima versión** (2026-10-15, pedido por el cliente): en la sección de agentes,
+  lo de cerrar y volver a abrir Claude Desktop va en un aviso destacado, con la orden en negrita.
+
 - **Después de la v0.8.0, pedido por el cliente el 2026-10-15:**
   - **Recortar con el ratón en el Estudio**, como en Squoosh: dibujar el rectángulo sobre el
     original, con asas, en vez de escribir x, y, ancho y alto. Hoy el recorte del proceso es

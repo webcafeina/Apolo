@@ -34,6 +34,9 @@ fn main() -> ExitCode {
     {
         return ExitCode::from(codigo.clamp(0, 255) as u8);
     }
+    // Qué fichero se ha cargado, para avisar si la aplicación lo reemplaza
+    // mientras sigue en marcha (actualizado.rs).
+    apolo_mcp::actualizado::anotar();
     if std::io::IsTerminal::is_terminal(&std::io::stdin()) {
         eprintln!(
             "apolo-mcp {}: este programa lo arranca un agente de IA (Claude, Cursor…), no se usa a mano.\nCómo añadirlo: Apolo › Ajustes › Agentes. Esperando mensajes MCP por la entrada estándar…",

@@ -75,7 +75,8 @@
         las comprobaciones (corregidas, y pasan). Arreglos en Apolo: `ancho` y `alto` son un máximo
         que no agranda (`Redimension.solo_reducir`); los presets dicen su proceso; los tres retoques
         de las instrucciones.
-     6. **Lo siguiente: la v0.8.1**, solo cuando lo diga el cliente. Las notas están en
+     6. **La v0.8.1**, con el sí del cliente (2026-10-15). Antes de publicarla, a petición suya,
+        lleva el aviso de reinicio: Claude Desktop mantiene el servidor viejo hasta reiniciarse. Las notas están en
         `.github/notas/v0.8.1.md`. Después: recortar con el ratón en el Estudio, y recortar y paleta
         desde el agente; pasar el CI a `macos-15` antes del 2 de noviembre (deuda).
    - Probarlo a mano: `make mcp`, y en Claude Code

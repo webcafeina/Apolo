@@ -70,7 +70,14 @@
      4. ~~Probar Claude Code con el cliente~~: **bien el 2026-10-15** (Sonnet 5.5, esfuerzo medio):
         rutas relativas, comparar, redimensionar, dos lotes. En la adversaria, Apolo no sobrescribió y
         Claude Code borró el original con su shell **tras pedir permiso** (el cliente lo aceptó): retoque de instrucciones para la 7c.
-     5. Lo siguiente: **la 7c** con los tres retoques de siguiente.md.
+     5. ~~La 7c~~: **hecha el 2026-10-15**. `scripts/evaluar-mcp.mjs` con 28 escenarios
+        (`make evaluar-mcp`): 26/28 con Sonnet en la pasada completa, y los dos que quedaban eran de
+        las comprobaciones (corregidas, y pasan). Arreglos en Apolo: `ancho` y `alto` son un máximo
+        que no agranda (`Redimension.solo_reducir`); los presets dicen su proceso; los tres retoques
+        de las instrucciones.
+     6. **Lo siguiente: la v0.8.1**, solo cuando lo diga el cliente. Las notas están en
+        `.github/notas/v0.8.1.md`. Después: recortar con el ratón en el Estudio, y recortar y paleta
+        desde el agente; pasar el CI a `macos-15` antes del 2 de noviembre (deuda).
    - Probarlo a mano: `make mcp`, y en Claude Code
      `claude mcp add --scope user apolo -- ~/proyectos/apolo/target/release/apolo-mcp`.
 1. **La entrega 5b está publicada como v0.6.0** (2026-10-08,

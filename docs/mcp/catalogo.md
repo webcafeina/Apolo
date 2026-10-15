@@ -5,7 +5,7 @@
 
 ## Lo que lee el agente al conectarse
 
-Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. Las rutas, absolutas o con ~. Responde en el idioma de quien pregunta.
+Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. Las rutas, absolutas o con ~. Apolo corre en este mismo ordenador, con la cuenta de quien te habla: sus rutas (/Users/…, C:\Users\…) son las suyas. Solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.
 
 ## `acerca_de_apolo` — Acerca de Apolo
 
@@ -44,8 +44,8 @@ Codifica la misma imagen en varios formatos a la misma calidad percibida (nota S
 | Argumento | Tipo | Qué es |
 |---|---|---|
 | `ruta` | texto | **Obligatorio.** Ruta absoluta de la imagen (se admite ~). |
-| `alto` | entero | Redimensionar a este alto, en píxeles (con ancho solo, proporcional). |
-| `ancho` | entero | Redimensionar a este ancho, en píxeles (con alto solo, proporcional). |
+| `alto` | entero | Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional). |
+| `ancho` | entero | Ancho máximo, en píxeles: reduce si es mayor y nunca agranda (con alto solo, proporcional). |
 | `enderezar` | sí/no | Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí. |
 | `formatos` | lista de webp \| jpeg \| png \| qoi \| avif \| jxl | Los formatos a comparar. Por defecto, webp, avif y jpeg. |
 | `guardar` | mejor \| todos \| ninguno | Qué guardar: mejor (por defecto), todos o ninguno. |
@@ -61,8 +61,8 @@ Convierte carpetas o muchas imágenes en segundo plano, con las subcarpetas, sin
 | Argumento | Tipo | Qué es |
 |---|---|---|
 | `entradas` | lista de texto | **Obligatorio.** Carpetas o imágenes, rutas absolutas (se admite ~). |
-| `alto` | entero | Redimensionar a este alto, en píxeles (con ancho solo, proporcional). |
-| `ancho` | entero | Redimensionar a este ancho, en píxeles (con alto solo, proporcional). |
+| `alto` | entero | Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional). |
+| `ancho` | entero | Ancho máximo, en píxeles: reduce si es mayor y nunca agranda (con alto solo, proporcional). |
 | `calidad` | entero (0–100) | Calidad fija de 0 a 100. No a la vez que nota_objetivo. |
 | `enderezar` | sí/no | Girar cada foto según su orientación EXIF si lo necesita. Por defecto, sí. |
 | `formatos` | lista de webp \| jpeg \| png \| qoi \| avif \| jxl | Formatos de salida (uno o varios). Por defecto, el del preset o webp. |
@@ -83,8 +83,8 @@ Guarda una combinación de formato y opciones como preset nuevo, para usarla en 
 | Argumento | Tipo | Qué es |
 |---|---|---|
 | `nombre` | texto | **Obligatorio.** El nombre del preset nuevo. No puede existir ya. |
-| `alto` | entero | Redimensionar a este alto, en píxeles (con ancho solo, proporcional). |
-| `ancho` | entero | Redimensionar a este ancho, en píxeles (con alto solo, proporcional). |
+| `alto` | entero | Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional). |
+| `ancho` | entero | Ancho máximo, en píxeles: reduce si es mayor y nunca agranda (con alto solo, proporcional). |
 | `calidad` | entero (0–100) | Calidad fija de 0 a 100. No a la vez que nota_objetivo. |
 | `enderezar` | sí/no | Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí. |
 | `formato` | webp \| jpeg \| png \| qoi \| avif \| jxl | webp, jpeg, png, qoi, avif o jxl. Por defecto, el del preset, o webp. |
@@ -121,8 +121,8 @@ Optimiza una imagen y la guarda como un fichero NUEVO (junto a la original, o en
 | Argumento | Tipo | Qué es |
 |---|---|---|
 | `ruta` | texto | **Obligatorio.** Ruta absoluta de la imagen (se admite ~). |
-| `alto` | entero | Redimensionar a este alto, en píxeles (con ancho solo, proporcional). |
-| `ancho` | entero | Redimensionar a este ancho, en píxeles (con alto solo, proporcional). |
+| `alto` | entero | Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional). |
+| `ancho` | entero | Ancho máximo, en píxeles: reduce si es mayor y nunca agranda (con alto solo, proporcional). |
 | `calidad` | entero (0–100) | Calidad fija de 0 a 100. No a la vez que nota_objetivo. |
 | `enderezar` | sí/no | Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí. |
 | `formato` | webp \| jpeg \| png \| qoi \| avif \| jxl | webp, jpeg, png, qoi, avif o jxl. Por defecto, el del preset, o webp. |

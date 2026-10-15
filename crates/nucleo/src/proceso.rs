@@ -40,6 +40,11 @@ pub struct Redimension {
     pub filtro: Filtro,
     /// Mezclar en RGB lineal (más correcto; lo de Squoosh).
     pub lineal: bool,
+    /// Las medidas son un máximo: una imagen que ya cabe se queda como está,
+    /// nunca se agranda. Apagado, como Squoosh, se lleva siempre a esas
+    /// medidas. Lo enciende el agente (ADR 0023): «1600 px de ancho» se
+    /// entiende como «como mucho», y agrandar empeora la imagen.
+    pub solo_reducir: bool,
 }
 
 impl Default for Redimension {
@@ -49,6 +54,7 @@ impl Default for Redimension {
             alto: None,
             filtro: Filtro::Lanczos3,
             lineal: true,
+            solo_reducir: false,
         }
     }
 }
@@ -97,21 +103,25 @@ impl Proceso {
             h = r.alto.min(alto.saturating_sub(r.y));
         }
         if let Some(r) = self.redimension {
-            (w, h) = destino(w, h, r.ancho, r.alto);
+            (w, h) = destino(w, h, r);
         }
         (w, h)
     }
 }
 
-fn destino(w: u32, h: u32, ancho: Option<u32>, alto: Option<u32>) -> (u32, u32) {
+fn destino(w: u32, h: u32, r: Redimension) -> (u32, u32) {
     let prop =
         |a: u32, de: u32, a_de: u32| ((a as f64 * a_de as f64 / de as f64).round() as u32).max(1);
-    match (ancho, alto) {
+    let (nw, nh) = match (r.ancho, r.alto) {
         (Some(a), Some(b)) => (a.max(1), b.max(1)),
         (Some(a), None) => (a.max(1), prop(a, w, h)),
         (None, Some(b)) => (prop(b, h, w), b.max(1)),
         (None, None) => (w, h),
+    };
+    if r.solo_reducir && (nw > w || nh > h) {
+        return (w, h);
     }
+    (nw, nh)
 }
 
 /// Aplica el proceso a píxeles RGBA. Devuelve las medidas nuevas y los píxeles.
@@ -145,7 +155,7 @@ fn recortar(w: u32, h: u32, px: &[u8], r: Recorte) -> Resultado<(u32, u32, Vec<u
 }
 
 fn redimensionar(w: u32, h: u32, px: &[u8], r: Redimension) -> Resultado<(u32, u32, Vec<u8>)> {
-    let (nw, nh) = destino(w, h, r.ancho, r.alto);
+    let (nw, nh) = destino(w, h, r);
     if (nw, nh) == (w, h) {
         return Ok((w, h, px.to_vec()));
     }
@@ -217,6 +227,20 @@ mod pruebas {
         (0..w * h)
             .flat_map(|i| [(i % w * 255 / w) as u8, (i / w * 255 / h) as u8, 128, 255])
             .collect()
+    }
+
+    #[test]
+    fn solo_reducir_no_agranda() {
+        let r = |ancho, solo_reducir| Redimension {
+            ancho: Some(ancho),
+            solo_reducir,
+            ..Default::default()
+        };
+        // Mayor que la imagen: con solo_reducir se queda; sin él, como Squoosh, agranda.
+        assert_eq!(destino(400, 300, r(800, true)), (400, 300));
+        assert_eq!(destino(400, 300, r(800, false)), (800, 600));
+        // Menor: reduce igual.
+        assert_eq!(destino(400, 300, r(200, true)), (200, 150));
     }
 
     #[test]

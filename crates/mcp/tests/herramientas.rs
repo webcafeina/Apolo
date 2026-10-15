@@ -334,6 +334,9 @@ fn los_presets_no_se_pisan() {
     let r = listar_presets(&cx).unwrap();
     assert_eq!(r.datos["presets"][0]["nombre"], "Web ligera");
     assert_eq!(r.datos["presets"][0]["nota_objetivo"], 75.0);
+    // El proceso se ve: un preset que reduce el ancho lo dice.
+    assert_eq!(r.datos["presets"][0]["proceso"], "ancho máx. 1920 px");
+    assert!(r.texto.contains("ancho máx. 1920 px"), "{}", r.texto);
     // Y sirve de base.
     let e = EntradaFormato {
         preset: Some("Web ligera".into()),
@@ -415,4 +418,25 @@ fn una_optimizacion_cancelada_no_escribe_nada() {
         optimizar_imagen(&cx, optimizar(&dir.join("fotos/foto.webp"), webp()), &s).unwrap_err();
     assert_eq!(err.error, "cancelado");
     assert_eq!(std::fs::read_dir(dir.join("fotos")).unwrap().count(), 2);
+}
+
+#[test]
+fn el_ancho_es_un_maximo_y_no_agranda() {
+    let (dir, cx) = preparar();
+    let e = EntradaFormato {
+        formato: Some(FormatoMcp::Webp),
+        ancho: Some(800),
+        ..Default::default()
+    };
+    // foto.webp mide 128 × 128: pedir 800 de ancho la deja como está.
+    let r = optimizar_imagen(
+        &cx,
+        optimizar(&dir.join("fotos/foto.webp"), e),
+        &Seguimiento::nada(),
+    )
+    .unwrap();
+    assert_eq!(
+        (r.datos["ancho"].as_u64(), r.datos["alto"].as_u64()),
+        (Some(128), Some(128))
+    );
 }

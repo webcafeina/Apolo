@@ -70,10 +70,10 @@ pub struct EntradaFormato {
     /// Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son.
     #[serde(default)]
     pub sin_perdida: bool,
-    /// Redimensionar a este ancho, en píxeles (con alto solo, proporcional).
+    /// Ancho máximo, en píxeles: reduce si es mayor y nunca agranda (con alto solo, proporcional).
     #[serde(default)]
     pub ancho: Option<u32>,
-    /// Redimensionar a este alto, en píxeles (con ancho solo, proporcional).
+    /// Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional).
     #[serde(default)]
     pub alto: Option<u32>,
     /// Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí.
@@ -188,9 +188,11 @@ impl EntradaFormato {
             }
         }
         if self.ancho.is_some() || self.alto.is_some() {
+            // Un máximo: nunca agranda (ADR 0023). Los agentes lo entienden así.
             a.proceso.redimension = Some(Redimension {
                 ancho: self.ancho,
                 alto: self.alto,
+                solo_reducir: true,
                 ..Default::default()
             });
         }

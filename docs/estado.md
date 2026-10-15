@@ -63,7 +63,11 @@
         de Linux dicen 0.8.0, `apolo-mcp` optimiza por el protocolo y sus instrucciones llevan la
         versión; los cinco `.mcpb` en 0.8.0 con su servidor ejecutable y once herramientas; la CLI da
         el mismo AVIF que avifenc 1.4.2 en 3 de 3.
-     3. La prueba guiada en su Mac (siguiente.md), y la 7c.
+     3. ~~La prueba guiada en su Mac~~: **bien el 2026-10-15** (pasos 1 a 5; Claude Code, aparte).
+        Actualizó a la 0.8.0; la extensión, en Claude Desktop, cede el turno a la aplicación y el
+        agente dice «Apolo 0.8.0»; optimizó un PNG con transparencia (AVIF −94 % a nota 80,1)
+        mirando el mapa y zonas, sin tocar el original. Dos retoques para la 7c (siguiente.md).
+     4. Lo siguiente: **probar Claude Code** con el cliente, y la 7c.
    - Probarlo a mano: `make mcp`, y en Claude Code
      `claude mcp add --scope user apolo -- ~/proyectos/apolo/target/release/apolo-mcp`.
 1. **La entrega 5b está publicada como v0.6.0** (2026-10-08,

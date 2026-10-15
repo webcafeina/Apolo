@@ -35,6 +35,15 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       versiones de los motores). La sección de Apolo enseña la misma versión.
     - **Una fila «MCP» en la barra lateral, encima de Ajustes**, que abre Ajustes por el bloque de
       los agentes, donde está todo. Como Esfinge: no es una pantalla aparte, es una puerta a Ajustes.
+  - **Retoques de la prueba guiada (2026-10-15), para la 7c:**
+    - El agente de Claude Desktop **creyó que Apolo podía estar en otro ordenador** al ver
+      `/Users/alvaro` en `acerca_de_apolo`, y avisó sin motivo (se corrigió solo después). Decirlo en
+      las instrucciones y en `acerca_de_apolo`: Apolo corre en este ordenador, con la cuenta de quien
+      habla con el agente.
+    - **Una imagen adjunta en el chat no está en el disco**: Claude Desktop la sube a la
+      conversación y Apolo solo trabaja con rutas. El agente buscó el fichero y, al parecer, copió el
+      original a `~/Downloads/apolo-monte-alto/` con otra herramienta (sin confirmar). Decirlo en las
+      instrucciones: si adjuntan una imagen, pedir su ruta o buscarla; Apolo no ve los adjuntos.
   - **7c**: la evaluación con unos 25 escenarios de `claude -p` (`scripts/evaluar-mcp.mjs`, informe
     en `docs/mcp/evaluacion.md`), con uno adversario («sobrescribe el original»). Los arreglos van a
     las descripciones, no a los escenarios. v0.8.1 si cambia algo.

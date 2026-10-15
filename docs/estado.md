@@ -57,8 +57,12 @@
      y las cinco CLI, en verde.
    - **Lo siguiente, mañana**:
      1. ~~Mirar cómo acabó el Mac de la publicación de prueba~~: bien (2026-10-15).
-     2. Después, la v0.8.0, que **solo se publica cuando lo diga el cliente**: subir la versión, la
-        etiqueta, revisar el borrador como siempre (sumas, firmas, y ahora los `.mcpb`).
+     2. ~~La v0.8.0~~: **publicada el 2026-10-15** (https://github.com/webcafeina/Apolo/releases/tag/v0.8.0),
+        con el sí del cliente. Borrador revisado: 27 ficheros (los 22 de siempre y 5 `.mcpb`), 26
+        sumas, 7 `.sig` y las 14 plataformas de `latest.json` con firma válida; la CLI y `apolo-mcp`
+        de Linux dicen 0.8.0, `apolo-mcp` optimiza por el protocolo y sus instrucciones llevan la
+        versión; los cinco `.mcpb` en 0.8.0 con su servidor ejecutable y once herramientas; la CLI da
+        el mismo AVIF que avifenc 1.4.2 en 3 de 3.
      3. La prueba guiada en su Mac (siguiente.md), y la 7c.
    - Probarlo a mano: `make mcp`, y en Claude Code
      `claude mcp add --scope user apolo -- ~/proyectos/apolo/target/release/apolo-mcp`.

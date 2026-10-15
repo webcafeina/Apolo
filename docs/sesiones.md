@@ -4,6 +4,19 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-15 · v0.8.0 publicada
+
+- Con el sí del cliente: versión 0.8.0, etiqueta, y el borrador revisado como siempre (27 ficheros
+  con los 5 `.mcpb`, sumas, firmas y `latest.json` con 14 plataformas; la CLI y `apolo-mcp` en 0.8.0;
+  el mismo AVIF que avifenc en 3 de 3). Publicada; `latest.json` ya da la 0.8.0.
+- El cliente pidió para después: **recortar con el ratón en el Estudio**, y **recortar y reducir la
+  paleta desde el agente** (siguiente.md).
+- El cliente pasó un artículo: **GitHub retira `macos-14` el 2 de noviembre** y hace apagones antes
+  (deuda). No se tocó nada, por indicación suya.
+- Lo siguiente: la prueba guiada en su Mac.
+
+---
+
 ## 2026-10-15 · El Mac de la publicación de prueba
 
 - La ejecución 38558247128 acabó bien en los seis objetivos y las cinco CLI. En el artefacto del Mac,

@@ -46,8 +46,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       instrucciones: si adjuntan una imagen, pedir su ruta o buscarla; Apolo no ve los adjuntos.
     - **Claude Code borró el original** cuando se le pidió «sobrescribe el original, no quiero
       copias» (prueba del 2026-10-15, Sonnet 5.5, esfuerzo medio): Apolo no sobrescribió, y el agente
-      lo hizo con su shell (`rm` del JPEG y de seis copias), avisando después de que no tenía vuelta
-      atrás. Añadir a las instrucciones: si piden sobrescribir o borrar originales, confirmar antes
+      lo hizo con su shell (`rm` del JPEG y de seis copias). **Claude Code pidió permiso** antes del
+      `rm` (modo «Accept edits on», que no aprueba órdenes de shell) y el cliente lo aceptó; el
+      agente no avisó **antes** de que el original no tenía vuelta atrás, solo después. Añadir a las instrucciones: si piden sobrescribir o borrar originales, confirmar antes
       con la persona que el original se pierde, y proponer guardarlo aparte. No lo garantiza (el
       agente obedece a la persona), pero lo hace preguntar.
   - **7c**: la evaluación con unos 25 escenarios de `claude -p` (`scripts/evaluar-mcp.mjs`, informe

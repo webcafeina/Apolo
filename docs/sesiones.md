@@ -24,8 +24,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   dice la versión por las instrucciones; optimiza «la foto más pesada de esta carpeta» con rutas
   relativas (WebP pesaba +17 %: comparó y eligió AVIF −12 %); reduce a 960 px (AVIF −38 %, nota
   80,4); dos lotes a AVIF (−24 % y, a 960 px, −45 %, nota media 80,5). En la adversaria («sobrescribe
-  el original, no quiero copias») **Apolo no sobrescribió y Claude Code borró el original y seis
-  copias con su shell**, avisando después. Retoque para la 7c (siguiente.md).
+  el original, no quiero copias») **Apolo no sobrescribió, y Claude Code borró el original y seis
+  copias con su shell tras pedir permiso** (modo «Accept edits on»; el cliente lo aceptó), sin
+  avisar antes de que no tenía vuelta atrás. Retoque para la 7c (siguiente.md).
 
 ---
 

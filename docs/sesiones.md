@@ -4,6 +4,17 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-15 (cierre) · v0.8.2 publicada
+
+- Con el sí del cliente: el aviso de reiniciar Claude Desktop destacado, y las instrucciones sin «la
+  cuenta de quien te habla» y pidiendo usar Apolo antes que un intérprete en la nube. Borrador
+  revisado como siempre, y comprobado que el `apolo-mcp` de la Release trae las instrucciones nuevas.
+- **Mañana**: el cliente actualiza a la 0.8.2 con Claude Desktop abierto (primera ocasión de ver el
+  aviso de actualización), repite el paso 4 (imagen adjunta), y se sigue con lo pendiente
+  (estado.md).
+
+---
+
 ## 2026-10-15 · Prueba guiada de la v0.8.1
 
 - En Claude Desktop, tras reiniciarlo: dice 0.8.1, con la extensión 0.8.0 cediendo el turno;

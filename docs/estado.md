@@ -83,7 +83,24 @@
      7. Prueba guiada de la v0.8.1: bien en lo nuevo (no agranda, presets, Claude Code avisa antes de
         sobrescribir); dos retoques de instrucciones y el aviso destacado, en `main` (siguiente.md).
         **Por repetir**: la imagen adjunta en Claude Desktop, en conversación nueva.
-     8. **Lo siguiente**: (hecho: el cliente actualizó y reinició); en
+     8. **v0.8.2 publicada el 2026-10-15** (https://github.com/webcafeina/Apolo/releases/tag/v0.8.2)
+        con lo que estaba en `main`: el aviso destacado de reiniciar Claude Desktop y los dos retoques
+        de instrucciones (la cuenta del sistema; usar Apolo en vez del intérprete en la nube).
+        Borrador revisado: 27 ficheros, sumas, 7 `.sig`, `latest.json` con 14 plataformas, CLI y
+        `apolo-mcp` en 0.8.2 con las instrucciones nuevas, cinco `.mcpb`, AVIF igual que avifenc 3/3.
+
+### Al parar el 2026-10-15: lo primero mañana
+
+1. **Que el cliente actualice a la 0.8.2 con Claude Desktop abierto**: es la primera vez que se
+   puede ver el aviso de «Apolo se ha actualizado» (lo lleva la 0.8.1 que tiene en marcha). Luego
+   reiniciar Claude Desktop.
+2. **Repetir el paso 4 en Claude Desktop**: conversación nueva, arrastrar una imagen y «Optimízala
+   para web». Debe pedir la ruta o buscarla y usar Apolo, no su intérprete en la nube.
+3. Después, lo pendiente: recortar con el ratón en el Estudio; recortar y paleta desde el agente;
+   el CI a `macos-15` antes del 2 de noviembre (apagones de `macos-14` el 16–17, 19–20, 23–24,
+   26–27, 29–30 y 30–31 de octubre, de 16:00 a 02:00 en Madrid: no empujar etiquetas entonces).
+
+     9. Pendiente de antes: en
         la siguiente actualización, ver el aviso en Claude Desktop (deuda). Después: recortar con
         el ratón en el Estudio, recortar y paleta desde el agente, y el CI a `macos-15` antes del 2
         de noviembre. Las notas están en

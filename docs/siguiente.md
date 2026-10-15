@@ -69,7 +69,7 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
-- **En `main` para la próxima versión** (2026-10-15):
+- ~~**En `main` para la próxima versión**~~ (2026-10-15), **publicado en la v0.8.2**:
   - en la sección de agentes, lo de cerrar y volver a abrir Claude Desktop va en un aviso destacado,
     con la orden en negrita (lo pidió el cliente);
   - las instrucciones ya no dicen «la cuenta de quien te habla» (Claude sabe que el cliente es

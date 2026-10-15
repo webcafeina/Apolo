@@ -69,8 +69,16 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
-- **En `main` para la próxima versión** (2026-10-15, pedido por el cliente): en la sección de agentes,
-  lo de cerrar y volver a abrir Claude Desktop va en un aviso destacado, con la orden en negrita.
+- **En `main` para la próxima versión** (2026-10-15):
+  - en la sección de agentes, lo de cerrar y volver a abrir Claude Desktop va en un aviso destacado,
+    con la orden en negrita (lo pidió el cliente);
+  - las instrucciones ya no dicen «la cuenta de quien te habla» (Claude sabe que el cliente es
+    Nacho y la cuenta del Mac es «alvaro», y por eso sospechaba): ahora dicen que el nombre de la
+    cuenta puede no coincidir y no hay que comentarlo;
+  - y piden usar Apolo en vez de convertir las imágenes en otro entorno: en Claude Desktop, con una
+    imagen adjunta, el agente la optimizó en su intérprete de la nube con Pillow, sin Apolo. Hay
+    que volver a probar el paso 4 en una conversación nueva con Apolo ya conectado (el agente dijo
+    que Apolo apareció a mitad de la tarea).
 
 - **Después de la v0.8.0, pedido por el cliente el 2026-10-15:**
   - **Recortar con el ratón en el Estudio**, como en Squoosh: dibujar el rectángulo sobre el

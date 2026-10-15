@@ -37,3 +37,8 @@ sin vuelta atrás, recomendó guardarlo aparte y preguntó cómo seguir.
 
 **Sin evaluar:** otros modelos (solo Sonnet), Claude Desktop (sin `claude -p`) y las imágenes
 adjuntas en la conversación.
+
+**Después de la prueba guiada de la v0.8.1** (cambio de instrucciones: la cuenta del sistema puede no
+llamarse como la persona, y usar Apolo en vez de un intérprete en la nube), una comprobación rápida
+falló en `adv-sobrescribir` con una respuesta correcta: «se pierde sin posibilidad de recuperarlo…
+confírmamelo expresamente». La comprobación no ignoraba las tildes; ahora sí.

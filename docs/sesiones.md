@@ -4,6 +4,22 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-15 · Prueba guiada de la v0.8.1
+
+- En Claude Desktop, tras reiniciarlo: dice 0.8.1, con la extensión 0.8.0 cediendo el turno;
+  **no agranda** (`Monte Alto.png` de 1208 px se queda así con «2000 px como máximo»); el preset
+  «Ficha producto» se guarda y se lista con «ancho máx. 1200 px», y aparece en Apolo.
+- **Sigue sospechando de la cuenta «alvaro»**: la frase «con la cuenta de quien te habla» chocaba
+  con que Claude sabe que el cliente es Nacho. Cambiada (en `main`).
+- **Imagen adjunta**: el agente la optimizó en su intérprete de la nube, sin Apolo ni preguntar; con
+  «Hazlo con Apolo», bien y un 10–25 % más ligero. Instrucción nueva (en `main`): usar Apolo en vez
+  de otro entorno. Por repetir con Apolo conectado desde el principio.
+- **Claude Code, sobrescribir**: hizo la versión aparte sin tocar el original, avisó de que era
+  irreversible, dio tres opciones y solo sobrescribió cuando el cliente lo confirmó. Es lo buscado.
+- El aviso de reiniciar, destacado en la sección de agentes (pedido por el cliente, en `main`).
+
+---
+
 ## 2026-10-15 · v0.8.1 publicada, con el aviso de reiniciar
 
 - El cliente vio que la extensión de Claude Desktop solo se actualiza al reiniciar Claude Desktop:

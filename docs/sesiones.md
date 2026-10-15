@@ -20,6 +20,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   revisando el mapa y zonas, avisando de la transparencia, sin tocar el original.
 - Dos retoques para la 7c (siguiente.md): el agente creyó que Apolo podía estar en otro equipo por la
   ruta `/Users/…`; y una imagen adjunta en el chat no está en el disco.
+- **Claude Code en el Mac del cliente** (Sonnet 5.5, esfuerzo medio), en una carpeta de prueba:
+  dice la versión por las instrucciones; optimiza «la foto más pesada de esta carpeta» con rutas
+  relativas (WebP pesaba +17 %: comparó y eligió AVIF −12 %); reduce a 960 px (AVIF −38 %, nota
+  80,4); dos lotes a AVIF (−24 % y, a 960 px, −45 %, nota media 80,5). En la adversaria («sobrescribe
+  el original, no quiero copias») **Apolo no sobrescribió y Claude Code borró el original y seis
+  copias con su shell**, avisando después. Retoque para la 7c (siguiente.md).
 
 ---
 

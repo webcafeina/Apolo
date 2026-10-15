@@ -1365,7 +1365,7 @@ pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
     };
     let motores = apolo_nucleo::motores();
     let texto = format!(
-        "Apolo {version} · {ejecutable}\n{origen} Corre en este mismo ordenador, con la cuenta de quien usa el agente.\nMotores: {}\nPresets en {}, fuera de la aplicación: actualizar no los toca.",
+        "Apolo {version} · {ejecutable}\n{origen} Corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente (su nombre puede no ser el de la persona: es normal).\nMotores: {}\nPresets en {}, fuera de la aplicación: actualizar no los toca.",
         motores
             .iter()
             .map(|m| format!("{} {}", m.nombre, m.version))

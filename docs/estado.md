@@ -80,7 +80,10 @@
         servidor viejo hasta reiniciarse). Borrador revisado: 27 ficheros, 26 sumas, 7 `.sig` y 14
         plataformas en `latest.json` con firma válida; CLI y `apolo-mcp` en 0.8.1; cinco `.mcpb` en
         0.8.1 con su servidor ejecutable; el mismo AVIF que avifenc en 3 de 3.
-     7. **Lo siguiente**: que el cliente actualice y reinicie Claude Desktop (la 0.8.0 no avisa); en
+     7. Prueba guiada de la v0.8.1: bien en lo nuevo (no agranda, presets, Claude Code avisa antes de
+        sobrescribir); dos retoques de instrucciones y el aviso destacado, en `main` (siguiente.md).
+        **Por repetir**: la imagen adjunta en Claude Desktop, en conversación nueva.
+     8. **Lo siguiente**: (hecho: el cliente actualizó y reinició); en
         la siguiente actualización, ver el aviso en Claude Desktop (deuda). Después: recortar con
         el ratón en el Estudio, recortar y paleta desde el agente, y el CI a `macos-15` antes del 2
         de noviembre. Las notas están en

@@ -13,7 +13,13 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   paleta desde el agente** (siguiente.md).
 - El cliente pasó un artículo: **GitHub retira `macos-14` el 2 de noviembre** y hace apagones antes
   (deuda). No se tocó nada, por indicación suya.
-- Lo siguiente: la prueba guiada en su Mac.
+- **Prueba guiada de la v0.8.0 en el Mac del cliente, bien** (pasos 1 a 5; Claude Code se prueba
+  aparte): actualizar; la fila MCP y la pestaña de agentes; crear la extensión e instalarla en
+  Claude Desktop; «¿Qué versión de Apolo usas?» → 0.8.0, desde la aplicación, con la extensión
+  cediéndole el turno; optimizar `Monte Alto.png` para web → AVIF −94 % (nota 80,1) y WebP −85 %,
+  revisando el mapa y zonas, avisando de la transparencia, sin tocar el original.
+- Dos retoques para la 7c (siguiente.md): el agente creyó que Apolo podía estar en otro equipo por la
+  ruta `/Users/…`; y una imagen adjunta en el chat no está en el disco.
 
 ---
 

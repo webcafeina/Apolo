@@ -4,6 +4,16 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-15 · El Mac de la publicación de prueba
+
+- La ejecución 38558247128 acabó bien en los seis objetivos y las cinco CLI. En el artefacto del Mac,
+  `Apolo.app/Contents/MacOS/apolo-mcp` está junto a `apolo-app` y es universal (x86_64 y arm64, con
+  `file`); el `.mcpb` de macOS lleva el servidor ejecutable y `platforms: darwin`.
+- **No verificado**: que arranque en un Mac de verdad, ni Claude Desktop con la extensión: es la
+  prueba guiada tras la v0.8.0.
+
+---
+
 ## 2026-10-14 (noche) · Entrega 7b: el conector en los instaladores, que se actualiza solo
 
 - Antes de empezar, el cliente pidió tres cosas: que el conector **se actualice solo** con Apolo sin

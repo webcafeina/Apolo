@@ -22,10 +22,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # macos-15: GitHub retira macos-14 el 2026-11-02, con apagones antes
+          # (deuda). El mínimo de macOS se fija abajo, con despliegue.
           - nombre: macos-universal
-            maquina: macos-14
+            maquina: macos-15
             objetivo: universal-apple-darwin
             rust: aarch64-apple-darwin,x86_64-apple-darwin
+            despliegue: "11.0"
           - nombre: windows-x64
             maquina: windows-latest
             objetivo: x86_64-pc-windows-msvc
@@ -46,6 +49,11 @@ jobs:
 
     name: ${{ matrix.nombre }}
     runs-on: ${{ matrix.maquina }}
+    # El macOS mínimo de todo lo que se compila, también lo que compila CMake
+    # (libjxl, aom, libheif…): sin fijarlo, cada Xcode pone el de su SDK, y
+    # Apolo promete macOS 11. En Windows y Linux va vacío y no cuenta.
+    env:
+      MACOSX_DEPLOYMENT_TARGET: ${{ matrix.despliegue }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -211,8 +219,9 @@ jobs:
       matrix:
         include:
           - nombre: macos-universal
-            maquina: macos-14
+            maquina: macos-15
             rust: aarch64-apple-darwin,x86_64-apple-darwin
+            despliegue: "11.0"
           - nombre: windows-x64
             maquina: windows-latest
             objetivo: x86_64-pc-windows-msvc
@@ -232,6 +241,11 @@ jobs:
 
     name: cli-${{ matrix.nombre }}
     runs-on: ${{ matrix.maquina }}
+    # El macOS mínimo de todo lo que se compila, también lo que compila CMake
+    # (libjxl, aom, libheif…): sin fijarlo, cada Xcode pone el de su SDK, y
+    # Apolo promete macOS 11. En Windows y Linux va vacío y no cuenta.
+    env:
+      MACOSX_DEPLOYMENT_TARGET: ${{ matrix.despliegue }}
     steps:
       - uses: actions/checkout@v4
         with:

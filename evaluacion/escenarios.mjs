@@ -148,6 +148,27 @@ export const ESCENARIOS = [
     },
   },
   {
+    id: 'o-recorte', categoria: 'optimizar',
+    peticion: 'Quédate solo con la mitad izquierda de playa-1.jpg y guárdala en WebP',
+    async comprobar(c, r) {
+      const f = unico(c, 'webp');
+      if (!f.endsWith('.webp')) return f;
+      const m = await medidas(c, f);
+      return todas([
+        r.llamadas.some((l) => l.args?.recorte) || 'no usó recorte',
+        (m.ancho === 1200 && m.alto === 1600) || `mide ${m.ancho}×${m.alto}, esperaba 1200×1600`,
+      ]);
+    },
+  },
+  {
+    id: 'o-paleta', categoria: 'optimizar',
+    peticion: 'Deja logo.png en 16 colores como mucho, en PNG',
+    comprobar: (c, r) => todas([
+      r.llamadas.some((l) => l.args?.paleta === 16) || 'no pidió paleta 16',
+      c.nuevos().some((f) => f.endsWith('.png')) || 'no escribió un PNG',
+    ]),
+  },
+  {
     id: 'o-sin-perdida', categoria: 'optimizar',
     peticion: 'Comprime logo.png sin perder nada de calidad',
     async comprobar(c) {

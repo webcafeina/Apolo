@@ -50,6 +50,8 @@ Codifica la misma imagen en varios formatos a la misma calidad percibida (nota S
 | `formatos` | lista de webp \| jpeg \| png \| qoi \| avif \| jxl | Los formatos a comparar. Por defecto, webp, avif y jpeg. |
 | `guardar` | mejor \| todos \| ninguno | Qué guardar: mejor (por defecto), todos o ninguno. |
 | `nota_objetivo` | número (0–100) | La nota SSIMULACRA 2 que tienen que alcanzar todos. Por defecto, 80. |
+| `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado. |
+| `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `salida` | texto | Carpeta donde guardar. Por defecto, junto a la original. |
 
 ## `empezar_lote` — Empezar un lote
@@ -70,7 +72,9 @@ Convierte carpetas o muchas imágenes en segundo plano, con las subcarpetas, sin
 | `medir` | sí/no | Medir la nota de cada fichero (tarda más). |
 | `nota_objetivo` | número (0–100) | Buscar, imagen a imagen, la calidad que da esta nota. Por defecto, 80. |
 | `orden` | texto | Opciones de la herramienta oficial (solo con un formato). |
+| `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado. |
 | `preset` | texto | Un preset guardado, base de todo. |
+| `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `salida` | texto | Carpeta de salida. Por defecto, junto a la de entrada con -webp, -apolo… |
 | `sin_perdida` | sí/no | Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son. |
 
@@ -90,7 +94,9 @@ Guarda una combinación de formato y opciones como preset nuevo, para usarla en 
 | `formato` | webp \| jpeg \| png \| qoi \| avif \| jxl | webp, jpeg, png, qoi, avif o jxl. Por defecto, el del preset, o webp. |
 | `nota_objetivo` | número (0–100) | Buscar la calidad más baja que da esta nota SSIMULACRA 2 (90 no se distingue; 80 muy alta; 70 alta; 50 media). Tarda unos segundos. |
 | `orden` | texto | Opciones de la herramienta oficial, tal cual: «-q 80 -m 6» (cwebp), «-quality 85 -progressive» (cjpeg), «-o 4» (oxipng), «-q 60 -s 6» (avifenc), «-d 1 -e 7» (cjxl). Puede empezar por el nombre de la herramienta. Para su formato, sustituye las opciones del preset. |
+| `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado: sobre todo para PNG de logos, iconos y capturas. |
 | `preset` | texto | Un preset guardado (listar_presets los da). Es la base de lo demás. |
+| `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `sin_perdida` | sí/no | Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son. |
 
 ## `listar_presets` — Listar los presets
@@ -129,7 +135,9 @@ Optimiza una imagen y la guarda como un fichero NUEVO (junto a la original, o en
 | `medir` | sí/no | Medir también PSNR y SSIM (la nota ya se mide al buscarla). |
 | `nota_objetivo` | número (0–100) | Buscar la calidad más baja que da esta nota SSIMULACRA 2 (90 no se distingue; 80 muy alta; 70 alta; 50 media). Tarda unos segundos. |
 | `orden` | texto | Opciones de la herramienta oficial, tal cual: «-q 80 -m 6» (cwebp), «-quality 85 -progressive» (cjpeg), «-o 4» (oxipng), «-q 60 -s 6» (avifenc), «-d 1 -e 7» (cjxl). Puede empezar por el nombre de la herramienta. Para su formato, sustituye las opciones del preset. |
+| `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado: sobre todo para PNG de logos, iconos y capturas. |
 | `preset` | texto | Un preset guardado (listar_presets los da). Es la base de lo demás. |
+| `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `salida` | texto | Dónde dejarla: una carpeta, o un fichero con la extensión del formato. Por defecto, junto a la original. Nunca se sobrescribe nada. |
 | `sin_perdida` | sí/no | Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son. |
 

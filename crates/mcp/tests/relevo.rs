@@ -55,14 +55,14 @@ fn la_copia_del_paquete_cede_el_turno_a_la_instalada() {
 
     // Sin Apolo instalado, contesta la copia del paquete, y lo dice.
     let sola = preguntar(&paquete, &casa);
-    assert_eq!(sola["ejecutable"], paquete.display().to_string());
+    assert_eq!(sola["ejecutable"], "~/extension/server/apolo-mcp");
     assert_eq!(sola["copia_del_paquete_sin_aplicacion"], true);
     assert!(sola["relevado_desde"].is_null());
 
     // Con Apolo instalado, contesta la instalada.
     std::fs::copy(env!("CARGO_BIN_EXE_apolo-mcp"), &instalada).unwrap();
     let relevada = preguntar(&paquete, &casa);
-    assert_eq!(relevada["ejecutable"], instalada.display().to_string());
+    assert_eq!(relevada["ejecutable"], "~/.local/bin/apolo-mcp");
     assert_eq!(relevada["relevado_desde"], env!("CARGO_PKG_VERSION"));
     assert_eq!(relevada["copia_del_paquete_sin_aplicacion"], false);
     assert_eq!(relevada["version"], env!("CARGO_PKG_VERSION"));

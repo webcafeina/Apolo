@@ -1,6 +1,6 @@
 # Estado
 
-Última actualización: **2026-10-15**
+Última actualización: **2026-10-16**
 
 ## Dónde se paró, y por dónde se sigue
 
@@ -9,18 +9,16 @@
 > Borrador revisado como siempre (27 ficheros, sumas, firmas, `latest.json`, versiones, `.mcpb`,
 > AVIF igual que avifenc 3/3). La entrega 7 (agentes por MCP) está hecha: 7a, 7b y 7c.
 
-### Al parar el 2026-10-15: lo primero mañana
+### Hecho el 2026-10-16, sin publicar (para la próxima versión)
 
-1. **Que el cliente actualice a la 0.8.2 con Claude Desktop abierto**: es la primera vez que se
-   puede ver el aviso de «Apolo se ha actualizado» (lo lleva la 0.8.1 que tiene en marcha). Luego
-   reiniciar Claude Desktop.
-2. **Repetir el paso 4 en Claude Desktop**: conversación nueva, arrastrar una imagen y «Optimízala
-   para web». Debe pedir la ruta o buscarla y usar Apolo, no su intérprete en la nube.
-3. Después, lo pendiente: recortar con el ratón en el Estudio; recortar y paleta desde el agente;
-   el CI a `macos-15` antes del 2 de noviembre (apagones de `macos-14` el 16–17, 19–20, 23–24,
-   26–27, 29–30 y 30–31 de octubre, de 16:00 a 02:00 en Madrid: no empujar etiquetas entonces).
+- El CI del Mac en `macos-15` (publicación de prueba 38893150888 entera; deuda saldada).
+- Recortar y reducir la paleta desde el agente.
+- Recortar con el ratón en el Estudio, comparando con el deslizador.
+- `acerca_de_apolo` dice que no hace falta actualizar la extensión de Claude Desktop.
 
-
+**Lo siguiente**: publicar (¿v0.9.0, por las dos funciones nuevas?) cuando lo diga el cliente, y
+probar en su Mac el recorte con el ratón y el trackpad. Con la nueva versión, repetir AVIF frente al
+avifenc oficial de Mac (deuda: primera compilación con `macos-15`).
 
 > **Entregas 0, 1, 2 y 3 hechas el 2026-10-06.** Publicadas la v0.2.0, la v0.3.0 y la **v0.3.1**,
 > todas como pre-release. La v0.3.1 añade:

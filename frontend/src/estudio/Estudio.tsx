@@ -5,12 +5,13 @@
 // generación anterior, y aquí se descarta cualquier respuesta que no sea la
 // última pedida: lo que se ve siempre corresponde a los controles.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Cabecera, Icono, IconoApp, Marca } from "../componentes";
 import * as puente from "../puente";
 import { Comparador, type Modo } from "./Comparador";
-import { admiteObjetivo, type Ajuste, type Contexto, type Preset } from "./opciones";
+import { admiteObjetivo, type Ajuste, type Contexto, type Preset, type Recorte } from "./opciones";
+import { conProporcion, dentro, type Proporcion, razon, recortar } from "./recorte";
 import { banda, nombreFormato, Panel, type Lado } from "./Panel";
 
 const RETARDO_MS = 120;
@@ -183,6 +184,29 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   };
 
   const ladoActivo: Lado = lados[editando].ajuste ? editando : 1;
+
+  // Recortar con el ratón: mientras se arrastra, el marco va aparte y solo se
+  // aplica al soltar, para no codificar en cada movimiento.
+  const [recortando, setRecortando] = useState(false);
+  const [proporcion, setProporcion] = useState<Proporcion>("libre");
+  const [marcoVivo, setMarcoVivo] = useState<Recorte | null>(null);
+  const marco = marcoVivo ?? editado.proceso.recorte;
+  const ponerRecorte = useCallback(
+    (r: Recorte | null) => ponerAjuste({ ...editado, proceso: { ...editado.proceso, recorte: r } }),
+    [editado, ponerAjuste],
+  );
+  // Para comparar: si el original va a la izquierda y el derecho recorta, el
+  // original también, por el mismo marco. Así tienen la misma proporción y el
+  // deslizador funciona (antes pasaba a lado a lado con escala aproximada).
+  const recorteDerecho = lados[1].ajuste!.proceso.recorte;
+  // Apagar el recorte en el panel también acaba la edición.
+  useEffect(() => {
+    if (recortando && !editado.proceso.recorte) setRecortando(false);
+  }, [recortando, editado.proceso.recorte]);
+  const originalComparable = useMemo(
+    () => (original && recorteDerecho && !recortando ? recortar(original, recorteDerecho) : original),
+    [original, recorteDerecho, recortando],
+  );
   const vista = lados[ladoActivo].vista;
 
   // El mapa de diferencias del lado que se edita, cuando se mira.
@@ -259,7 +283,31 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
     );
   }
 
-  const contexto: Contexto = { alfa: info.alfa, ancho: info.ancho, alto: info.alto, jpeg: info.formato === "JPEG" };
+  // El recorte va en píxeles de la imagen ya enderezada: la del original.
+  const W = original?.width ?? info.ancho;
+  const H = original?.height ?? info.alto;
+  const contexto: Contexto = {
+    alfa: info.alfa,
+    ancho: info.ancho,
+    alto: info.alto,
+    jpeg: info.formato === "JPEG",
+    recortar: {
+      editando: recortando,
+      editar: () => {
+        if (!recortando && !editado.proceso.recorte) ponerRecorte(conProporcion({ x: 0, y: 0, ancho: W, alto: H }, razon(proporcion, W, H)));
+        setMarcoVivo(null);
+        setRecortando((v) => !v);
+      },
+      proporcion,
+      elegirProporcion: (p) => {
+        setProporcion(p);
+        const actual = editado.proceso.recorte ? dentro(editado.proceso.recorte, W, H) : null;
+        ponerRecorte(conProporcion(actual ?? { x: 0, y: 0, ancho: W, alto: H }, razon(p, W, H)));
+      },
+      ancho: W,
+      alto: H,
+    },
+  };
   const medidas = lados[ladoActivo].medidas;
   // Con nota objetivo, la vista previa es la búsqueda: varias pruebas que
   // pueden tardar segundos. Se dice, para que no parezca parado (v0.7.0).
@@ -313,7 +361,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
         )}
 
         <Comparador
-          izquierda={lados[0].ajuste ? lados[0].pixeles : original}
+          izquierda={lados[0].ajuste && !recortando ? lados[0].pixeles : recortando ? original : originalComparable}
           derecha={modo === "diferencias" ? mapa : lados[1].pixeles}
           rotulos={
             modo === "diferencias"
@@ -322,6 +370,24 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
           }
           ocupados={modo === "diferencias" ? [false, lados[ladoActivo].ocupado || (!!vista && !mapa)] : [lados[0].ocupado, lados[1].ocupado]}
           modo={modo}
+          recorte={
+            recortando && marco
+              ? {
+                  marco,
+                  proporcion: razon(proporcion, W, H),
+                  alCambiar: setMarcoVivo,
+                  alSoltar: () => {
+                    if (marcoVivo) ponerRecorte(marcoVivo);
+                    setMarcoVivo(null);
+                  },
+                  alAcabar: () => {
+                    if (marcoVivo) ponerRecorte(marcoVivo);
+                    setMarcoVivo(null);
+                    setRecortando(false);
+                  },
+                }
+              : null
+          }
           extra={
             <select
               value={tipoMapa}
@@ -361,7 +427,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
       </div>
 
       <Panel
-        ajuste={editado}
+        ajuste={marcoVivo ? { ...editado, proceso: { ...editado.proceso, recorte: marcoVivo } } : editado}
         contexto={contexto}
         presetsCwebp={inicio.presets_cwebp}
         guardados={guardados}

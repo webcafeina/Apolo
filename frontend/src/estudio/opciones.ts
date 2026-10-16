@@ -7,6 +7,8 @@
 // la explicación salen de i18n con la clave `opcion.<clave>` y
 // `opcion.<clave>Ayuda`.
 
+import type { Proporcion } from "./recorte";
+
 export type Preset = "default" | "photo" | "picture" | "drawing" | "icon" | "text";
 export type Pista = "ninguna" | "picture" | "photo" | "graph";
 export type FiltradoAlfa = "none" | "fast" | "best";
@@ -205,6 +207,16 @@ export interface Contexto {
   alto: number;
   /** La entrada es un JPEG (cjxl lo recomprime sin pérdida). */
   jpeg: boolean;
+  /** Recortar con el ratón (Estudio.tsx): solo en el Estudio, no en Lotes. */
+  recortar?: {
+    editando: boolean;
+    editar: () => void;
+    proporcion: Proporcion;
+    elegirProporcion: (p: Proporcion) => void;
+    /** Las medidas de la imagen ya enderezada, que son las del recorte. */
+    ancho: number;
+    alto: number;
+  };
 }
 
 type Cuando = (a: Ajuste, c: Contexto) => boolean;

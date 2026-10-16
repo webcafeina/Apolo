@@ -160,3 +160,19 @@ test("agentes", async ({ page }, info) => {
   await page.getByTestId("agentes").evaluate((e) => e.closest(".contenido")!.scrollTo(0, 10_000));
   await page.screenshot({ path: `capturas/agentes-abajo-${info.project.name}.png` });
 });
+
+test("recorte", async ({ page }, info) => {
+  await page.goto("/");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/corpus/foto.webp"));
+  await page.getByText("foto.webp", { exact: true }).waitFor();
+  await page.getByRole("switch", { name: "Recortar", exact: true }).check();
+  await page.getByTestId("proporcion").selectOption("4:3");
+  await page.getByTestId("recortar-en-imagen").click();
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `capturas/recorte-${info.project.name}.png` });
+  await page.getByTestId("recorte-listo").click();
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: `capturas/recorte-hecho-${info.project.name}.png` });
+});

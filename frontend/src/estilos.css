@@ -454,7 +454,12 @@ input[type="range"] { accent-color: var(--relleno); }
 
 .pareja { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .pareja input[type="number"] { width: 76px; }
-.pareja.cuadruple input[type="number"] { width: 60px; }
+.pareja.cuadruple input[type="number"] { flex: 1; min-width: 0; width: auto; }
+/* Cuatro números en una fila (el recorte): sin las flechitas, que se comían el
+   sitio y cortaban «128». Se escriben, o salen del marco en la imagen. */
+.pareja.cuadruple input[type="number"] { padding-inline: 6px; appearance: textfield; -moz-appearance: textfield; }
+.pareja.cuadruple input[type="number"]::-webkit-inner-spin-button,
+.pareja.cuadruple input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .casilla { display: flex; align-items: center; gap: 4px; color: var(--cuerpo); }
 
 /* Ajustes */
@@ -539,6 +544,7 @@ html, body, #raiz { overscroll-behavior: none; }
    Abajo, sobre el zoom: arriba pisaba el selector y el rótulo del modo
    Diferencias (v0.7.0). «Otra proporción», que usa el mismo sitio, nunca sale
    a la vez: esa solo con otra proporción, y esta solo con la misma. */
+.recorte-listo { position: absolute; top: var(--espacio-3); right: var(--espacio-3); }
 .nota-reducida {
   position: absolute;
   bottom: 56px;

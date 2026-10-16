@@ -156,3 +156,25 @@ con imágenes de la carpeta de prueba.
 - BMP, GIF y Targa en cjpeg;
 - lotes grandes con varios formatos: memoria y tiempo;
 - que la mezcla en RGB lineal de `fast_image_resize` trate la transparencia como Squoosh.
+
+## Añadido el 2026-10-16: recortar con el ratón
+
+Lo pidió el cliente comparándolo con Squoosh. El recorte del proceso era solo con números, y con un
+recorte el comparador pasaba a lado a lado con una escala aproximada (deuda).
+
+- **En el panel**, junto a los cuatro números: «Recortar en la imagen» y una proporción (libre, la
+  del original, 1:1, 4:3, 3:2, 16:9 o 4:5). Elegir una proporción deja el marco más grande que cabe
+  en el actual, centrado.
+- **En el comparador**, mientras se recorta: el original entero, lo de fuera oscurecido, el marco
+  con ocho asas y los tercios. Se mueve el marco o se tira de las asas, con la proporción fija si la
+  hay (crece desde el lado contrario). Los números del panel lo siguen. **El recorte se aplica al
+  soltar**, no en cada movimiento, para no codificar a cada píxel de arrastre. «Listo» acaba.
+- **Para comparar, el original se recorta por el mismo marco** (en el navegador, sin pedir nada al
+  núcleo). Los dos lados tienen así la misma proporción y el deslizador funciona.
+- Las coordenadas son las de la imagen ya enderezada, que es la que carga el Estudio como original.
+- La cuenta del marco está en `frontend/src/estudio/recorte.ts`, con pruebas unitarias. La prueba e2e
+  recorta 16:9, arrastra el marco hasta abajo y comprueba que se compara con el deslizador.
+
+**Sin comprobar:** en la ventana de verdad (WebKit en macOS, WebView2 en Windows), sobre todo con el
+trackpad; con fotos de muchos megapíxeles, el coste de recortar el original en el navegador.
+

@@ -19,6 +19,7 @@ import {
   type Preset,
   type Proceso,
 } from "./opciones";
+import { PROPORCIONES, type Proporcion } from "./recorte";
 
 export type Lado = 0 | 1;
 
@@ -539,20 +540,47 @@ function Especial({
     }
     case "procesoRecorte": {
       const r = a.proceso.recorte;
+      const rc = contexto.recortar;
+      // Las medidas de la imagen ya enderezada, que son las del recorte.
+      const w = rc?.ancho ?? contexto.ancho;
+      const h = rc?.alto ?? contexto.alto;
       return (
-        <div className="pareja cuadruple">
-          <input
-            id={id}
-            type="checkbox"
-            role="switch"
-            checked={r !== null}
-            onChange={(e) => proceso({ recorte: e.target.checked ? { x: 0, y: 0, ancho: contexto.ancho, alto: contexto.alto } : null })}
-            aria-label={t("opcion.procesoRecorte")}
-          />
-          {r &&
-            (["x", "y", "ancho", "alto"] as const).map((k) => (
-              <input key={k} type="number" min={0} value={r[k]} aria-label={t(`panel.${k}`)} title={t(`panel.${k}`)} onChange={(e) => proceso({ recorte: { ...r, [k]: num(e.target.value) } })} />
-            ))}
+        <div className="proceso-control">
+          <div className="pareja cuadruple">
+            <input
+              id={id}
+              type="checkbox"
+              role="switch"
+              checked={r !== null}
+              onChange={(e) => proceso({ recorte: e.target.checked ? { x: 0, y: 0, ancho: w, alto: h } : null })}
+              aria-label={t("opcion.procesoRecorte")}
+            />
+            {r &&
+              (["x", "y", "ancho", "alto"] as const).map((k) => (
+                <input key={k} type="number" min={0} value={r[k]} aria-label={t(`panel.${k}`)} title={t(`panel.${k}`)} onChange={(e) => proceso({ recorte: { ...r, [k]: num(e.target.value) } })} />
+              ))}
+          </div>
+          {/* Recortar con el ratón, con una proporción fija si se quiere. */}
+          {rc && (
+            <div className="pareja">
+              <button onClick={rc.editar} aria-pressed={rc.editando} data-prueba="recortar-en-imagen">
+                {rc.editando ? t("panel.recorteListo") : t("panel.recortarEnImagen")}
+              </button>
+              <select
+                value={rc.proporcion}
+                onChange={(e) => rc.elegirProporcion(e.target.value as Proporcion)}
+                aria-label={t("panel.proporcion")}
+                title={t("panel.proporcion")}
+                data-prueba="proporcion"
+              >
+                {PROPORCIONES.map((p) => (
+                  <option key={p} value={p}>
+                    {p === "libre" || p === "original" ? t(`panel.proporciones.${p}`) : p}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       );
     }

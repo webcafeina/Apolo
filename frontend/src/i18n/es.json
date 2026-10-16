@@ -44,7 +44,9 @@
     "mapa": {
       "diferencia": "Píxeles que cambian",
       "estructura": "Detalle que se pierde"
-    }
+    },
+    "recorteRotulo": "Recorte · {{ancho}} × {{alto}} px · arrastra el marco o sus esquinas",
+    "recorteListo": "Listo"
   },
   "orden": {
     "copiar": "Copiar",
@@ -99,7 +101,14 @@
     "lineal": "Mezclar en RGB lineal",
     "colores": "Colores",
     "tramado": "Tramado",
-    "nota": "Nota"
+    "nota": "Nota",
+    "recortarEnImagen": "Recortar en la imagen",
+    "recorteListo": "Listo",
+    "proporcion": "Proporción",
+    "proporciones": {
+      "libre": "Libre",
+      "original": "La del original"
+    }
   },
   "formato": {
     "avif": "AVIF",

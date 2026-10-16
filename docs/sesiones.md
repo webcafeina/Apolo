@@ -15,7 +15,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   comparar con el deslizador (ADR 0020, añadido). Pruebas unitarias del marco y una e2e; 61 e2e.
 - **v0.9.0 publicada** con las tres, con el sí del cliente. Borrador revisado como siempre, y la CLI
   de Mac (la primera de `macos-15`) universal y con macOS mínimo 11.0.
-- Mañana: prueba guiada del recorte con ratón y trackpad, el agente recortando, y AVIF frente al
+- El lunes 2026-10-19: prueba guiada del recorte con ratón y trackpad, el agente recortando, y AVIF frente al
   avifenc oficial de Mac (estado.md).
 
 ---

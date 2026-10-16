@@ -9,7 +9,7 @@
 > Borrador revisado como siempre (27 ficheros, sumas, firmas, `latest.json`, versiones, `.mcpb`,
 > AVIF igual que avifenc 3/3). La entrega 7 (agentes por MCP) está hecha: 7a, 7b y 7c.
 
-### Al parar el 2026-10-16: lo primero mañana
+### Al parar el viernes 2026-10-16: lo primero el lunes 2026-10-19
 
 **v0.9.0** (2026-10-16): recortar con el ratón en el Estudio (comparando con el deslizador), el
 agente recorta y reduce la paleta, y el CI del Mac en `macos-15`.

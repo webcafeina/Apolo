@@ -83,12 +83,12 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     que Apolo apareció a mitad de la tarea).
 
 - **Después de la v0.8.0, pedido por el cliente el 2026-10-15:**
-  - **Recortar con el ratón en el Estudio**, como en Squoosh: dibujar el rectángulo sobre el
+  - ~~**Recortar con el ratón en el Estudio**~~ (hecho el 2026-10-16, sin publicar), como en Squoosh: dibujar el rectángulo sobre el
     original, con asas, en vez de escribir x, y, ancho y alto. Hoy el recorte del proceso es
     numérico, y con él el comparador pasa a lado a lado con escala aproximada (deuda: «Recortar en
     el comparador»). Hace falta decidir la proporción fija (libre, 1:1, 4:3, 16:9…) y cómo se
     compara después.
-  - **Recortar y reducir la paleta desde el agente (MCP).** Hoy `EntradaFormato` solo lleva `ancho` y
+  - ~~**Recortar y reducir la paleta desde el agente (MCP).**~~ (hecho el 2026-10-16, sin publicar) Hoy `EntradaFormato` solo lleva `ancho` y
     `alto`. Añadir `recorte` (`{x, y, ancho, alto}`, como la `zona` de `ver_imagen`) y `paleta`
     (número de colores), con sus errores y pistas (fuera de la imagen, paleta en formatos sin
     pérdida), en `optimizar_imagen`, `comparar_formatos`, `empezar_lote` y `guardar_preset`. Regenerar

@@ -4,6 +4,19 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-16 · Las tres pendientes: CI en macos-15, recorte y paleta en el agente, recortar con el ratón
+
+- **CI a `macos-15`** con `MACOSX_DEPLOYMENT_TARGET=11.0`. La primera prueba no enlazó: la imagen
+  trae giflib con Homebrew y libjxl activaba GIF en cjxl (trampa). Apagado; la segunda, entera, con
+  todo universal y macOS mínimo 11.0 (antes la CLI x86_64 pedía 10.12).
+- **El agente recorta y reduce la paleta** (`recorte`, `paleta` en la entrada común), con errores y
+  pistas; dos escenarios nuevos que pasan.
+- **Recortar con el ratón en el Estudio**, con proporciones, y el original recortado igual para
+  comparar con el deslizador (ADR 0020, añadido). Pruebas unitarias del marco y una e2e; 61 e2e.
+- Sin publicar: para la próxima versión, cuando lo diga el cliente.
+
+---
+
 ## 2026-10-16 · Prueba de la v0.8.2 y v0.8.3
 
 - El aviso de actualización no se pudo ver: el cliente ya había actualizado a la 0.8.2 al cerrar

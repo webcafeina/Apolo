@@ -149,6 +149,8 @@ fn comparar_sin_guardar_no_escribe_nada() {
         ancho: None,
         alto: None,
         enderezar: None,
+        recorte: None,
+        paleta: None,
     };
     let r = comparar_formatos(&cx, e, &Seguimiento::nada()).unwrap();
     assert_eq!(std::fs::read_dir(dir.join("fotos")).unwrap().count(), 2);
@@ -169,6 +171,8 @@ fn comparar_guarda_el_mejor() {
         ancho: None,
         alto: None,
         enderezar: None,
+        recorte: None,
+        paleta: None,
     };
     let r = comparar_formatos(&cx, e, &Seguimiento::nada()).unwrap();
     let g = r.datos["guardados"].as_array().unwrap();
@@ -361,6 +365,8 @@ fn un_lote_de_principio_a_fin() {
             ancho: None,
             alto: None,
             enderezar: None,
+            recorte: None,
+            paleta: None,
             mas_ligero: false,
             medir: false,
             salida: None,
@@ -438,5 +444,93 @@ fn el_ancho_es_un_maximo_y_no_agranda() {
     assert_eq!(
         (r.datos["ancho"].as_u64(), r.datos["alto"].as_u64()),
         (Some(128), Some(128))
+    );
+}
+
+#[test]
+fn recortar_y_reducir_la_paleta() {
+    use apolo_mcp::entrada::RecorteMcp;
+    let (dir, cx) = preparar();
+    // Recorte de 64×32 de foto.webp (128×128), sin redimensionar.
+    let e = EntradaFormato {
+        formato: Some(FormatoMcp::Png),
+        recorte: Some(RecorteMcp {
+            x: 10,
+            y: 20,
+            ancho: 64,
+            alto: 32,
+        }),
+        paleta: Some(8),
+        ..Default::default()
+    };
+    let r = optimizar_imagen(
+        &cx,
+        optimizar(&dir.join("fotos/foto.webp"), e),
+        &Seguimiento::nada(),
+    )
+    .unwrap();
+    assert_eq!(
+        (r.datos["ancho"].as_u64(), r.datos["alto"].as_u64()),
+        (Some(64), Some(32))
+    );
+    // Como mucho 8 colores en el PNG escrito.
+    let datos = std::fs::read(r.datos["salida"].as_str().unwrap()).unwrap();
+    let img = apolo_nucleo::entrada::leer(&datos, Default::default()).unwrap();
+    let (_, _, px) = apolo_nucleo::vista::rgba(&img).unwrap();
+    let colores: std::collections::HashSet<&[u8]> = px.chunks(4).collect();
+    assert!(colores.len() <= 8, "{} colores", colores.len());
+
+    // Un recorte que empieza fuera, y una paleta imposible: errores con pista.
+    let fuera = EntradaFormato {
+        recorte: Some(RecorteMcp {
+            x: 500,
+            y: 0,
+            ancho: 10,
+            alto: 10,
+        }),
+        ..Default::default()
+    };
+    let err = optimizar_imagen(
+        &cx,
+        optimizar(&dir.join("fotos/foto.webp"), fuera),
+        &Seguimiento::nada(),
+    )
+    .unwrap_err();
+    assert_eq!(err.error, "recorte_fuera");
+    let mala = EntradaFormato {
+        paleta: Some(1000),
+        ..Default::default()
+    };
+    let err = optimizar_imagen(
+        &cx,
+        optimizar(&dir.join("fotos/foto.webp"), mala),
+        &Seguimiento::nada(),
+    )
+    .unwrap_err();
+    assert_eq!(err.error, "paleta_fuera");
+
+    // Un preset con los dos, y lo dice.
+    guardar_preset(
+        &cx,
+        EntradaGuardarPreset {
+            nombre: "Logos".into(),
+            formato: EntradaFormato {
+                formato: Some(FormatoMcp::Png),
+                recorte: Some(RecorteMcp {
+                    x: 0,
+                    y: 0,
+                    ancho: 100,
+                    alto: 50,
+                }),
+                paleta: Some(16),
+                ..Default::default()
+            },
+        },
+    )
+    .unwrap();
+    let l = listar_presets(&cx).unwrap();
+    assert_eq!(
+        l.datos["presets"][0]["proceso"],
+        "recorta 100×50 en 0,0 · paleta de 16 colores"
     );
 }

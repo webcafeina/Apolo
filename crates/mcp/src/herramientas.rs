@@ -28,7 +28,7 @@ use base64::Engine;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::entrada::{EntradaFormato, FormatoMcp, NOTA_POR_DEFECTO};
+use crate::entrada::{EntradaFormato, FormatoMcp, NOTA_POR_DEFECTO, RecorteMcp};
 use crate::errores::{ErrorMcp, FORMATOS_QUE_LEE, Hecho};
 use crate::respuesta::{Imagen, Respuesta, ahorro, ahorro_pct, banda, coma, peso};
 use crate::rutas::resolver;
@@ -388,6 +388,7 @@ pub fn optimizar_imagen(cx: &Contexto, e: EntradaOptimizar, s: &Seguimiento) -> 
     let ajuste = e
         .formato
         .ajuste(&cx.servicio.presets(), a.formato, a.info.orientacion)?;
+    recorte_cabe(&a.info, &ajuste)?;
     let destino = destino(&a, e.salida.as_deref(), ajuste.formato)?;
     let _turno = cx.turno();
     let avisar = |p: i32| {
@@ -471,6 +472,28 @@ pub fn optimizar_imagen(cx: &Contexto, e: EntradaOptimizar, s: &Seguimiento) -> 
     Ok(Respuesta::nueva(texto, &datos))
 }
 
+/// Un recorte que empieza fuera de la imagen (ya enderezada) es un error: el
+/// núcleo ajusta lo que se sale por el borde, pero ahí no quedaría nada.
+fn recorte_cabe(info: &InfoImagen, a: &Ajuste) -> Hecho<()> {
+    let Some(r) = a.proceso.recorte else {
+        return Ok(());
+    };
+    let gira = a.proceso.enderezar && (5..=8).contains(&info.orientacion);
+    let (w, h) = if gira {
+        (info.alto, info.ancho)
+    } else {
+        (info.ancho, info.alto)
+    };
+    if r.x >= w || r.y >= h {
+        return Err(ErrorMcp::nuevo(
+            "recorte_fuera",
+            format!("El recorte empieza en {},{}, fuera de la imagen ({w}×{h}).", r.x, r.y),
+        )
+        .con_pista("x tiene que ser menor que el ancho e y menor que el alto (de la imagen ya enderezada)."));
+    }
+    Ok(())
+}
+
 /// Buscar una nota con `-resize` de cwebp no se puede: se dice cómo sí.
 fn tamano_cambia(e: ErrorMcp) -> ErrorMcp {
     if e.mensaje.contains("cambia el tamaño") {
@@ -521,6 +544,14 @@ pub struct EntradaComparar {
     /// Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí.
     #[serde(default)]
     pub enderezar: Option<bool>,
+    /// Quedarse con este rectángulo, antes de redimensionar (en píxeles de la
+    /// imagen ya enderezada; lo que se salga del borde se ajusta).
+    #[serde(default)]
+    pub recorte: Option<RecorteMcp>,
+    /// Reducir a este número de colores (de 2 a 256), con tramado.
+    #[serde(default)]
+    #[schemars(range(min = 2, max = 256))]
+    pub paleta: Option<u32>,
 }
 
 #[derive(Serialize)]
@@ -567,6 +598,8 @@ pub fn comparar_formatos(cx: &Contexto, e: EntradaComparar, s: &Seguimiento) -> 
             ancho: e.ancho,
             alto: e.alto,
             enderezar: e.enderezar,
+            recorte: e.recorte,
+            paleta: e.paleta,
             ..Default::default()
         };
         let con_nota = EntradaFormato {
@@ -581,6 +614,7 @@ pub fn comparar_formatos(cx: &Contexto, e: EntradaComparar, s: &Seguimiento) -> 
             }
             otro => otro?,
         };
+        recorte_cabe(&a.info, &ajuste)?;
         let avisar = |p: i32| {
             (s.avisar)((i as i32 * 100 + p) / total);
             if s.cancelado.load(Ordering::SeqCst) {
@@ -939,6 +973,14 @@ pub struct EntradaLote {
     /// Girar cada foto según su orientación EXIF si lo necesita. Por defecto, sí.
     #[serde(default)]
     pub enderezar: Option<bool>,
+    /// Quedarse con este rectángulo, antes de redimensionar (en píxeles de la
+    /// imagen ya enderezada; lo que se salga del borde se ajusta).
+    #[serde(default)]
+    pub recorte: Option<RecorteMcp>,
+    /// Reducir a este número de colores (de 2 a 256), con tramado.
+    #[serde(default)]
+    #[schemars(range(min = 2, max = 256))]
+    pub paleta: Option<u32>,
     /// Con varios formatos: guardar de cada imagen solo el que menos pese.
     #[serde(default)]
     pub mas_ligero: bool,
@@ -1006,6 +1048,8 @@ pub fn empezar_lote(cx: &Contexto, e: EntradaLote) -> Hecho<Respuesta> {
             ancho: e.ancho,
             alto: e.alto,
             enderezar: e.enderezar,
+            recorte: e.recorte,
+            paleta: e.paleta,
         };
         let mut a = ef.ajuste(&presets, None, 1)?;
         // En un lote cada foto tiene su orientación: el núcleo endereza solo

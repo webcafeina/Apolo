@@ -312,3 +312,11 @@ En depuración, `apolo-mcp` pesa unos 200 MB, y comprimirlo con zlib-rs sin opti
 más que una prueba e2e. El perfil `dev` optimiza `zlib-rs`, `flate2`, `crc32fast` y `zip`, y el
 paquete se comprime con nivel 1: 0,9 s. Ojo, el motor de deflate de `zip` 4 es **zlib-rs**, no
 miniz_oxide: optimizar el que no es no cambia nada. · 2026-10-14
+
+## macOS 15 en CI: «Undefined symbols: _DGifOpen, _GifErrorString…» al enlazar
+
+Al pasar el CI de `macos-14` a `macos-15`, la CLI y `apolo-mcp` dejaron de enlazar. La máquina nueva
+trae **giflib con Homebrew**, el CMake de libjxl la encuentra (`find_package(GIF)`) y activa la
+lectura de GIF en cjxl, pero nadie la enlaza. En `macos-14` no estaba, en el VPS tampoco. Se apaga en
+`crates/avifjxl/cmake/CMakeLists.txt` con `CMAKE_DISABLE_FIND_PACKAGE_GIF`, para que todas las
+máquinas compilen lo mismo. Al cambiar de imagen de CI, mirar qué trae Homebrew. · 2026-10-16

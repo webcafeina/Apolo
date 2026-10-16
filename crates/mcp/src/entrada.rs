@@ -7,7 +7,7 @@
 
 use apolo_nucleo::entrada::Formato;
 use apolo_nucleo::presets::PresetGuardado;
-use apolo_nucleo::proceso::Redimension;
+use apolo_nucleo::proceso::{Paleta, Recorte, Redimension};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida};
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -40,6 +40,17 @@ impl From<FormatoMcp> for FormatoSalida {
             FormatoMcp::Jxl => FormatoSalida::Jxl,
         }
     }
+}
+
+/// Un rectángulo de la imagen, en píxeles (ya enderezada).
+#[derive(Debug, Clone, Copy, Deserialize, JsonSchema)]
+pub struct RecorteMcp {
+    /// Desde la izquierda.
+    pub x: u32,
+    /// Desde arriba.
+    pub y: u32,
+    pub ancho: u32,
+    pub alto: u32,
 }
 
 /// Cómo codificar: todo opcional. Sin nada, WebP con la calidad más baja que
@@ -79,6 +90,15 @@ pub struct EntradaFormato {
     /// Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí.
     #[serde(default)]
     pub enderezar: Option<bool>,
+    /// Quedarse con este rectángulo, antes de redimensionar (en píxeles de la
+    /// imagen ya enderezada; lo que se salga del borde se ajusta).
+    #[serde(default)]
+    pub recorte: Option<RecorteMcp>,
+    /// Reducir a este número de colores (de 2 a 256), con tramado: sobre todo
+    /// para PNG de logos, iconos y capturas.
+    #[serde(default)]
+    #[schemars(range(min = 2, max = 256))]
+    pub paleta: Option<u32>,
 }
 
 impl EntradaFormato {
@@ -193,6 +213,31 @@ impl EntradaFormato {
                 ancho: self.ancho,
                 alto: self.alto,
                 solo_reducir: true,
+                ..Default::default()
+            });
+        }
+        if let Some(r) = self.recorte {
+            if r.ancho == 0 || r.alto == 0 {
+                return Err(ErrorMcp::nuevo("recorte_vacio", "El recorte no tiene ancho o alto.")
+                    .con_pista("recorte es {x, y, ancho, alto}, en píxeles, con ancho y alto mayores que 0."));
+            }
+            a.proceso.recorte = Some(Recorte {
+                x: r.x,
+                y: r.y,
+                ancho: r.ancho,
+                alto: r.alto,
+            });
+        }
+        if let Some(colores) = self.paleta {
+            if !(2..=256).contains(&colores) {
+                return Err(ErrorMcp::nuevo(
+                    "paleta_fuera",
+                    format!("Una paleta de {colores} colores no vale."),
+                )
+                .con_pista("paleta va de 2 a 256 colores."));
+            }
+            a.proceso.paleta = Some(Paleta {
+                colores,
                 ..Default::default()
             });
         }

@@ -28,6 +28,10 @@ set(JPEGXL_ENABLE_TOOLS ON CACHE BOOL "" FORCE)
 set(JPEGXL_ENABLE_SJPEG ON CACHE BOOL "" FORCE)
 set(JPEGXL_ENABLE_SKCMS ON CACHE BOOL "" FORCE)
 set(JPEGXL_BUNDLE_LIBPNG ON CACHE BOOL "" FORCE)
+# Sin GIF en cjxl, en todas las máquinas: libjxl lo activa si encuentra giflib
+# en el sistema, y en la máquina macos-15 de GitHub viene con Homebrew, así que
+# enlazaba sin ella (trampas.md). Apolo lee los GIF él mismo y le da a cjxl un PNG.
+set(CMAKE_DISABLE_FIND_PACKAGE_GIF ON CACHE BOOL "" FORCE)
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 # En Windows, CMake encuentra el awk de Git, y libpng intenta generar su
 # pnglibconf.h compilando un fichero que no ve zlib.h. Sin awk usa el que trae

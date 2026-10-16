@@ -11,9 +11,22 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import type { Recorte } from "./opciones";
+import { type Asa, ASAS, aplicarAsa } from "./recorte";
 
 /** «diferencias» pinta un solo panel: el mapa de dónde se pierde (ADR 0022). */
 export type Modo = "deslizador" | "ladoALado" | "diferencias";
+
+/** Mientras se recorta con el ratón: el marco, su proporción y qué hacer al
+ *  cambiarlo. El comparador pinta entonces solo el original, con el marco. */
+export interface EdicionRecorte {
+  marco: Recorte;
+  proporcion: number | null;
+  alCambiar: (r: Recorte) => void;
+  /** Al soltar el marco: entonces se aplica y se recalcula la vista previa. */
+  alSoltar: () => void;
+  alAcabar: () => void;
+}
 
 interface Props {
   /** El original o el resultado del lado izquierdo. */
@@ -24,6 +37,7 @@ interface Props {
   modo: Modo;
   /** Va donde el rótulo izquierdo en el modo diferencias (el tipo de mapa). */
   extra?: React.ReactNode;
+  recorte?: EdicionRecorte | null;
 }
 
 interface Vista {
@@ -42,7 +56,7 @@ function color(nombre: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(nombre).trim() || "#ccc";
 }
 
-export function Comparador({ izquierda: original, derecha: resultado, rotulos, ocupados, modo, extra }: Props) {
+export function Comparador({ izquierda: original, derecha: resultado, rotulos, ocupados, modo, extra, recorte }: Props) {
   const { t } = useTranslation();
   const caja = useRef<HTMLDivElement>(null);
   const lienzo = useRef<HTMLCanvasElement>(null);
@@ -50,7 +64,12 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
   const [tamano, setTamano] = useState({ w: 0, h: 0 });
   const [vista, setVista] = useState<Vista | null>(null);
   const [corte, setCorte] = useState(0.5);
-  const arrastre = useRef<null | { tipo: "corte" } | { tipo: "mover"; x: number; y: number; v: Vista }>(null);
+  const arrastre = useRef<
+    | null
+    | { tipo: "corte" }
+    | { tipo: "mover"; x: number; y: number; v: Vista }
+    | { tipo: "recorte"; asa: Asa; x: number; y: number; r0: Recorte }
+  >(null);
 
   // Las dimensiones de referencia son las del original: el resultado se
   // estira a ellas si tiene la misma proporción (redimensionar), y si no
@@ -58,7 +77,9 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
   const ref = original ?? resultado;
   const mismaProporcion =
     !original || !resultado || Math.abs(original.width / original.height - resultado.width / resultado.height) < 0.01;
-  const modoReal: Modo = modo === "diferencias" ? modo : mismaProporcion ? modo : "ladoALado";
+  const editando = !!recorte;
+  // Recortando, un solo panel con el original (como el de diferencias).
+  const modoReal: Modo = editando || modo === "diferencias" ? "diferencias" : mismaProporcion ? modo : "ladoALado";
 
   useEffect(() => {
     let vivo = true;
@@ -155,7 +176,40 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
       g.restore();
     };
 
-    if (modoReal === "diferencias") {
+    if (recorte) {
+      pintar(a, 0, tamano.w, 0, tamano.w);
+      // Lo de fuera del marco, oscurecido; el marco blanco con sus asas y los
+      // tercios, para encuadrar.
+      const e = vista.escala;
+      const m = { x: vista.x + recorte.marco.x * e, y: vista.y + recorte.marco.y * e, w: recorte.marco.ancho * e, h: recorte.marco.alto * e };
+      g.save();
+      g.fillStyle = "rgba(0, 0, 0, 0.55)";
+      g.beginPath();
+      g.rect(vista.x, vista.y, ref.width * e, ref.height * e);
+      g.rect(m.x, m.y, m.w, m.h);
+      g.fill("evenodd");
+      g.strokeStyle = "rgba(255, 255, 255, 0.35)";
+      g.lineWidth = 1;
+      g.beginPath();
+      for (const f of [1 / 3, 2 / 3]) {
+        g.moveTo(m.x + m.w * f, m.y);
+        g.lineTo(m.x + m.w * f, m.y + m.h);
+        g.moveTo(m.x, m.y + m.h * f);
+        g.lineTo(m.x + m.w, m.y + m.h * f);
+      }
+      g.stroke();
+      g.strokeStyle = "#ffffff";
+      g.lineWidth = 1.5;
+      g.strokeRect(m.x, m.y, m.w, m.h);
+      g.fillStyle = "#ffffff";
+      g.strokeStyle = "rgba(0, 0, 0, 0.5)";
+      for (const asa of ASAS) {
+        const p = puntoAsa(asa, m);
+        g.fillRect(p.x - 4.5, p.y - 4.5, 9, 9);
+        g.strokeRect(p.x - 4.5, p.y - 4.5, 9, 9);
+      }
+      g.restore();
+    } else if (modoReal === "diferencias") {
       pintar(b, 0, tamano.w, 0, tamano.w);
     } else if (modoReal === "deslizador") {
       const xc = corte * tamano.w;
@@ -182,7 +236,19 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
       g.fillStyle = color("--filete");
       g.fillRect(p1.x0 - 0.5, 0, 1, tamano.h);
     }
-  }, [bitmaps, vista, corte, tamano, modoReal, ref, panel, mismaProporcion, ajustar]);
+  }, [bitmaps, vista, corte, tamano, modoReal, ref, panel, mismaProporcion, ajustar, recorte]);
+
+  /** El asa (o el marco entero) bajo el puntero, mientras se recorta. */
+  const asaEn = (p: { x: number; y: number }): Asa | null => {
+    if (!recorte || !vista) return null;
+    const e = vista.escala;
+    const m = { x: vista.x + recorte.marco.x * e, y: vista.y + recorte.marco.y * e, w: recorte.marco.ancho * e, h: recorte.marco.alto * e };
+    for (const asa of ASAS) {
+      const q = puntoAsa(asa, m);
+      if (Math.abs(p.x - q.x) <= 10 && Math.abs(p.y - q.y) <= 10) return asa;
+    }
+    return p.x >= m.x && p.x <= m.x + m.w && p.y >= m.y && p.y <= m.y + m.h ? "mover" : null;
+  };
 
   const enCorte = (x: number) => modoReal === "deslizador" && Math.abs(x - corte * tamano.w) < 16;
 
@@ -195,19 +261,38 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
     if (!vista) return;
     const p = posicion(e);
     (e.target as Element).setPointerCapture(e.pointerId);
+    const asa = asaEn(p);
+    if (recorte && asa) {
+      arrastre.current = { tipo: "recorte", asa, x: p.x, y: p.y, r0: recorte.marco };
+      return;
+    }
     arrastre.current = enCorte(p.x) ? { tipo: "corte" } : { tipo: "mover", x: p.x, y: p.y, v: vista };
   };
 
   const alMover = (e: React.PointerEvent) => {
     const a = arrastre.current;
     const p = posicion(e);
-    if (lienzo.current) lienzo.current.style.cursor = a?.tipo === "mover" ? "grabbing" : enCorte(p.x) ? "ew-resize" : "grab";
+    const asa = a?.tipo === "recorte" ? a.asa : asaEn(p);
+    if (lienzo.current)
+      lienzo.current.style.cursor = asa
+        ? CURSORES[asa]
+        : a?.tipo === "mover"
+          ? "grabbing"
+          : enCorte(p.x)
+            ? "ew-resize"
+            : "grab";
     if (!a) return;
-    if (a.tipo === "corte") setCorte(Math.min(1, Math.max(0, p.x / tamano.w)));
+    if (a.tipo === "recorte") {
+      if (!recorte || !vista || !ref) return;
+      const dx = (p.x - a.x) / vista.escala;
+      const dy = (p.y - a.y) / vista.escala;
+      recorte.alCambiar(aplicarAsa(a.asa, a.r0, dx, dy, ref.width, ref.height, recorte.proporcion));
+    } else if (a.tipo === "corte") setCorte(Math.min(1, Math.max(0, p.x / tamano.w)));
     else setVista({ ...a.v, x: a.v.x + p.x - a.x, y: a.v.y + p.y - a.y });
   };
 
   const alSoltar = () => {
+    if (arrastre.current?.tipo === "recorte") recorte?.alSoltar();
     arrastre.current = null;
   };
 
@@ -288,7 +373,11 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
         aria-label={t("comparador.etiqueta")}
         role="img"
       />
-      {modoReal !== "diferencias" ? (
+      {recorte ? (
+        <span className="rotulo izquierda" data-prueba="rotulo-recorte">
+          {t("comparador.recorteRotulo", { ancho: recorte.marco.ancho, alto: recorte.marco.alto })}
+        </span>
+      ) : modoReal !== "diferencias" ? (
         <span className="rotulo izquierda" data-prueba="rotulo-izquierda">
           {rotulos[0]}
           {ocupados[0] && <span className="girando" aria-label={t("comparador.codificando")} />}
@@ -296,14 +385,20 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
       ) : (
         extra && <div className="rotulo izquierda con-control">{extra}</div>
       )}
-      <span className="rotulo derecha" data-prueba="rotulo-derecha">
-        {rotulos[1]}
-        {ocupados[1] && <span className="girando" aria-label={t("comparador.codificando")} />}
-      </span>
-      {!mismaProporcion && modo === "deslizador" && <span className="nota-comparador">{t("comparador.otraProporcion")}</span>}
+      {recorte ? (
+        <button className="principal recorte-listo" onClick={recorte.alAcabar} data-prueba="recorte-listo">
+          {t("comparador.recorteListo")}
+        </button>
+      ) : (
+        <span className="rotulo derecha" data-prueba="rotulo-derecha">
+          {rotulos[1]}
+          {ocupados[1] && <span className="girando" aria-label={t("comparador.codificando")} />}
+        </span>
+      )}
+      {!recorte && !mismaProporcion && modo === "deslizador" && <span className="nota-comparador">{t("comparador.otraProporcion")}</span>}
       {/* Reducida, la vista promedia los píxeles y esconde los defectos de la
           compresión: con calidad 5 «apenas se veía diferencia» (v0.3.1). */}
-      {vista && mismaProporcion && vista.escala < 0.995 && (
+      {!recorte && vista && mismaProporcion && vista.escala < 0.995 && (
         <button className="nota-reducida" onClick={cienPorCien} data-prueba="nota-reducida">
           {t("comparador.reducida", { porcentaje: Math.round(vista.escala * 100) })}
         </button>
@@ -323,3 +418,22 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
     </div>
   );
 }
+
+/** Dónde va cada asa en el marco `m`, en píxeles de pantalla. */
+function puntoAsa(asa: Exclude<Asa, "mover">, m: { x: number; y: number; w: number; h: number }) {
+  const x = asa.includes("o") ? m.x : asa.includes("e") ? m.x + m.w : m.x + m.w / 2;
+  const y = asa.startsWith("n") ? m.y : asa.startsWith("s") ? m.y + m.h : m.y + m.h / 2;
+  return { x, y };
+}
+
+const CURSORES: Record<Asa, string> = {
+  mover: "move",
+  n: "ns-resize",
+  s: "ns-resize",
+  e: "ew-resize",
+  o: "ew-resize",
+  ne: "nesw-resize",
+  so: "nesw-resize",
+  no: "nwse-resize",
+  se: "nwse-resize",
+};

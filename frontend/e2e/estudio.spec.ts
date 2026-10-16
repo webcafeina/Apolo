@@ -304,3 +304,33 @@ test("el proceso redimensiona, en cualquier formato, y la orden lo dice", async 
   await expect(page.getByTestId("barra-estado")).toContainText("64 × 64", { timeout: 30_000 });
   await expect(page.getByTestId("no-equivalente")).toContainText("Procesada por Apolo");
 });
+
+test("recortar con el ratón, con proporción, y comparar con el deslizador", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await page.getByRole("switch", { name: "Recortar", exact: true }).check();
+  // 16:9 en una foto de 128 × 128: el marco más grande que cabe, centrado.
+  await page.getByTestId("proporcion").selectOption("16:9");
+  const arriba = page.getByRole("spinbutton", { name: "Arriba" });
+  await expect(page.getByRole("spinbutton", { name: "Ancho", exact: true })).toHaveValue("128");
+  await expect(page.getByRole("spinbutton", { name: "Alto", exact: true })).toHaveValue("72");
+  await expect(arriba).toHaveValue("28");
+
+  // En la imagen: se arrastra el marco hacia abajo, y el panel lo sigue.
+  await page.getByTestId("recortar-en-imagen").click();
+  await expect(page.getByTestId("rotulo-recorte")).toContainText("128 × 72");
+  const caja = (await page.getByTestId("lienzo").boundingBox())!;
+  const [cx, cy] = [caja.x + caja.width / 2, caja.y + caja.height / 2];
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  await page.mouse.move(cx, cy + 400, { steps: 8 });
+  await page.mouse.up();
+  // Abajo del todo: 128 − 72 = 56.
+  await expect(arriba).toHaveValue("56");
+
+  // Listo: el resultado mide lo del marco y se compara con el deslizador, no
+  // lado a lado (el original se recorta igual).
+  await page.getByTestId("recorte-listo").click();
+  await expect(page.getByTestId("rotulo-recorte")).toHaveCount(0);
+  await expect(page.getByTestId("barra-estado")).toContainText("128 × 72", { timeout: 30_000 });
+  await expect(page.getByText("El resultado tiene otra proporción")).toHaveCount(0);
+});

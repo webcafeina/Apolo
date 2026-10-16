@@ -16,7 +16,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   del servidor no le llegan cuando decide; no se ha podido comprobar. Arreglo, en lo que sí ve antes:
   la descripción de la extensión y la de `optimizar_imagen`. El cliente no quiere el consejo en
   Apolo › MCP; va en las notas de la versión.
-- v0.8.3 con eso.
+- **v0.8.3 publicada** con eso; borrador revisado como siempre. La descripción larga de la
+  extensión solo cambia instalando el `.mcpb` nuevo; la de las herramientas llega con la aplicación.
 
 ---
 

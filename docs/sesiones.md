@@ -4,6 +4,22 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-16 · Prueba de la v0.8.2 y v0.8.3
+
+- El aviso de actualización no se pudo ver: el cliente ya había actualizado a la 0.8.2 al cerrar
+  ayer. Queda para la próxima actualización (deuda).
+- En Claude Desktop, con la 0.8.2: **sigue comentando la cuenta «alvaro»**, porque la ve en la ruta de
+  los presets y sabe que el cliente es Nacho. Arreglo: las rutas que enseña Apolo en
+  `acerca_de_apolo` y en los presets, con `~` (`rutas::con_casa`).
+- **La imagen adjunta, otra vez en el intérprete de la nube**, sin mirar Apolo («Apolo estaba
+  disponible… no lo tuve en cuenta»). Con las herramientas cargadas bajo demanda, las instrucciones
+  del servidor no le llegan cuando decide; no se ha podido comprobar. Arreglo, en lo que sí ve antes:
+  la descripción de la extensión y la de `optimizar_imagen`. El cliente no quiere el consejo en
+  Apolo › MCP; va en las notas de la versión.
+- v0.8.3 con eso.
+
+---
+
 ## 2026-10-15 (cierre) · v0.8.2 publicada
 
 - Con el sí del cliente: el aviso de reiniciar Claude Desktop destacado, y las instrucciones sin «la

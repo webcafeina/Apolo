@@ -87,7 +87,7 @@ pub fn manifiesto(version: &str, sistema: Sistema) -> Value {
         "display_name": "Apolo",
         "version": version,
         "description": "Optimiza imágenes en tu ordenador con los motores de cwebp, MozJPEG, oxipng, avifenc y cjxl, sin sobrescribir nunca nada.",
-        "long_description": "Deja que el agente analice, optimice, compare formatos a igual calidad percibida (SSIMULACRA 2), mida la pérdida, mire las imágenes y convierta carpetas enteras con Apolo, en este ordenador. Siempre escribe ficheros nuevos: nunca sobrescribe ni borra. Si Apolo está instalado, la extensión usa el suyo, que se actualiza con la aplicación.",
+        "long_description": "Deja que el agente analice, optimice, compare formatos a igual calidad percibida (SSIMULACRA 2), mida la pérdida, mire las imágenes y convierta carpetas enteras con Apolo, en este ordenador. Siempre escribe ficheros nuevos: nunca sobrescribe ni borra. Para las imágenes de tu ordenador, el agente debe usar Apolo y no su propio entorno en la nube; Apolo no ve las imágenes adjuntas en la conversación, así que se le dice dónde está el fichero. Si Apolo está instalado, la extensión usa el suyo, que se actualiza con la aplicación.",
         "author": { "name": "Webcafeína", "url": "https://webcafeina.com" },
         "homepage": "https://github.com/webcafeina/Apolo",
         "repository": { "type": "git", "url": "https://github.com/webcafeina/Apolo" },

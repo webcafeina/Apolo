@@ -59,6 +59,22 @@ pub fn resolver_con(texto: &str, casa: Option<&Path>, actual: Option<&Path>) -> 
     }
 }
 
+/// Una ruta para enseñar, con `~` en lugar de la carpeta personal. Así no sale
+/// el nombre de la cuenta del sistema, que puede no ser el de la persona y hacía
+/// sospechar al agente («Apolo corre con la cuenta alvaro…»; prueba guiada de la
+/// v0.8.2). `resolver` acepta `~`, así que la ruta sigue valiendo.
+pub fn con_casa(ruta: &Path) -> String {
+    con_casa_en(ruta, dirs::home_dir().as_deref())
+}
+
+pub fn con_casa_en(ruta: &Path, casa: Option<&Path>) -> String {
+    match casa.and_then(|c| ruta.strip_prefix(c).ok()) {
+        Some(resto) if resto.as_os_str().is_empty() => "~".into(),
+        Some(resto) => format!("~{}{}", std::path::MAIN_SEPARATOR, resto.display()),
+        None => ruta.display().to_string(),
+    }
+}
+
 /// %20 y compañía, de una URL `file://`.
 fn decodificar_url(s: &str) -> String {
     let b = s.as_bytes();
@@ -105,6 +121,28 @@ mod pruebas {
             Path::new("/home/ana/proyecto/fotos/a.jpg")
         );
         assert_eq!(r("  /abs/b.png  ").unwrap(), Path::new("/abs/b.png"));
+    }
+
+    #[test]
+    fn la_carpeta_personal_se_enseña_como_virgulilla() {
+        let casa = Path::new("/Users/alvaro");
+        assert_eq!(
+            con_casa_en(
+                Path::new("/Users/alvaro/Library/Application Support/Apolo/presets"),
+                Some(casa)
+            ),
+            "~/Library/Application Support/Apolo/presets"
+        );
+        assert_eq!(
+            con_casa_en(Path::new("/Applications/Apolo.app"), Some(casa)),
+            "/Applications/Apolo.app"
+        );
+        assert_eq!(con_casa_en(Path::new("/Users/alvaro"), Some(casa)), "~");
+        // Y se puede volver a usar.
+        assert_eq!(
+            resolver_con("~/Library/x", Some(casa), None).unwrap(),
+            Path::new("/Users/alvaro/Library/x")
+        );
     }
 
     #[test]

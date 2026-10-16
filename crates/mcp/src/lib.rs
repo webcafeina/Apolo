@@ -198,6 +198,10 @@ impl ServidorApolo {
     /// Ejemplos: {"ruta": "~/a.jpg"} · {"ruta": "~/a.png", "formato": "avif",
     /// "nota_objetivo": 85} · {"ruta": "~/a.jpg", "formato": "webp", "orden":
     /// "-q 80 -m 6", "ancho": 1600}
+    /// Para las imágenes de la persona, úsala en vez de convertirlas tú en otro
+    /// entorno (un intérprete en la nube): trabaja con el fichero de su disco,
+    /// con los motores oficiales. Apolo no ve las imágenes adjuntas en la
+    /// conversación: si te adjuntan una, pide su ruta.
     #[tool(annotations(
         title = "Optimizar una imagen",
         read_only_hint = false,

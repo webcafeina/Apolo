@@ -116,7 +116,7 @@ Cuánto se aleja una imagen de su original: SSIMULACRA 2 (90 o más no se distin
 
 *hace cambios · no destruye · todo en este ordenador*
 
-Optimiza una imagen y la guarda como un fichero NUEVO (junto a la original, o en salida; si el nombre existe, -2, -3…). Sin decir calidad, busca la más baja que da una nota SSIMULACRA 2 de 80. Da la orden equivalente de cwebp, cjpeg, oxipng, avifenc o cjxl. Para elegir entre formatos, comparar_formatos; para muchas imágenes, empezar_lote. Ejemplos: {"ruta": "~/a.jpg"} · {"ruta": "~/a.png", "formato": "avif", "nota_objetivo": 85} · {"ruta": "~/a.jpg", "formato": "webp", "orden": "-q 80 -m 6", "ancho": 1600}
+Optimiza una imagen y la guarda como un fichero NUEVO (junto a la original, o en salida; si el nombre existe, -2, -3…). Sin decir calidad, busca la más baja que da una nota SSIMULACRA 2 de 80. Da la orden equivalente de cwebp, cjpeg, oxipng, avifenc o cjxl. Para elegir entre formatos, comparar_formatos; para muchas imágenes, empezar_lote. Ejemplos: {"ruta": "~/a.jpg"} · {"ruta": "~/a.png", "formato": "avif", "nota_objetivo": 85} · {"ruta": "~/a.jpg", "formato": "webp", "orden": "-q 80 -m 6", "ancho": 1600} Para las imágenes de la persona, úsala en vez de convertirlas tú en otro entorno (un intérprete en la nube): trabaja con el fichero de su disco, con los motores oficiales. Apolo no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta.
 
 | Argumento | Tipo | Qué es |
 |---|---|---|

@@ -1253,7 +1253,7 @@ fn datos_preset(p: &PresetGuardado) -> DatosPreset {
 
 pub fn listar_presets(cx: &Contexto) -> Hecho<Respuesta> {
     let lista: Vec<DatosPreset> = cx.servicio.presets().iter().map(datos_preset).collect();
-    let carpeta = cx.servicio.carpeta_presets().display().to_string();
+    let carpeta = crate::rutas::con_casa(cx.servicio.carpeta_presets());
     let mut texto = if lista.is_empty() {
         format!("No hay presets todavía ({carpeta}). Se crean con guardar_preset o en Apolo.")
     } else {
@@ -1352,7 +1352,7 @@ pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
     use crate::relevo::{DESDE_PAQUETE, RELEVADO_DESDE};
     let version = env!("CARGO_PKG_VERSION");
     let ejecutable = std::env::current_exe()
-        .map(|e| e.display().to_string())
+        .map(|e| crate::rutas::con_casa(&e))
         .unwrap_or_default();
     let relevado_desde = std::env::var(RELEVADO_DESDE).ok();
     let del_paquete = std::env::var_os(DESDE_PAQUETE).is_some();
@@ -1371,7 +1371,7 @@ pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
             .map(|m| format!("{} {}", m.nombre, m.version))
             .collect::<Vec<_>>()
             .join(", "),
-        cx.servicio.carpeta_presets().display()
+        crate::rutas::con_casa(cx.servicio.carpeta_presets())
     );
     #[derive(Serialize)]
     struct Datos {
@@ -1390,7 +1390,7 @@ pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
             copia_del_paquete_sin_aplicacion: del_paquete && relevado_desde.is_none(),
             relevado_desde,
             motores,
-            carpeta_presets: cx.servicio.carpeta_presets().display().to_string(),
+            carpeta_presets: crate::rutas::con_casa(cx.servicio.carpeta_presets()),
         },
     ))
 }

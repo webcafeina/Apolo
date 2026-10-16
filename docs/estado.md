@@ -4,7 +4,10 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **Publicada la v0.8.2.** La entrega 7 (agentes por MCP) está hecha: 7a, 7b y 7c.
+> **Publicada la v0.8.3** (2026-10-16): las rutas de Apolo con `~` (el agente comentaba la cuenta
+> «alvaro») y, en las descripciones, usar Apolo y no el intérprete de la nube con imágenes adjuntas.
+> Borrador revisado como siempre (27 ficheros, sumas, firmas, `latest.json`, versiones, `.mcpb`,
+> AVIF igual que avifenc 3/3). La entrega 7 (agentes por MCP) está hecha: 7a, 7b y 7c.
 
 ### Al parar el 2026-10-15: lo primero mañana
 

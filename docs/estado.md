@@ -4,21 +4,30 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **Publicada la v0.8.3** (2026-10-16): las rutas de Apolo con `~` (el agente comentaba la cuenta
+> **Publicada la v0.9.0** (2026-10-16), detalle abajo. Antes, la **v0.8.3** (2026-10-16): las rutas de Apolo con `~` (el agente comentaba la cuenta
 > «alvaro») y, en las descripciones, usar Apolo y no el intérprete de la nube con imágenes adjuntas.
 > Borrador revisado como siempre (27 ficheros, sumas, firmas, `latest.json`, versiones, `.mcpb`,
 > AVIF igual que avifenc 3/3). La entrega 7 (agentes por MCP) está hecha: 7a, 7b y 7c.
 
-### Hecho el 2026-10-16, sin publicar (para la próxima versión)
+### Al parar el 2026-10-16: lo primero mañana
 
-- El CI del Mac en `macos-15` (publicación de prueba 38893150888 entera; deuda saldada).
-- Recortar y reducir la paleta desde el agente.
-- Recortar con el ratón en el Estudio, comparando con el deslizador.
-- `acerca_de_apolo` dice que no hace falta actualizar la extensión de Claude Desktop.
+**v0.9.0** (2026-10-16): recortar con el ratón en el Estudio (comparando con el deslizador), el
+agente recorta y reduce la paleta, y el CI del Mac en `macos-15`.
+**Publicada** (https://github.com/webcafeina/Apolo/releases/tag/v0.9.0), borrador revisado como
+siempre: 27 ficheros, 26 sumas, 7 `.sig`, `latest.json` con 14 plataformas; CLI, `apolo-mcp` y los
+cinco `.mcpb` en 0.9.0; el mismo AVIF que avifenc 3/3; la CLI de Mac, universal y con macOS mínimo
+11.0.
 
-**Lo siguiente**: publicar (¿v0.9.0, por las dos funciones nuevas?) cuando lo diga el cliente, y
-probar en su Mac el recorte con el ratón y el trackpad. Con la nueva versión, repetir AVIF frente al
-avifenc oficial de Mac (deuda: primera compilación con `macos-15`).
+1. **Prueba guiada de la v0.9.0 en el Mac del cliente**:
+   - Recortar con el ratón y con el trackpad: activar Recortar, «Recortar en la imagen», mover el
+     marco, estirarlo por esquinas y lados, una proporción (16:9) y «Listo»; comparar con el
+     deslizador. Con una foto grande, que no vaya lento.
+   - El agente (Claude Desktop): «Quédate con la mitad izquierda de <ruta> en WebP» y «Deja <un
+     logo> en 16 colores».
+   - Si Claude Desktop estaba abierto al actualizar: el aviso de reiniciar (otra vez, ya visto).
+2. **AVIF frente al avifenc oficial de Mac** con la CLI de la v0.9.0: primera compilación con
+   `macos-15` (deuda). Como el 2026-10-08: unas imágenes de `vacaciones` por unas combinaciones.
+3. Nada más pendiente en siguiente.md con prioridad; la 1.0 (entrega 8) es lo siguiente grande.
 
 > **Entregas 0, 1, 2 y 3 hechas el 2026-10-06.** Publicadas la v0.2.0, la v0.3.0 y la **v0.3.1**,
 > todas como pre-release. La v0.3.1 añade:

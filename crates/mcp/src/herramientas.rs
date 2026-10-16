@@ -1358,7 +1358,7 @@ pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
     let del_paquete = std::env::var_os(DESDE_PAQUETE).is_some();
     let origen = match (&relevado_desde, del_paquete) {
         (Some(v), _) => format!(
-            "La extensión de Claude Desktop (paquete {v}) ha cedido el turno a la aplicación instalada: se actualiza con ella."
+            "La extensión de Claude Desktop (paquete {v}) ha cedido el turno a la aplicación instalada: se actualiza con ella. No hace falta actualizar ni reinstalar la extensión: su versión no importa mientras ceda el turno."
         ),
         (None, true) => "Es la copia del paquete .mcpb y no se ha encontrado Apolo instalado: esta copia no se actualiza sola. Instalar Apolo lo arregla.".into(),
         (None, false) => "Es el de la aplicación (o el de la línea de órdenes): se actualiza con ella.".into(),

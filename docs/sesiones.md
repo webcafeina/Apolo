@@ -16,6 +16,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   del servidor no le llegan cuando decide; no se ha podido comprobar. Arreglo, en lo que sí ve antes:
   la descripción de la extensión y la de `optimizar_imagen`. El cliente no quiere el consejo en
   Apolo › MCP; va en las notas de la versión.
+- **Prueba de la v0.8.3 en Claude Desktop**: **el aviso de actualización funciona** (con la 0.8.2 en
+  marcha y la 0.8.3 instalada, el agente lo dijo y explicó cómo reiniciar; tras reiniciar, 0.8.3 y
+  los presets en `~/Library/...`). Le sobraba recomendar «actualizar el paquete de la extensión»:
+  `acerca_de_apolo` dice ahora que no hace falta (en `main`). **El adjunto, otra vez en la nube**
+  («ni siquiera miré qué herramientas tenía»): no depende de Apolo; se propone al cliente ponerlo
+  en sus preferencias personales de Claude.
 - **v0.8.3 publicada** con eso; borrador revisado como siempre. La descripción larga de la
   extensión solo cambia instalando el `.mcpb` nuevo; la de las herramientas llega con la aplicación.
 

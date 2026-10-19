@@ -20,7 +20,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   8/8).
 - Un `bundle_dmg.sh` falló una vez en macOS y salió a la segunda (trampa).
 - El README rehecho, con la tabla de descargas.
-- Queda de la 8a: publicar la v0.10.0 y las pruebas guiadas del cliente en Windows ARM y Ubuntu ARM.
+- **v0.10.0 publicada**, con el humo en verde y el borrador revisado como siempre. Queda de la 8a:
+  las pruebas guiadas del cliente en Windows ARM y Ubuntu ARM.
 
 ---
 

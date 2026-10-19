@@ -4,7 +4,13 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **Publicada la v0.9.1** (2026-10-19): el recorte del agente llega desde Claude Desktop (esquema
+> **Publicada la v0.10.0** (2026-10-19), la 8a de la 1.0 (ADR 0024): `humo.yml` en CI (Windows x64,
+> Linux x64 y arm64, en verde), AVIF y JPEG XL con tildes en Windows arreglados (manifiesto UTF-8) y
+> el README con la tabla de descargas. Borrador revisado como siempre, con el humo en verde.
+> **Lo siguiente**: las pruebas guiadas del cliente en Windows ARM y Ubuntu ARM; luego la 8b
+> (rendimiento).
+>
+> **La v0.9.1** (2026-10-19): el recorte del agente llega desde Claude Desktop (esquema
 > sin `$ref` y lectura tolerante), y el motivo dice qué proceso se hizo. Borrador revisado como
 > siempre, y el `apolo-mcp` de la Release recorta con el recorte escrito como texto. Antes salió una
 > comprobación de CI en rojo tres veces por clippy (memoria: `make comprobar` antes de subir).

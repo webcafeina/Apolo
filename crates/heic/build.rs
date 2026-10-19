@@ -39,6 +39,7 @@ fn main() {
         de265.define("ENABLE_AVX2", "OFF");
     }
     minimo_macos(&mut de265, macos);
+    crt_estatico(&mut de265, msvc);
     let de265 = de265.build();
     let lib_de265 = de265
         .join("lib")
@@ -89,6 +90,7 @@ fn main() {
         heif.define(format!("WITH_{codec}"), "OFF");
     }
     minimo_macos(&mut heif, macos);
+    crt_estatico(&mut heif, msvc);
     let heif = heif.build();
 
     println!(
@@ -120,5 +122,15 @@ fn minimo_macos(c: &mut cmake::Config, macos: bool) {
     if macos {
         let minimo = std::env::var("MACOSX_DEPLOYMENT_TARGET").unwrap_or_else(|_| "11.0".into());
         c.define("CMAKE_OSX_DEPLOYMENT_TARGET", &minimo);
+    }
+}
+
+/// En Windows, la biblioteca de C++ dentro del .exe (/MT), como el resto de
+/// Apolo (`.cargo/config.toml`): con /MD, el .exe pide MSVCP140.dll, que un
+/// Windows recién instalado no tiene (docs/trampas.md).
+fn crt_estatico(c: &mut cmake::Config, msvc: bool) {
+    if msvc {
+        c.define("CMAKE_POLICY_DEFAULT_CMP0091", "NEW")
+            .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded");
     }
 }

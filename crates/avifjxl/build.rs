@@ -78,7 +78,12 @@ fn main() {
             }
         }
         "windows" if msvc => {
-            c.generator_toolset("ClangCL");
+            // La biblioteca de C++ dentro del .exe (/MT), como el resto de
+            // Apolo (`.cargo/config.toml`): con /MD pide MSVCP140.dll, que un
+            // Windows recién instalado no tiene (docs/trampas.md).
+            c.generator_toolset("ClangCL")
+                .define("CMAKE_POLICY_DEFAULT_CMP0091", "NEW")
+                .define("CMAKE_MSVC_RUNTIME_LIBRARY", "MultiThreaded");
         }
         _ => {
             let (cc, cxx) = clang();

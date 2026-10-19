@@ -6,6 +6,8 @@ Lo que nadie ha visto en un equipo: Windows x64 y Linux x64. Con los binarios ya
 - todo en una carpeta **con tildes y eñes**, también la temporal (TEMP, TMP, TMPDIR): avifenc y
   cjxl abren sus ficheros con fopen, que en Windows no usa UTF-8 (deuda);
 - la CLI frente a los binarios oficiales (cwebp, avifenc, cjxl) si se le dan, byte a byte;
+- en Windows, que ningún .exe pida las DLL de Visual C++ (MSVCP140.dll…), que las máquinas de CI
+  tienen y un Windows recién instalado no;
 - `apolo-mcp` por sus tuberías: initialize, las once herramientas, optimizar a AVIF y JPEG XL;
 - con --reinstalar (Windows): un apolo-mcp.exe en marcha, como el de un agente abierto, y el
   instalador otra vez encima: su gancho tiene que cerrarlo y el instalador terminar bien.
@@ -19,6 +21,7 @@ import argparse
 import json
 import os
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -186,6 +189,53 @@ def mcp(binario, base, entorno):
         m.cerrar()
 
 
+# Las DLL de «Visual C++ Redistributable»: un Windows recién instalado no las
+# trae, y las máquinas de CI sí, así que un .exe que las pida pasa aquí y falla
+# en casa (MSVCP140.dll, 2026-10-19). Se mira lo que el .exe importa.
+DLL_DE_VC = ("msvcp", "vcruntime", "concrt", "vccorlib")
+
+
+def dlls_importadas(ruta):
+    """Los nombres de las DLL que importa un .exe de Windows (PE32+)."""
+    d = Path(ruta).read_bytes()
+    u16 = lambda o: struct.unpack_from("<H", d, o)[0]  # noqa: E731
+    u32 = lambda o: struct.unpack_from("<I", d, o)[0]  # noqa: E731
+    pe = u32(0x3C)
+    secciones, opcional = u16(pe + 6), u16(pe + 20)
+    tabla = pe + 24 + opcional
+    importaciones = u32(pe + 24 + 120)  # PE32+: directorio 1, el de importaciones
+
+    def desplazamiento(rva):
+        for i in range(secciones):
+            s = tabla + 40 * i
+            va, tam, crudo = u32(s + 12), max(u32(s + 8), u32(s + 16)), u32(s + 20)
+            if va <= rva < va + tam:
+                return rva - va + crudo
+        raise ValueError(f"RVA {rva:#x} fuera de las secciones")
+
+    nombres, o = [], desplazamiento(importaciones)
+    while u32(o + 12):
+        n = desplazamiento(u32(o + 12))
+        nombres.append(d[n:d.index(b"\0", n)].decode())
+        o += 20
+    return nombres
+
+
+def sin_dll_de_vc(rutas):
+    print("Sin las DLL de Visual C++:")
+    for r in rutas:
+        try:
+            dlls = dlls_importadas(r)
+        except Exception as x:  # noqa: BLE001
+            mal(f"{Path(r).name}: no se pudo leer ({x})")
+            continue
+        pide = [n for n in dlls if n.lower().startswith(DLL_DE_VC)]
+        if pide:
+            mal(f"{Path(r).name} pide {', '.join(pide)}")
+        else:
+            bien(f"{Path(r).name}: {', '.join(sorted(dlls, key=str.lower))}")
+
+
 def reinstalar(instalador, instalado, base, entorno):
     """Un apolo-mcp.exe en marcha (un agente abierto) y el instalador encima, en silencio."""
     print("Actualizar con un agente abierto:")
@@ -232,6 +282,11 @@ def main():
     print(f"Carpeta de trabajo: {base}")
     equivalencia(o.cli, base, entorno, {"cwebp": o.cwebp, "avifenc": o.avifenc, "cjxl": o.cjxl},
                  o.solo_informar_equivalencia)
+    if os.name == "nt":
+        exes = [o.cli / "apolo.exe", o.cli / "apolo-mcp.exe", *o.mcp]
+        if o.instalado:
+            exes.append(Path(o.instalado).parent / "apolo-app.exe")
+        sin_dll_de_vc(exes)
     for b in [str(o.cli / f"apolo-mcp{EXE}"), *o.mcp]:
         mcp(b, base, entorno)
     if o.reinstalar:

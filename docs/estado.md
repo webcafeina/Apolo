@@ -1,14 +1,27 @@
 # Estado
 
-Última actualización: **2026-10-16**
+Última actualización: **2026-10-19**
 
 ## Dónde se paró, y por dónde se sigue
 
 > **Publicada la v0.10.0** (2026-10-19), la 8a de la 1.0 (ADR 0024): `humo.yml` en CI (Windows x64,
 > Linux x64 y arm64, en verde), AVIF y JPEG XL con tildes en Windows arreglados (manifiesto UTF-8) y
 > el README con la tabla de descargas. Borrador revisado como siempre, con el humo en verde.
-> **Lo siguiente**: las pruebas guiadas del cliente en Windows ARM y Ubuntu ARM; luego la 8b
-> (rendimiento).
+> **Lo siguiente (al parar el 2026-10-19 a mediodía)**: el cliente empieza **esta tarde por Ubuntu
+> ARM, sobre Ubuntu 26.10 ARM64** (más nueva que la 22.04 con la que se compila el `.deb`: no se ha
+> probado nunca), y después Windows ARM; las dos en máquinas virtuales VMPal de su M1. El guion
+> que se le dio, para cada una:
+> 1. instalar la **v0.9.1** (`Apolo_0.9.1_arm64.deb` con `sudo apt install ./…`, o el instalador
+>    arm64 de Windows);
+> 2. actualizar a la 0.10.0 desde la banda (en Ubuntu pide la contraseña con `pkexec`);
+> 3. el Estudio: recortar con el ratón, comparar, **exportar a AVIF y JPEG XL en una carpeta con
+>    tilde**;
+> 4. Lotes con `vacaciones` a AVIF;
+> 5. en Ubuntu, la AppImage (`chmod +x`, que arranque y abra);
+> 6. el MCP: en Ubuntu, Claude Code con `/usr/bin/apolo-mcp`; en Windows, Claude Desktop si se
+>    instala en ARM, y si no, Claude Code. Preguntar la versión y pasar una foto a AVIF.
+>
+> Lo que salga, a v0.10.1 si hace falta. Después, la **8b** (rendimiento).
 >
 > **La v0.9.1** (2026-10-19): el recorte del agente llega desde Claude Desktop (esquema
 > sin `$ref` y lectura tolerante), y el motivo dice qué proceso se hizo. Borrador revisado como

@@ -7,10 +7,13 @@
 > **Publicada la v0.10.0** (2026-10-19), la 8a de la 1.0 (ADR 0024): `humo.yml` en CI (Windows x64,
 > Linux x64 y arm64, en verde), AVIF y JPEG XL con tildes en Windows arreglados (manifiesto UTF-8) y
 > el README con la tabla de descargas. Borrador revisado como siempre, con el humo en verde.
-> **Lo siguiente (al parar el 2026-10-19 a mediodía)**: el cliente empieza **esta tarde por Ubuntu
-> ARM, sobre Ubuntu 26.10 ARM64** (más nueva que la 22.04 con la que se compila el `.deb`: no se ha
-> probado nunca), y después Windows ARM; las dos en máquinas virtuales VMPal de su M1. El guion
-> que se le dio, para cada una:
+> ~~**Ubuntu ARM**~~: **bien el 2026-10-19 por la tarde**, en Ubuntu 26.10 ARM64. El `.deb` de la
+> 0.9.1 se instala, la banda la pasa a la 0.10.0 con `pkexec`, el Estudio exporta AVIF y JPEG XL
+> en una carpeta con tilde, Lotes da los mismos números que la CLI del VPS y la AppImage arranca.
+> El MCP, sin agente (no hay Claude en esa máquina): `apolo-mcp --version` y la fila MCP, bien; las
+> tuberías ya las prueba `humo.yml`.
+> **Lo siguiente: Windows ARM**, en la máquina virtual VMPal de su M1, con el mismo guion (sin el
+> paso 5):
 > 1. instalar la **v0.9.1** (`Apolo_0.9.1_arm64.deb` con `sudo apt install ./…`, o el instalador
 >    arm64 de Windows);
 > 2. actualizar a la 0.10.0 desde la banda (en Ubuntu pide la contraseña con `pkexec`);

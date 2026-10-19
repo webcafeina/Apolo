@@ -185,7 +185,7 @@ fn texto_motivo(m: Motivo, herramienta: &str, formato: &str, proceso: &Proceso) 
             // las fotos que lo necesitan.
             texto_proceso(&Proceso {
                 enderezar: true,
-                ..proceso.clone()
+                ..*proceso
             })
             .unwrap_or_else(|| "recorte, tamaño o paleta".into())
         ),

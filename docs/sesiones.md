@@ -4,6 +4,23 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-19 (tarde) · Prueba guiada en Ubuntu ARM
+
+- **Ubuntu 26.10 ARM64** en una máquina virtual VMPal del M1 del cliente, más nueva que la 22.04
+  con la que se compila el `.deb`. Todo bien a la primera:
+  - el `.deb` de la v0.9.1 con `sudo apt install`;
+  - la banda la pasó a la 0.10.0, pidiendo la contraseña con `pkexec`: **el actualizador en Linux,
+    visto por primera vez**;
+  - el Estudio: recortar, comparar y exportar a AVIF y JPEG XL en una carpeta con tilde;
+  - Lotes con `vacaciones` a AVIF: 24 convertidas, 1 error (`rota.jpg`), 4,1 MB → unos 975 KB
+    (−77 %), dos más pesadas que el original. Los mismos números que la CLI en el VPS;
+  - la AppImage arranca y abre.
+- **El MCP, sin agente**: no hay Claude en esa máquina. `/usr/bin/apolo-mcp --version` da 0.10.0 y
+  la fila MCP lo encuentra sin avisos. Las tuberías ya las cubre `humo.yml` en x64 y arm64.
+- Deuda al día. Queda de la 8a: Windows ARM.
+
+---
+
 ## 2026-10-19 (tarde) · La 1.0 planteada, y la 8a: el humo en Windows y Linux
 
 - **La 1.0 planteada con el cliente en modo plan** (ADR 0024): Windows y Linux probados (ARM a mano

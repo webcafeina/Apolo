@@ -99,7 +99,7 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 
 [[package]]
 name = "apolo"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "apolo-mcpb",
  "apolo-nucleo",
@@ -116,7 +116,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-avifjxl"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "cmake",
  "libwebp-sys",
@@ -125,7 +125,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-cli"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "apolo-avifjxl",
  "apolo-nucleo",
@@ -135,7 +135,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-dev"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "apolo-mcpb",
  "apolo-nucleo",
@@ -148,14 +148,14 @@ dependencies = [
 
 [[package]]
 name = "apolo-heic"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "cmake",
 ]
 
 [[package]]
 name = "apolo-mcp"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "apolo-avifjxl",
  "apolo-nucleo",
@@ -172,7 +172,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-mcpb"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "apolo-mcp",
  "apolo-nucleo",
@@ -184,7 +184,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-nucleo"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "apolo-avifjxl",
  "apolo-heic",
@@ -207,7 +207,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-servicio"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "apolo-nucleo",
  "libwebp-sys",
@@ -217,7 +217,7 @@ dependencies = [
 
 [[package]]
 name = "apolo-tema"
-version = "0.9.1"
+version = "0.10.0"
 
 [[package]]
 name = "arbitrary"

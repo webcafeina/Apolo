@@ -13,6 +13,10 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   `main`: esquema en el sitio y lectura tolerante (`tests/objetos.rs`). Y el motivo decía
   «redimensionado» al reducir la paleta: ahora dice lo que se hizo.
 - Escenarios de recorte, paleta y tamaño con Claude Code: 4/4.
+- **AVIF en Mac, igual que el oficial**: la CLI de la v0.9.0, la primera compilada en `macos-15`,
+  frente al avifenc 1.4.2 de `macOS-artifacts.zip`: **16 de 16**, en el Mac del cliente.
+- La carpeta de prueba, con **fotos reales** (Kodak), a petición del cliente: `generar.sh` las
+  descarga con su sha256. La evaluación del MCP sigue con la carpeta antigua (deuda).
 
 ---
 

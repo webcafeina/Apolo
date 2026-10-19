@@ -4,6 +4,26 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-19 (tarde) · La 1.0 planteada, y la 8a: el humo en Windows y Linux
+
+- **La 1.0 planteada con el cliente en modo plan** (ADR 0024): Windows y Linux probados (ARM a mano
+  en sus máquinas virtuales, x64 en CI), sin firmar, rendimiento medido y arreglado, todo en
+  inglés, Homebrew y una web. En cuatro partes, 8a–8d.
+- **`humo.yml`** (lo llama `publicar.yml`, y se lanza a mano con los paquetes de otra ejecución):
+  `pruebas/humo/humo.py` en Windows x64, Linux x64 y Linux arm64. Instala el NSIS y el `.deb`, abre
+  la AppImage, trabaja en una ruta con tildes y eñes, compara con cwebp, avifenc y cjxl oficiales,
+  habla con `apolo-mcp` y, en Windows, actualiza con un `apolo-mcp.exe` en marcha.
+- **El fallo real de la deuda, confirmado y arreglado**: en Windows, AVIF y JPEG XL no abrían rutas
+  con tildes (fopen en cp1252). Manifiesto con la página de códigos UTF-8 en los tres `.exe`
+  (trampa). Después, todo bien: cwebp 8/8, **avifenc 6/6 y cjxl 5/5 iguales a los oficiales de
+  Windows**, el MCP y el gancho del instalador. Linux x64 y arm64, bien a la primera (cwebp arm64
+  8/8).
+- Un `bundle_dmg.sh` falló una vez en macOS y salió a la segunda (trampa).
+- El README rehecho, con la tabla de descargas.
+- Queda de la 8a: publicar la v0.10.0 y las pruebas guiadas del cliente en Windows ARM y Ubuntu ARM.
+
+---
+
 ## 2026-10-19 · Prueba guiada de la v0.9.0
 
 - **Recortar con el ratón en la ventana**: todo bien, con ratón y trackpad.

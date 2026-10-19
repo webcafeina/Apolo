@@ -8,9 +8,11 @@
 > sin `$ref` y lectura tolerante), y el motivo dice qué proceso se hizo. Borrador revisado como
 > siempre, y el `apolo-mcp` de la Release recorta con el recorte escrito como texto. Antes salió una
 > comprobación de CI en rojo tres veces por clippy (memoria: `make comprobar` antes de subir).
-> **Lo siguiente**: que el cliente repita en Claude Desktop «Quédate con la mitad izquierda de <ruta>
-> y guárdala en WebP», tras reiniciarlo. La prueba de la v0.9.0 salió bien en lo demás (ventana,
-> paleta, AVIF en Mac 16/16).
+> ~~Que el cliente repita el recorte en Claude Desktop~~: **bien el 2026-10-19** (recorte de Apolo,
+> 800×1600, buscando la nota 80: calidad 69, SSIMULACRA 2 80,3, con transparencia). **La prueba de
+> la v0.9.x está completa**: ventana, paleta, recorte del agente y AVIF en Mac 16/16.
+> **Lo siguiente**: la 1.0 (entrega 8, siguiente.md), y adaptar la evaluación del MCP a la carpeta
+> de fotos reales (deuda).
 >
 > **La v0.9.0** (2026-10-16), detalle abajo. Antes, la **v0.8.3** (2026-10-16): las rutas de Apolo con `~` (el agente comentaba la cuenta
 > «alvaro») y, en las descripciones, usar Apolo y no el intérprete de la nube con imágenes adjuntas.

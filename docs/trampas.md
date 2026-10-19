@@ -21,6 +21,14 @@ compilación entera en cada objetivo. `bundle.category` en `tauri.conf.json` no 
 texto: es una lista cerrada con los nombres de Apple sin espacios (`GraphicsAndDesign`, no
 `Graphics`). Pasó en la primera publicación, en los seis objetivos a la vez. · 2026-10-06
 
+## El icono de Apolo, borroso en el listado de aplicaciones de Ubuntu
+
+En el Dock de Ubuntu se veía bien y en la cuadrícula de aplicaciones, borroso. El `.deb` solo
+llevaba 32 y 128 píxeles en `hicolor`. El de 256 lo copiaba Tauri a `hicolor/256x256@2`, porque
+se llamaba `128x128@2x.png`: Tauri lo toma como uno de 256 a doble escala, 512 píxeles reales. La
+cuadrícula, a doble escala, quiere unos 192 píxeles y estiraba el de 128. Se evita listando en
+`bundle.icon` PNG sin `@2x` en el nombre (`256x256.png` y `icon.png`, de 512). · 2026-10-19
+
 ## cwebp descarta un perfil ICC de un PNG y Apolo lo copia
 
 El fichero de cwebp sale más corto, justo el tamaño del perfil. No lo descarta cwebp: lo descarta

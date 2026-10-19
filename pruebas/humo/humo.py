@@ -32,6 +32,13 @@ EXE = ".exe" if os.name == "nt" else ""
 fallos = []
 avisos = []
 
+# La consola de Windows es cp1252 y no sabe escribir «✓»: en UTF-8, siempre.
+for flujo in (sys.stdout, sys.stderr):
+    try:
+        flujo.reconfigure(encoding="utf-8")
+    except AttributeError:
+        pass
+
 
 def bien(msg):
     print(f"  ✓ {msg}", flush=True)

@@ -8,7 +8,24 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **Entrega 7 — Agentes por MCP** (v0.8.0, [ADR 0023](adr/0023-mcp.md)). En tres partes:
+- **Entrega 8 — la 1.0** ([ADR 0024](adr/0024-la-1-0.md)), en cuatro partes con su versión:
+  - **8a · v0.10.0**:
+    - Windows y Linux de verdad: `humo.yml` en CI (Windows x64 y Linux x64; instalar, `apolo-mcp`,
+      rutas con tildes, AVIF y JPEG XL frente a los oficiales de Windows, equivalencia con cwebp en
+      Windows y Linux arm64);
+    - arreglos (lo esperado: rutas con tildes en Windows, manifiesto UTF-8);
+    - pruebas guiadas del cliente en Windows ARM y Ubuntu ARM;
+    - el README rehecho con la tabla de descargas.
+  - **8b · v0.11.0**: rendimiento. Un banco con fotos de 24 MP y un lote de 200, medido y arreglado
+    para un Mac de 8 GB, sin cambiar ni un byte de salida.
+  - **8c · v0.12.0**: todo en inglés. La ventana (`en.json`, idioma del sistema y selector), la CLI,
+    el MCP y los mensajes del núcleo con un catálogo en Rust, y las notas y el README.
+  - **8d · 1.0.0**:
+    - el tap `webcafeina/homebrew-apolo` (fórmula de la CLI y cask de la aplicación);
+    - la web en `apolo.webcafeina.com` (GitHub Pages, es + en);
+    - la prueba guiada final.
+
+- ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:
   - ~~**7a**~~: `crates/mcp` con las diez herramientas (once desde la 7b), pruebas, catálogo y el paseo con Claude Code
     (2026-10-14, sin versión publicada).
   - **7b**, hecha en el código el 2026-10-14 y sin empujar: el empaquetado. `crates/mcpb` (`armar-mcpb`, manifiesto 0.3 con las herramientas sacadas
@@ -98,13 +115,12 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
   `windows-artifacts.zip` de libavif y el `jxl-x64-windows-static.zip` de libjxl. AVIF en Mac ya
   está (16 de 16, 2026-10-08).
 - ~~**Entrega 6 — Métricas.**~~ Hecha como v0.7.0 (ver Cerrado).
-- **Entrega 8 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas. (La
-  actualización automática se adelantó a la v0.3.3: ADR 0018.) Era la 7 hasta el 2026-10-14, cuando
-  el cliente metió delante los agentes por MCP.
+- ~~**Entrega 8 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas.~~ Definida
+  el 2026-10-19 en modo plan: ver Alta y el [ADR 0024](adr/0024-la-1-0.md).
 
 ## Baja
 
-- **Instalar la CLI desde un repositorio de paquetes.** Hoy solo se baja el `.tar.gz` de la
+- **Instalar la CLI desde un repositorio de paquetes.** (Homebrew, en la 8d.) Hoy solo se baja el `.tar.gz` de la
   Release, o se compila con `cargo install --git …`, que exige Rust, nasm y CMake. El cliente lo
   preguntó el 2026-10-07 y lo dejó para el futuro, no es prioritario.
   - **Lo propuesto, por orden**: primero **Homebrew con un tap propio**
@@ -119,7 +135,7 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 - WebP animado: `gif2webp` e `img2webp`.
 - Butteraugli. Ya está dentro con libjxl (ADR 0022), pero es lenta; SSIMULACRA 2 cubre lo mismo.
 - Firmar y notarizar ([ADR 0009](adr/0009-sin-firmar.md)).
-- La traducción al inglés: con la i18n hecha, es traducir `es.json`.
+- ~~La traducción al inglés~~: en la 8c, y en todo (ADR 0024).
 
 ## Cerrado
 

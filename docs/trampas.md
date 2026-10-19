@@ -330,3 +330,19 @@ Claude Code lo manda bien, así que la evaluación no lo vio. Arreglo en `entrad
 escrito en el sitio (`esquema_rectangulo`, `type: object`, sin `$ref`) y una lectura que acepta
 también el texto (`objeto_o_texto`). `tests/objetos.rs` lo vigila. Para cualquier objeto nuevo en
 las entradas de las herramientas, lo mismo. · 2026-10-19
+
+## Windows: «Failed to open file for write» de avifenc, o «Could not write jxl file» de cjxl
+
+Solo cuando la ruta tiene tildes o eñes, por ejemplo una carpeta de usuario `C:\Users\José`, o la
+temporal dentro de ella. WebP funciona y AVIF y JPEG XL no: avifenc y cjxl, compilados dentro,
+abren sus ficheros con `fopen`, que en Windows interpreta el `char*` en la página de códigos del
+proceso (cp1252), y Rust les pasa UTF-8. No sale en ningún sitio más que en Windows con esa ruta: lo
+destapó `humo.yml` el 2026-10-19. Arreglo: `activeCodePage` UTF-8 en el manifiesto de los tres
+`.exe` (`empaquetado/windows/apolo.manifest`), con `tauri-build` en la aplicación y `embed-resource`
+en `apolo` y `apolo-mcp`. Windows 10 1903 o posterior. · 2026-10-19
+
+## `publicar.yml` en macOS: «failed to run bundle_dmg.sh», sin más
+
+Pasó una vez en `macos-15` y a la segunda salió bien: `hdiutil` falla a veces en las máquinas de
+GitHub. `gh run rerun <id> --failed` (relanza también lo que depende de él, el humo). Si se repite,
+reintentar ese paso. · 2026-10-19

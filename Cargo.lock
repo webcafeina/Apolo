@@ -130,6 +130,7 @@ dependencies = [
  "apolo-avifjxl",
  "apolo-nucleo",
  "clap",
+ "embed-resource",
 ]
 
 [[package]]
@@ -161,6 +162,7 @@ dependencies = [
  "apolo-servicio",
  "base64 0.22.1",
  "dirs 6.0.0",
+ "embed-resource",
  "rmcp",
  "schemars 1.2.2",
  "serde",

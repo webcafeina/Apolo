@@ -15,3 +15,7 @@ path = "src/main.rs"
 apolo-nucleo.workspace = true
 apolo-avifjxl.workspace = true
 clap = { version = "4", features = ["derive"] }
+
+[build-dependencies]
+# MIT. Ya lo trae tauri-build; aquí, para el manifiesto de Windows (build.rs).
+embed-resource = "3"

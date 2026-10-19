@@ -1,0 +1,6 @@
+# En Windows, la biblioteca de C y C++ de Microsoft va dentro de cada .exe
+# (/MT), no en las DLL de «Visual C++ Redistributable» (MSVCP140.dll,
+# VCRUNTIME140.dll), que un Windows recién instalado no trae. Los build.rs de
+# heic y avifjxl compilan sus CMake igual (docs/trampas.md).
+[target.'cfg(all(target_os = "windows", target_env = "msvc"))']
+rustflags = ["-C", "target-feature=+crt-static"]

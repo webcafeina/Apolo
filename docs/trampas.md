@@ -21,6 +21,18 @@ compilación entera en cada objetivo. `bundle.category` en `tauri.conf.json` no 
 texto: es una lista cerrada con los nombres de Apple sin espacios (`GraphicsAndDesign`, no
 `Graphics`). Pasó en la primera publicación, en los seis objetivos a la vez. · 2026-10-06
 
+## «No se encontró MSVCP140.dll» al abrir Apolo en Windows
+
+Sale en un Windows recién instalado, y **nunca en las máquinas de CI**, que traen instalado
+«Visual C++ Redistributable»: el humo pasaba en verde. Lo causan los motores en C++ (libjxl, aom,
+libheif, libde265) compilados con /MD, la biblioteca de C++ en DLL, y Rust también enlaza
+VCRUNTIME140.dll por defecto. Pasaba en todos los `.exe` de Windows desde la primera versión. Se
+evita con todo en /MT:
+- `+crt-static` en `.cargo/config.toml`, que también lo pasa al crate cc;
+- `CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded` en los CMake de `heic` y `avifjxl`.
+
+`humo.py` mira las DLL que importa cada `.exe` y falla si sale alguna de Visual C++. · 2026-10-19
+
 ## El icono de Apolo, borroso en el listado de aplicaciones de Ubuntu
 
 En el Dock de Ubuntu se veía bien y en la cuadrícula de aplicaciones, borroso. El `.deb` solo

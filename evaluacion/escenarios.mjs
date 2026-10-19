@@ -49,7 +49,11 @@ export const ESCENARIOS = [
   {
     id: 'c-medidas', categoria: 'consulta', soloLectura: true,
     peticion: '¿Qué medidas tiene playa-1.jpg y cuánto pesa?',
-    comprobar: (_c, r) => (incluye(r.texto, '2400') && incluye(r.texto, '1600')) || 'no da 2400 × 1600',
+    // Las medidas, leídas de la foto: desde el 2026-10-19 la carpeta lleva fotos reales de Kodak.
+    async comprobar(c, r) {
+      const m = await medidas(c, 'playa-1.jpg');
+      return (incluye(r.texto, m.ancho) && incluye(r.texto, m.alto)) || `no da ${m.ancho} × ${m.alto}`;
+    },
   },
   {
     id: 'c-carpeta', categoria: 'consulta', soloLectura: true,
@@ -71,8 +75,8 @@ export const ESCENARIOS = [
   {
     id: 'o-webp', categoria: 'optimizar',
     peticion: 'Optimiza playa-1.jpg para la web en WebP',
-    // playa-1.jpg es de las fotos con las que WebP no llega a la nota 80 ni con calidad 100 (se
-    // queda en 68): vale llegar, o decir que no llega (corregido en la primera pasada).
+    // Hay fotos con las que WebP no llega a la nota 80 ni con calidad 100: vale llegar, o decir
+    // que no llega (corregido en la primera pasada).
     // Puede probar más de una (corregido en la segunda pasada): vale si alguna llega, o si dice
     // que no llega.
     async comprobar(c, r) {
@@ -85,8 +89,8 @@ export const ESCENARIOS = [
   {
     id: 'o-avif-90', categoria: 'optimizar',
     peticion: 'Pasa playa-2.jpg a AVIF con una calidad que no se distinga del original ni alternándolas (nota 90)',
-    // Con playa-2.jpg, AVIF se queda en 88,96 incluso con calidad 100: vale llegar, o decir con
-    // verdad que no llega (corregido en la primera pasada).
+    // Hay fotos con las que AVIF no llega a 90 ni con calidad 100: vale llegar, o decir con verdad
+    // que no llega (corregido en la primera pasada).
     async comprobar(c, r) {
       const f = unico(c, 'avif');
       if (!f.endsWith('.avif')) return f;
@@ -96,12 +100,14 @@ export const ESCENARIOS = [
   },
   {
     id: 'o-ancho', categoria: 'optimizar',
-    peticion: 'Haz una versión de playa-1.jpg de 800 px de ancho en WebP',
+    // Menos de lo que mide la foto: Apolo no agranda.
+    peticion: 'Haz una versión de playa-1.jpg de 400 px de ancho en WebP',
     async comprobar(c) {
       const f = unico(c, 'webp');
       if (!f.endsWith('.webp')) return f;
-      const m = await medidas(c, f);
-      return (m.ancho === 800 && m.alto === 533) || (m.ancho === 800 && m.alto === 534) || `mide ${m.ancho}×${m.alto}`;
+      const [o, m] = [await medidas(c, 'playa-1.jpg'), await medidas(c, f)];
+      const alto = Math.round((400 * o.alto) / o.ancho);
+      return (m.ancho === 400 && Math.abs(m.alto - alto) <= 1) || `mide ${m.ancho}×${m.alto}, esperaba 400×${alto}`;
     },
   },
   {
@@ -154,9 +160,10 @@ export const ESCENARIOS = [
       const f = unico(c, 'webp');
       if (!f.endsWith('.webp')) return f;
       const m = await medidas(c, f);
+      const o = await medidas(c, 'playa-1.jpg');
       return todas([
         r.llamadas.some((l) => l.args?.recorte) || 'no usó recorte',
-        (m.ancho === 1200 && m.alto === 1600) || `mide ${m.ancho}×${m.alto}, esperaba 1200×1600`,
+        (Math.abs(m.ancho - o.ancho / 2) <= 1 && m.alto === o.alto) || `mide ${m.ancho}×${m.alto}, esperaba ${o.ancho / 2}×${o.alto}`,
       ]);
     },
   },
@@ -240,13 +247,13 @@ export const ESCENARIOS = [
   },
   {
     id: 'lote-ancho', categoria: 'lote',
-    peticion: 'Reduce todas las imágenes de fotos a 1200 px de ancho como máximo, en AVIF',
+    peticion: 'Reduce todas las imágenes de fotos a 500 px de ancho como máximo, en AVIF',
     async comprobar(c) {
       const v = c.nuevos().filter((f) => f.endsWith('.avif'));
       if (v.length !== 4) return `avif nuevos: ${v.length}`;
       for (const f of v) {
         const m = await medidas(c, f);
-        if (m.ancho > 1200) return `${f} mide ${m.ancho} de ancho`;
+        if (m.ancho > 500) return `${f} mide ${m.ancho} de ancho`;
       }
       return true;
     },
@@ -265,14 +272,15 @@ export const ESCENARIOS = [
   {
     id: 'preset-usar', categoria: 'presets',
     async preparar(c) {
-      await c.apolo('guardar_preset', { nombre: 'Web ligera', formato: 'avif', nota_objetivo: 75, ancho: 1600 });
+      // Menos de lo que mide la foto: si no, no reduciría nada.
+      await c.apolo('guardar_preset', { nombre: 'Web ligera', formato: 'avif', nota_objetivo: 75, ancho: 600 });
     },
     peticion: 'Usa mi preset Web ligera con playa-1.jpg',
     async comprobar(c) {
       const f = unico(c, 'avif');
       if (!f.endsWith('.avif')) return f;
       const m = await medidas(c, f);
-      return m.ancho === 1600 || `mide ${m.ancho} de ancho`;
+      return m.ancho === 600 || `mide ${m.ancho} de ancho, esperaba 600`;
     },
   },
   {

@@ -22,6 +22,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **Prueba de la v0.9.1 en Claude Desktop**: «Quédate con la mitad izquierda… en WebP» → recorte de
   Apolo (800×1600) con la nota 80 (calidad 69, 80,3), transparencia conservada, −97 %; y avisó de
   que el corte partía el texto, proponiendo dónde cortar. La prueba de la v0.9.x, completa.
+- **La evaluación del MCP, con fotos reales**: cinco escenarios leen ahora las medidas de la foto en
+  vez de llevarlas escritas; la carpeta del VPS, regenerada; **30 de 30** a la primera.
 - La carpeta de prueba, con **fotos reales** (Kodak), a petición del cliente: `generar.sh` las
   descarga con su sha256. La evaluación del MCP sigue con la carpeta antigua (deuda).
 

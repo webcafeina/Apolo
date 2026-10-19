@@ -11,8 +11,8 @@
 > ~~Que el cliente repita el recorte en Claude Desktop~~: **bien el 2026-10-19** (recorte de Apolo,
 > 800×1600, buscando la nota 80: calidad 69, SSIMULACRA 2 80,3, con transparencia). **La prueba de
 > la v0.9.x está completa**: ventana, paleta, recorte del agente y AVIF en Mac 16/16.
-> **Lo siguiente**: la 1.0 (entrega 8, siguiente.md), y adaptar la evaluación del MCP a la carpeta
-> de fotos reales (deuda).
+> ~~Adaptar la evaluación del MCP a las fotos reales~~: hecho el 2026-10-19, 30 de 30.
+> **Lo siguiente**: la 1.0 (entrega 8, siguiente.md), a plantear con el cliente.
 >
 > **La v0.9.0** (2026-10-16), detalle abajo. Antes, la **v0.8.3** (2026-10-16): las rutas de Apolo con `~` (el agente comentaba la cuenta
 > «alvaro») y, en las descripciones, usar Apolo y no el intérprete de la nube con imágenes adjuntas.

@@ -42,3 +42,12 @@ adjuntas en la conversación.
 llamarse como la persona, y usar Apolo en vez de un intérprete en la nube), una comprobación rápida
 falló en `adv-sobrescribir` con una respuesta correcta: «se pierde sin posibilidad de recuperarlo…
 confírmamelo expresamente». La comprobación no ignoraba las tildes; ahora sí.
+
+## 2026-10-19, con fotos reales
+
+La carpeta de prueba pasó a fotos reales de Kodak (768 × 512) a petición del cliente. Cinco
+escenarios llevaban escritas las medidas de los fractales de antes (2400 × 1600): `c-medidas`,
+`o-ancho`, `o-recorte`, `lote-ancho` y `preset-usar`. Ahora leen las medidas de la foto, y las
+peticiones de tamaño piden menos de lo que mide (Apolo no agranda): 400 px, 500 px, un preset de
+600 px. Con la carpeta del VPS regenerada, **30 de 30 a la primera** (ejecución
+`2026-10-19T09-09-55`, apolo-mcp 0.9.1).

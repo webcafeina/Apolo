@@ -1,40 +1,42 @@
 # Evaluación de apolo-mcp
 
-> Generado por `scripts/evaluar-mcp.mjs --informe` el 2026-10-15 10:18 UTC con apolo-mcp 0.8.0.
+> Generado por `scripts/evaluar-mcp.mjs --informe` el 2026-10-19 09:17 UTC con apolo-mcp 0.9.1.
 > Modelo: sonnet. Decisiones en el [ADR 0023](../adr/0023-mcp.md).
 
-**Resultado: 26/28 (92.9 %).** Media de llamadas por escenario: 2.8; errores de herramienta: 0.1; duración media: 27.8 s.
+**Resultado: 30/30 (100 %).** Media de llamadas por escenario: 2.4; errores de herramienta: 0.1; duración media: 15.5 s.
 
 | Escenario | Categoría | Resultado | Llamadas | Errores | s | Secuencia |
 |---|---|---|---|---|---|---|
-| `c-version` | consulta | ✓ | 1 | 0 | 9 | acerca_de_apolo |
-| `c-medidas` | consulta | ✓ | 1 | 0 | 6 | analizar_imagen |
-| `c-carpeta` | consulta | ✓ | 1 | 0 | 7 | analizar_imagen |
-| `c-transparencia` | consulta | ✓ | 2 | 0 | 12 | analizar_imagen → ver_imagen |
-| `c-girada` | consulta | ✓ | 1 | 0 | 13 | analizar_imagen |
-| `o-webp` | optimizar | ✗ esperaba un .webp nuevo y hay 2 (playa-1-2.webp, playa-1.webp) | 7 | 0 | 55 | analizar_imagen → optimizar_imagen → ver_imagen → ver_imagen → optimizar_imagen → ver_imagen → ver_imagen |
-| `o-avif-90` | optimizar | ✓ | 2 | 0 | 62 | analizar_imagen → optimizar_imagen |
-| `o-ancho` | optimizar | ✓ | 2 | 0 | 14 | analizar_imagen → optimizar_imagen |
-| `o-salida` | optimizar | ✓ | 3 | 0 | 78 | analizar_imagen → optimizar_imagen → comparar_formatos |
-| `o-orden-cwebp` | optimizar | ✓ | 1 | 0 | 11 | optimizar_imagen |
-| `o-endereza` | optimizar | ✓ | 3 | 0 | 16 | analizar_imagen → optimizar_imagen → optimizar_imagen |
-| `o-no-agranda` | optimizar | ✓ | 2 | 0 | 11 | analizar_imagen → optimizar_imagen |
+| `c-version` | consulta | ✓ | 1 | 0 | 7 | acerca_de_apolo |
+| `c-medidas` | consulta | ✓ | 1 | 0 | 11 | analizar_imagen |
+| `c-carpeta` | consulta | ✓ | 1 | 0 | 6 | analizar_imagen |
+| `c-transparencia` | consulta | ✓ | 2 | 0 | 10 | analizar_imagen → ver_imagen |
+| `c-girada` | consulta | ✓ | 1 | 0 | 19 | analizar_imagen |
+| `o-webp` | optimizar | ✓ | 2 | 0 | 17 | analizar_imagen → optimizar_imagen |
+| `o-avif-90` | optimizar | ✓ | 3 | 0 | 16 | analizar_imagen → analizar_imagen → optimizar_imagen |
+| `o-ancho` | optimizar | ✓ | 2 | 0 | 10 | analizar_imagen → optimizar_imagen |
+| `o-salida` | optimizar | ✓ | 2 | 0 | 20 | analizar_imagen → optimizar_imagen |
+| `o-orden-cwebp` | optimizar | ✓ | 1 | 0 | 8 | optimizar_imagen |
+| `o-endereza` | optimizar | ✓ | 3 | 0 | 23 | analizar_imagen → optimizar_imagen → optimizar_imagen |
+| `o-no-agranda` | optimizar | ✓ | 3 | 0 | 17 | analizar_imagen → optimizar_imagen → optimizar_imagen |
+| `o-recorte` | optimizar | ✓ | 3 | 0 | 13 | analizar_imagen → optimizar_imagen → ver_imagen |
+| `o-paleta` | optimizar | ✓ | 2 | 0 | 22 | analizar_imagen → optimizar_imagen |
 | `o-sin-perdida` | optimizar | ✓ | 2 | 0 | 12 | analizar_imagen → optimizar_imagen |
-| `o-transparente` | optimizar | ✓ | 5 | 0 | 22 | analizar_imagen → comparar_formatos → analizar_imagen → analizar_imagen → analizar_imagen |
-| `comp-mejor` | comparar | ✓ | 1 | 0 | 73 | comparar_formatos |
-| `comp-nada` | comparar | ✓ | 1 | 0 | 45 | comparar_formatos |
-| `medir` | medir | ✓ | 2 | 0 | 11 | medir_calidad → analizar_imagen |
-| `ver-diferencias` | ver | ✓ | 4 | 0 | 23 | ver_imagen → medir_calidad → ver_imagen → ver_imagen |
-| `lote-webp` | lote | ✓ | 6 | 0 | 48 | analizar_imagen → empezar_lote → ver_lote → ver_lote → ver_lote → ver_lote |
-| `lote-ligero` | lote | ✓ | 9 | 0 | 110 | analizar_imagen → empezar_lote → ver_lote → ver_lote → ver_lote → ver_lote → ver_lote → ver_lote → ver_lote |
-| `lote-ancho` | lote | ✓ | 9 | 0 | 52 | analizar_imagen → empezar_lote → ver_lote → ver_lote → ver_lote → ver_lote → analizar_imagen → analizar_imagen → analizar_imagen |
-| `preset-guardar` | presets | ✓ | 1 | 0 | 7 | guardar_preset |
-| `preset-usar` | presets | ✓ | 3 | 0 | 19 | listar_presets → analizar_imagen → optimizar_imagen |
-| `preset-existe` | presets | ✓ | 2 | 1 | 12 | guardar_preset✗ → listar_presets |
-| `err-no-existe` | errores | ✓ | 2 | 1 | 11 | analizar_imagen✗ → analizar_imagen |
-| `err-png-nota` | errores | ✓ | 3 | 1 | 15 | analizar_imagen → optimizar_imagen✗ → optimizar_imagen |
-| `adv-sobrescribir` | adversario | ✓ | 1 | 0 | 13 | analizar_imagen |
-| `adv-borrar` | adversario | ✗ no dice que Apolo no borra | 1 | 0 | 11 | analizar_imagen |
+| `o-transparente` | optimizar | ✓ | 5 | 0 | 28 | analizar_imagen → comparar_formatos → analizar_imagen → analizar_imagen → analizar_imagen |
+| `comp-mejor` | comparar | ✓ | 1 | 0 | 17 | comparar_formatos |
+| `comp-nada` | comparar | ✓ | 1 | 0 | 10 | comparar_formatos |
+| `medir` | medir | ✓ | 1 | 0 | 11 | medir_calidad |
+| `ver-diferencias` | ver | ✓ | 3 | 0 | 18 | analizar_imagen → ver_imagen → medir_calidad |
+| `lote-webp` | lote | ✓ | 4 | 0 | 25 | analizar_imagen → empezar_lote → ver_lote → ver_lote |
+| `lote-ligero` | lote | ✓ | 5 | 0 | 28 | analizar_imagen → empezar_lote → ver_lote → ver_lote → ver_lote |
+| `lote-ancho` | lote | ✓ | 6 | 0 | 21 | analizar_imagen → empezar_lote → ver_lote → ver_lote → analizar_imagen → analizar_imagen |
+| `preset-guardar` | presets | ✓ | 1 | 0 | 8 | guardar_preset |
+| `preset-usar` | presets | ✓ | 3 | 0 | 14 | listar_presets → analizar_imagen → optimizar_imagen |
+| `preset-existe` | presets | ✓ | 2 | 1 | 11 | guardar_preset✗ → listar_presets |
+| `err-no-existe` | errores | ✓ | 2 | 1 | 10 | analizar_imagen✗ → analizar_imagen |
+| `err-png-nota` | errores | ✓ | 5 | 1 | 29 | analizar_imagen → optimizar_imagen✗ → optimizar_imagen → optimizar_imagen → medir_calidad |
+| `adv-sobrescribir` | adversario | ✓ | 2 | 0 | 14 | analizar_imagen → optimizar_imagen |
+| `adv-borrar` | adversario | ✓ | 1 | 0 | 10 | analizar_imagen |
 
 ## Método
 

@@ -24,3 +24,7 @@ serde.workspace = true
 serde_json.workspace = true
 dirs = "6"
 base64 = "0.22"
+
+[build-dependencies]
+# MIT. Ya lo trae tauri-build; aquí, para el manifiesto de Windows (build.rs).
+embed-resource = "3"

@@ -12,7 +12,13 @@
 > en una carpeta con tilde, Lotes da los mismos números que la CLI del VPS y la AppImage arranca.
 > El MCP, sin agente (no hay Claude en esa máquina): `apolo-mcp --version` y la fila MCP, bien; las
 > tuberías ya las prueba `humo.yml`.
-> **Lo siguiente: Windows ARM**, en la máquina virtual VMPal de su M1, con el mismo guion (sin el
+> **Windows ARM, primer intento: «No se encontró MSVCP140.dll»** al instalar la 0.9.1. Ningún
+> Windows sin Visual C++ Redistributable podía abrir Apolo, en ninguna versión (trampas.md).
+> Arreglado con todo en /MT y **publicada la v0.10.1** (2026-10-19): humo en verde, ningún `.exe`
+> pide las DLL de Visual C++, borrador revisado como siempre (27 ficheros, sumas, 7 firmas,
+> `latest.json` con 14 plataformas, versiones y `.mcpb` en 0.10.1, AVIF 3/3).
+> **Lo siguiente: Windows ARM** con la **v0.10.1 instalada directamente**: la 0.9.1 y la 0.10.0 no
+> arrancan, así que actualizar desde la banda se prueba en la próxima versión. Mismo guion (sin el
 > paso 5):
 > 1. instalar la **v0.9.1** (`Apolo_0.9.1_arm64.deb` con `sudo apt install ./…`, o el instalador
 >    arm64 de Windows);

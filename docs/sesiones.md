@@ -17,7 +17,14 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   - la AppImage arranca y abre.
 - **El MCP, sin agente**: no hay Claude en esa máquina. `/usr/bin/apolo-mcp --version` da 0.10.0 y
   la fila MCP lo encuentra sin avisos. Las tuberías ya las cubre `humo.yml` en x64 y arm64.
-- Deuda al día. Queda de la 8a: Windows ARM.
+- El cliente vio el icono **borroso en el listado de aplicaciones**: el de 256 iba a
+  `hicolor/256x256@2` por llamarse `128x128@2x.png` (trampa). Arreglado; falta verlo.
+- **Windows ARM: «No se encontró MSVCP140.dll»** al instalar la 0.9.1. Todos los `.exe` de Windows
+  pedían las DLL de Visual C++ desde la primera versión; las máquinas de CI las tienen y el humo no
+  lo veía (trampa). Todo en /MT (`+crt-static` y `CMAKE_MSVC_RUNTIME_LIBRARY`), y `humo.py` lee
+  las importaciones de cada `.exe`. Una caída de `chromium.googlesource.com` (503 al bajar libyuv)
+  tumbó la compilación de prueba; a la segunda, bien.
+- **v0.10.1 publicada**, revisada como siempre. Queda de la 8a: Windows ARM, con la 0.10.1.
 
 ---
 

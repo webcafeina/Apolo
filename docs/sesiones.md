@@ -4,6 +4,18 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-19 · Prueba guiada de la v0.9.0
+
+- **Recortar con el ratón en la ventana**: todo bien, con ratón y trackpad.
+- **El agente en Claude Desktop**: la paleta, bien (16 colores, −92 %, con transparencia). **El
+  recorte no llegaba**: Claude Desktop manda como texto los objetos cuyo esquema es un `$ref`
+  (trampa nueva), y el agente se apañó con `-crop` de cwebp, sin poder buscar la nota. Arreglado en
+  `main`: esquema en el sitio y lectura tolerante (`tests/objetos.rs`). Y el motivo decía
+  «redimensionado» al reducir la paleta: ahora dice lo que se hizo.
+- Escenarios de recorte, paleta y tamaño con Claude Code: 4/4.
+
+---
+
 ## 2026-10-16 · Las tres pendientes: CI en macos-15, recorte y paleta en el agente, recortar con el ratón
 
 - **CI a `macos-15`** con `MACOSX_DEPLOYMENT_TARGET=11.0`. La primera prueba no enlazó: la imagen

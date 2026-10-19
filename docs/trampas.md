@@ -320,3 +320,13 @@ trae **giflib con Homebrew**, el CMake de libjxl la encuentra (`find_package(GIF
 lectura de GIF en cjxl, pero nadie la enlaza. En `macos-14` no estaba, en el VPS tampoco. Se apaga en
 `crates/avifjxl/cmake/CMakeLists.txt` con `CMAKE_DISABLE_FIND_PACKAGE_GIF`, para que todas las
 máquinas compilen lo mismo. Al cambiar de imagen de CI, mirar qué trae Homebrew. · 2026-10-16
+
+## Claude Desktop: «invalid type: string "{\"x\":0,…}", expected struct RecorteMcp»
+
+Un argumento que es un objeto (`recorte`, la `zona` de `ver_imagen`) y cuyo esquema es una
+referencia a `$defs` (`anyOf: [{$ref}, {type: null}]`, lo que genera schemars para un
+`Option<Struct>`) llega desde Claude Desktop **como texto con el JSON dentro**, y serde lo rechaza.
+Claude Code lo manda bien, así que la evaluación no lo vio. Arreglo en `entrada.rs`: el esquema
+escrito en el sitio (`esquema_rectangulo`, `type: object`, sin `$ref`) y una lectura que acepta
+también el texto (`objeto_o_texto`). `tests/objetos.rs` lo vigila. Para cualquier objeto nuevo en
+las entradas de las herramientas, lo mismo. · 2026-10-19

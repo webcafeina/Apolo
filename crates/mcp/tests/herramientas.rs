@@ -479,6 +479,14 @@ fn recortar_y_reducir_la_paleta() {
     let (_, _, px) = apolo_nucleo::vista::rgba(&img).unwrap();
     let colores: std::collections::HashSet<&[u8]> = px.chunks(4).collect();
     assert!(colores.len() <= 8, "{} colores", colores.len());
+    // El motivo dice lo que se hizo, no «redimensionado» (prueba guiada de la v0.9.0).
+    assert!(
+        r.texto
+            .contains("recorta 64×32 en 10,20 · paleta de 8 colores"),
+        "{}",
+        r.texto
+    );
+    assert!(!r.texto.contains("sin enderezar"), "{}", r.texto);
 
     // Un recorte que empieza fuera, y una paleta imposible: errores con pista.
     let fuera = EntradaFormato {

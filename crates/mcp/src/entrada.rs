@@ -42,6 +42,43 @@ impl From<FormatoMcp> for FormatoSalida {
     }
 }
 
+/// El esquema de un rectángulo `{x, y, ancho, alto}`, escrito en el sitio y
+/// sin `$ref`: Claude Desktop mandaba como texto los objetos que llegaban por
+/// una referencia a `$defs` («invalid type: string, expected struct
+/// RecorteMcp»; prueba guiada de la v0.9.0). Claude Code los mandaba bien.
+pub fn esquema_rectangulo(_: &mut schemars::SchemaGenerator) -> schemars::Schema {
+    schemars::json_schema!({
+        "type": "object",
+        "properties": {
+            "x": { "type": "integer", "minimum": 0, "description": "Desde la izquierda, en píxeles." },
+            "y": { "type": "integer", "minimum": 0, "description": "Desde arriba, en píxeles." },
+            "ancho": { "type": "integer", "minimum": 1 },
+            "alto": { "type": "integer", "minimum": 1 }
+        },
+        "required": ["x", "y", "ancho", "alto"]
+    })
+}
+
+/// Lee un objeto opcional que puede llegar como objeto o como texto con el
+/// JSON dentro (`"{\"x\":0,…}"`), que es como lo mandaba Claude Desktop.
+pub fn objeto_o_texto<'de, D, T>(d: D) -> Result<Option<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: serde::de::DeserializeOwned,
+{
+    use serde::de::Error;
+    match serde_json::Value::deserialize(d)? {
+        serde_json::Value::Null => Ok(None),
+        serde_json::Value::String(t) if t.trim().is_empty() => Ok(None),
+        serde_json::Value::String(t) => {
+            serde_json::from_str(&t).map(Some).map_err(D::Error::custom)
+        }
+        v => serde_json::from_value(v)
+            .map(Some)
+            .map_err(D::Error::custom),
+    }
+}
+
 /// Un rectángulo de la imagen, en píxeles (ya enderezada).
 #[derive(Debug, Clone, Copy, Deserialize, JsonSchema)]
 pub struct RecorteMcp {
@@ -92,7 +129,8 @@ pub struct EntradaFormato {
     pub enderezar: Option<bool>,
     /// Quedarse con este rectángulo, antes de redimensionar (en píxeles de la
     /// imagen ya enderezada; lo que se salga del borde se ajusta).
-    #[serde(default)]
+    #[serde(default, deserialize_with = "objeto_o_texto")]
+    #[schemars(schema_with = "esquema_rectangulo")]
     pub recorte: Option<RecorteMcp>,
     /// Reducir a este número de colores (de 2 a 256), con tramado: sobre todo
     /// para PNG de logos, iconos y capturas.

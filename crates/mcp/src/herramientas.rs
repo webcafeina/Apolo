@@ -172,14 +172,23 @@ fn leer_rgba(ruta: &Path) -> Hecho<Leida> {
     Ok((vista::rgba(&img)?, o, img))
 }
 
-fn texto_motivo(m: Motivo, herramienta: &str, formato: &str) -> String {
+fn texto_motivo(m: Motivo, herramienta: &str, formato: &str, proceso: &Proceso) -> String {
     match m {
         Motivo::Enderezada => {
             format!("Apolo la ha enderezado según su EXIF, y {herramienta} no gira")
         }
-        Motivo::Procesada => {
-            format!("Apolo la ha redimensionado antes, y {herramienta} no lo hace igual")
-        }
+        // Lo que se hizo de verdad: decía «redimensionado» también al reducir
+        // la paleta (prueba guiada de la v0.9.0).
+        Motivo::Procesada => format!(
+            "Apolo la ha procesado antes ({}), y {herramienta} no lo hace igual",
+            // «sin enderezar» aquí no dice nada: el agente solo endereza
+            // las fotos que lo necesitan.
+            texto_proceso(&Proceso {
+                enderezar: true,
+                ..proceso.clone()
+            })
+            .unwrap_or_else(|| "recorte, tamaño o paleta".into())
+        ),
         Motivo::FormatoSinHerramienta => {
             format!("{herramienta} no lee {formato}: Apolo la ha convertido antes")
         }
@@ -445,7 +454,7 @@ pub fn optimizar_imagen(cx: &Contexto, e: EntradaOptimizar, s: &Seguimiento) -> 
         (Some(o), _) => texto.push_str(&format!("\nOrden equivalente: {o}")),
         (None, Some(m)) => texto.push_str(&format!(
             "\nSin orden equivalente: {}.",
-            texto_motivo(m, v.herramienta, a.info.formato)
+            texto_motivo(m, v.herramienta, a.info.formato, &ajuste.proceso)
         )),
         _ => {}
     }
@@ -546,7 +555,8 @@ pub struct EntradaComparar {
     pub enderezar: Option<bool>,
     /// Quedarse con este rectángulo, antes de redimensionar (en píxeles de la
     /// imagen ya enderezada; lo que se salga del borde se ajusta).
-    #[serde(default)]
+    #[serde(default, deserialize_with = "crate::entrada::objeto_o_texto")]
+    #[schemars(schema_with = "crate::entrada::esquema_rectangulo")]
     pub recorte: Option<RecorteMcp>,
     /// Reducir a este número de colores (de 2 a 256), con tramado.
     #[serde(default)]
@@ -794,7 +804,8 @@ pub struct EntradaVer {
     #[serde(default)]
     pub lado_max: Option<u32>,
     /// Ver solo esta zona, en píxeles de la imagen (para mirar defectos a 1:1).
-    #[serde(default)]
+    #[serde(default, deserialize_with = "crate::entrada::objeto_o_texto")]
+    #[schemars(schema_with = "crate::entrada::esquema_rectangulo")]
     pub zona: Option<Zona>,
     /// Ruta del original: en vez de la imagen, el mapa de dónde se aleja de él.
     #[serde(default)]
@@ -975,7 +986,8 @@ pub struct EntradaLote {
     pub enderezar: Option<bool>,
     /// Quedarse con este rectángulo, antes de redimensionar (en píxeles de la
     /// imagen ya enderezada; lo que se salga del borde se ajusta).
-    #[serde(default)]
+    #[serde(default, deserialize_with = "crate::entrada::objeto_o_texto")]
+    #[schemars(schema_with = "crate::entrada::esquema_rectangulo")]
     pub recorte: Option<RecorteMcp>,
     /// Reducir a este número de colores (de 2 a 256), con tramado.
     #[serde(default)]

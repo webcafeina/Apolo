@@ -15,6 +15,8 @@ on:
 
 permissions:
   contents: write
+  # Para que humo.yml baje los paquetes de esta ejecución.
+  actions: read
 
 jobs:
   paquete:
@@ -307,111 +309,14 @@ jobs:
           path: apolo-cli-*
           if-no-files-found: error
 
-  # Pruebas de humo de lo empaquetado (entrega 8a, ADR 0024): lo que nadie ve en un equipo,
-  # Windows x64 y Linux. pruebas/humo/humo.py trabaja en una carpeta con tildes y eñes (también
-  # la temporal), compara la CLI con las herramientas oficiales byte a byte y habla con apolo-mcp.
-  # No frenan la Release (sigue en borrador hasta revisarla); se miran al revisarla.
-  humo-windows:
+  # Pruebas de humo de lo empaquetado (entrega 8a, ADR 0024), en humo.yml: también se lanza a mano
+  # contra los paquetes de una ejecución anterior. No frenan la Release (sigue en borrador hasta
+  # revisarla); se miran al revisarla.
+  humo:
     needs: [paquete, cli]
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: apolo-windows-x64
-          path: paquete
-      - uses: actions/download-artifact@v4
-        with:
-          name: cli-windows-x64
-          path: cli
-      - name: Las herramientas oficiales de Windows
-        run: |
-          mkdir -p ref cli/x && cd ref
-          curl -sSfL -o webp.zip https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.6.0-windows-x64.zip
-          curl -sSfL -o avif.zip https://github.com/AOMediaCodec/libavif/releases/download/v1.4.2/windows-artifacts.zip
-          curl -sSfL -o jxl.zip https://github.com/libjxl/libjxl/releases/download/v0.12.0/jxl-x64-windows-static.zip
-          for z in *.zip; do 7z x -y -o"${z%.zip}" "$z" > /dev/null; done
-          find . -iname "cwebp.exe" -o -iname "avifenc.exe" -o -iname "cjxl.exe"
-          cd ../cli && 7z x -y -ox *.zip > /dev/null && ls x
-      - name: Instalar Apolo en silencio
-        shell: pwsh
-        run: |
-          $exe = Get-ChildItem -Recurse paquete -Filter *-setup.exe | Select-Object -First 1
-          Start-Process -Wait -FilePath $exe.FullName -ArgumentList '/S'
-          Get-ChildItem "$env:LOCALAPPDATA\Apolo"
-          if (-not (Test-Path "$env:LOCALAPPDATA\Apolo\apolo-app.exe")) { throw "falta apolo-app.exe" }
-          if (-not (Test-Path "$env:LOCALAPPDATA\Apolo\apolo-mcp.exe")) { throw "falta apolo-mcp.exe" }
-      - name: Humo
-        run: |
-          w() { cygpath -w "$1"; }
-          r() { find ref -iname "$1" | head -1; }
-          inst=$(find paquete -name "*-setup.exe" | head -1)
-          mcp="$LOCALAPPDATA\Apolo\apolo-mcp.exe"
-          python pruebas/humo/humo.py --cli cli/x --mcp "$mcp" \
-            --cwebp "$(r cwebp.exe)" --avifenc "$(r avifenc.exe)" --cjxl "$(r cjxl.exe)" \
-            --reinstalar "$(w "$inst")" --instalado "$mcp" --solo-informar-equivalencia
-
-  humo-linux:
-    needs: [paquete, cli]
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: apolo-linux-amd64
-          path: paquete
-      - uses: actions/download-artifact@v4
-        with:
-          name: cli-linux-amd64
-          path: cli
-      - name: Instalar el .deb y abrir la AppImage
-        run: |
-          sudo apt-get update > /dev/null
-          sudo apt-get install -y "$(find "$PWD/paquete" -name '*.deb' | head -1)"
-          ls -la /usr/bin/apolo-app /usr/bin/apolo-mcp
-          app=$(find "$PWD/paquete" -name '*.AppImage' | head -1)
-          chmod +x "$app" && mkdir appimage && (cd appimage && "$app" --appimage-extract > /dev/null)
-          ls appimage/squashfs-root/usr/bin/
-          mkdir cli/x && tar xzf cli/*.tar.gz -C cli/x
-      - name: Las herramientas oficiales de Linux
-        run: |
-          mkdir ref && cd ref
-          curl -sSfL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.6.0-linux-x86-64.tar.gz | tar xz
-          curl -sSfL -o avif.zip https://github.com/AOMediaCodec/libavif/releases/download/v1.4.2/linux-artifacts.zip && unzip -oq avif.zip -d avif
-          find . -name cwebp -o -name avifenc
-      - name: Humo
-        run: |
-          r() { find ref -name "$1" -type f | head -1; }
-          chmod +x "$(r avifenc)"
-          python3 pruebas/humo/humo.py --cli cli/x --mcp /usr/bin/apolo-mcp \
-            --mcp appimage/squashfs-root/usr/bin/apolo-mcp \
-            --cwebp "$(r cwebp)" --avifenc "$(r avifenc)"
-
-  # Linux ARM64: la equivalencia con cwebp (siguiente.md) y el .deb de arm64.
-  humo-linux-arm:
-    needs: [paquete, cli]
-    runs-on: ubuntu-22.04-arm
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: apolo-linux-arm64
-          path: paquete
-      - uses: actions/download-artifact@v4
-        with:
-          name: cli-linux-arm64
-          path: cli
-      - name: Instalar el .deb, y cwebp oficial
-        run: |
-          sudo apt-get update > /dev/null
-          sudo apt-get install -y "$(find "$PWD/paquete" -name '*.deb' | head -1)"
-          mkdir cli/x && tar xzf cli/*.tar.gz -C cli/x
-          mkdir ref && curl -sSfL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.6.0-linux-aarch64.tar.gz | tar xz -C ref
-      - name: Humo
-        run: python3 pruebas/humo/humo.py --cli cli/x --mcp /usr/bin/apolo-mcp --cwebp "$(find ref -name cwebp -type f | head -1)"
+    uses: ./.github/workflows/humo.yml
+    with:
+      ejecucion: ${{ github.run_id }}
 
   # Con todo compilado: la CLI a la Release, las notas y las sumas.
   adjuntar:

@@ -15,6 +15,10 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - Escenarios de recorte, paleta y tamaño con Claude Code: 4/4.
 - **AVIF en Mac, igual que el oficial**: la CLI de la v0.9.0, la primera compilada en `macos-15`,
   frente al avifenc 1.4.2 de `macOS-artifacts.zip`: **16 de 16**, en el Mac del cliente.
+- La comprobación de CI falló tres commits seguidos por clippy (`clone` de un tipo `Copy`) en el
+  arreglo del motivo: faltó `make comprobar` antes de subir. La publicación de la v0.9.1 se paró
+  antes de etiquetar; arreglado, CI en verde, y luego la etiqueta.
+- **v0.9.1 publicada**, con el borrador revisado como siempre.
 - La carpeta de prueba, con **fotos reales** (Kodak), a petición del cliente: `generar.sh` las
   descarga con su sha256. La evaluación del MCP sigue con la carpeta antigua (deuda).
 

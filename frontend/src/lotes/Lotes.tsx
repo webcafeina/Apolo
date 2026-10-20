@@ -118,12 +118,13 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
     };
   }, [salidas, guardados, inicio.ajuste]);
 
-  // La carpeta propuesta lleva el sufijo de lo que se pide: «-webp», «-jpg»…
-  // o «-apolo» si son varios formatos.
+  // La carpeta propuesta lleva el sufijo de lo que se pide: «webp», «jpg»… o
+  // «apolo» si son varios formatos. Con carpetas, al lado (vacaciones-webp);
+  // con ficheros sueltos, una subcarpeta junto a ellos (Escritorio/webp).
   const formatosPedidos = [...new Set(salidas.map((s) => s.formato))];
   const sufijo = formatosPedidos.length === 1 ? EXTENSION[formatosPedidos[0]] : "apolo";
   useEffect(() => {
-    if (!salidaElegida.current && recogida?.salida_sugerida) setSalida(`${recogida.salida_sugerida}-${sufijo}`);
+    if (!salidaElegida.current && recogida?.salida_sugerida) setSalida(`${recogida.salida_sugerida}${recogida.salida_union}${sufijo}`);
   }, [sufijo, recogida]);
 
   // Lo que hay en lo elegido, cada vez que cambia.

@@ -58,7 +58,7 @@ Codifica la misma imagen en varios formatos a la misma calidad percibida (nota S
 
 *hace cambios · no destruye · todo en este ordenador*
 
-Convierte carpetas o muchas imágenes en segundo plano, con las subcarpetas, sin sobrescribir nada, y vuelve enseguida con un id. Por defecto, WebP con la nota 80, en una carpeta junto a la de entrada (fotos-webp, o fotos-apolo con varios formatos). Uno a la vez. Después, ver_lote. Ejemplo: {"entradas": ["~/Fotos/viaje"], "formatos": ["webp", "avif"], "mas_ligero": true}
+Convierte carpetas o muchas imágenes en segundo plano, con las subcarpetas, sin sobrescribir nada, y vuelve enseguida con un id. Por defecto, WebP con la nota 80, en una carpeta junto a la de entrada (fotos-webp, o fotos-apolo con varios formatos); con imágenes sueltas, en una subcarpeta junto a ellas (webp/, apolo/). Uno a la vez. Después, ver_lote. Ejemplo: {"entradas": ["~/Fotos/viaje"], "formatos": ["webp", "avif"], "mas_ligero": true}
 
 | Argumento | Tipo | Qué es |
 |---|---|---|
@@ -75,7 +75,7 @@ Convierte carpetas o muchas imágenes en segundo plano, con las subcarpetas, sin
 | `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado. |
 | `preset` | texto | Un preset guardado, base de todo. |
 | `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
-| `salida` | texto | Carpeta de salida. Por defecto, junto a la de entrada con -webp, -apolo… |
+| `salida` | texto | Carpeta de salida. Por defecto, junto a la de entrada con -webp, -apolo…; con imágenes sueltas, una subcarpeta webp/, apolo/… junto a ellas. |
 | `sin_perdida` | sí/no | Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son. |
 
 ## `guardar_preset` — Guardar un preset

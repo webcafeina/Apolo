@@ -281,7 +281,8 @@ impl ServidorApolo {
     /// Convierte carpetas o muchas imágenes en segundo plano, con las
     /// subcarpetas, sin sobrescribir nada, y vuelve enseguida con un id. Por
     /// defecto, WebP con la nota 80, en una carpeta junto a la de entrada
-    /// (fotos-webp, o fotos-apolo con varios formatos). Uno a la vez. Después,
+    /// (fotos-webp, o fotos-apolo con varios formatos); con imágenes sueltas,
+    /// en una subcarpeta junto a ellas (webp/, apolo/). Uno a la vez. Después,
     /// ver_lote. Ejemplo: {"entradas": ["~/Fotos/viaje"], "formatos":
     /// ["webp", "avif"], "mas_ligero": true}
     #[tool(annotations(

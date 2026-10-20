@@ -99,7 +99,17 @@ Comillas: «» en español, “” en inglés. Mayúscula inicial en cada frase,
 
 ## Verificación
 
-Se irá llenando:
-- `make comprobar`, con la prueba de claves de la interfaz y la de descripciones del MCP;
-- la batería e2e también en inglés;
-- la evaluación del MCP con unos escenarios pedidos en inglés.
+2026-10-20, con todo hecho:
+- `make comprobar` en verde en una máquina con `LANG=C.UTF-8`, como CI: las pruebas de siempre en
+  español, y en inglés las nuevas del núcleo, la CLI (`--idioma`, la ayuda, el resumen de un
+  lote), el MCP (`tests/ingles.rs`: instrucciones, herramientas sin nada en español, un error con
+  «HINTS:») y el servicio (`tests/idioma.rs`, en su propio proceso);
+- `i18n.test.ts`: las mismas claves y los mismos datos en `es.json` y `en.json` (578);
+- la batería e2e, 65 de 65, con `ingles.spec.ts` (cambiar el idioma en Ajustes, las pantallas y
+  dos errores de Rust en inglés, sin claves que falten);
+- `make equivalencia`, igual: ningún fichero cambia;
+- la evaluación del MCP, 37 de 37, con seis escenarios en inglés.
+
+**No se ha comprobado**: el inglés en la ventana de verdad (macOS, Windows, Linux), solo en el
+navegador contra `apolo-dev`; ni que el idioma del sistema se lea bien en macOS y Windows con
+`sys-locale`. Lo verá el cliente.

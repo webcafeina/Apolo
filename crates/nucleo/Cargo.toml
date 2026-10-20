@@ -35,6 +35,9 @@ apolo-avifjxl.workspace = true
 tiff = "0.11"
 image = { version = "0.25", default-features = false, features = ["gif", "bmp", "qoi", "pnm"] }
 serde.workspace = true
+# El idioma del sistema en macOS y Windows, donde no hay LANG (ADR 0025).
+# MIT o Apache-2.0, sin dependencias en esos sistemas.
+sys-locale = "0.3.2"
 serde_json.workspace = true
 dirs = "6"
 thiserror = "2"

@@ -4,6 +4,31 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-20 (mediodía) · La 8b: el banco y la memoria con fotos de 24 MP
+
+- **El banco** (`scripts/banco.sh`): fotos de Kodak ampliadas a 6000 × 4000, lotes con 8 a la
+  vez, el Estudio con el `Servicio` de la ventana y `comparar_formatos` por MCP. Con 200 fotos,
+  antes de los arreglos: `apolo medir` 4,3 GB; el Estudio 4,5 GB (medir); lote midiendo 6,0 GB;
+  lote a AVIF 2,9 GB; `comparar_formatos` 4,1 GB y 324 s.
+- **SSIMULACRA 2 canal a canal**: libjxl tenía unas once imágenes de tres canales a la vez.
+  `medir.cc` incluye `ssimulacra2.cc` y lo hace por canal, mismas operaciones, mismo orden. Misma
+  nota bit a bit (prueba nueva frente a la función de libjxl) y 56/56 con la herramienta oficial.
+  4,3 → 1,7 GB, y más rápido.
+- **Ver un AVIF**: el decodificador de aom reserva por hilo y avifdec comprimía el PNG. Con
+  `-j 1 --png-compress 0`, 1,8 GB y 8,8 s → 433 MB y 1,6 s; mismos píxeles en 21 AVIF.
+- **Lotes midiendo**: el turno de medir antes de descomprimir. 6,0 → 2,5 GB.
+- **Lotes a AVIF en Linux**: el pico crecía con el número de fotos. Era glibc (una arena por hilo
+  que no devuelve). `mallopt(M_ARENA_MAX, 2)`: 2,9 → 1,5 GB y más rápido (trampa). Un límite de
+  megapíxeles en vuelo no cambiaba nada y se quitó.
+- Después, con 200 fotos: Estudio 1,9 GB, lote midiendo 2,5 GB, `comparar_formatos` 2,1 GB y
+  170 s; con 48, lote a AVIF 1,5 GB y «el más ligero» 2,3 GB.
+- **`comparar_formatos` sigue tardando** (unos 3 min con 24 MP). El cliente eligió no acelerarlo y
+  que la descripción mande a `empezar_lote` con fotos grandes.
+- `apolo-mcp --version` sale ya en una consola de Windows.
+- Se paró a mediodía con CI, la evaluación y el banco final a medias (estado.md).
+
+---
+
 ## 2026-10-20 · Windows ARM: la ventana no arrancaba, v0.10.2
 
 - **Con la v0.10.1, «la configuración en paralelo no es correcta»** al abrir Apolo en Windows ARM.

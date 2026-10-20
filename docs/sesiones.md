@@ -4,6 +4,26 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-20 (tarde y noche) · La 8c: Apolo en inglés
+
+- **v0.11.0 publicada** (la 8b), revisada como siempre.
+- El cliente pidió hacer la 8c antes de la prueba de Windows ARM: esa prueba (actualizar desde la
+  0.10.2) se puede hacer con cualquier versión posterior, si no abre Apolo antes.
+- **Inventario**: unos 550 textos en Rust y 140 líneas de ayuda, y 573 claves en la interfaz.
+  `rust-i18n` (MIT) arrastraba unas 90 dependencias: descartada. ADR 0025: `tr!`/`trs!` con las
+  dos versiones en el mismo sitio, `sys-locale` para el idioma del sistema, y un glosario.
+- **Cuatro agentes en paralelo**, cada uno en sus crates: el núcleo (133 textos), la CLI
+  (`--idioma`, la ayuda de cwebp, cjpeg y oxipng, el informe de cwebp con sus palabras, coma o
+  punto decimal), el MCP (tabla de 69 descripciones, errores con código en vez de texto, `.mcpb`
+  de la Release en inglés) y la ventana (`en.json`, el selector, el servicio).
+- **Al juntarlo**: el servicio fijaba el idioma del proceso al crearse, y pisaba `APOLO_IDIOMA` y
+  el de las pruebas. Ahora solo lo aplican la ventana y `apolo-dev` (`aplicar_idioma`).
+- **El disco del VPS, lleno otra vez**: `target/debug` llegó a 67 GB. Borrado entero.
+- `make comprobar`, e2e 65/65, equivalencia completa, evaluación del MCP 37/37 con seis escenarios
+  en inglés. README.en.md y las notas de la v0.12.0 en los dos idiomas.
+
+---
+
 ## 2026-10-20 (tarde) · La 8b, terminada
 
 - CI de la mañana en verde en los seis sistemas, con el humo.

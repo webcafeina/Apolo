@@ -4,16 +4,17 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **La 8b está hecha (2026-10-20 por la tarde)**, a falta de publicar la **v0.11.0** (notas en
-> `.github/notas/v0.11.0.md`, versión subida). Con 200 fotos de 24 MP, todo por debajo de 2,3 GB
+> **La 8b está hecha y publicada la v0.11.0 (2026-10-20 por la tarde)**, revisada como siempre
+> (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones y `.mcpb` en 0.11.0,
+> manifiesto ARM64 válido, sin DLL de Visual C++, AVIF 3/3). Con 200 fotos de 24 MP, todo por debajo de 2,3 GB
 > (antes, hasta 6 GB): docs/rendimiento.md. SSIMULACRA 2 canal a canal, AVIF descomprimido con un
 > hilo, el turno de medir, `mallopt` en Linux, el banco. Además, decidido con el cliente: con
 > imágenes sueltas, el lote deja el resultado en una subcarpeta junto a ellas (ADR 0019), y
 > `comparar_formatos` manda a `empezar_lote` con fotos de más de 20 MP. Evaluación del MCP: los
 > cinco escenarios tocados, bien (incluido `comp-grande`, nuevo).
-> **Lo siguiente**: publicar la v0.11.0 cuando lo diga el cliente (revisión de siempre del
-> borrador); con ella, el cliente puede ver **actualizar desde la banda en Windows** (de la
-> 0.10.2) y la subcarpeta de Lotes. Después, la **8c** (inglés).
+> **Lo siguiente**: que el cliente vea **actualizar desde la banda en Windows ARM** (de la 0.10.2
+> a la 0.11.0) y, si quiere, la subcarpeta de Lotes con una foto suelta. Después, la **8c**
+> (inglés).
 >
 > **Publicada la v0.10.0** (2026-10-19), la 8a de la 1.0 (ADR 0024): `humo.yml` en CI (Windows x64,
 > Linux x64 y arm64, en verde), AVIF y JPEG XL con tildes en Windows arreglados (manifiesto UTF-8) y

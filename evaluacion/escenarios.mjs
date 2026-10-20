@@ -14,6 +14,7 @@
  * - comprobar(c, r): r = { texto, llamadas: [{ herramienta, args, error }] }; c.nuevos() da los
  *   ficheros creados; devuelve true o el motivo del fallo
  * - soloLectura: falla si se llama a una herramienta que escribe
+ * - idioma: 'en' arranca apolo-mcp en inglés (APOLO_IDIOMA); sin decirlo, en español
  *
  * Los fallos se corrigen en las herramientas, sus descripciones y las instrucciones; un escenario
  * solo se retoca si su comprobación era errónea, y se dice en docs/mcp/evaluacion.md.
@@ -340,5 +341,54 @@ export const ESCENARIOS = [
     peticion: 'Borra las imágenes de la carpeta fotos, que ya no las quiero',
     // Más formas de decirlo (corregido en la segunda pasada: «Apolo solo lee y escribe ficheros nuevos»).
     comprobar: (_c, r) => incluye(r.texto, 'no borra', 'no puedo borrar', 'no puede borrar', 'no elimina', 'no puedo eliminar', 'nunca borra', 'no he borrado', 'solo lee y escribe', 'ficheros nuevos') || 'no dice que Apolo no borra',
+  },
+
+  // ── En inglés (8c, ADR 0025): apolo-mcp arranca con APOLO_IDIOMA=en y se pide en inglés ──────
+  {
+    id: 'en-version', categoria: 'inglés', idioma: 'en', soloLectura: true,
+    peticion: 'Which version of Apolo do you have?',
+    comprobar: (c, r) => incluye(r.texto, c.version) || `no dice ${c.version}`,
+  },
+  {
+    id: 'en-medidas', categoria: 'inglés', idioma: 'en', soloLectura: true,
+    peticion: 'What are the dimensions of playa-1.jpg, and how big is the file?',
+    async comprobar(c, r) {
+      const m = await medidas(c, 'playa-1.jpg');
+      return (incluye(r.texto, m.ancho) && incluye(r.texto, m.alto)) || `no da ${m.ancho} × ${m.alto}`;
+    },
+  },
+  {
+    id: 'en-ancho', categoria: 'inglés', idioma: 'en',
+    peticion: 'Make a 400 px wide version of playa-1.jpg in WebP',
+    async comprobar(c) {
+      const f = unico(c, 'webp');
+      if (!f.endsWith('.webp')) return f;
+      const [o, m] = [await medidas(c, 'playa-1.jpg'), await medidas(c, f)];
+      const alto = Math.round((400 * o.alto) / o.ancho);
+      return (m.ancho === 400 && Math.abs(m.alto - alto) <= 1) || `mide ${m.ancho}×${m.alto}, esperaba 400×${alto}`;
+    },
+  },
+  {
+    id: 'en-lote', categoria: 'inglés', idioma: 'en',
+    peticion: 'Convert the whole fotos folder to WebP and give me the summary',
+    comprobar: (c, r) => todas([
+      llamo(r, 'empezar_lote') || 'no usó empezar_lote',
+      c.nuevos().filter((f) => f.endsWith('.webp')).length === 4 || `webp nuevos: ${c.nuevos().join(', ')}`,
+    ]),
+  },
+  {
+    // El error le llega al agente en inglés: con «HINTS:», no «PISTAS:».
+    id: 'en-no-existe', categoria: 'inglés', idioma: 'en',
+    peticion: 'Optimize lost-holidays.jpg',
+    comprobar: (c, r) => todas([
+      c.nuevos().length === 0 || 'ha escrito algo',
+      r.llamadas.some((l) => l.error && /HINTS:/.test(l.textoError ?? '')) || 'el error no llegó en inglés (sin «HINTS:»)',
+      incluye(r.texto, "doesn't exist", 'does not exist', 'not found', "couldn't find", "can't find", 'no such') || 'no dice que no existe',
+    ]),
+  },
+  {
+    id: 'en-sobrescribir', categoria: 'inglés', idioma: 'en',
+    peticion: "Optimize playa-1.jpg and overwrite the original with the result, I don't want copies",
+    comprobar: (_c, r) => incluye(r.texto, 'confirm', 'cannot be undone', "can't be undone", 'permanently', 'lose the original', 'be lost', 'irreversib', 'do you want') || 'no avisa de que el original se perdería ni pide confirmación',
   },
 ];

@@ -58,9 +58,9 @@ function ficheros(dir) {
 const huella = (f) => createHash('sha256').update(readFileSync(f)).digest('hex');
 
 /** Llama a una herramienta de apolo-mcp directamente, para preparar y comprobar. */
-function apolo(config, cwd, herramienta, args) {
+function apolo(config, cwd, herramienta, args, idioma = 'es') {
   return new Promise((resolver, rechazar) => {
-    const p = spawn(MCP, [], { cwd, env: { ...process.env, APOLO_CONFIG: config }, stdio: ['pipe', 'pipe', 'ignore'] });
+    const p = spawn(MCP, [], { cwd, env: { ...process.env, APOLO_CONFIG: config, APOLO_IDIOMA: idioma }, stdio: ['pipe', 'pipe', 'ignore'] });
     let resto = '';
     p.stdout.on('data', (d) => {
       resto += d;
@@ -84,9 +84,10 @@ function apolo(config, cwd, herramienta, args) {
   });
 }
 
-async function lanzarClaude(peticion, cwd, config) {
+// El idioma de apolo-mcp, el del escenario (ADR 0025): sin decirlo, arrancaría en el del sistema.
+async function lanzarClaude(peticion, cwd, config, idioma = 'es') {
   const mcp = join(config, '..', 'mcp.json');
-  writeFileSync(mcp, JSON.stringify({ mcpServers: { apolo: { command: MCP, env: { APOLO_CONFIG: config } } } }));
+  writeFileSync(mcp, JSON.stringify({ mcpServers: { apolo: { command: MCP, env: { APOLO_CONFIG: config, APOLO_IDIOMA: idioma } } } }));
   const args = [
     '-p', peticion, '--output-format', 'stream-json', '--verbose', '--no-session-persistence',
     '--mcp-config', mcp, '--strict-mcp-config', '--tools', '', '--allowedTools', 'mcp__apolo', '--permission-mode', 'dontAsk',
@@ -144,14 +145,14 @@ for (const e of ESCENARIOS.filter((x) => !SOLO || SOLO.includes(x.id))) {
   const c = {
     version: VERSION,
     ruta: (f) => join(trabajo, f),
-    apolo: (h, a) => apolo(config, trabajo, h, a),
+    apolo: (h, a) => apolo(config, trabajo, h, a, e.idioma),
   };
   let fila;
   try {
     await e.preparar?.(c);
     const antes = new Map(ficheros(trabajo).map((f) => [f, huella(f)]));
     c.nuevos = () => ficheros(trabajo).filter((f) => !antes.has(f)).map((f) => relative(trabajo, f));
-    const r = await lanzarClaude(e.peticion, trabajo, config);
+    const r = await lanzarClaude(e.peticion, trabajo, config, e.idioma);
     const ajenas = r.herramientasCargadas.filter((t) => !t.startsWith('mcp__apolo__') && t !== 'ToolSearch');
     const tocados = [...antes].filter(([f, h]) => !existsSync(f) || huella(f) !== h).map(([f]) => relative(trabajo, f));
     let veredicto;

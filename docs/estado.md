@@ -17,10 +17,13 @@
 > Arreglado con todo en /MT y **publicada la v0.10.1** (2026-10-19): humo en verde, ningún `.exe`
 > pide las DLL de Visual C++, borrador revisado como siempre (27 ficheros, sumas, 7 firmas,
 > `latest.json` con 14 plataformas, versiones y `.mcpb` en 0.10.1, AVIF 3/3).
-> **Al parar el 2026-10-19 por la noche. Lo siguiente, el 2026-10-20: Windows ARM** con la
-> **v0.10.1 instalada directamente** (el guion ya se le dio al cliente): la 0.9.1 y la 0.10.0 no
-> arrancan, así que actualizar desde la banda se prueba en la próxima versión. Mismo guion (sin el
-> paso 5):
+> **Windows ARM, segundo intento (2026-10-20): «la configuración en paralelo no es correcta»** con
+> la v0.10.1: el manifiesto UTF-8 de la v0.10.0 entraba roto en `apolo-app.exe` (trampas.md). La
+> CLI y `apolo-mcp` iban bien. Arreglado, el humo abre ahora la ventana, y las imágenes del
+> instalador al doble (se veían borrosas). **Publicada la v0.10.2** (2026-10-20), revisada como
+> siempre más el manifiesto de la ventana ARM64 válido y sin DLL de Visual C++.
+> **Lo siguiente: Windows ARM con la v0.10.2 instalada directamente** (las anteriores no arrancan,
+> así que actualizar desde la banda se prueba en la próxima versión). Mismo guion (sin el paso 5):
 > 1. instalar la **v0.9.1** (`Apolo_0.9.1_arm64.deb` con `sudo apt install ./…`, o el instalador
 >    arm64 de Windows);
 > 2. actualizar a la 0.10.0 desde la banda (en Ubuntu pide la contraseña con `pkexec`);

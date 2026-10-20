@@ -4,6 +4,22 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-20 · Windows ARM: la ventana no arrancaba, v0.10.2
+
+- **Con la v0.10.1, «la configuración en paralelo no es correcta»** al abrir Apolo en Windows ARM.
+  El manifiesto UTF-8 de la v0.10.0 entraba roto en `apolo-app.exe`: Tauri lo copia en un `.rc`
+  con un espacio delante de cada línea (`<?xml` fuera del principio) y `rc.exe` lo lee en cp1252
+  (las tildes del comentario). Confirmado sacando el manifiesto con 7-Zip (trampa). Arreglado:
+  manifiesto sin declaración y en ASCII, que `crates/cli/build.rs` vigila. **`humo.py` abre ahora
+  la ventana**: antes la instalaba sin abrirla.
+- Las imágenes del instalador, al doble: el cliente las vio borrosas a doble escala.
+- **El disco del VPS, lleno**: `make comprobar` falló con «No space left on device». Se borraron
+  `target/debug/incremental` y `examples` (24 GB). Queda al 90 % (deuda).
+- **v0.10.2 publicada**, revisada como siempre, con el manifiesto ARM64 válido y sin DLL de Visual
+  C++. Queda de la 8a: Windows ARM, con la 0.10.2.
+
+---
+
 ## 2026-10-19 (tarde) · Prueba guiada en Ubuntu ARM
 
 - **Ubuntu 26.10 ARM64** en una máquina virtual VMPal del M1 del cliente, más nueva que la 22.04

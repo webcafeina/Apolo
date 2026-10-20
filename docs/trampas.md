@@ -380,3 +380,12 @@ en `apolo` y `apolo-mcp`. Windows 10 1903 o posterior. · 2026-10-19
 Pasó una vez en `macos-15` y a la segunda salió bien: `hdiutil` falla a veces en las máquinas de
 GitHub. `gh run rerun <id> --failed` (relanza también lo que depende de él, el humo). Si se repite,
 reintentar ese paso. · 2026-10-19
+
+## Un lote de fotos grandes gasta en Linux casi el doble que su cuenta
+
+Con 8 hilos y fotos de 24 MP a AVIF, el pico crecía con el número de fotos: 2,3 GB con 16 y 2,9 GB
+con 200, aunque nunca hubiera más de ocho a la vez, y limitar cuántas iban a la vez no lo cambiaba.
+Es glibc: cada hilo tiene su reserva (arena) y lo liberado en ella no vuelve al sistema. Con
+`MALLOC_ARENA_MAX=2`, 1,5 GB y más rápido. `apolo_nucleo::memoria::preparar()` lo pone con
+`mallopt` al arrancar cada programa. macOS y Windows devuelven los bloques grandes al liberarlos. Se
+ve con `scripts/banco.sh` o con `/usr/bin/time -f %M`. · 2026-10-20

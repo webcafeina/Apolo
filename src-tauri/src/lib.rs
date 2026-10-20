@@ -255,6 +255,7 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
 }
 
 pub fn arrancar() {
+    apolo_nucleo::memoria::preparar();
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         // Actualizarse desde la propia aplicación (ADR 0018): el plugin baja el

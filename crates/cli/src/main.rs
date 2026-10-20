@@ -141,6 +141,7 @@ enum Accion {
 }
 
 fn main() -> ExitCode {
+    apolo_nucleo::memoria::preparar();
     let orden = Orden::parse();
 
     if orden.version {

@@ -12,6 +12,7 @@ use apolo_mcp::ServidorApolo;
 use rmcp::ServiceExt;
 
 fn main() -> ExitCode {
+    apolo_nucleo::memoria::preparar();
     // Antes de tocar la salida: --version lo escribe una persona en una consola.
     if std::env::args().any(|a| a == "--version" || a == "-V") {
         decir(&format!("apolo-mcp {}\n", env!("CARGO_PKG_VERSION")));

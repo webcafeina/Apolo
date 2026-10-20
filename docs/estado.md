@@ -4,36 +4,17 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **Al parar el 2026-10-20 a mediodía, en plena 8b (rendimiento → v0.11.0). Se sigue por la tarde.**
+> **La 8b está hecha (2026-10-20 por la tarde)**, a falta de publicar la **v0.11.0** (notas en
+> `.github/notas/v0.11.0.md`, versión subida). Con 200 fotos de 24 MP, todo por debajo de 2,3 GB
+> (antes, hasta 6 GB): docs/rendimiento.md. SSIMULACRA 2 canal a canal, AVIF descomprimido con un
+> hilo, el turno de medir, `mallopt` en Linux, el banco. Además, decidido con el cliente: con
+> imágenes sueltas, el lote deja el resultado en una subcarpeta junto a ellas (ADR 0019), y
+> `comparar_formatos` manda a `empezar_lote` con fotos de más de 20 MP. Evaluación del MCP: los
+> cinco escenarios tocados, bien (incluido `comp-grande`, nuevo).
+> **Lo siguiente**: publicar la v0.11.0 cuando lo diga el cliente (revisión de siempre del
+> borrador); con ella, el cliente puede ver **actualizar desde la banda en Windows** (de la
+> 0.10.2) y la subcarpeta de Lotes. Después, la **8c** (inglés).
 >
-> Hecho y **subido** (`f1983e0` y `4e75fd8`, `make comprobar` y `make equivalencia` en verde):
-> - SSIMULACRA 2 canal a canal, con la misma nota bit a bit (`c/medir.cc`,
->   `tests/ssimulacra2_ligero.rs`; equivalencia con la herramienta oficial, 56/56): `apolo medir`
->   con 24 MP pasa de 4,3 GB a 1,7 GB;
-> - AVIF descomprimido con `-j 1 --png-compress 0`: de 1,8 GB y 8,8 s a 433 MB y 1,6 s, con los
->   mismos píxeles;
-> - el turno de medir antes de descomprimir (lote midiendo, de 6,0 a 2,5 GB), PSNR y SSIM sin
->   copias en coma flotante;
-> - en Linux, `mallopt(M_ARENA_MAX, 2)` al arrancar (`nucleo::memoria`): lote a AVIF de 2,9 a 1,5
->   GB (trampas.md). Un límite de megapíxeles se probó y **se descartó**: no cambiaba nada;
-> - `scripts/banco.sh` (+ `examples/banco_estudio.rs`, `scripts/banco_mcp.py`);
-> - `apolo-mcp --version` en la consola de Windows (`AttachConsole`).
->
-> **Hecho y sin subir** (commit local, falta `make comprobar`): la frase en la descripción de
-> `comparar_formatos` («con más de unos 20 MP, mejor empezar_lote con mas_ligero»), decidida con el
-> cliente (opción A: no se acelera), el catálogo regenerado y el escenario `comp-grande` en la
-> evaluación (foto de 24 MP de la caché del banco).
->
-> **Lo siguiente, por la tarde:**
-> 1. Mirar la compilación de prueba **39420049800** (sobre `4e75fd8`; al parar, Linux en verde y
->    macOS y Windows en marcha), con el humo.
-> 2. `make comprobar` y subir el commit local; pasar `node scripts/evaluar-mcp.mjs --solo
->    comp-mejor,comp-grande` (se paró a medias).
-> 3. El banco final de 200 fotos (`scripts/banco.sh`, unos 45 min; se paró a medias): sus cifras a
->    `docs/rendimiento.md` (nuevo) y al README. Las de la pasada anterior, en la sesión de hoy.
-> 4. Notas de la v0.11.0, versión, y publicar cuando lo diga el cliente. Con ella se ve por fin
->    **actualizar desde la banda en Windows** (de la 0.10.2).
-
 > **Publicada la v0.10.0** (2026-10-19), la 8a de la 1.0 (ADR 0024): `humo.yml` en CI (Windows x64,
 > Linux x64 y arm64, en verde), AVIF y JPEG XL con tildes en Windows arreglados (manifiesto UTF-8) y
 > el README con la tabla de descargas. Borrador revisado como siempre, con el humo en verde.

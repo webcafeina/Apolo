@@ -64,7 +64,9 @@ pesa y dónde se pierde calidad, y ajustas hasta que te convence.
 - **Abre las fotos del iPhone** (HEIC), además de PNG, JPEG, WebP, AVIF, JPEG XL, TIFF, GIF, BMP,
   QOI y PNM.
 - **Línea de órdenes `apolo`**, con los mismos presets, para scripts.
-- **Nativo, ligero y sin conexión**: tus imágenes no salen de tu ordenador.
+- **Nativo, ligero y sin conexión**: tus imágenes no salen de tu ordenador. Con fotos de 24
+  megapíxeles no pasa de unos 2 GB de memoria, ni en lotes de cientos: cabe en un Mac de 8 GB
+  ([docs/rendimiento.md](docs/rendimiento.md)).
 
 ## Con un agente de IA
 

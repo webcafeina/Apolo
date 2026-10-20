@@ -16,8 +16,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     - arreglos (lo esperado: rutas con tildes en Windows, manifiesto UTF-8);
     - pruebas guiadas del cliente en Windows ARM y Ubuntu ARM;
     - el README rehecho con la tabla de descargas.
-  - **8b · v0.11.0**: rendimiento. Un banco con fotos de 24 MP y un lote de 200, medido y arreglado
-    para un Mac de 8 GB, sin cambiar ni un byte de salida.
+  - ~~**8b · v0.11.0**: rendimiento. Un banco con fotos de 24 MP y un lote de 200, medido y arreglado
+    para un Mac de 8 GB, sin cambiar ni un byte de salida.~~ Hecha el 2026-10-20: todo por debajo de
+    2,3 GB (docs/rendimiento.md); falta publicar la v0.11.0.
   - **8c · v0.12.0**: todo en inglés. La ventana (`en.json`, idioma del sistema y selector), la CLI,
     el MCP y los mensajes del núcleo con un catálogo en Rust, y las notas y el README.
   - **8d · 1.0.0**:

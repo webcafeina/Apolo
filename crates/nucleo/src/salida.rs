@@ -299,6 +299,8 @@ fn buscar_nota(
             return Err(crate::Error::Cancelado);
         }
         let c = codificar_tal_cual(datos, img, &con_calidad(a, q), None)?;
+        // El turno de medir antes de descomprimir (medir::Turno).
+        let turno = crate::medir::turno();
         let (rw, rh, rgba) = vista::decodificar(&c.datos)?;
         if (rw, rh) != (w, h) {
             return Err(crate::Error::Configuracion(
@@ -306,7 +308,7 @@ fn buscar_nota(
                     .into(),
             ));
         }
-        let n = crate::medir::nota(&ref_rgba, &rgba, w, h)?.ok_or_else(|| {
+        let n = crate::medir::nota_en_turno(&turno, &ref_rgba, &rgba, w, h)?.ok_or_else(|| {
             crate::Error::Configuracion("la imagen es demasiado pequeña para medirla (8×8)".into())
         })?;
         probadas.push((q, c, n));

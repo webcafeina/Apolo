@@ -92,9 +92,10 @@ foreach(t apolo_cjxl apolo_djxl)
 endforeach()
 
 # Las medidas (ADR 0022): SSIMULACRA 2 de las herramientas de libjxl.
+# medir.cc incluye tools/ssimulacra2.cc entero (usa sus funciones internas):
+# no se compila aparte, o sus símbolos saldrían dos veces.
 add_library(apolo_medir STATIC
   "${APOLO_MEDIR}"
-  "${APOLO_LIBJXL}/tools/ssimulacra2.cc"
   # packed_image_convert y compañía: la parte de extras que usa lo interno
   # de libjxl, que cjxl no necesita y no va en jxl_extras_codec.
   $<TARGET_OBJECTS:jxl_extras_internal-obj>)

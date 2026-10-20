@@ -175,12 +175,19 @@ pub fn es_jxl(datos: &[u8]) -> bool {
 
 /// Un AVIF a PNG con avifdec, con su perfil y sus metadatos. `ocho_bits`
 /// fuerza 8 bits por canal (para enseñarlo).
+///
+/// Con un hilo y el PNG sin comprimir (entrega 8b): con una foto de 24 MP,
+/// 1,6 s y 433 MB en vez de 8,8 s y 1,8 GB. El decodificador de aom reserva
+/// mucho por cada hilo, y comprimir un PNG que se lee al momento no sirve de
+/// nada. Los píxeles son los mismos: el AV1 se decodifica igual con cualquier
+/// número de hilos, y el PNG no pierde.
 pub fn avif_a_png(datos: &[u8], ocho_bits: bool) -> Result<Vec<u8>, String> {
-    let args: Vec<String> = if ocho_bits {
-        vec!["-d".into(), "8".into()]
-    } else {
-        Vec::new()
-    };
+    let mut args: Vec<String> = ["-j", "1", "--png-compress", "0"]
+        .map(String::from)
+        .to_vec();
+    if ocho_bits {
+        args.extend(["-d".into(), "8".into()]);
+    }
     convertir(Herramienta::Avifdec, datos, "avif", &args, "png")
 }
 
@@ -229,6 +236,13 @@ unsafe extern "C" {
         alto: usize,
         canales: c_int,
     ) -> f64;
+    fn apolo_ssimulacra2_libjxl(
+        original: *const u8,
+        distorsionada: *const u8,
+        ancho: usize,
+        alto: usize,
+        canales: c_int,
+    ) -> f64;
 }
 
 /// La nota SSIMULACRA 2 de libjxl (de −∞ a 100; 100 es idéntica) de
@@ -236,7 +250,50 @@ unsafe extern "C" {
 /// tamaño, con 3 canales (RGB) o 4 (RGBA). Con transparencia, la peor nota
 /// sobre fondo oscuro y claro, como la herramienta `ssimulacra2`. `None` si
 /// no se puede medir (menos de 8×8, o tamaños que no cuadran).
+///
+/// Se calcula canal a canal, con menos de la mitad de memoria que la función
+/// de libjxl y la misma nota bit a bit (c/medir.cc).
 pub fn ssimulacra2(
+    original: &[u8],
+    distorsionada: &[u8],
+    ancho: u32,
+    alto: u32,
+    canales: u8,
+) -> Option<f64> {
+    nota_con(
+        apolo_ssimulacra2,
+        original,
+        distorsionada,
+        ancho,
+        alto,
+        canales,
+    )
+}
+
+/// La misma nota con la función de libjxl tal cual, que gasta más memoria:
+/// solo para comprobar que [`ssimulacra2`] da lo mismo.
+#[doc(hidden)]
+pub fn ssimulacra2_libjxl(
+    original: &[u8],
+    distorsionada: &[u8],
+    ancho: u32,
+    alto: u32,
+    canales: u8,
+) -> Option<f64> {
+    nota_con(
+        apolo_ssimulacra2_libjxl,
+        original,
+        distorsionada,
+        ancho,
+        alto,
+        canales,
+    )
+}
+
+type FuncionNota = unsafe extern "C" fn(*const u8, *const u8, usize, usize, c_int) -> f64;
+
+fn nota_con(
+    f: FuncionNota,
     original: &[u8],
     distorsionada: &[u8],
     ancho: u32,
@@ -250,7 +307,7 @@ pub fn ssimulacra2(
     // SAFETY: los dos búferes tienen exactamente ancho × alto × canales bytes,
     // y la función solo los lee.
     let nota = unsafe {
-        apolo_ssimulacra2(
+        f(
             original.as_ptr(),
             distorsionada.as_ptr(),
             ancho as usize,

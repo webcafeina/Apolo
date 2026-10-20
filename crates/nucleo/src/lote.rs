@@ -263,10 +263,13 @@ pub fn convertir(
                 if !seguir(0) {
                     return Err(Error::Cancelado);
                 }
+                // El turno antes de descomprimir: los hilos que esperan no
+                // tienen la referencia ni el resultado en memoria.
+                let turno = crate::medir::turno();
                 let (w, h, referencia) = salida::referencia(&img, a)?;
                 let (rw, rh, rgba) = crate::vista::decodificar(&r.datos)?;
                 if (rw, rh) == (w, h) {
-                    crate::medir::nota(&referencia, &rgba, w, h)?
+                    crate::medir::nota_en_turno(&turno, &referencia, &rgba, w, h)?
                 } else {
                     None
                 }

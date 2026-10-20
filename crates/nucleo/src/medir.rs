@@ -34,6 +34,17 @@ pub struct Medidas {
 /// SSIMULACRA 2 usa mucha memoria: una medida a la vez en todo el proceso.
 static UNA_A_LA_VEZ: Mutex<()> = Mutex::new(());
 
+/// El turno de medir. Quien lo tiene puede preparar dentro lo que va a medir
+/// (descomprimir el resultado, sacar la referencia) y medirlo con
+/// [`nota_en_turno`]: así, en un lote, los hilos que esperan no tienen esas
+/// imágenes en memoria (con 24 MP, unos 300 MB cada uno; entrega 8b).
+pub struct Turno(#[allow(dead_code)] std::sync::MutexGuard<'static, ()>);
+
+/// Espera el turno de medir.
+pub fn turno() -> Turno {
+    Turno(UNA_A_LA_VEZ.lock().unwrap_or_else(|e| e.into_inner()))
+}
+
 /// Fondos sobre los que se componen las imágenes con transparencia: los de
 /// `ssimulacra2` (0,1 y 0,9).
 const FONDOS: [f32; 2] = [0.1 * 255.0, 0.9 * 255.0];
@@ -54,24 +65,27 @@ fn con_alfa(a: &[u8], b: &[u8]) -> bool {
     transparente(a) || transparente(b)
 }
 
-/// RGB de un RGBA compuesto sobre un fondo gris de intensidad `fondo`.
-fn sobre(rgba: &[u8], fondo: f32) -> Vec<f32> {
-    let mut v = Vec::with_capacity(rgba.len() / 4 * 3);
-    for p in rgba.as_chunks::<4>().0 {
-        let a = p[3] as f32 / 255.0;
-        for &c in &p[..3] {
-            v.push(c as f32 * a + fondo * (1.0 - a));
+/// El RGB de un píxel en coma flotante (0–255): tal cual, o compuesto sobre
+/// un fondo gris de intensidad `fondo`. Se calcula píxel a píxel, sin copiar
+/// la imagen entera en coma flotante (288 MB con 24 MP; entrega 8b).
+fn rgb(p: &[u8; 4], fondo: Option<f32>) -> [f32; 3] {
+    match fondo {
+        None => [p[0] as f32, p[1] as f32, p[2] as f32],
+        Some(fondo) => {
+            let a = p[3] as f32 / 255.0;
+            [p[0], p[1], p[2]].map(|c| c as f32 * a + fondo * (1.0 - a))
         }
     }
-    v
 }
 
-fn sin_alfa(rgba: &[u8]) -> Vec<f32> {
-    rgba.as_chunks::<4>()
-        .0
-        .iter()
-        .flat_map(|p| [p[0] as f32, p[1] as f32, p[2] as f32])
-        .collect()
+/// Los fondos sobre los que se mide: los dos de `ssimulacra2` si hay
+/// transparencia, y si no, ninguno.
+fn fondos(alfa: bool) -> Vec<Option<f32>> {
+    if alfa {
+        FONDOS.iter().map(|&f| Some(f)).collect()
+    } else {
+        vec![None]
+    }
 }
 
 /// Las tres medidas de `resultado` frente a `referencia`, RGBA de 8 bits del
@@ -79,21 +93,14 @@ fn sin_alfa(rgba: &[u8]) -> Vec<f32> {
 pub fn medir(referencia: &[u8], resultado: &[u8], ancho: u32, alto: u32) -> Resultado<Medidas> {
     comprobar(referencia, resultado, ancho, alto)?;
     let alfa = con_alfa(referencia, resultado);
-    let pares: Vec<(Vec<f32>, Vec<f32>)> = if alfa {
-        FONDOS
-            .iter()
-            .map(|&f| (sobre(referencia, f), sobre(resultado, f)))
-            .collect()
-    } else {
-        vec![(sin_alfa(referencia), sin_alfa(resultado))]
-    };
-    let psnr = pares
-        .iter()
-        .map(|(a, b)| psnr(a, b))
+    let (w, h) = (ancho as usize, alto as usize);
+    let psnr = fondos(alfa)
+        .into_iter()
+        .map(|f| psnr(referencia, resultado, f))
         .fold(f64::INFINITY, f64::min);
-    let ssim = pares
-        .iter()
-        .map(|(a, b)| ssim_medio(a, b, ancho as usize, alto as usize))
+    let ssim = fondos(alfa)
+        .into_iter()
+        .map(|f| ssim_medio(&luma(referencia, f), &luma(resultado, f), w, h))
         .fold(f64::INFINITY, f64::min);
     let ssimulacra2 = nota_sin_comprobar(referencia, resultado, ancho, alto, alfa);
     Ok(Medidas {
@@ -106,9 +113,20 @@ pub fn medir(referencia: &[u8], resultado: &[u8], ancho: u32, alto: u32) -> Resu
 /// Solo la nota SSIMULACRA 2 (para buscar una calidad, donde PSNR y SSIM
 /// sobran). `None` si la imagen es menor de 8×8.
 pub fn nota(referencia: &[u8], resultado: &[u8], ancho: u32, alto: u32) -> Resultado<Option<f64>> {
+    nota_en_turno(&turno(), referencia, resultado, ancho, alto)
+}
+
+/// [`nota`] con el turno ya cogido.
+pub fn nota_en_turno(
+    _turno: &Turno,
+    referencia: &[u8],
+    resultado: &[u8],
+    ancho: u32,
+    alto: u32,
+) -> Resultado<Option<f64>> {
     comprobar(referencia, resultado, ancho, alto)?;
     let alfa = con_alfa(referencia, resultado);
-    Ok(nota_sin_comprobar(referencia, resultado, ancho, alto, alfa))
+    Ok(calcular(referencia, resultado, ancho, alto, alfa))
 }
 
 fn nota_sin_comprobar(
@@ -118,7 +136,12 @@ fn nota_sin_comprobar(
     alto: u32,
     alfa: bool,
 ) -> Option<f64> {
-    let _turno = UNA_A_LA_VEZ.lock().unwrap_or_else(|e| e.into_inner());
+    let _turno = turno();
+    calcular(referencia, resultado, ancho, alto, alfa)
+}
+
+/// La nota, sin coger el turno: quien llama ya lo tiene.
+fn calcular(referencia: &[u8], resultado: &[u8], ancho: u32, alto: u32, alfa: bool) -> Option<f64> {
     if alfa {
         apolo_avifjxl::ssimulacra2(referencia, resultado, ancho, alto, 4)
     } else {
@@ -133,17 +156,22 @@ fn nota_sin_comprobar(
     }
 }
 
-/// PSNR de dos imágenes RGB en coma flotante (0–255).
-fn psnr(a: &[f32], b: &[f32]) -> f64 {
+/// PSNR de los canales RGB de dos imágenes RGBA (0–255), sobre `fondo`.
+fn psnr(a: &[u8], b: &[u8], fondo: Option<f32>) -> f64 {
     let suma: f64 = a
+        .as_chunks::<4>()
+        .0
         .iter()
-        .zip(b)
-        .map(|(x, y)| {
-            let d = (*x - *y) as f64;
-            d * d
+        .zip(b.as_chunks::<4>().0)
+        .flat_map(|(p, q)| {
+            let (x, y) = (rgb(p, fondo), rgb(q, fondo));
+            (0..3).map(move |i| {
+                let d = (x[i] - y[i]) as f64;
+                d * d
+            })
         })
         .sum();
-    let mse = suma / a.len().max(1) as f64;
+    let mse = suma / (a.len() / 4 * 3).max(1) as f64;
     if mse == 0.0 {
         f64::INFINITY
     } else {
@@ -151,12 +179,15 @@ fn psnr(a: &[f32], b: &[f32]) -> f64 {
     }
 }
 
-/// Luminancia BT.601 de RGB en coma flotante.
-fn luma(rgb: &[f32]) -> Vec<f32> {
-    rgb.as_chunks::<3>()
+/// Luminancia BT.601 de una imagen RGBA, sobre `fondo`.
+fn luma(rgba: &[u8], fondo: Option<f32>) -> Vec<f32> {
+    rgba.as_chunks::<4>()
         .0
         .iter()
-        .map(|p| 0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2])
+        .map(|p| {
+            let p = rgb(p, fondo);
+            0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2]
+        })
         .collect()
 }
 
@@ -201,15 +232,14 @@ fn desenfocar(v: &[f32], w: usize, h: usize) -> Vec<f32> {
     salida
 }
 
-/// El mapa SSIM, un valor por píxel (1 es idéntico).
-fn mapa_ssim(a: &[f32], b: &[f32], w: usize, h: usize) -> Vec<f32> {
-    let (ya, yb) = (luma(a), luma(b));
+/// El mapa SSIM de dos luminancias, un valor por píxel (1 es idéntico).
+fn mapa_ssim(ya: &[f32], yb: &[f32], w: usize, h: usize) -> Vec<f32> {
     let producto = |p: &[f32], q: &[f32]| p.iter().zip(q).map(|(x, y)| x * y).collect::<Vec<f32>>();
-    let mu_a = desenfocar(&ya, w, h);
-    let mu_b = desenfocar(&yb, w, h);
-    let aa = desenfocar(&producto(&ya, &ya), w, h);
-    let bb = desenfocar(&producto(&yb, &yb), w, h);
-    let ab = desenfocar(&producto(&ya, &yb), w, h);
+    let mu_a = desenfocar(ya, w, h);
+    let mu_b = desenfocar(yb, w, h);
+    let aa = desenfocar(&producto(ya, ya), w, h);
+    let bb = desenfocar(&producto(yb, yb), w, h);
+    let ab = desenfocar(&producto(ya, yb), w, h);
     let c1 = (0.01f32 * 255.0).powi(2);
     let c2 = (0.03f32 * 255.0).powi(2);
     (0..ya.len())
@@ -265,12 +295,8 @@ pub fn mapa(
             .collect(),
         TipoMapa::Estructura => {
             // Con transparencia, sobre el fondo claro: es donde más se ve.
-            let (a, b) = if con_alfa(referencia, resultado) {
-                (sobre(referencia, FONDOS[1]), sobre(resultado, FONDOS[1]))
-            } else {
-                (sin_alfa(referencia), sin_alfa(resultado))
-            };
-            mapa_ssim(&a, &b, w, h)
+            let fondo = con_alfa(referencia, resultado).then_some(FONDOS[1]);
+            mapa_ssim(&luma(referencia, fondo), &luma(resultado, fondo), w, h)
                 .into_iter()
                 .map(|s| ((1.0 - s) * 2.0).clamp(0.0, 1.0))
                 .collect()

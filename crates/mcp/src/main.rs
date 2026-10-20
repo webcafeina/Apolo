@@ -12,6 +12,11 @@ use apolo_mcp::ServidorApolo;
 use rmcp::ServiceExt;
 
 fn main() -> ExitCode {
+    // Antes de tocar la salida: --version lo escribe una persona en una consola.
+    if std::env::args().any(|a| a == "--version" || a == "-V") {
+        decir(&format!("apolo-mcp {}\n", env!("CARGO_PKG_VERSION")));
+        return ExitCode::SUCCESS;
+    }
     // Lo primero de todo: la salida estándar es del protocolo. Se guarda una
     // copia para él y el fd 1 pasa a la salida de errores, así lo que escriba
     // cualquier biblioteca (avifenc imprime con printf) no rompe los mensajes.
@@ -22,10 +27,6 @@ fn main() -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    if std::env::args().any(|a| a == "--version" || a == "-V") {
-        eprintln!("apolo-mcp {}", env!("CARGO_PKG_VERSION"));
-        return ExitCode::SUCCESS;
-    }
     // La copia del .mcpb le cede el turno a la aplicación instalada, que es la
     // que se actualiza (relevo.rs). Si no hay o no arranca, sigue esta.
     if let Some(otro) = apolo_mcp::relevo::ceder_si_toca()
@@ -67,4 +68,48 @@ fn main() -> ExitCode {
             }
         }
     })
+}
+
+/// Escribir algo para quien lo ha llamado a mano, en la salida de errores. En
+/// Windows, sin consola propia (windows_subsystem), esa salida no existe si no
+/// se redirige: entonces se engancha a la consola de quien lo arrancó
+/// (PowerShell, cmd) y escribe en ella.
+fn decir(texto: &str) {
+    #[cfg(windows)]
+    if consola::sin_salida_de_errores() {
+        consola::escribir(texto);
+        return;
+    }
+    eprint!("{texto}");
+}
+
+#[cfg(windows)]
+mod consola {
+    use std::io::Write;
+
+    const STD_ERROR_HANDLE: u32 = -12i32 as u32;
+    const ATTACH_PARENT_PROCESS: u32 = -1i32 as u32;
+
+    #[link(name = "kernel32")]
+    unsafe extern "system" {
+        fn GetStdHandle(cual: u32) -> *mut std::ffi::c_void;
+        fn AttachConsole(proceso: u32) -> i32;
+    }
+
+    pub fn sin_salida_de_errores() -> bool {
+        // SAFETY: GetStdHandle no tiene precondiciones; nulo es «no hay».
+        let h = unsafe { GetStdHandle(STD_ERROR_HANDLE) };
+        h.is_null() || h as isize == -1
+    }
+
+    pub fn escribir(texto: &str) {
+        // SAFETY: sin precondiciones; si no hay consola del padre, falla y no se escribe.
+        if unsafe { AttachConsole(ATTACH_PARENT_PROCESS) } == 0 {
+            return;
+        }
+        if let Ok(mut c) = std::fs::OpenOptions::new().write(true).open("CONOUT$") {
+            // La consola ya ha vuelto a pintar el indicador: se empieza en otra línea.
+            let _ = write!(c, "\n{texto}");
+        }
+    }
 }

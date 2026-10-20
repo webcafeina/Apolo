@@ -163,6 +163,9 @@ def mcp(binario, base, entorno):
         mal(f"no existe {binario}")
         return
     e = dict(entorno, APOLO_CONFIG=str(base / "config ñ"))
+    v = correr([binario, "--version"], e)
+    texto = (v.stdout + v.stderr).decode(errors="replace").strip()
+    bien(f"--version: {texto}") if texto.startswith("apolo-mcp ") else mal(f"--version: «{texto}»")
     m = Mcp(binario, e)
     try:
         ini = m.pedir("initialize", {"protocolVersion": "2025-06-18", "capabilities": {},

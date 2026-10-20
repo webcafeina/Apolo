@@ -17,6 +17,7 @@
 //! El orden en que se escriben las respeta: `-revert`, `-tune-*`,
 //! `-quant-table`, `-lambda*` y luego todo lo demás.
 
+use crate::{tr, trs};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
@@ -295,23 +296,30 @@ impl OpcionesJpeg {
     /// es el argumento siguiente, si la opción lo lleva; devuelve si lo usó.
     fn aplicar(&mut self, op: &str, valor: Option<&str>) -> Result<bool, String> {
         let k = |p: &str, n: usize| keymatch(op, p, n);
-        let falta = || format!("falta el valor de -{op}");
+        let falta = || tr!("falta el valor de -{op}", "missing value for -{op}");
         let v = || valor.ok_or_else(falta);
         let num = |s: &str| -> Result<f32, String> {
             s.trim()
                 .parse::<f32>()
-                .map_err(|_| format!("-{op} {s}: no es un número"))
+                .map_err(|_| tr!("-{op} {s}: no es un número", "-{op} {s}: not a number"))
         };
         let ent = |s: &str| -> Result<i32, String> {
-            s.trim()
-                .parse::<i32>()
-                .map_err(|_| format!("-{op} {s}: no es un número entero"))
+            s.trim().parse::<i32>().map_err(|_| {
+                tr!(
+                    "-{op} {s}: no es un número entero",
+                    "-{op} {s}: not a whole number"
+                )
+            })
         };
         // El mismo orden de comprobación que parse_switches: con abreviaturas,
         // la primera que encaja gana.
         if k("arithmetic", 1) {
             // Como el cjpeg 4.1.5 oficial, que viene sin ella.
-            return Err("cjpeg no tiene codificación aritmética (-arithmetic)".into());
+            return Err(trs!(
+                "cjpeg no tiene codificación aritmética (-arithmetic)",
+                "cjpeg has no arithmetic coding (-arithmetic)"
+            )
+            .into());
         } else if k("baseline", 1) {
             self.escaneo = Escaneo::Secuencial;
             self.tablas_baseline = true;
@@ -324,7 +332,10 @@ impl OpcionesJpeg {
             } else if keymatch(s, "float", 2) {
                 Dct::Float
             } else {
-                return Err(format!("-dct {s}: tiene que ser int, fast o float"));
+                return Err(tr!(
+                    "-dct {s}: tiene que ser int, fast o float",
+                    "-dct {s}: must be int, fast or float"
+                ));
             });
             return Ok(true);
         } else if k("fastcrush", 4) {
@@ -357,7 +368,10 @@ impl OpcionesJpeg {
         } else if k("quant-table", 7) {
             let t = ent(v()?)?;
             if !(0..=8).contains(&t) {
-                return Err(format!("-quant-table {t}: tiene que ir de 0 a 8"));
+                return Err(tr!(
+                    "-quant-table {t}: tiene que ir de 0 a 8",
+                    "-quant-table {t}: must be from 0 to 8"
+                ));
             }
             self.tabla = Some(t);
             return Ok(true);
@@ -369,11 +383,12 @@ impl OpcionesJpeg {
                 Some(n) => (n, true),
                 None => (s, false),
             };
-            let n: u32 = n
-                .parse()
-                .ok()
-                .filter(|n| *n <= 65535)
-                .ok_or_else(|| format!("-restart {s}: tiene que ir de 0 a 65535"))?;
+            let n: u32 = n.parse().ok().filter(|n| *n <= 65535).ok_or_else(|| {
+                tr!(
+                    "-restart {s}: tiene que ir de 0 a 65535",
+                    "-restart {s}: must be from 0 to 65535"
+                )
+            })?;
             self.reinicio = Some(if bloques {
                 Reinicio::Bloques(n)
             } else {
@@ -399,7 +414,10 @@ impl OpcionesJpeg {
         } else if k("smooth", 2) {
             let s = ent(v()?)?;
             if !(0..=100).contains(&s) {
-                return Err(format!("-smooth {s}: tiene que ir de 0 a 100"));
+                return Err(tr!(
+                    "-smooth {s}: tiene que ir de 0 a 100",
+                    "-smooth {s}: must be from 0 to 100"
+                ));
             }
             self.suavizado = Some(s);
             return Ok(true);
@@ -433,7 +451,10 @@ impl OpcionesJpeg {
         } else if format!("-{op}") == ENDEREZAR {
             self.enderezar = true;
         } else {
-            return Err(format!("cjpeg no tiene la opción -{op}"));
+            return Err(tr!(
+                "cjpeg no tiene la opción -{op}",
+                "cjpeg has no option -{op}"
+            ));
         }
         Ok(false)
     }
@@ -453,7 +474,7 @@ impl OpcionesJpeg {
         while i < args.len() {
             let a = args[i].as_ref();
             let Some(op) = a.strip_prefix('-') else {
-                return Err(format!("«{a}» no es una opción"));
+                return Err(tr!("«{a}» no es una opción", "“{a}” isn't an option"));
             };
             if o.aplicar(op, args.get(i + 1).map(|s| s.as_ref()))? {
                 i += 1;
@@ -509,7 +530,7 @@ pub fn leer_orden_desde<S: AsRef<str>>(
             continue;
         };
         let valor = args.get(i + 1).map(|s| s.as_ref().to_string());
-        let falta = || format!("falta el valor de -{op}");
+        let falta = || tr!("falta el valor de -{op}", "missing value for -{op}");
         if keymatch(op, "outfile", 4) {
             o.salida = Some(valor.ok_or_else(falta)?);
             i += 2;
@@ -521,8 +542,9 @@ pub fn leer_orden_desde<S: AsRef<str>>(
             continue;
         }
         if keymatch(op, "qtables", 2) || keymatch(op, "scans", 4) {
-            return Err(format!(
-                "-{op}: los ficheros de tablas y de escaneos no están todavía en Apolo"
+            return Err(tr!(
+                "-{op}: los ficheros de tablas y de escaneos no están todavía en Apolo",
+                "-{op}: table and scan files aren't in Apolo yet"
             ));
         }
         if keymatch(op, "maxmemory", 3) {
@@ -563,7 +585,13 @@ pub fn leer_orden_desde<S: AsRef<str>>(
             o.salida = ficheros.pop();
             o.entrada = ficheros.pop();
         }
-        _ => return Err("cjpeg lee un solo fichero de entrada".into()),
+        _ => {
+            return Err(trs!(
+                "cjpeg lee un solo fichero de entrada",
+                "cjpeg reads a single input file"
+            )
+            .into());
+        }
     }
     Ok(o)
 }

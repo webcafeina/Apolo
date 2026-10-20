@@ -7,6 +7,7 @@
 //! demás que avifenc admite van en [`OpcionesAvif::otras`], tal cual y en su
 //! orden.
 
+use crate::{tr, trs};
 use serde::{Deserialize, Serialize};
 
 use apolo_avifjxl::Herramienta;
@@ -231,10 +232,12 @@ fn lleva_valor(nombre: &str) -> Option<bool> {
 }
 
 fn numero(v: &str, que: &str, max: u8) -> Resultado<u8> {
-    v.parse::<u8>()
-        .ok()
-        .filter(|n| *n <= max)
-        .ok_or_else(|| mal(format!("{que} {v}: va de 0 a {max}")))
+    v.parse::<u8>().ok().filter(|n| *n <= max).ok_or_else(|| {
+        mal(tr!(
+            "{que} {v}: va de 0 a {max}",
+            "{que} {v}: must be from 0 to {max}"
+        ))
+    })
 }
 
 /// Lee una orden de avifenc: opciones y ficheros.
@@ -266,15 +269,23 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesAvif, args: &[S]) -> Resul
         }
         let Some(con_valor) = lleva_valor(&a) else {
             return Err(match a.as_str() {
-                "-h" | "--help" | "-V" | "--version" => mal(format!("{a}: Apolo no lo enseña")),
-                "--stdin" => mal("--stdin no está en Apolo: la entrada es un fichero"),
-                _ => mal(format!("avifenc no tiene la opción {a}")),
+                "-h" | "--help" | "-V" | "--version" => {
+                    mal(tr!("{a}: Apolo no lo enseña", "{a}: Apolo doesn't show it"))
+                }
+                "--stdin" => mal(trs!(
+                    "--stdin no está en Apolo: la entrada es un fichero",
+                    "--stdin isn't in Apolo: the input is a file"
+                )),
+                _ => mal(tr!(
+                    "avifenc no tiene la opción {a}",
+                    "avifenc has no option {a}"
+                )),
             });
         };
         let valor = if con_valor {
             Some(
                 cola.next()
-                    .ok_or_else(|| mal(format!("falta el valor de {a}")))?,
+                    .ok_or_else(|| mal(tr!("falta el valor de {a}", "missing value for {a}")))?,
             )
         } else {
             None
@@ -288,7 +299,10 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesAvif, args: &[S]) -> Resul
             }
             "-y" | "--yuv" if v != "auto" => {
                 if !matches!(v.as_str(), "444" | "422" | "420" | "400") {
-                    return Err(mal(format!("{a} {v}: tiene que ser 444, 422, 420 o 400")));
+                    return Err(mal(tr!(
+                        "{a} {v}: tiene que ser 444, 422, 420 o 400",
+                        "{a} {v}: must be 444, 422, 420 or 400"
+                    )));
                 }
                 op.submuestreo = Some(v);
             }
@@ -299,7 +313,12 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesAvif, args: &[S]) -> Resul
             "-r" | "--range" => match v.as_str() {
                 "limited" | "l" => op.rango_limitado = true,
                 "full" | "f" => op.rango_limitado = false,
-                _ => return Err(mal(format!("{a} {v}: tiene que ser limited o full"))),
+                _ => {
+                    return Err(mal(tr!(
+                        "{a} {v}: tiene que ser limited o full",
+                        "{a} {v}: must be limited or full"
+                    )));
+                }
             },
             "-a" | "--advanced" if v.starts_with("tune=") => {
                 op.afinado = Some(v["tune=".len()..].to_string())
@@ -316,13 +335,15 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesAvif, args: &[S]) -> Resul
             "--ignore-icc" | "--ignore-profile" => op.sin_icc = true,
             "--no-overwrite" => o.ignoradas.push(a),
             "-o" | "--output" | "--exif" | "--xmp" | "--icc" => {
-                return Err(mal(format!(
-                    "{a} no está en Apolo: la salida y los metadatos salen de la imagen abierta"
+                return Err(mal(tr!(
+                    "{a} no está en Apolo: la salida y los metadatos salen de la imagen abierta",
+                    "{a} isn't in Apolo: the output and the metadata come from the open image"
                 )));
             }
             "-g" | "--grid" | "--layered" => {
-                return Err(mal(format!(
-                    "{a} no está en Apolo: es para varias imágenes"
+                return Err(mal(tr!(
+                    "{a} no está en Apolo: es para varias imágenes",
+                    "{a} isn't in Apolo: it's for several images"
                 )));
             }
             _ => {

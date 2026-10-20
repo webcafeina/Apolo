@@ -8,6 +8,7 @@
 //! dentro de `catch_unwind`. Por eso el perfil de compilación no puede usar
 //! `panic = "abort"` (ver docs/trampas.md).
 
+use crate::{tr, trs};
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
 use mozjpeg::{Decompress, Marker};
@@ -27,7 +28,7 @@ pub(super) fn leer(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
                 .downcast_ref::<String>()
                 .cloned()
                 .or_else(|| panico.downcast_ref::<&str>().map(|s| s.to_string()))
-                .unwrap_or_else(|| "el fichero está dañado".into());
+                .unwrap_or_else(|| trs!("el fichero está dañado", "the file is damaged").into());
             Err(Error::lectura(F, detalle))
         }
     }
@@ -62,7 +63,10 @@ fn leer_sin_proteger(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
     rgb.finish().map_err(|e| Error::lectura(F, e))?;
 
     if pixeles.len() != ancho as usize * alto as usize * 3 {
-        return Err(Error::lectura(F, "faltan líneas"));
+        return Err(Error::lectura(
+            F,
+            trs!("faltan líneas", "lines are missing"),
+        ));
     }
     Ok(Imagen {
         ancho,
@@ -100,7 +104,10 @@ fn icc(marcas: &[(u8, Vec<u8>)]) -> Resultado<Option<Vec<u8>>> {
     let mal = |d: &str| {
         Err(Error::lectura(
             F,
-            format!("el perfil ICC está mal troceado: {d}"),
+            tr!(
+                "el perfil ICC está mal troceado: {d}",
+                "the ICC profile is badly split into chunks: {d}"
+            ),
         ))
     };
     let mut trozos: Vec<Option<&[u8]>> = vec![None; 255];
@@ -112,15 +119,21 @@ fn icc(marcas: &[(u8, Vec<u8>)]) -> Resultado<Option<Vec<u8>>> {
         let seq = datos[FIRMA.len()] as usize;
         let cuenta = datos[FIRMA.len() + 1] as usize;
         if cuenta == 0 || seq == 0 {
-            return mal("número de trozo o cuenta a cero");
+            return mal(trs!(
+                "número de trozo o cuenta a cero",
+                "chunk number or count is zero"
+            ));
         }
         if esperados == 0 {
             esperados = cuenta;
         } else if esperados != cuenta {
-            return mal("la cuenta de trozos no coincide");
+            return mal(trs!(
+                "la cuenta de trozos no coincide",
+                "the chunk count doesn't match"
+            ));
         }
         if trozos[seq - 1].is_some() {
-            return mal("trozo repetido");
+            return mal(trs!("trozo repetido", "repeated chunk"));
         }
         trozos[seq - 1] = Some(&datos[FIRMA.len() + 2..]);
         vistos += 1;
@@ -130,7 +143,7 @@ fn icc(marcas: &[(u8, Vec<u8>)]) -> Resultado<Option<Vec<u8>>> {
         return Ok(None);
     }
     if maximo != vistos || esperados != vistos {
-        return mal("faltan trozos");
+        return mal(trs!("faltan trozos", "chunks are missing"));
     }
     Ok(Some(
         trozos[..maximo]
@@ -164,7 +177,10 @@ pub(crate) fn leer_para_cjpeg(datos: &[u8]) -> Resultado<JpegCjpeg> {
             mozjpeg::decompress::Format::CMYK(_) => {
                 return Err(Error::lectura(
                     F,
-                    "los JPEG en CMYK todavía no se pueden pasar a JPEG",
+                    trs!(
+                        "los JPEG en CMYK todavía no se pueden pasar a JPEG",
+                        "CMYK JPEGs can't be converted to JPEG yet"
+                    ),
                 ));
             }
         };
@@ -174,7 +190,10 @@ pub(crate) fn leer_para_cjpeg(datos: &[u8]) -> Resultado<JpegCjpeg> {
             .map_err(|e| Error::lectura(F, e))?;
         inicio.finish().map_err(|e| Error::lectura(F, e))?;
         if filas.len() != ancho as usize * alto as usize * if gris { 1 } else { 3 } {
-            return Err(Error::lectura(F, "faltan líneas"));
+            return Err(Error::lectura(
+                F,
+                trs!("faltan líneas", "lines are missing"),
+            ));
         }
         Ok(JpegCjpeg {
             ancho,
@@ -189,7 +208,7 @@ pub(crate) fn leer_para_cjpeg(datos: &[u8]) -> Resultado<JpegCjpeg> {
             F,
             p.downcast_ref::<String>()
                 .cloned()
-                .unwrap_or_else(|| "el fichero está dañado".into()),
+                .unwrap_or_else(|| trs!("el fichero está dañado", "the file is damaged").into()),
         ))
     })
 }

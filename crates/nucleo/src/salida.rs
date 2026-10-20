@@ -9,6 +9,7 @@
 //! en JPEG, PNG y QOI), se codifican los píxeles ya procesados, y la orden
 //! de la herramienta ya no da ese fichero: [`motivo`] dice por qué.
 
+use crate::trs;
 use serde::{Deserialize, Serialize};
 
 use crate::entrada::{Formato, Imagen, Pixeles};
@@ -304,12 +305,18 @@ fn buscar_nota(
         let (rw, rh, rgba) = vista::decodificar(&c.datos)?;
         if (rw, rh) != (w, h) {
             return Err(crate::Error::Configuracion(
-                "no se puede buscar una nota si el formato cambia el tamaño (como -resize de cwebp)"
+                trs!("no se puede buscar una nota si el formato cambia el tamaño (como -resize de cwebp)", "can't search for a score if the format changes the size (like cwebp's -resize)")
                     .into(),
             ));
         }
         let n = crate::medir::nota_en_turno(&turno, &ref_rgba, &rgba, w, h)?.ok_or_else(|| {
-            crate::Error::Configuracion("la imagen es demasiado pequeña para medirla (8×8)".into())
+            crate::Error::Configuracion(
+                trs!(
+                    "la imagen es demasiado pequeña para medirla (8×8)",
+                    "the image is too small to measure (8×8)"
+                )
+                .into(),
+            )
         })?;
         probadas.push((q, c, n));
         Ok(n)

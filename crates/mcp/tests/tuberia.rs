@@ -21,6 +21,7 @@ fn una_sesion_entera_por_las_tuberias() {
 
     let mut hijo = Command::new(env!("CARGO_BIN_EXE_apolo-mcp"))
         .env("APOLO_CONFIG", dir.join("config"))
+        .env("APOLO_IDIOMA", "es")
         .current_dir(&dir)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())

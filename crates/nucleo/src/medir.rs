@@ -15,6 +15,7 @@
 //! y B). El SSIM es el de Wang y otros (2004) sobre la luminancia BT.601, con
 //! ventana gaussiana de 11 píxeles y σ = 1,5, como el SSIM «de referencia».
 
+use crate::trs;
 use std::sync::Mutex;
 
 use serde::Serialize;
@@ -53,7 +54,11 @@ fn comprobar(a: &[u8], b: &[u8], ancho: u32, alto: u32) -> Resultado<()> {
     let n = ancho as usize * alto as usize * 4;
     if a.len() != n || b.len() != n {
         return Err(Error::Configuracion(
-            "el resultado no tiene el tamaño de la referencia".into(),
+            trs!(
+                "el resultado no tiene el tamaño de la referencia",
+                "the result isn't the same size as the reference"
+            )
+            .into(),
         ));
     }
     Ok(())

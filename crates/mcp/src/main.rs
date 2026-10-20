@@ -9,10 +9,19 @@
 use std::process::ExitCode;
 
 use apolo_mcp::ServidorApolo;
+use apolo_nucleo::idioma::{self, Idioma};
+use apolo_nucleo::tr;
 use rmcp::ServiceExt;
 
 fn main() -> ExitCode {
     apolo_nucleo::memoria::preparar();
+    // El idioma de los textos (ADR 0025): APOLO_IDIOMA (es o en), y si no, el
+    // del sistema.
+    let lengua = std::env::var("APOLO_IDIOMA")
+        .ok()
+        .and_then(|v| Idioma::de_codigo(&v))
+        .unwrap_or_else(idioma::del_sistema);
+    idioma::poner(lengua);
     // Antes de tocar la salida: --version lo escribe una persona en una consola.
     if std::env::args().any(|a| a == "--version" || a == "-V") {
         decir(&format!("apolo-mcp {}\n", env!("CARGO_PKG_VERSION")));
@@ -24,7 +33,13 @@ fn main() -> ExitCode {
     let salida = match apolo_avifjxl::apartar_salida() {
         Ok(f) => f,
         Err(e) => {
-            eprintln!("apolo-mcp: no se pudo preparar la salida: {e}");
+            eprintln!(
+                "{}",
+                tr!(
+                    "apolo-mcp: no se pudo preparar la salida: {e}",
+                    "apolo-mcp: couldn't prepare the output: {e}"
+                )
+            );
             return ExitCode::FAILURE;
         }
     };
@@ -40,9 +55,13 @@ fn main() -> ExitCode {
     // mientras sigue en marcha (actualizado.rs).
     apolo_mcp::actualizado::anotar();
     if std::io::IsTerminal::is_terminal(&std::io::stdin()) {
+        let version = env!("CARGO_PKG_VERSION");
         eprintln!(
-            "apolo-mcp {}: este programa lo arranca un agente de IA (Claude, Cursor…), no se usa a mano.\nCómo añadirlo: Apolo › Ajustes › Agentes. Esperando mensajes MCP por la entrada estándar…",
-            env!("CARGO_PKG_VERSION")
+            "{}",
+            tr!(
+                "apolo-mcp {version}: este programa lo arranca un agente de IA (Claude, Cursor…), no se usa a mano.\nCómo añadirlo: Apolo › Ajustes › Agentes. Esperando mensajes MCP por la entrada estándar…",
+                "apolo-mcp {version}: this program is started by an AI agent (Claude, Cursor…), it isn't used by hand.\nHow to add it: Apolo › Settings › Agents. Waiting for MCP messages on standard input…"
+            )
         );
     }
     let rt = match tokio::runtime::Builder::new_multi_thread()
@@ -56,9 +75,10 @@ fn main() -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
+    let servidor = ServidorApolo::nuevo();
     rt.block_on(async move {
         let transporte = (tokio::io::stdin(), tokio::fs::File::from_std(salida));
-        match ServidorApolo::nuevo().serve(transporte).await {
+        match servidor.serve(transporte).await {
             Ok(servicio) => {
                 let _ = servicio.waiting().await;
                 ExitCode::SUCCESS

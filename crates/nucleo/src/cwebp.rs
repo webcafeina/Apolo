@@ -9,6 +9,7 @@
 use crate::entrada::{self, Lectura};
 use crate::error::Resultado;
 use crate::metadatos::Conservar;
+use crate::tr;
 use crate::webp::opciones::{
     FiltradoAlfa, ModoRedimension, OpcionesWebp, Pista, Preset, Recorte, Redimension, config_base,
     config_preset,
@@ -195,8 +196,9 @@ pub fn leer_desde<S: AsRef<str>>(
                 let h = entero(&mut error, i + 2);
                 i += 2;
                 if !(0..=16383).contains(&w) || !(0..=16383).contains(&h) {
-                    return Err(ErrorOrden(format!(
-                        "El tamaño indicado ({w} × {h}) se sale del rango."
+                    return Err(ErrorOrden(tr!(
+                        "El tamaño indicado ({w} × {h}) se sale del rango.",
+                        "Specified size ({w} × {h}) is out of range."
                     )));
                 }
                 o.tamano_yuv = Some((w, h));
@@ -242,7 +244,12 @@ pub fn leer_desde<S: AsRef<str>>(
                     "none" => 0,
                     "fast" => 1,
                     "best" => 2,
-                    x => return Err(ErrorOrden(format!("Filtro de alfa desconocido: {x}"))),
+                    x => {
+                        return Err(ErrorOrden(tr!(
+                            "Filtro de alfa desconocido: {x}",
+                            "Unknown alpha filter: {x}"
+                        )));
+                    }
                 };
             }
             "-noalpha" => conservar_alfa = false,
@@ -259,7 +266,12 @@ pub fn leer_desde<S: AsRef<str>>(
                     "photo" => WEBP_HINT_PHOTO,
                     "picture" => WEBP_HINT_PICTURE,
                     "graph" => WEBP_HINT_GRAPH,
-                    x => return Err(ErrorOrden(format!("Pista de imagen desconocida: {x}"))),
+                    x => {
+                        return Err(ErrorOrden(tr!(
+                            "Pista de imagen desconocida: {x}",
+                            "Unrecognized hint: {x}"
+                        )));
+                    }
                 };
             }
             "-size" if hay(1) => {
@@ -333,7 +345,12 @@ pub fn leer_desde<S: AsRef<str>>(
                     "down_only" => ModoRedimension::SoloReducir,
                     "up_only" => ModoRedimension::SoloAmpliar,
                     "always" => ModoRedimension::Siempre,
-                    x => return Err(ErrorOrden(format!("Modo de redimensión desconocido: {x}"))),
+                    x => {
+                        return Err(ErrorOrden(tr!(
+                            "Modo de redimensión desconocido: {x}",
+                            "Unrecognized resize mode: {x}"
+                        )));
+                    }
                 };
             }
             "-noasm" => o.sin_asm = true,
@@ -345,8 +362,9 @@ pub fn leer_desde<S: AsRef<str>>(
             "-quiet" => o.silencio = true,
             "-preset" if hay(1) => {
                 i += 1;
-                let p = Preset::desde_cwebp(args[i])
-                    .ok_or_else(|| ErrorOrden(format!("Preset desconocido: {}", args[i])))?;
+                let p = Preset::desde_cwebp(args[i]).ok_or_else(|| {
+                    ErrorOrden(tr!("Preset desconocido: {}", "Unknown preset: {}", args[i]))
+                })?;
                 c = config_preset(p, c.quality);
                 preset = Some(p);
             }
@@ -360,7 +378,10 @@ pub fn leer_desde<S: AsRef<str>>(
                         "icc" => metadatos.icc = true,
                         "xmp" => metadatos.xmp = true,
                         x => {
-                            return Err(ErrorOrden(format!("Tipo de metadato desconocido: «{x}»")));
+                            return Err(ErrorOrden(tr!(
+                                "Tipo de metadato desconocido: «{x}»",
+                                "Unknown metadata type “{x}”"
+                            )));
                         }
                     }
                 }
@@ -375,12 +396,18 @@ pub fn leer_desde<S: AsRef<str>>(
             }
             x if x.starts_with('-') => {
                 o.ayuda = Some(Ayuda::Larga);
-                return Err(ErrorOrden(format!("Opción desconocida: «{x}»")));
+                return Err(ErrorOrden(tr!(
+                    "Opción desconocida: «{x}»",
+                    "Unknown option “{x}”"
+                )));
             }
             x => o.entrada = Some(x.to_string()),
         }
         if error {
-            return Err(ErrorOrden(format!("Valor no válido para «{a}»")));
+            return Err(ErrorOrden(tr!(
+                "Valor no válido para «{a}»",
+                "Invalid value for “{a}”"
+            )));
         }
         i += 1;
     }
@@ -388,8 +415,9 @@ pub fn leer_desde<S: AsRef<str>>(
     if usar_nivel == 1 {
         // SAFETY: c es una configuración propia y válida en memoria.
         if unsafe { libwebp_sys::WebPConfigLosslessPreset(&mut c, nivel_sin_perdida) } == 0 {
-            return Err(ErrorOrden(format!(
-                "Nivel sin pérdida no válido (-z {nivel_sin_perdida})"
+            return Err(ErrorOrden(tr!(
+                "Nivel sin pérdida no válido (-z {nivel_sin_perdida})",
+                "Invalid lossless preset (-z {nivel_sin_perdida})"
             )));
         }
     }
@@ -616,6 +644,18 @@ pub(crate) fn citar(s: &str) -> String {
 #[cfg(test)]
 mod pruebas {
     use super::*;
+
+    #[test]
+    fn los_errores_de_la_orden_en_ingles() {
+        use crate::idioma::{Idioma, en_este_hilo};
+        let error = |a: &[&str]| leer(a).unwrap_err().0;
+        assert_eq!(error(&["-foo"]), "Opción desconocida: «-foo»");
+        en_este_hilo(Idioma::En, || {
+            assert_eq!(error(&["-foo"]), "Unknown option “-foo”");
+            assert_eq!(error(&["-hint", "x"]), "Unrecognized hint: x");
+            assert_eq!(error(&["-q", "mucha"]), "Invalid value for “-q”");
+        });
+    }
 
     #[test]
     fn strtol_como_c() {

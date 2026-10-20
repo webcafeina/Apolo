@@ -3,6 +3,8 @@
 
 use std::path::{Path, PathBuf};
 
+use apolo_nucleo::{tr, trs};
+
 use crate::errores::{ErrorMcp, Hecho};
 
 /// Una ruta de un agente, absoluta. Una relativa vale si el directorio de
@@ -24,8 +26,13 @@ pub fn resolver_con(texto: &str, casa: Option<&Path>, actual: Option<&Path>) -> 
         }
     }
     if t.is_empty() {
-        return Err(ErrorMcp::nuevo("ruta_vacia", "Falta la ruta.")
-            .con_pista("Pasa la ruta absoluta del fichero o la carpeta (se admite ~)."));
+        return Err(
+            ErrorMcp::nuevo("ruta_vacia", trs!("Falta la ruta.", "The path is missing."))
+                .con_pista(trs!(
+                    "Pasa la ruta absoluta del fichero o la carpeta (se admite ~).",
+                    "Pass the absolute path of the file or folder (~ is accepted)."
+                )),
+        );
     }
     let mut ruta: String = match t.strip_prefix("file://") {
         Some(resto) => decodificar_url(resto.strip_prefix("localhost").unwrap_or(resto)),
@@ -39,9 +46,15 @@ pub fn resolver_con(texto: &str, casa: Option<&Path>, actual: Option<&Path>) -> 
         let Some(casa) = casa else {
             return Err(ErrorMcp::nuevo(
                 "ruta_relativa",
-                "No se sabe cuál es la carpeta personal.",
+                trs!(
+                    "No se sabe cuál es la carpeta personal.",
+                    "The home folder is unknown."
+                ),
             )
-            .con_pista("Usa la ruta absoluta, sin ~."));
+            .con_pista(trs!(
+                "Usa la ruta absoluta, sin ~.",
+                "Use the absolute path, without ~."
+            )));
         };
         ruta = format!("{}{}", casa.display(), &ruta[1..]);
     }
@@ -53,9 +66,15 @@ pub fn resolver_con(texto: &str, casa: Option<&Path>, actual: Option<&Path>) -> 
         Some(a) if a.parent().is_some() => Ok(a.join(p)),
         _ => Err(ErrorMcp::nuevo(
             "ruta_relativa",
-            format!("«{texto}» es una ruta relativa, y aquí no se sabe a qué carpeta se refiere."),
+            tr!(
+                "«{texto}» es una ruta relativa, y aquí no se sabe a qué carpeta se refiere.",
+                "“{texto}” is a relative path, and here it's unknown which folder it refers to."
+            ),
         )
-        .con_pista("Usa la ruta absoluta (se admite ~ para la carpeta personal).")),
+        .con_pista(trs!(
+            "Usa la ruta absoluta (se admite ~ para la carpeta personal).",
+            "Use the absolute path (~ is accepted for the home folder)."
+        ))),
     }
 }
 

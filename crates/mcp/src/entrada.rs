@@ -9,6 +9,7 @@ use apolo_nucleo::entrada::Formato;
 use apolo_nucleo::presets::PresetGuardado;
 use apolo_nucleo::proceso::{Paleta, Recorte, Redimension};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida};
+use apolo_nucleo::{tr, trs};
 use schemars::JsonSchema;
 use serde::Deserialize;
 
@@ -152,11 +153,15 @@ impl EntradaFormato {
         if self.calidad.is_some() && self.nota_objetivo.is_some() {
             return Err(ErrorMcp::nuevo(
                 "nota_y_calidad",
-                "Se ha pedido una calidad fija y una nota a la vez.",
+                trs!(
+                    "Se ha pedido una calidad fija y una nota a la vez.",
+                    "A fixed quality and a target score were asked for at the same time."
+                ),
             )
-            .con_pista(
+            .con_pista(trs!(
                 "Quita calidad (para buscar la nota) o nota_objetivo (para la calidad fija).",
-            ));
+                "Remove calidad (to search for the score) or nota_objetivo (for the fixed quality)."
+            )));
         }
         let mut a = match &self.preset {
             Some(nombre) => presets
@@ -166,9 +171,15 @@ impl EntradaFormato {
                 .ok_or_else(|| {
                     ErrorMcp::nuevo(
                         "preset_no_existe",
-                        format!("No hay ningún preset «{nombre}»."),
+                        tr!(
+                            "No hay ningún preset «{nombre}».",
+                            "There is no preset “{nombre}”."
+                        ),
                     )
-                    .con_pista("listar_presets da los que hay.")
+                    .con_pista(trs!(
+                        "listar_presets da los que hay.",
+                        "listar_presets lists the ones there are."
+                    ))
                 })?,
             None => Ajuste::default(),
         };
@@ -177,22 +188,27 @@ impl EntradaFormato {
         }
         if let Some(orden) = self.orden.as_deref().filter(|o| !o.trim().is_empty()) {
             let leido = apolo_servicio::leer_orden(orden, &a).map_err(|f| {
-                ErrorMcp::nuevo("orden_no_valida", f.mensaje).con_pista(
+                ErrorMcp::nuevo("orden_no_valida", f.mensaje).con_pista(trs!(
                     "Opciones como «-q 80 -m 6» (cwebp), «-quality 85» (cjpeg), «-o 4» (oxipng), «-q 60 -s 6» (avifenc) o «-d 1 -e 7» (cjxl); o usa preset.",
-                )
+                    "Options like “-q 80 -m 6” (cwebp), “-quality 85” (cjpeg), “-o 4” (oxipng), “-q 60 -s 6” (avifenc) or “-d 1 -e 7” (cjxl); or use preset."
+                ))
             })?;
             if let Some(f) = self.formato
                 && FormatoSalida::from(f) != leido.formato
             {
                 return Err(ErrorMcp::nuevo(
                     "formato_y_orden",
-                    format!(
+                    tr!(
                         "La orden es de {} y el formato pedido, {}.",
+                        "The command is for {} and the format asked for is {}.",
                         leido.formato.herramienta(),
                         FormatoSalida::from(f).nombre()
                     ),
                 )
-                .con_pista("Quita formato, o da una orden de su herramienta."));
+                .con_pista(trs!(
+                    "Quita formato, o da una orden de su herramienta.",
+                    "Remove formato, or give a command for its tool."
+                )));
             }
             a = leido;
         }
@@ -214,11 +230,15 @@ impl EntradaFormato {
                 FormatoSalida::Jpeg => {
                     return Err(ErrorMcp::nuevo(
                         "sin_perdida_no",
-                        "JPEG no tiene modo sin pérdida.",
+                        trs!(
+                            "JPEG no tiene modo sin pérdida.",
+                            "JPEG has no lossless mode."
+                        ),
                     )
-                    .con_pista(
+                    .con_pista(trs!(
                         "Usa png, webp con sin_perdida, o jxl (un JPEG se recomprime sin pérdida).",
-                    ));
+                        "Use png, webp with sin_perdida, or jxl (a JPEG is recompressed losslessly)."
+                    )));
                 }
             }
         }
@@ -256,8 +276,17 @@ impl EntradaFormato {
         }
         if let Some(r) = self.recorte {
             if r.ancho == 0 || r.alto == 0 {
-                return Err(ErrorMcp::nuevo("recorte_vacio", "El recorte no tiene ancho o alto.")
-                    .con_pista("recorte es {x, y, ancho, alto}, en píxeles, con ancho y alto mayores que 0."));
+                return Err(ErrorMcp::nuevo(
+                    "recorte_vacio",
+                    trs!(
+                        "El recorte no tiene ancho o alto.",
+                        "The crop has no width or height."
+                    ),
+                )
+                .con_pista(trs!(
+                    "recorte es {x, y, ancho, alto}, en píxeles, con ancho y alto mayores que 0.",
+                    "recorte is {x, y, ancho, alto}, in pixels, with ancho and alto greater than 0."
+                )));
             }
             a.proceso.recorte = Some(Recorte {
                 x: r.x,
@@ -270,9 +299,15 @@ impl EntradaFormato {
             if !(2..=256).contains(&colores) {
                 return Err(ErrorMcp::nuevo(
                     "paleta_fuera",
-                    format!("Una paleta de {colores} colores no vale."),
+                    tr!(
+                        "Una paleta de {colores} colores no vale.",
+                        "A palette of {colores} colors isn't valid."
+                    ),
                 )
-                .con_pista("paleta va de 2 a 256 colores."));
+                .con_pista(trs!(
+                    "paleta va de 2 a 256 colores.",
+                    "paleta goes from 2 to 256 colors."
+                )));
             }
             a.proceso.paleta = Some(Paleta {
                 colores,
@@ -295,12 +330,16 @@ impl EntradaFormato {
 fn sin_calidad(f: FormatoSalida) -> ErrorMcp {
     ErrorMcp::nuevo(
         "nota_no_admitida",
-        format!(
+        tr!(
             "{} no tiene calidad que elegir o buscar (es sin pérdida).",
+            "{} has no quality to choose or search for (it's lossless).",
             f.nombre()
         ),
     )
-    .con_pista("Quita nota_objetivo y calidad, o elige webp, jpeg, avif o jxl.")
+    .con_pista(trs!(
+        "Quita nota_objetivo y calidad, o elige webp, jpeg, avif o jxl.",
+        "Remove nota_objetivo and calidad, or choose webp, jpeg, avif or jxl."
+    ))
 }
 
 #[cfg(test)]

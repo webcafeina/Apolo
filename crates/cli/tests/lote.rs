@@ -3,8 +3,19 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+/// El binario, en español: sin `--idioma`, la CLI usa el idioma del sistema, y
+/// estas pruebas comparan textos en español.
 fn apolo() -> Command {
-    Command::new(env!("CARGO_BIN_EXE_apolo"))
+    let mut c = Command::new(env!("CARGO_BIN_EXE_apolo"));
+    c.env("LC_ALL", "es_ES.UTF-8");
+    c
+}
+
+/// El binario, en inglés por el sistema (sin `--idioma`).
+fn apolo_en() -> Command {
+    let mut c = Command::new(env!("CARGO_BIN_EXE_apolo"));
+    c.env("LC_ALL", "en_US.UTF-8");
+    c
 }
 
 fn carpeta(nombre: &str) -> PathBuf {
@@ -71,4 +82,54 @@ fn un_preset_que_no_existe_no_empieza() {
     assert!(!r.status.success());
     assert!(String::from_utf8_lossy(&r.stderr).contains("No hay ningún preset"));
     assert!(!d.join("fotos-webp").exists());
+}
+
+#[test]
+fn la_ayuda_sale_en_ingles_con_idioma_en() {
+    let r = apolo().args(["--idioma", "en", "--help"]).output().unwrap();
+    assert!(r.status.success());
+    let texto = String::from_utf8_lossy(&r.stdout);
+    assert!(texto.contains("Optimizes images"), "{texto}");
+    assert!(!texto.contains("Optimiza imágenes"), "{texto}");
+    // Y con el sistema en inglés, sin pedirlo.
+    let r = apolo_en().args(["lote", "--help"]).output().unwrap();
+    assert!(String::from_utf8_lossy(&r.stdout).contains("Converts whole folders"));
+}
+
+#[test]
+fn un_error_en_ingles() {
+    // `--idioma` detrás de `webp`: se quita antes de que lo lea cwebp.
+    let r = apolo()
+        .args(["webp", "--idioma", "en", "no-existe.png", "-o", "x.webp"])
+        .output()
+        .unwrap();
+    assert!(!r.status.success());
+    let texto = String::from_utf8_lossy(&r.stderr);
+    assert!(texto.contains("Can't read “no-existe.png”"), "{texto}");
+}
+
+#[test]
+fn un_idioma_que_no_hay_no_empieza() {
+    let r = apolo()
+        .args(["--idioma", "fr", "motores"])
+        .output()
+        .unwrap();
+    assert_eq!(r.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&r.stderr).contains("--idioma fr"));
+}
+
+#[test]
+fn el_resumen_del_lote_en_ingles() {
+    let d = carpeta("ingles");
+    let r = apolo()
+        .args(["--idioma=en", "lote", "-q"])
+        .arg(d.join("fotos"))
+        .output()
+        .unwrap();
+    assert!(r.status.success(), "{}", String::from_utf8_lossy(&r.stderr));
+    let texto = String::from_utf8_lossy(&r.stdout);
+    assert!(texto.starts_with("2 converted in "), "{texto}");
+    // Con punto decimal, y sin espacio antes del «%».
+    assert!(texto.contains(" KB") && !texto.contains(','), "{texto}");
+    assert!(texto.contains("%)") && !texto.contains(" %"), "{texto}");
 }

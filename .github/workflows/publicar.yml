@@ -160,6 +160,9 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Los de la Release, en inglés (ADR 0025): las descripciones de su
+          # manifiesto. El que crea la ventana va en el idioma de la ventana.
+          APOLO_IDIOMA: en
         run: |
           V=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
           case "$RUNNER_OS" in macOS) S=macos;; Windows) S=windows;; *) S=linux;; esac

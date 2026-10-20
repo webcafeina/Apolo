@@ -5,6 +5,7 @@
 //! Con proceso, la orden de la herramienta oficial ya no da el mismo fichero:
 //! ni cwebp ni cjpeg redimensionan como Apolo. La interfaz lo dice.
 
+use crate::{tr, trs};
 use fast_image_resize as fr;
 use serde::{Deserialize, Serialize};
 
@@ -142,7 +143,11 @@ pub fn aplicar(p: &Proceso, ancho: u32, alto: u32, rgba: &[u8]) -> Resultado<(u3
 fn recortar(w: u32, h: u32, px: &[u8], r: Recorte) -> Resultado<(u32, u32, Vec<u8>)> {
     if r.x >= w || r.y >= h || r.ancho == 0 || r.alto == 0 {
         return Err(Error::Configuracion(
-            "el recorte queda fuera de la imagen".into(),
+            trs!(
+                "el recorte queda fuera de la imagen",
+                "the crop is outside the image"
+            )
+            .into(),
         ));
     }
     let (nw, nh) = (r.ancho.min(w - r.x), r.alto.min(h - r.y));
@@ -159,7 +164,9 @@ fn redimensionar(w: u32, h: u32, px: &[u8], r: Redimension) -> Resultado<(u32, u
     if (nw, nh) == (w, h) {
         return Ok((w, h, px.to_vec()));
     }
-    let mal = |e: &dyn std::fmt::Display| Error::Codificacion(format!("al redimensionar: {e}"));
+    let mal = |e: &dyn std::fmt::Display| {
+        Error::Codificacion(tr!("al redimensionar: {e}", "while resizing: {e}"))
+    };
     let alg = match r.filtro {
         Filtro::Vecino => fr::ResizeAlg::Nearest,
         Filtro::Lanczos3 => fr::ResizeAlg::Convolution(fr::FilterType::Lanczos3),
@@ -194,7 +201,12 @@ fn redimensionar(w: u32, h: u32, px: &[u8], r: Redimension) -> Resultado<(u32, u
 }
 
 fn reducir_paleta(w: u32, h: u32, px: &[u8], p: Paleta) -> Resultado<Vec<u8>> {
-    let mal = |e: imagequant::Error| Error::Codificacion(format!("al reducir la paleta: {e}"));
+    let mal = |e: imagequant::Error| {
+        Error::Codificacion(tr!(
+            "al reducir la paleta: {e}",
+            "while reducing the palette: {e}"
+        ))
+    };
     let mut liq = imagequant::new();
     liq.set_max_colors(p.colores.clamp(2, 256)).map_err(mal)?;
     let pixeles: Vec<imagequant::RGBA> = px

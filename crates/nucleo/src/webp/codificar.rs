@@ -6,6 +6,7 @@
 //! añadir los metadatos. Cambiar el orden de cualquiera de esos pasos cambia
 //! los bytes.
 
+use crate::trs;
 use std::ffi::c_void;
 
 use libwebp_sys as w;
@@ -113,7 +114,11 @@ impl Picture {
         };
         if ok == 0 {
             return Err(Error::Codificacion(
-                "versión de libwebp incompatible".into(),
+                trs!(
+                    "versión de libwebp incompatible",
+                    "incompatible libwebp version"
+                )
+                .into(),
             ));
         }
         // SAFETY: inicializada arriba.
@@ -177,18 +182,31 @@ fn error_libwebp(codigo: w::WebPEncodingError) -> Error {
             return Error::Memoria;
         }
         VP8_ENC_ERROR_USER_ABORT => return Error::Cancelado,
-        VP8_ENC_ERROR_NULL_PARAMETER => "parámetro nulo",
-        VP8_ENC_ERROR_INVALID_CONFIGURATION => "la configuración no es válida",
+        VP8_ENC_ERROR_NULL_PARAMETER => trs!("parámetro nulo", "null parameter"),
+        VP8_ENC_ERROR_INVALID_CONFIGURATION => {
+            trs!("la configuración no es válida", "invalid configuration")
+        }
         VP8_ENC_ERROR_BAD_DIMENSION => {
-            "dimensiones no válidas: el máximo es 16383 píxeles por lado"
+            trs!(
+                "dimensiones no válidas: el máximo es 16383 píxeles por lado",
+                "invalid dimensions: the maximum is 16383 pixels per side"
+            )
         }
         VP8_ENC_ERROR_PARTITION0_OVERFLOW => {
-            "la partición 0 no cabe en 512 KB; prueba con menos segmentos o con límite de partición"
+            trs!(
+                "la partición 0 no cabe en 512 KB; prueba con menos segmentos o con límite de partición",
+                "partition 0 doesn't fit in 512 KB; try fewer segments or a partition limit"
+            )
         }
-        VP8_ENC_ERROR_PARTITION_OVERFLOW => "una partición no cabe en 16 MB",
-        VP8_ENC_ERROR_BAD_WRITE => "error al escribir",
-        VP8_ENC_ERROR_FILE_TOO_BIG => "el fichero pasaría de 4 GB",
-        _ => "error desconocido",
+        VP8_ENC_ERROR_PARTITION_OVERFLOW => trs!(
+            "una partición no cabe en 16 MB",
+            "a partition doesn't fit in 16 MB"
+        ),
+        VP8_ENC_ERROR_BAD_WRITE => trs!("error al escribir", "write error"),
+        VP8_ENC_ERROR_FILE_TOO_BIG => {
+            trs!("el fichero pasaría de 4 GB", "the file would exceed 4 GB")
+        }
+        _ => trs!("error desconocido", "unknown error"),
     };
     Error::Codificacion(texto.into())
 }
@@ -197,7 +215,11 @@ fn error_libwebp(codigo: w::WebPEncodingError) -> Error {
 pub(crate) fn importar(img: &Imagen, pic: &mut Picture, conservar_alfa: bool) -> Resultado<()> {
     let p = &mut pic.0;
     let (ancho, alto) = (img.ancho as i32, img.alto as i32);
-    let fallo = || Error::Codificacion("no se pudo importar la imagen".into());
+    let fallo = || {
+        Error::Codificacion(
+            trs!("no se pudo importar la imagen", "couldn't import the image").into(),
+        )
+    };
     // SAFETY: los búferes tienen el tamaño que dicen ancho, alto y stride.
     unsafe {
         match &img.pixeles {
@@ -247,7 +269,10 @@ unsafe fn importar_webp(
     unsafe {
         let mut config = std::mem::MaybeUninit::<w::WebPDecoderConfig>::zeroed().assume_init();
         if !w::WebPInitDecoderConfig(&mut config) {
-            return Err(fallo("versión de libwebp incompatible"));
+            return Err(fallo(trs!(
+                "versión de libwebp incompatible",
+                "incompatible libwebp version"
+            )));
         }
         if w::WebPGetFeaturesInternal(
             datos.as_ptr(),
@@ -256,7 +281,7 @@ unsafe fn importar_webp(
             w::WEBP_DECODER_ABI_VERSION as i32,
         ) != w::VP8StatusCode::VP8_STATUS_OK
         {
-            return Err(fallo("cabecera no válida"));
+            return Err(fallo(trs!("cabecera no válida", "invalid header")));
         }
         let rasgos = config.input;
         let tiene_alfa = conservar_alfa && rasgos.has_alpha != 0;
@@ -377,7 +402,9 @@ pub fn codificar(
     }
     // SAFETY: config es propia y válida en memoria.
     if unsafe { w::WebPValidateConfig(&config) } == 0 {
-        return Err(Error::Configuracion("libwebp no la acepta".into()));
+        return Err(Error::Configuracion(
+            trs!("libwebp no la acepta", "libwebp doesn't accept it").into(),
+        ));
     }
 
     let enderezada = if op.enderezar {
@@ -415,7 +442,11 @@ pub fn codificar(
             let vista: *mut w::WebPPicture = &mut pic.0;
             if w::WebPPictureView(vista, r.x, r.y, r.ancho, r.alto, vista) == 0 {
                 return Err(Error::Configuracion(
-                    "el recorte se sale de la imagen".into(),
+                    trs!(
+                        "el recorte se sale de la imagen",
+                        "the crop goes outside the image"
+                    )
+                    .into(),
                 ));
             }
         }
@@ -531,11 +562,15 @@ unsafe fn redimensionar(pic: &mut Picture, rw: i32, rh: i32, exacto: bool) -> Re
                 }
             }
             if w::WebPPictureRescale(&mut opaca.0, rw, rh) == 0 {
-                return Err(Error::Configuracion("no se pudo redimensionar".into()));
+                return Err(Error::Configuracion(
+                    trs!("no se pudo redimensionar", "couldn't resize").into(),
+                ));
             }
         }
         if w::WebPPictureRescale(&mut pic.0, rw, rh) == 0 {
-            return Err(Error::Configuracion("no se pudo redimensionar".into()));
+            return Err(Error::Configuracion(
+                trs!("no se pudo redimensionar", "couldn't resize").into(),
+            ));
         }
         if exacto {
             for y in 0..opaca.0.height {
@@ -580,7 +615,13 @@ unsafe fn medir(
             w::WebPPictureDistortion(&decodificada.0, &pic.0, m as i32, v.as_mut_ptr())
         };
         if ok == 0 {
-            return Err(Error::Codificacion("no se pudo medir la distorsión".into()));
+            return Err(Error::Codificacion(
+                trs!(
+                    "no se pudo medir la distorsión",
+                    "couldn't measure the distortion"
+                )
+                .into(),
+            ));
         }
     }
     Ok(v)

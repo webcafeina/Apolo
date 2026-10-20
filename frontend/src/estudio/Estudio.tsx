@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Cabecera, Icono, IconoApp, Marca } from "../componentes";
+import { lengua } from "../i18n";
 import * as puente from "../puente";
 import { Comparador, type Modo } from "./Comparador";
 import { admiteObjetivo, type Ajuste, type Contexto, type Preset, type Recorte } from "./opciones";
@@ -21,7 +22,7 @@ export const EVENTO_PRESETS = "apolo:presets";
 export const EVENTO_APLICAR = "apolo:aplicar-preset";
 
 export function formatoBytes(n: number): string {
-  const f = (v: number, d: number) => v.toLocaleString("es", { maximumFractionDigits: d, minimumFractionDigits: d });
+  const f = (v: number, d: number) => v.toLocaleString(lengua(), { maximumFractionDigits: d, minimumFractionDigits: d });
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${f(n / 1024, n < 10 * 1024 ? 1 : 0)} KB`;
   return `${f(n / 1024 / 1024, 1)} MB`;
@@ -40,8 +41,8 @@ interface EstadoLado {
 
 const ladoVacio = (ajuste: Ajuste | null): EstadoLado => ({ ajuste, vista: null, pixeles: null, ocupado: false, medidas: null });
 
-/** Un número con coma y `d` decimales. */
-const cifra = (n: number, d: number) => n.toLocaleString("es", { minimumFractionDigits: d, maximumFractionDigits: d });
+/** Un número con `d` decimales, con la coma o el punto del idioma. */
+const cifra = (n: number, d: number) => n.toLocaleString(lengua(), { minimumFractionDigits: d, maximumFractionDigits: d });
 
 export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boolean }) {
   const { t } = useTranslation();
@@ -471,7 +472,7 @@ function Pesos({ info, vista }: { info: puente.InfoImagen; vista: puente.Vista |
         <div className={`ahorro ${crece ? "crece" : ""}`} data-prueba="ahorro">
           <span className="ahorro-cifra">
             {crece ? "+" : "−"}
-            {Math.abs(ahorro * 100).toLocaleString("es", { maximumFractionDigits: 1 })} %
+            {Math.abs(ahorro * 100).toLocaleString(lengua(), { maximumFractionDigits: 1 })} %
           </span>
           <span className="etiqueta">
             {crece

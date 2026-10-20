@@ -16,6 +16,7 @@ fn preguntar(binario: &Path, casa: &Path) -> Value {
         .env("HOME", casa)
         .env("APOLO_MCP_DESDE_PAQUETE", "1")
         .env("APOLO_CONFIG", casa.join("config"))
+        .env("APOLO_IDIOMA", "es")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::null())

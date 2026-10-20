@@ -12,6 +12,7 @@ use std::time::Instant;
 
 use apolo_nucleo::lote::{self, Hecho, Resumen};
 use apolo_nucleo::salida::{Ajuste, FormatoSalida};
+use apolo_nucleo::trs;
 use serde::Serialize;
 
 use crate::{Fallo, R, Servicio};
@@ -147,18 +148,30 @@ impl Servicio {
         salida: &str,
     ) -> R<LoteEmpezado> {
         if ajustes.is_empty() {
-            return Err(Fallo::nuevo("Falta al menos un formato de salida"));
+            return Err(Fallo::nuevo(trs!(
+                "Falta al menos un formato de salida",
+                "At least one output format is needed"
+            )));
         }
         if ajustes.iter().any(|a| !a.webp.validar()) {
-            return Err(Fallo::nuevo("La configuración no es válida"));
+            return Err(Fallo::nuevo(trs!(
+                "La configuración no es válida",
+                "Invalid configuration"
+            )));
         }
         if salida.trim().is_empty() {
-            return Err(Fallo::nuevo("Falta la carpeta de salida"));
+            return Err(Fallo::nuevo(trs!(
+                "Falta la carpeta de salida",
+                "The output folder is missing"
+            )));
         }
         let destino = std::path::absolute(salida).unwrap_or_else(|_| PathBuf::from(salida));
         let elementos = lote::recoger(&rutas(entradas), Some(&destino));
         if elementos.is_empty() {
-            return Err(Fallo::nuevo("No hay imágenes que convertir"));
+            return Err(Fallo::nuevo(trs!(
+                "No hay imágenes que convertir",
+                "There are no images to convert"
+            )));
         }
         let id = self.siguiente.fetch_add(1, Ordering::Relaxed);
         let l = Arc::new(Lote {
@@ -200,7 +213,7 @@ impl Servicio {
             .unwrap()
             .get(&id)
             .cloned()
-            .ok_or_else(|| Fallo::nuevo("Ese lote no existe"))?;
+            .ok_or_else(|| Fallo::nuevo(trs!("Ese lote no existe", "That batch doesn't exist")))?;
         // Se lee antes que la lista: si ya estaba terminado, la lista está entera.
         let terminado = l.terminado.load(Ordering::SeqCst);
         let hechos = l.hechos.lock().unwrap();

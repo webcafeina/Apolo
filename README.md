@@ -9,6 +9,8 @@
   macOS · Windows · Linux
 </p>
 
+<p align="center"><a href="README.en.md">English</a></p>
+
 <p align="center">
   <a href="https://github.com/webcafeina/Apolo/releases/latest"><img src="https://img.shields.io/github/v/release/webcafeina/Apolo?label=versi%C3%B3n" alt="Versión"></a>
   <a href="https://github.com/webcafeina/Apolo/actions/workflows/comprobar.yml"><img src="https://github.com/webcafeina/Apolo/actions/workflows/comprobar.yml/badge.svg" alt="Comprobar"></a>
@@ -64,6 +66,9 @@ pesa y dónde se pierde calidad, y ajustas hasta que te convence.
 - **Abre las fotos del iPhone** (HEIC), además de PNG, JPEG, WebP, AVIF, JPEG XL, TIFF, GIF, BMP,
   QOI y PNM.
 - **Línea de órdenes `apolo`**, con los mismos presets, para scripts.
+- **En español y en inglés**: la ventana, la línea de órdenes y el agente. Por defecto, el idioma
+  del sistema; se cambia en Ajustes › General, con `apolo --idioma en` o con `APOLO_IDIOMA=en` para
+  el agente.
 - **Nativo, ligero y sin conexión**: tus imágenes no salen de tu ordenador. Con fotos de 24
   megapíxeles no pasa de unos 2 GB de memoria, ni en lotes de cientos: cabe en un Mac de 8 GB
   ([docs/rendimiento.md](docs/rendimiento.md)).
@@ -123,5 +128,6 @@ motores que lleva dentro tienen sus propias licencias, todas compatibles:
 | GPLv3 | libimagequant |
 | LGPLv3 | libheif y libde265 |
 | Apache-2.0 | highway, sjpeg y rmcp |
+| MIT o Apache-2.0 | sys-locale |
 
 Hecho por [Webcafeína](https://webcafeina.com).

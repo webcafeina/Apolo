@@ -1,10 +1,15 @@
 //! `docs/mcp/catalogo.md`: las herramientas tal como las ve un agente, sacadas
 //! de las mismas definiciones que da `tools/list`. Se regenera con
 //! `make catalogo-mcp`, y una prueba falla si el fichero se queda atrás.
+//!
+//! Siempre en español, como el resto de `docs/` (ADR 0025), sea cual sea el
+//! idioma del proceso.
 
 use serde_json::{Map, Value};
 
-use crate::{INSTRUCCIONES, ServidorApolo};
+use apolo_nucleo::idioma::{self, Idioma};
+
+use crate::{ServidorApolo, texto_instrucciones};
 
 /// Junta las líneas de un comentario de documentación en un párrafo.
 fn parrafo(s: &str) -> String {
@@ -91,15 +96,19 @@ fn anotaciones(a: &Value) -> String {
     v.join(" · ")
 }
 
-/// El catálogo entero, en Markdown.
+/// El catálogo entero, en Markdown y en español.
 pub fn catalogo() -> String {
+    idioma::en_este_hilo(Idioma::Es, catalogo_en_espanol)
+}
+
+fn catalogo_en_espanol() -> String {
     let mut s = String::from(
         "# Las herramientas de apolo-mcp\n\n\
          > Generado desde el código (`crates/mcp`) con `make catalogo-mcp`. No se edita a mano: una\n\
          > prueba falla si se queda atrás. Las decisiones, en el [ADR 0023](../adr/0023-mcp.md).\n\n\
          ## Lo que lee el agente al conectarse\n\n",
     );
-    s.push_str(INSTRUCCIONES);
+    s.push_str(texto_instrucciones());
     s.push('\n');
     for h in ServidorApolo::herramientas() {
         let h = serde_json::to_value(&h).unwrap_or_default();

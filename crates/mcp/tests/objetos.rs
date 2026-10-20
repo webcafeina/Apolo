@@ -20,6 +20,7 @@ fn el_recorte_vale_como_objeto_y_como_texto() {
 
     let mut hijo = Command::new(env!("CARGO_BIN_EXE_apolo-mcp"))
         .env("APOLO_CONFIG", dir.join("config"))
+        .env("APOLO_IDIOMA", "es")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::null())

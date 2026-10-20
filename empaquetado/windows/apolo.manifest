@@ -1,15 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!--
-  El manifiesto de los tres .exe de Apolo en Windows (apolo-app, apolo, apolo-mcp).
-
-  activeCodePage UTF-8 (Windows 10 1903 y posteriores): avifenc y cjxl, compilados dentro, abren
-  sus ficheros con fopen, que usa la página de códigos del proceso. Con la de siempre (cp1252),
-  una ruta con tildes o eñes no se abre: «Failed to open file for write», y AVIF y JPEG XL fallaban
-  para cualquiera con una tilde en su carpeta (lo vio humo.yml el 2026-10-19; trampas.md).
-
-  Common-Controls 6: lo necesitan los diálogos de Tauri (era el manifiesto por defecto de
-  tauri-build).
--->
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
   <dependency>
     <dependentAssembly>

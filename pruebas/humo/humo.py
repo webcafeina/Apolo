@@ -7,7 +7,7 @@ Lo que nadie ha visto en un equipo: Windows x64 y Linux x64. Con los binarios ya
   cjxl abren sus ficheros con fopen, que en Windows no usa UTF-8 (deuda);
 - la CLI frente a los binarios oficiales (cwebp, avifenc, cjxl) si se le dan, byte a byte;
 - en Windows, que ningún .exe pida las DLL de Visual C++ (MSVCP140.dll…), que las máquinas de CI
-  tienen y un Windows recién instalado no;
+  tienen y un Windows recién instalado no, y que la ventana arranque;
 - `apolo-mcp` por sus tuberías: initialize, las once herramientas, optimizar a AVIF y JPEG XL;
 - con --reinstalar (Windows): un apolo-mcp.exe en marcha, como el de un agente abierto, y el
   instalador otra vez encima: su gancho tiene que cerrarlo y el instalador terminar bien.
@@ -236,6 +236,23 @@ def sin_dll_de_vc(rutas):
             bien(f"{Path(r).name}: {', '.join(sorted(dlls, key=str.lower))}")
 
 
+def abrir_ventana(app, entorno):
+    """Que la ventana arranque y siga en marcha unos segundos. Un manifiesto roto no deja ni
+    crear el proceso («la configuración en paralelo no es correcta», 2026-10-20)."""
+    print(f"La ventana: {app}")
+    try:
+        p = subprocess.Popen([str(app)], env=entorno)
+    except OSError as x:
+        mal(f"no arranca: {x}")
+        return
+    time.sleep(10)
+    if p.poll() is None:
+        bien("arranca y sigue abierta")
+        p.kill()
+    else:
+        mal(f"se cerró sola con el código {p.returncode}")
+
+
 def reinstalar(instalador, instalado, base, entorno):
     """Un apolo-mcp.exe en marcha (un agente abierto) y el instalador encima, en silencio."""
     print("Actualizar con un agente abierto:")
@@ -287,6 +304,8 @@ def main():
         if o.instalado:
             exes.append(Path(o.instalado).parent / "apolo-app.exe")
         sin_dll_de_vc(exes)
+        if o.instalado:
+            abrir_ventana(Path(o.instalado).parent / "apolo-app.exe", entorno)
     for b in [str(o.cli / f"apolo-mcp{EXE}"), *o.mcp]:
         mcp(b, base, entorno)
     if o.reinstalar:

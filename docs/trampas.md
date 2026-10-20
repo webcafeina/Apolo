@@ -21,6 +21,20 @@ compilación entera en cada objetivo. `bundle.category` en `tauri.conf.json` no 
 texto: es una lista cerrada con los nombres de Apple sin espacios (`GraphicsAndDesign`, no
 `Graphics`). Pasó en la primera publicación, en los seis objetivos a la vez. · 2026-10-06
 
+## «La configuración en paralelo no es correcta» al abrir Apolo en Windows
+
+Sale al abrir `apolo-app.exe`; la CLI y `apolo-mcp.exe`, con el mismo manifiesto, van bien. El
+manifiesto que Tauri mete en la ventana estaba roto. `app_manifest` no lo mete como fichero: lo
+copia línea a línea en un `.rc`, con un espacio delante de cada una, y `rc.exe` lee el `.rc` en
+cp1252. Rompía dos cosas:
+- `<?xml …?>` dejaba de estar al principio;
+- las tildes y las comillas «» del comentario se convertían en bytes que no son UTF-8.
+
+Windows no crea el proceso. Se evita con un manifiesto sin declaración XML y solo en ASCII, que
+`crates/cli/build.rs` comprueba en cada compilación. `humo.py` abre ahora la ventana: antes la
+instalaba pero no la abría. Para ver el manifiesto de un `.exe`, `7zz x app.exe '.rsrc/MANIFEST/*'`
+(el 7-Zip de github.com/ip7z/7zip, y antes `7zz x` del instalador). · 2026-10-20
+
 ## «No se encontró MSVCP140.dll» al abrir Apolo en Windows
 
 Sale en un Windows recién instalado, y **nunca en las máquinas de CI**, que traen instalado

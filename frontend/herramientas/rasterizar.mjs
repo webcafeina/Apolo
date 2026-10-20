@@ -27,8 +27,11 @@ const trabajos = [
     ["empaquetado/macos/disco.svg", `empaquetado/macos/disco.iconset/icon_${n}x${n}@2x.png`, n * 2],
   ]),
   // Las imágenes del instalador de Windows. NSIS solo acepta BMP de 24 bits.
-  ["empaquetado/windows/lateral.svg", "empaquetado/windows/lateral.bmp", 164],
-  ["empaquetado/windows/cabecera.svg", "empaquetado/windows/cabecera.bmp", 150],
+  // Al doble de su hueco (164×314 y 150×57): NSIS las ajusta al hueco, y con
+  // la pantalla a 200 % (un portátil, una máquina virtual en un Retina) el
+  // hueco dobla y a 1x se veían borrosas.
+  ["empaquetado/windows/lateral.svg", "empaquetado/windows/lateral.bmp", 328],
+  ["empaquetado/windows/cabecera.svg", "empaquetado/windows/cabecera.bmp", 300],
 ];
 
 // BMP de 24 bits, sin comprimir, de abajo arriba y con cada fila rellena hasta

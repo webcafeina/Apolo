@@ -22,19 +22,15 @@
 > CLI y `apolo-mcp` iban bien. Arreglado, el humo abre ahora la ventana, y las imágenes del
 > instalador al doble (se veían borrosas). **Publicada la v0.10.2** (2026-10-20), revisada como
 > siempre más el manifiesto de la ventana ARM64 válido y sin DLL de Visual C++.
-> **Lo siguiente: Windows ARM con la v0.10.2 instalada directamente** (las anteriores no arrancan,
-> así que actualizar desde la banda se prueba en la próxima versión). Mismo guion (sin el paso 5):
-> 1. instalar la **v0.9.1** (`Apolo_0.9.1_arm64.deb` con `sudo apt install ./…`, o el instalador
->    arm64 de Windows);
-> 2. actualizar a la 0.10.0 desde la banda (en Ubuntu pide la contraseña con `pkexec`);
-> 3. el Estudio: recortar con el ratón, comparar, **exportar a AVIF y JPEG XL en una carpeta con
->    tilde**;
-> 4. Lotes con `vacaciones` a AVIF;
-> 5. en Ubuntu, la AppImage (`chmod +x`, que arranque y abra);
-> 6. el MCP: en Ubuntu, Claude Code con `/usr/bin/apolo-mcp`; en Windows, Claude Desktop si se
->    instala en ARM, y si no, Claude Code. Preguntar la versión y pasar una foto a AVIF.
->
-> Lo que salga, a v0.10.1 si hace falta. Después, la **8b** (rendimiento).
+> ~~**Windows ARM**~~: **bien el 2026-10-20 con la v0.10.2** instalada directamente: el instalador
+> (en español, imágenes nítidas), el Estudio exportando AVIF y JPEG XL en una carpeta con tilde,
+> Lotes con los mismos números, y `apolo-mcp --version` en 0.10.2. Sin agente (no hay Claude en esa
+> máquina); el MCP de Windows lo cubre `humo.yml` en x64.
+> **La 8a está hecha.** Queda para la próxima versión ver **actualizar desde la banda en Windows**
+> (de la 0.10.2 a la siguiente: las anteriores no arrancaban).
+> **Lo siguiente: la 8b** (rendimiento, siguiente.md): el banco `scripts/banco.sh` con fotos de 24 MP
+> y un lote de 200, medir, arreglar lo que pase de un Mac de 8 GB, v0.11.0. Ojo con el disco del VPS
+> (deuda): el banco escribe mucho.
 >
 > **La v0.9.1** (2026-10-19): el recorte del agente llega desde Claude Desktop (esquema
 > sin `$ref` y lectura tolerante), y el motivo dice qué proceso se hizo. Borrador revisado como

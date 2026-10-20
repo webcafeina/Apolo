@@ -16,7 +16,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **El disco del VPS, lleno**: `make comprobar` falló con «No space left on device». Se borraron
   `target/debug/incremental` y `examples` (24 GB). Queda al 90 % (deuda).
 - **v0.10.2 publicada**, revisada como siempre, con el manifiesto ARM64 válido y sin DLL de Visual
-  C++. Queda de la 8a: Windows ARM, con la 0.10.2.
+  C++.
+- **Prueba guiada en Windows ARM con la v0.10.2: todo bien**. El instalador, en español y con las
+  imágenes nítidas. El Estudio exporta AVIF y JPEG XL en una carpeta con tilde. Lotes da los mismos
+  números. `apolo-mcp --version`, 0.10.2, aunque en PowerShell solo sale con `2>&1 | Out-String`
+  (deuda). Sin agente: no hay Claude en esa máquina.
+- **La 8a, hecha.** Queda ver actualizar desde la banda en Windows con la próxima versión.
 
 ---
 

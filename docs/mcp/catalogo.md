@@ -39,7 +39,7 @@ Para un lote. Lo ya convertido se queda. Ejemplo: {"id": "l-1"}
 
 *hace cambios · no destruye · todo en este ordenador*
 
-Codifica la misma imagen en varios formatos a la misma calidad percibida (nota SSIMULACRA 2, 80 por defecto) y dice cuál pesa menos. Guarda el mejor (por defecto), todos o ninguno, siempre como ficheros nuevos. Tarda: unas 7 pruebas por formato (con una foto de 12 MP, más de un minuto). Para una sola salida ya decidida, optimizar_imagen. Ejemplo: {"ruta": "~/a.png", "formatos": ["webp", "avif", "jxl"]}
+Codifica la misma imagen en varios formatos a la misma calidad percibida (nota SSIMULACRA 2, 80 por defecto) y dice cuál pesa menos. Guarda el mejor (por defecto), todos o ninguno, siempre como ficheros nuevos. Tarda: unas 7 pruebas por formato (con una foto de 12 MP, más de un minuto; con 24 MP, unos tres). Con fotos de más de unos 20 MP, mejor empezar_lote con esa imagen, los formatos y mas_ligero: hace lo mismo en segundo plano y no se corta por tiempo, aunque solo da el que gana. Para una sola salida ya decidida, optimizar_imagen. Ejemplo: {"ruta": "~/a.png", "formatos": ["webp", "avif", "jxl"]}
 
 | Argumento | Tipo | Qué es |
 |---|---|---|

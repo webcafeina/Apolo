@@ -19,6 +19,13 @@
  * solo se retoca si su comprobación era errónea, y se dice en docs/mcp/evaluacion.md.
  */
 
+import { copyFileSync, existsSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
+
+// Una foto de 24 MP: la deja scripts/banco.sh en su caché (las de Kodak ampliadas, entrega 8b).
+const GRANDE = join(process.env.XDG_CACHE_HOME ?? join(homedir(), '.cache'), 'apolo-banco/fotos24/kodim03.jpg');
+
 // Sin mayúsculas ni tildes: «confírmamelo» cuenta como «confirm» (corregido el 2026-10-15).
 const llano = (t) => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const incluye = (texto, ...alguno) => alguno.some((x) => llano(texto).includes(llano(x)));
@@ -204,6 +211,20 @@ export const ESCENARIOS = [
     id: 'comp-mejor', categoria: 'comparar',
     peticion: '¿Qué formato pesa menos para playa-2.jpg a la misma calidad? Guarda solo el mejor',
     comprobar: (c, r) => todas([llamo(r, 'comparar_formatos') || 'no usó comparar_formatos', c.nuevos().length === 1 || `nuevos: ${c.nuevos().join(', ')}`]),
+  },
+  {
+    // Con 24 MP, comparar_formatos tarda unos tres minutos y un cliente puede cortarlo: la
+    // descripción manda a empezar_lote con mas_ligero (8b, 2026-10-20).
+    id: 'comp-grande', categoria: 'comparar',
+    preparar(c) {
+      if (!existsSync(GRANDE)) throw new Error(`falta ${GRANDE}: scripts/banco.sh la genera`);
+      copyFileSync(GRANDE, c.ruta('grande.jpg'));
+    },
+    peticion: '¿Qué formato pesa menos para grande.jpg a la misma calidad? Guarda solo el mejor',
+    comprobar: (c, r) => todas([
+      llamo(r, 'empezar_lote') || 'no usó empezar_lote con una foto de 24 MP',
+      c.nuevos().length === 1 || `nuevos: ${c.nuevos().join(', ')}`,
+    ]),
   },
   {
     id: 'comp-nada', categoria: 'comparar',

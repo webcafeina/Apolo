@@ -4,6 +4,21 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-20 (tarde) · La 8b, terminada
+
+- CI de la mañana en verde en los seis sistemas, con el humo.
+- **`comp-grande`**: el agente usó `empezar_lote` a la primera. El resultado caía en
+  `trabajo-apolo`, junto a la carpeta de trabajo, y eso destapó que con imágenes sueltas la
+  carpeta propuesta era hermana de la suya (`~/Escritorio-webp`). El cliente eligió una
+  subcarpeta junto a ellas (`~/Escritorio/webp`): `lote::salida_base`, matiz en la ADR 0019.
+  Cinco escenarios del MCP, bien.
+- **Banco final, 200 fotos de 24 MP**: medir 1,7 GB, Estudio 1,9 GB, lote a AVIF 1,5 GB, el más
+  ligero 2,2 GB, midiendo 2,3 GB, `comparar_formatos` 2,0 GB y 165 s. docs/rendimiento.md y una
+  línea en el README.
+- v0.11.0 preparada: notas y versión. Sin publicar.
+
+---
+
 ## 2026-10-20 (mediodía) · La 8b: el banco y la memoria con fotos de 24 MP
 
 - **El banco** (`scripts/banco.sh`): fotos de Kodak ampliadas a 6000 × 4000, lotes con 8 a la

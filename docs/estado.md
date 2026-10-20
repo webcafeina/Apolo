@@ -4,17 +4,19 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **La 8c está hecha (2026-10-20 por la tarde)**, a falta de publicar la **v0.12.0** (notas
-> bilingües en `.github/notas/v0.12.0.md`; la versión en `Cargo.toml` sigue en 0.11.0). ADR 0025:
+> **La 8c está hecha y publicada la v0.12.0 (2026-10-20 por la noche)**, revisada como siempre
+> (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones en 0.12.0, los cinco
+> `.mcpb` en inglés, la CLI en los dos idiomas, manifiesto ARM64 válido, sin DLL de Visual C++,
+> AVIF 3/3). ADR 0025:
 > en Rust, cada texto con sus dos versiones (`tr!`, `trs!`); el idioma, uno por proceso (CLI con
 > `--idioma` o el del sistema, `apolo-mcp` con `APOLO_IDIOMA`, la ventana con su selector en
 > Ajustes › General); `en.json` con las 578 claves; las descripciones del MCP, con una tabla.
 > Hecho con cuatro agentes en paralelo por crates. `make comprobar`, e2e 65/65, equivalencia y
 > evaluación del MCP 37/37 en verde. README.en.md.
-> **Lo siguiente**: la compilación de prueba en CI (la 39463437873, relanzada por dos trabajos
-> cancelados por GitHub), y publicar la v0.12.0 cuando lo diga el cliente. Con ella, la prueba
-> guiada en **Windows ARM**: actualizar desde la banda (de la 0.10.2, que el cliente **no debe
-> abrir** antes) y ver Apolo en inglés. Después, la **8d** (Homebrew, la web y la 1.0).
+> **Lo siguiente**: la prueba guiada en **Windows ARM**: actualizar desde la banda de la 0.10.2 a
+> la 0.12.0 (lo único de Windows sin ver), Lotes con una foto suelta (subcarpeta) y Apolo en
+> inglés (Ajustes › General). Si el cliente quiere, ver también el inglés en su Mac. Después, la
+> **8d** (Homebrew, la web y la 1.0).
 >
 > **La 8b está hecha y publicada la v0.11.0 (2026-10-20 por la tarde)**, revisada como siempre
 > (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones y `.mcpb` en 0.11.0,

@@ -84,9 +84,10 @@ pub fn version_nueva() -> Option<String> {
 /// La línea que se añade a las respuestas.
 pub fn aviso() -> Option<String> {
     version_nueva().map(|v| {
-        format!(
-            "AVISO: Apolo se ha actualizado a la {v}, pero este agente sigue con la {} hasta que se reinicie. Díselo a la persona: en Claude Desktop, cerrar y volver a abrir Claude Desktop (o apagar y encender la extensión en Ajustes › Extensiones); en Claude Code y otros, empezar una sesión nueva.",
-            env!("CARGO_PKG_VERSION")
+        let esta = env!("CARGO_PKG_VERSION");
+        apolo_nucleo::tr!(
+            "AVISO: Apolo se ha actualizado a la {v}, pero este agente sigue con la {esta} hasta que se reinicie. Díselo a la persona: en Claude Desktop, cerrar y volver a abrir Claude Desktop (o apagar y encender la extensión en Ajustes › Extensiones); en Claude Code y otros, empezar una sesión nueva.",
+            "NOTICE: Apolo has been updated to {v}, but this agent keeps running {esta} until it restarts. Tell the person: in Claude Desktop, quit and reopen Claude Desktop (or turn the extension off and on in Settings › Extensions); in Claude Code and others, start a new session."
         )
     })
 }

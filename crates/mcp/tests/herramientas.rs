@@ -23,6 +23,10 @@ fn preparar() -> (PathBuf, Contexto) {
     for f in ["foto.webp", "orientacion-6.png"] {
         std::fs::copy(corpus.join(f), dir.join("fotos").join(f)).unwrap();
     }
+    // El servicio pone el idioma de sus ajustes, y sin ellos el del sistema
+    // (en CI, inglés): estas pruebas miran los textos en español.
+    std::fs::create_dir_all(dir.join("config")).unwrap();
+    std::fs::write(dir.join("config/ajustes.json"), r#"{"idioma": "es"}"#).unwrap();
     let cx = Contexto::con(Servicio::nuevo(dir.join("config")));
     (dir, cx)
 }
@@ -541,4 +545,73 @@ fn recortar_y_reducir_la_paleta() {
         l.datos["presets"][0]["proceso"],
         "recorta 100×50 en 0,0 · paleta de 16 colores"
     );
+}
+
+/// Los códigos que antes salían de mirar el texto del error (ADR 0025): en
+/// los dos idiomas, el mismo código y la misma pista.
+#[test]
+fn los_codigos_no_dependen_del_idioma() {
+    use apolo_nucleo::idioma::{Idioma, en_este_hilo};
+    let (dir, cx) = preparar();
+    let foto = dir.join("fotos/foto.webp");
+    let vacia = dir.join("vacia");
+    std::fs::create_dir_all(&vacia).unwrap();
+    let texto = dir.join("fotos/nota.txt");
+    std::fs::write(&texto, "no soy una imagen").unwrap();
+    for idioma in [Idioma::Es, Idioma::En] {
+        en_este_hilo(idioma, || {
+            // Buscar una nota con -resize de cwebp.
+            let e = optimizar_imagen(
+                &cx,
+                optimizar(
+                    &foto,
+                    EntradaFormato {
+                        orden: Some("-q 80 -resize 64 64".into()),
+                        nota_objetivo: Some(80.0),
+                        ..Default::default()
+                    },
+                ),
+                &Seguimiento::nada(),
+            )
+            .unwrap_err();
+            assert_eq!(e.error, "tamano_cambia", "{idioma:?}: {e:?}");
+            assert!(e.pista.unwrap().contains("ancho"));
+            // Una carpeta sin imágenes.
+            let e = empezar_lote(
+                &cx,
+                EntradaLote {
+                    entradas: vec![ruta(&vacia)],
+                    formatos: None,
+                    preset: None,
+                    orden: None,
+                    calidad: None,
+                    nota_objetivo: None,
+                    sin_perdida: false,
+                    ancho: None,
+                    alto: None,
+                    enderezar: None,
+                    recorte: None,
+                    paleta: None,
+                    mas_ligero: false,
+                    medir: false,
+                    salida: Some(ruta(&dir.join("salida"))),
+                },
+            )
+            .unwrap_err();
+            assert_eq!(e.error, "sin_imagenes", "{idioma:?}: {e:?}");
+            assert!(e.pista.unwrap().contains("analizar_imagen"));
+            // Un fichero que no es una imagen.
+            let e =
+                optimizar_imagen(&cx, optimizar(&texto, webp()), &Seguimiento::nada()).unwrap_err();
+            assert_eq!(e.error, "no_es_imagen", "{idioma:?}: {e:?}");
+        });
+    }
+    // Y el texto, en el idioma pedido.
+    let t = en_este_hilo(Idioma::En, || {
+        optimizar_imagen(&cx, optimizar(&texto, webp()), &Seguimiento::nada())
+            .unwrap_err()
+            .texto()
+    });
+    assert!(t.contains("isn't an image that Apolo reads"), "{t}");
+    assert!(t.contains("\nHINTS: Apolo reads PNG"), "{t}");
 }

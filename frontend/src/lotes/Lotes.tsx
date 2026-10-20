@@ -19,6 +19,7 @@ import { Cabecera, Icono } from "../componentes";
 import { EVENTO_PRESETS, formatoBytes } from "../estudio/Estudio";
 import { FORMATOS, type Ajuste, type FormatoSalida, type Preset } from "../estudio/opciones";
 import { banda, nombreFormato } from "../estudio/Panel";
+import { lengua } from "../i18n";
 import * as puente from "../puente";
 
 const CADA_MS = 250;
@@ -52,7 +53,7 @@ export function ahorro(antes: number, despues: number): number {
 
 export function duracion(segundos: number, t: TFunction): string {
   if (segundos < 1) return t("lotes.tiempo.menosDeUno");
-  if (segundos < 60) return t("lotes.tiempo.segundos", { s: segundos.toLocaleString("es", { maximumFractionDigits: 1 }) });
+  if (segundos < 60) return t("lotes.tiempo.segundos", { s: segundos.toLocaleString(lengua(), { maximumFractionDigits: 1 }) });
   const m = Math.floor(segundos / 60);
   const s = Math.round(segundos % 60);
   return s ? t("lotes.tiempo.minutosYSegundos", { m, s }) : t("lotes.tiempo.minutos", { m });
@@ -484,7 +485,7 @@ function Progreso({
                 )}
                 {r.nota_media !== null && (
                   <p data-prueba="nota-media">
-                    {t("lotes.notaMedia")} <strong>{r.nota_media.toLocaleString("es", { maximumFractionDigits: 1, minimumFractionDigits: 1 })}</strong>
+                    {t("lotes.notaMedia")} <strong>{r.nota_media.toLocaleString(lengua(), { maximumFractionDigits: 1, minimumFractionDigits: 1 })}</strong>
                     <span className="apagado"> · {t(`nota.${banda(r.nota_media)}`)}</span>
                   </p>
                 )}
@@ -538,7 +539,7 @@ function Progreso({
                       {p.relativa}
                     </span>
                     <span className="apagado">{nombreFormato(p.formato)}</span>
-                    <span className="cifra">{p.nota.toLocaleString("es", { maximumFractionDigits: 1, minimumFractionDigits: 1 })}</span>
+                    <span className="cifra">{p.nota.toLocaleString(lengua(), { maximumFractionDigits: 1, minimumFractionDigits: 1 })}</span>
                   </li>
                 ))}
               </ul>
@@ -595,7 +596,7 @@ function FilaLote({ fila }: { fila: puente.Fila }) {
               <>
                 {" · "}
                 <span data-prueba="nota-fila">
-                  {t("lotes.nota", { nota: principal.nota.toLocaleString("es", { maximumFractionDigits: 1, minimumFractionDigits: 1 }) })}
+                  {t("lotes.nota", { nota: principal.nota.toLocaleString(lengua(), { maximumFractionDigits: 1, minimumFractionDigits: 1 }) })}
                 </span>
               </>
             )}

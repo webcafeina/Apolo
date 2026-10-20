@@ -17,19 +17,20 @@ use std::time::{Duration, Instant};
 use apolo_nucleo::entrada::{self, Formato, Lectura};
 use apolo_nucleo::formatos::png;
 use apolo_nucleo::jpeg;
-use apolo_nucleo::lote::{escribir_sin_pisar, salida_sugerida, sufijo};
+use apolo_nucleo::lote::{self, escribir_sin_pisar, salida_sugerida, sufijo};
 use apolo_nucleo::medir::{self, Medidas, TipoMapa};
 use apolo_nucleo::presets::{self, PresetGuardado};
 use apolo_nucleo::proceso::{Proceso, Redimension};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida, Hallada, Motivo};
 use apolo_nucleo::{orientacion, vista};
+use apolo_nucleo::{tr, trs};
 use apolo_servicio::{InfoImagen, Servicio};
 use base64::Engine;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::entrada::{EntradaFormato, FormatoMcp, NOTA_POR_DEFECTO, RecorteMcp};
-use crate::errores::{ErrorMcp, FORMATOS_QUE_LEE, Hecho};
+use crate::errores::{ErrorMcp, Hecho, formatos_que_lee};
 use crate::respuesta::{Imagen, Respuesta, ahorro, ahorro_pct, banda, coma, peso};
 use crate::rutas::resolver;
 
@@ -99,10 +100,14 @@ impl Drop for Abierta<'_> {
 fn existe(texto: &str) -> Hecho<PathBuf> {
     let ruta = resolver(texto)?;
     if !ruta.exists() {
-        return Err(
-            ErrorMcp::nuevo("no_existe", format!("No existe «{}».", ruta.display()))
-                .con_pista("Comprueba la ruta; usa la absoluta (se admite ~)."),
-        );
+        return Err(ErrorMcp::nuevo(
+            "no_existe",
+            tr!("No existe «{}».", "“{}” doesn't exist.", ruta.display()),
+        )
+        .con_pista(trs!(
+            "Comprueba la ruta; usa la absoluta (se admite ~).",
+            "Check the path; use the absolute one (~ is accepted)."
+        )));
     }
     Ok(ruta)
 }
@@ -112,17 +117,19 @@ fn abrir<'a>(cx: &'a Contexto, texto: &str) -> Hecho<Abierta<'a>> {
     if ruta.is_dir() {
         return Err(ErrorMcp::nuevo(
             "es_carpeta",
-            format!("«{}» es una carpeta.", ruta.display()),
+            tr!("«{}» es una carpeta.", "“{}” is a folder.", ruta.display()),
         )
-        .con_pista("Para una carpeta, empezar_lote (o analizar_imagen para ver qué hay)."));
+        .con_pista(trs!(
+            "Para una carpeta, empezar_lote (o analizar_imagen para ver qué hay).",
+            "For a folder, empezar_lote (or analizar_imagen to see what's in it)."
+        )));
     }
     let info = cx.servicio.abrir_ruta(&ruta).map_err(|f| {
-        if f.mensaje.contains("No se reconoce") {
-            ErrorMcp::nuevo(
-                "no_es_imagen",
-                format!("«{}» no es una imagen que Apolo lea.", ruta.display()),
-            )
-            .con_pista(format!("Apolo lee {FORMATOS_QUE_LEE}."))
+        // Sin mirar el texto del fallo, que depende del idioma: el núcleo da
+        // «formato desconocido» si y solo si la cabecera no es de ningún
+        // formato (`Formato::adivinar`), y eso se puede mirar aquí.
+        if !f.cancelado && no_es_imagen(&ruta) {
+            error_no_es_imagen(&ruta)
         } else {
             ErrorMcp::from(f)
         }
@@ -136,12 +143,35 @@ fn abrir<'a>(cx: &'a Contexto, texto: &str) -> Hecho<Abierta<'a>> {
     })
 }
 
-/// El formato de un fichero por sus primeros bytes.
-fn formato_de(ruta: &Path) -> Option<Formato> {
+/// Los primeros bytes de un fichero, si se puede leer.
+fn cabeza(ruta: &Path) -> Option<Vec<u8>> {
     use std::io::Read;
     let mut cabeza = vec![0u8; 4096];
     let n = std::fs::File::open(ruta).ok()?.read(&mut cabeza).ok()?;
-    Formato::adivinar(&cabeza[..n])
+    cabeza.truncate(n);
+    Some(cabeza)
+}
+
+/// El formato de un fichero por sus primeros bytes.
+fn formato_de(ruta: &Path) -> Option<Formato> {
+    Formato::adivinar(&cabeza(ruta)?)
+}
+
+/// Se lee y no es de ningún formato que Apolo conozca.
+fn no_es_imagen(ruta: &Path) -> bool {
+    cabeza(ruta).is_some_and(|c| Formato::adivinar(&c).is_none())
+}
+
+fn error_no_es_imagen(ruta: &Path) -> ErrorMcp {
+    ErrorMcp::nuevo(
+        "no_es_imagen",
+        tr!(
+            "«{}» no es una imagen que Apolo lea.",
+            "“{}” isn't an image that Apolo reads.",
+            ruta.display()
+        ),
+    )
+    .con_pista(formatos_que_lee())
 }
 
 /// Lee un fichero como RGBA (para medir y ver), con su orientación EXIF.
@@ -161,11 +191,7 @@ fn leer_rgba(ruta: &Path) -> Hecho<Leida> {
             )
         })
         .map_err(|e| match e {
-            apolo_nucleo::Error::FormatoDesconocido => ErrorMcp::nuevo(
-                "no_es_imagen",
-                format!("«{}» no es una imagen que Apolo lea.", ruta.display()),
-            )
-            .con_pista(format!("Apolo lee {FORMATOS_QUE_LEE}.")),
+            apolo_nucleo::Error::FormatoDesconocido => error_no_es_imagen(ruta),
             otro => ErrorMcp::from(otro),
         })?;
     let o = orientacion::leer(img.metadatos.exif.as_deref());
@@ -174,24 +200,29 @@ fn leer_rgba(ruta: &Path) -> Hecho<Leida> {
 
 fn texto_motivo(m: Motivo, herramienta: &str, formato: &str, proceso: &Proceso) -> String {
     match m {
-        Motivo::Enderezada => {
-            format!("Apolo la ha enderezado según su EXIF, y {herramienta} no gira")
-        }
+        Motivo::Enderezada => tr!(
+            "Apolo la ha enderezado según su EXIF, y {herramienta} no gira",
+            "Apolo has auto-rotated it according to its EXIF, and {herramienta} doesn't rotate"
+        ),
         // Lo que se hizo de verdad: decía «redimensionado» también al reducir
         // la paleta (prueba guiada de la v0.9.0).
-        Motivo::Procesada => format!(
-            "Apolo la ha procesado antes ({}), y {herramienta} no lo hace igual",
+        Motivo::Procesada => {
             // «sin enderezar» aquí no dice nada: el agente solo endereza
             // las fotos que lo necesitan.
-            texto_proceso(&Proceso {
+            let hecho = texto_proceso(&Proceso {
                 enderezar: true,
                 ..*proceso
             })
-            .unwrap_or_else(|| "recorte, tamaño o paleta".into())
-        ),
-        Motivo::FormatoSinHerramienta => {
-            format!("{herramienta} no lee {formato}: Apolo la ha convertido antes")
+            .unwrap_or_else(|| trs!("recorte, tamaño o paleta", "crop, size or palette").into());
+            tr!(
+                "Apolo la ha procesado antes ({hecho}), y {herramienta} no lo hace igual",
+                "Apolo has processed it first ({hecho}), and {herramienta} doesn't do it the same way"
+            )
         }
+        Motivo::FormatoSinHerramienta => tr!(
+            "{herramienta} no lee {formato}: Apolo la ha convertido antes",
+            "{herramienta} doesn't read {formato}: Apolo has converted it first"
+        ),
     }
 }
 
@@ -205,16 +236,18 @@ fn segundos(ms: u64) -> String {
 
 fn linea_hallada(h: &Hallada, objetivo: f32) -> String {
     if h.alcanzada {
-        format!(
+        tr!(
             "Calidad {} encontrada para la nota {} (SSIMULACRA 2 {} · {} pruebas)",
+            "Quality {} found for score {} (SSIMULACRA 2 {} · {} trials)",
             h.calidad,
             coma(objetivo as f64, 0),
             coma(h.nota, 1),
             h.pruebas
         )
     } else {
-        format!(
+        tr!(
             "No llega a la nota {} ni con calidad 100: se queda en 100 (SSIMULACRA 2 {}). Este formato no da más con esta imagen: prueba otros con comparar_formatos, o sin_perdida",
+            "It doesn't reach score {} even at quality 100: it stays at 100 (SSIMULACRA 2 {}). This format can't do better with this image: try others with comparar_formatos, or sin_perdida",
             coma(objetivo as f64, 0),
             coma(h.nota, 1)
         )
@@ -224,11 +257,15 @@ fn linea_hallada(h: &Hallada, objetivo: f32) -> String {
 fn linea_medidas(m: &Medidas) -> String {
     let nota = match m.ssimulacra2 {
         Some(n) => format!("SSIMULACRA 2 {} ({})", coma(n, 1), banda(n)),
-        None => "SSIMULACRA 2: la imagen es menor de 8×8".into(),
+        None => trs!(
+            "SSIMULACRA 2: la imagen es menor de 8×8",
+            "SSIMULACRA 2: the image is smaller than 8×8"
+        )
+        .into(),
     };
     let psnr = match m.psnr {
         Some(p) => format!("PSNR {} dB", coma(p, 1)),
-        None => "PSNR ∞ (idénticas)".into(),
+        None => trs!("PSNR ∞ (idénticas)", "PSNR ∞ (identical)").into(),
     };
     format!("{nota} · {psnr} · SSIM {}", coma(m.ssim, 4))
 }
@@ -261,13 +298,16 @@ pub fn analizar_imagen(cx: &Contexto, e: EntradaAnalizar) -> Hecho<Respuesta> {
     if ruta.is_dir() {
         let r = apolo_servicio::recoger_lote(&[ruta.display().to_string()]);
         let mut texto = format!(
-            "{} · carpeta con {} {} · {}",
+            "{} · {} · {}",
             ruta.display(),
-            r.imagenes,
             if r.imagenes == 1 {
-                "imagen"
+                trs!("carpeta con 1 imagen", "folder with 1 image").to_string()
             } else {
-                "imágenes"
+                tr!(
+                    "carpeta con {} imágenes",
+                    "folder with {} images",
+                    r.imagenes
+                )
             },
             peso(r.bytes)
         );
@@ -275,9 +315,13 @@ pub fn analizar_imagen(cx: &Contexto, e: EntradaAnalizar) -> Hecho<Respuesta> {
             texto.push_str(&format!("\n  {m}"));
         }
         if r.imagenes > r.muestra.len() {
-            texto.push_str(&format!("\n  … y {} más", r.imagenes - r.muestra.len()));
+            let mas = r.imagenes - r.muestra.len();
+            texto.push_str(&tr!("\n  … y {mas} más", "\n  … and {mas} more"));
         }
-        texto.push_str("\nPara convertirlas: empezar_lote.");
+        texto.push_str(trs!(
+            "\nPara convertirlas: empezar_lote.",
+            "\nTo convert them: empezar_lote."
+        ));
         return Ok(Respuesta::nueva(texto, &r));
     }
     let a = abrir(cx, &e.ruta)?;
@@ -296,17 +340,18 @@ pub fn analizar_imagen(cx: &Contexto, e: EntradaAnalizar) -> Hecho<Respuesta> {
         coma(mp, 1),
         peso(i.bytes),
         if i.alfa {
-            "con transparencia"
+            trs!("con transparencia", "with transparency")
         } else {
-            "sin transparencia"
+            trs!("sin transparencia", "no transparency")
         }
     );
     if !metadatos.is_empty() {
         texto.push_str(&format!(" · {}", metadatos.join(", ")));
     }
     if i.orientacion != 1 {
-        texto.push_str(&format!(
+        texto.push_str(&tr!(
             "\nOrientación EXIF {}: se ve girada si no se endereza (optimizar_imagen la endereza por defecto).",
+            "\nEXIF orientation {}: it looks rotated unless auto-rotated (optimizar_imagen auto-rotates it by default).",
             i.orientacion
         ));
     }
@@ -379,14 +424,18 @@ fn destino(a: &Abierta, salida: Option<&str>, formato: FormatoSalida) -> Hecho<P
     if !vale {
         return Err(ErrorMcp::nuevo(
             "extension_no_cuadra",
-            format!(
+            tr!(
                 "«{}» no tiene la extensión de {} (.{}).",
+                "“{}” doesn't have the {} extension (.{}).",
                 p.display(),
                 formato.nombre(),
                 formato.extension()
             ),
         )
-        .con_pista("Cambia la extensión, o pasa solo la carpeta en salida."));
+        .con_pista(trs!(
+            "Cambia la extensión, o pasa solo la carpeta en salida.",
+            "Change the extension, or pass only the folder in salida."
+        )));
     }
     Ok(p)
 }
@@ -409,7 +458,7 @@ pub fn optimizar_imagen(cx: &Contexto, e: EntradaOptimizar, s: &Seguimiento) -> 
     let v = cx
         .servicio
         .codificar_con(id, &ajuste, 0, 1, &avisar)
-        .map_err(|f| tamano_cambia(ErrorMcp::from(f)))?;
+        .map_err(|f| tamano_cambia(&ajuste, ErrorMcp::from(f)))?;
     let bytes = cx.servicio.bytes_finales(id, &ajuste, 0)?;
     let medidas = if e.medir {
         Some(cx.servicio.medir(id, 0, 1)?)
@@ -451,16 +500,25 @@ pub fn optimizar_imagen(cx: &Contexto, e: EntradaOptimizar, s: &Seguimiento) -> 
         texto.push_str(&format!("\n{}", linea_medidas(m)));
     }
     match (&orden, v.motivo) {
-        (Some(o), _) => texto.push_str(&format!("\nOrden equivalente: {o}")),
-        (None, Some(m)) => texto.push_str(&format!(
-            "\nSin orden equivalente: {}.",
-            texto_motivo(m, v.herramienta, a.info.formato, &ajuste.proceso)
+        (Some(o), _) => texto.push_str(&tr!(
+            "\nOrden equivalente: {o}",
+            "\nEquivalent command: {o}"
         )),
+        (None, Some(m)) => {
+            let motivo = texto_motivo(m, v.herramienta, a.info.formato, &ajuste.proceso);
+            texto.push_str(&tr!(
+                "\nSin orden equivalente: {motivo}.",
+                "\nNo equivalent command: {motivo}."
+            ))
+        }
         _ => {}
     }
     let mas_pesado = v.bytes as u64 > total;
     if mas_pesado {
-        texto.push_str("\nAviso: pesa más que el original (se ha guardado igual).");
+        texto.push_str(trs!(
+            "\nAviso: pesa más que el original (se ha guardado igual).",
+            "\nNote: it weighs more than the original (it has been saved anyway)."
+        ));
     }
     let datos = DatosOptimizar {
         entrada: a.ruta.display().to_string(),
@@ -496,18 +554,34 @@ fn recorte_cabe(info: &InfoImagen, a: &Ajuste) -> Hecho<()> {
     if r.x >= w || r.y >= h {
         return Err(ErrorMcp::nuevo(
             "recorte_fuera",
-            format!("El recorte empieza en {},{}, fuera de la imagen ({w}×{h}).", r.x, r.y),
+            tr!(
+                "El recorte empieza en {},{}, fuera de la imagen ({w}×{h}).",
+                "The crop starts at {},{}, outside the image ({w}×{h}).",
+                r.x,
+                r.y
+            ),
         )
-        .con_pista("x tiene que ser menor que el ancho e y menor que el alto (de la imagen ya enderezada)."));
+        .con_pista(trs!(
+            "x tiene que ser menor que el ancho e y menor que el alto (de la imagen ya enderezada).",
+            "x has to be less than the width and y less than the height (of the already auto-rotated image)."
+        )));
     }
     Ok(())
 }
 
-/// Buscar una nota con `-resize` de cwebp no se puede: se dice cómo sí.
-fn tamano_cambia(e: ErrorMcp) -> ErrorMcp {
-    if e.mensaje.contains("cambia el tamaño") {
-        ErrorMcp::nuevo("tamano_cambia", e.mensaje)
-            .con_pista("Redimensiona con ancho o alto, no con -resize en orden.")
+/// Buscar una nota con `-resize` o `-crop` de cwebp no se puede: se dice cómo
+/// sí. Sin mirar el texto del error, que depende del idioma: si el ajuste
+/// busca una nota y cwebp cambia el tamaño, el fallo es ese (el núcleo no deja
+/// buscarla si la salida no mide lo mismo que la referencia, salida.rs). Solo
+/// las opciones de cwebp cambian el tamaño; las de los demás, no.
+fn tamano_cambia(ajuste: &Ajuste, e: ErrorMcp) -> ErrorMcp {
+    let cambia = ajuste.formato == FormatoSalida::Webp
+        && (ajuste.webp.redimension.is_some() || ajuste.webp.recorte.is_some());
+    if e.error == "fallo" && ajuste.objetivo.is_some() && cambia {
+        ErrorMcp::nuevo("tamano_cambia", e.mensaje).con_pista(trs!(
+            "Redimensiona con ancho o alto, no con -resize en orden.",
+            "Resize with ancho or alto, not with -resize in orden."
+        ))
     } else {
         e
     }
@@ -589,10 +663,17 @@ pub fn comparar_formatos(cx: &Contexto, e: EntradaComparar, s: &Seguimiento) -> 
         .clone()
         .unwrap_or_else(|| vec![FormatoMcp::Webp, FormatoMcp::Avif, FormatoMcp::Jpeg]);
     if formatos.is_empty() {
-        return Err(
-            ErrorMcp::nuevo("formatos_vacios", "No hay formatos que comparar.")
-                .con_pista("Quita formatos (webp, avif y jpeg) o da al menos uno."),
-        );
+        return Err(ErrorMcp::nuevo(
+            "formatos_vacios",
+            trs!(
+                "No hay formatos que comparar.",
+                "There are no formats to compare."
+            ),
+        )
+        .con_pista(trs!(
+            "Quita formatos (webp, avif y jpeg) o da al menos uno.",
+            "Remove formatos (webp, avif and jpeg) or give at least one."
+        )));
     }
     let objetivo = e.nota_objetivo.unwrap_or(NOTA_POR_DEFECTO);
     let a = abrir(cx, &e.ruta)?;
@@ -634,7 +715,7 @@ pub fn comparar_formatos(cx: &Contexto, e: EntradaComparar, s: &Seguimiento) -> 
         let v = cx
             .servicio
             .codificar_con(id, &ajuste, lado, 1, &avisar)
-            .map_err(|f| tamano_cambia(ErrorMcp::from(f)))?;
+            .map_err(|f| tamano_cambia(&ajuste, ErrorMcp::from(f)))?;
         let nota = match v.hallada {
             Some(h) => Some(h.nota),
             None => cx.servicio.medir(id, lado, 1)?.ssimulacra2,
@@ -673,8 +754,9 @@ pub fn comparar_formatos(cx: &Contexto, e: EntradaComparar, s: &Seguimiento) -> 
             guardados.push(escribir_sin_pisar(&d, &bytes)?.display().to_string());
         }
     }
-    let mut texto = format!(
+    let mut texto = tr!(
         "{} ({}) a la nota {}:",
+        "{} ({}) at score {}:",
         a.ruta.display(),
         peso(a.info.bytes),
         coma(objetivo as f64, 0)
@@ -687,17 +769,20 @@ pub fn comparar_formatos(cx: &Contexto, e: EntradaComparar, s: &Seguimiento) -> 
             peso(c.bytes),
             ahorro(a.info.bytes, c.bytes),
             c.nota
-                .map(|n| format!("nota {}", coma(n, 1)))
-                .unwrap_or_else(|| "sin nota".into()),
+                .map(|n| {
+                    let n = coma(n, 1);
+                    tr!("nota {n}", "score {n}")
+                })
+                .unwrap_or_else(|| trs!("sin nota", "no score").into()),
             match (c.calidad, c.alcanzada) {
-                (Some(q), true) => format!(" · calidad {q}"),
-                (_, false) => " · no llega".into(),
+                (Some(q), true) => tr!(" · calidad {q}", " · quality {q}"),
+                (_, false) => trs!(" · no llega", " · doesn't reach it").into(),
                 (None, true) => String::new(),
             }
         ));
     }
     for g in &guardados {
-        texto.push_str(&format!("\nGuardado: {g}"));
+        texto.push_str(&tr!("\nGuardado: {g}", "\nSaved: {g}"));
     }
     let datos = DatosComparar {
         entrada: a.ruta.display().to_string(),
@@ -737,9 +822,15 @@ fn par(original: &Path, resultado: &Path) -> Hecho<(u32, u32, Vec<u8>, Vec<u8>)>
     }
     Err(ErrorMcp::nuevo(
         "tamano_distinto",
-        format!("No miden lo mismo: {w}×{h} y {rw}×{rh}."),
+        tr!(
+            "No miden lo mismo: {w}×{h} y {rw}×{rh}.",
+            "They aren't the same size: {w}×{h} and {rw}×{rh}."
+        ),
     )
-    .con_pista("Si se redimensionó, mide con optimizar_imagen y medir: true, que compara con lo que recibió el codificador."))
+    .con_pista(trs!(
+        "Si se redimensionó, mide con optimizar_imagen y medir: true, que compara con lo que recibió el codificador.",
+        "If it was resized, measure with optimizar_imagen and medir: true, which compares with what the encoder received."
+    )))
 }
 
 pub fn medir_calidad(cx: &Contexto, e: EntradaMedir) -> Hecho<Respuesta> {
@@ -749,8 +840,9 @@ pub fn medir_calidad(cx: &Contexto, e: EntradaMedir) -> Hecho<Respuesta> {
         let _turno = cx.turno();
         medir::medir(&a, &b, w, h)?
     };
-    let texto = format!(
+    let texto = tr!(
         "{} frente a {}:\n{}",
+        "{} against {}:\n{}",
         r.display(),
         o.display(),
         linea_medidas(&m)
@@ -842,9 +934,15 @@ pub fn ver_imagen(cx: &Contexto, e: EntradaVer) -> Hecho<Respuesta> {
         {
             return Err(ErrorMcp::nuevo(
                 "zona_fuera",
-                format!("La zona se sale de la imagen ({w}×{h})."),
+                tr!(
+                    "La zona se sale de la imagen ({w}×{h}).",
+                    "The area goes outside the image ({w}×{h})."
+                ),
             )
-            .con_pista("x + ancho y y + alto no pueden pasar de las medidas de la imagen."));
+            .con_pista(trs!(
+                "x + ancho y y + alto no pueden pasar de las medidas de la imagen.",
+                "x + ancho and y + alto can't go beyond the image's dimensions."
+            )));
         }
         let mut recorte = Vec::with_capacity((z.ancho * z.alto * 4) as usize);
         for fila in z.y..z.y + z.alto {
@@ -912,18 +1010,31 @@ pub fn ver_imagen(cx: &Contexto, e: EntradaVer) -> Hecho<Respuesta> {
             lado = lado * 2 / 3;
             continue;
         }
-        let que = if e.diferencias_con.is_some() {
-            "Mapa de diferencias de"
+        let zona = e
+            .zona
+            .map(|z| {
+                tr!(
+                    ", zona {}×{} en {},{}",
+                    ", area {}×{} at {},{}",
+                    z.ancho,
+                    z.alto,
+                    z.x,
+                    z.y
+                )
+            })
+            .unwrap_or_default();
+        let r = ruta.display();
+        let texto = if e.diferencias_con.is_some() {
+            tr!(
+                "Mapa de diferencias de {r} a {vw}×{vh} (original {ow}×{oh}{zona}).",
+                "Difference map of {r} at {vw}×{vh} (original {ow}×{oh}{zona})."
+            )
         } else {
-            "Vista de"
+            tr!(
+                "Vista de {r} a {vw}×{vh} (original {ow}×{oh}{zona}).",
+                "View of {r} at {vw}×{vh} (original {ow}×{oh}{zona})."
+            )
         };
-        let texto = format!(
-            "{que} {} a {vw}×{vh} (original {ow}×{oh}{}).",
-            ruta.display(),
-            e.zona
-                .map(|z| format!(", zona {}×{} en {},{}", z.ancho, z.alto, z.x, z.y))
-                .unwrap_or_default()
-        );
         #[derive(Serialize)]
         struct Datos {
             ruta: String,
@@ -1010,8 +1121,14 @@ fn id_lote(texto: &str) -> Hecho<u64> {
         .strip_prefix("l-")
         .and_then(|n| n.parse().ok())
         .ok_or_else(|| {
-            ErrorMcp::nuevo("lote_no_existe", format!("«{texto}» no es un lote."))
-                .con_pista("El id lo da empezar_lote, como «l-3».")
+            ErrorMcp::nuevo(
+                "lote_no_existe",
+                tr!("«{texto}» no es un lote.", "“{texto}” isn't a batch."),
+            )
+            .con_pista(trs!(
+                "El id lo da empezar_lote, como «l-3».",
+                "The id comes from empezar_lote, like “l-3”."
+            ))
         })
 }
 
@@ -1024,17 +1141,29 @@ pub fn empezar_lote(cx: &Contexto, e: EntradaLote) -> Hecho<Respuesta> {
     {
         return Err(ErrorMcp::nuevo(
             "lote_en_marcha",
-            format!("Ya hay un lote en marcha: l-{id}."),
+            tr!(
+                "Ya hay un lote en marcha: l-{id}.",
+                "There is already a batch running: l-{id}."
+            ),
         )
-        .con_pista("Espera con ver_lote, o páralo con cancelar_lote."));
+        .con_pista(trs!(
+            "Espera con ver_lote, o páralo con cancelar_lote.",
+            "Wait with ver_lote, or stop it with cancelar_lote."
+        )));
     }
     let mut rutas = Vec::new();
     for t in &e.entradas {
         rutas.push(existe(t)?);
     }
     if rutas.is_empty() {
-        return Err(ErrorMcp::nuevo("sin_imagenes", "No hay entradas.")
-            .con_pista("Pasa en entradas carpetas o imágenes."));
+        return Err(ErrorMcp::nuevo(
+            "sin_imagenes",
+            trs!("No hay entradas.", "There are no inputs."),
+        )
+        .con_pista(trs!(
+            "Pasa en entradas carpetas o imágenes.",
+            "Pass folders or images in entradas."
+        )));
     }
     let formatos: Vec<Option<FormatoMcp>> = match &e.formatos {
         Some(v) if !v.is_empty() => v.iter().map(|f| Some(*f)).collect(),
@@ -1043,9 +1172,15 @@ pub fn empezar_lote(cx: &Contexto, e: EntradaLote) -> Hecho<Respuesta> {
     if formatos.len() > 1 && e.orden.is_some() {
         return Err(ErrorMcp::nuevo(
             "orden_con_varios_formatos",
-            "Una orden es de una herramienta: no vale para varios formatos.",
+            trs!(
+                "Una orden es de una herramienta: no vale para varios formatos.",
+                "A command belongs to one tool: it isn't valid for several formats."
+            ),
         )
-        .con_pista("Quita orden, o deja un solo formato."));
+        .con_pista(trs!(
+            "Quita orden, o deja un solo formato.",
+            "Remove orden, or keep a single format."
+        )));
     }
     let presets = cx.servicio.presets();
     let mut ajustes = Vec::new();
@@ -1072,8 +1207,17 @@ pub fn empezar_lote(cx: &Contexto, e: EntradaLote) -> Hecho<Respuesta> {
     let salida = match &e.salida {
         Some(s) => resolver(s)?,
         None => salida_sugerida(&rutas, &sufijo(&ajustes)).ok_or_else(|| {
-            ErrorMcp::nuevo("sin_salida", "No se puede proponer una carpeta de salida.")
-                .con_pista("Pasa la carpeta en salida.")
+            ErrorMcp::nuevo(
+                "sin_salida",
+                trs!(
+                    "No se puede proponer una carpeta de salida.",
+                    "No output folder can be suggested."
+                ),
+            )
+            .con_pista(trs!(
+                "Pasa la carpeta en salida.",
+                "Pass the folder in salida."
+            ))
         })?,
     };
     let entradas: Vec<String> = rutas.iter().map(|r| r.display().to_string()).collect();
@@ -1087,28 +1231,34 @@ pub fn empezar_lote(cx: &Contexto, e: EntradaLote) -> Hecho<Respuesta> {
             &salida.display().to_string(),
         )
         .map_err(|f| {
-            if f.mensaje.contains("No hay imágenes") {
-                ErrorMcp::nuevo("sin_imagenes", f.mensaje)
-                    .con_pista("analizar_imagen sobre la carpeta dice qué hay.")
+            // Sin mirar el texto del fallo, que depende del idioma: se mira si
+            // de verdad no hay imágenes, como lo mira el servicio (sin contar
+            // las de la carpeta de salida).
+            if !f.cancelado && lote::recoger(&rutas, Some(&salida)).is_empty() {
+                ErrorMcp::nuevo("sin_imagenes", f.mensaje).con_pista(trs!(
+                    "analizar_imagen sobre la carpeta dice qué hay.",
+                    "analizar_imagen on the folder says what's in it."
+                ))
             } else {
                 ErrorMcp::from(f)
             }
         })?;
     *cx.lote.lock().unwrap_or_else(|x| x.into_inner()) = Some(empezado.id);
-    let mut texto = format!(
-        "Lote l-{} empezado: {} {} → {}\nPregunta cómo va con ver_lote(id: \"l-{}\", esperar_segundos: 20).",
-        empezado.id,
-        empezado.total,
-        if empezado.total == 1 {
-            "imagen"
-        } else {
-            "imágenes"
-        },
-        empezado.salida,
-        empezado.id
+    let (id, total, destino) = (empezado.id, empezado.total, &empezado.salida);
+    let cuantas = if total == 1 {
+        trs!("1 imagen", "1 image").to_string()
+    } else {
+        tr!("{total} imágenes", "{total} images")
+    };
+    let mut texto = tr!(
+        "Lote l-{id} empezado: {cuantas} → {destino}\nPregunta cómo va con ver_lote(id: \"l-{id}\", esperar_segundos: 20).",
+        "Batch l-{id} started: {cuantas} → {destino}\nAsk how it's going with ver_lote(id: \"l-{id}\", esperar_segundos: 20)."
     );
     if ajustes.iter().any(|a| a.objetivo.is_some()) {
-        texto.push_str(" Buscando la nota, cada imagen hace unas 7 pruebas y van varias a la vez: las primeras pueden tardar un par de minutos en salir.");
+        texto.push_str(trs!(
+            " Buscando la nota, cada imagen hace unas 7 pruebas y van varias a la vez: las primeras pueden tardar un par de minutos en salir.",
+            " Searching for the score, each image takes about 7 trials and several run at once: the first ones may take a couple of minutes to come out."
+        ));
     }
     #[derive(Serialize)]
     struct Datos {
@@ -1145,8 +1295,14 @@ pub fn ver_lote(cx: &Contexto, e: EntradaVerLote) -> Hecho<Respuesta> {
     let limite = Instant::now() + Duration::from_secs(e.esperar_segundos.min(25));
     let st = loop {
         let st = cx.servicio.estado_lote(id, e.desde).map_err(|_| {
-            ErrorMcp::nuevo("lote_no_existe", format!("No hay ningún lote {}.", e.id))
-                .con_pista("Los lotes viven mientras el servidor sigue abierto; empieza otro con empezar_lote.")
+            ErrorMcp::nuevo(
+                "lote_no_existe",
+                tr!("No hay ningún lote {}.", "There is no batch {}.", e.id),
+            )
+            .con_pista(trs!(
+                "Los lotes viven mientras el servidor sigue abierto; empieza otro con empezar_lote.",
+                "Batches live while the server stays open; start another with empezar_lote."
+            ))
         })?;
         if !st.nuevas.is_empty() || st.terminado || Instant::now() >= limite {
             break st;
@@ -1158,11 +1314,11 @@ pub fn ver_lote(cx: &Contexto, e: EntradaVerLote) -> Hecho<Respuesta> {
 
 fn respuesta_lote(id: u64, desde: usize, st: apolo_servicio::EstadoLote) -> Respuesta {
     let estado = if st.cancelado {
-        "cancelado"
+        trs!("cancelado", "cancelled")
     } else if st.terminado {
-        "terminado"
+        trs!("terminado", "finished")
     } else {
-        "en marcha"
+        trs!("en marcha", "running")
     };
     let mut texto = format!(
         "l-{id}: {}/{} · {} · {estado}",
@@ -1182,18 +1338,20 @@ fn respuesta_lote(id: u64, desde: usize, st: apolo_servicio::EstadoLote) -> Resp
                     ahorro(f.bytes_entrada, s.bytes)
                 ));
                 if let Some(q) = s.calidad {
-                    texto.push_str(&format!(" · calidad {q}"));
+                    texto.push_str(&tr!(" · calidad {q}", " · quality {q}"));
                 }
                 if let Some(n) = s.nota {
-                    texto.push_str(&format!(" · nota {}", coma(n, 1)));
+                    let n = coma(n, 1);
+                    texto.push_str(&tr!(" · nota {n}", " · score {n}"));
                 }
             }
             (None, None) => {}
         }
     }
     if let Some(r) = &st.resumen {
-        texto.push_str(&format!(
+        texto.push_str(&tr!(
             "\nResumen: {} convertidas, {} con error · {} → {} ({})",
+            "\nSummary: {} converted, {} with errors · {} → {} ({})",
             r.convertidas,
             r.fallidas,
             peso(r.bytes_entrada),
@@ -1201,14 +1359,16 @@ fn respuesta_lote(id: u64, desde: usize, st: apolo_servicio::EstadoLote) -> Resp
             ahorro(r.bytes_entrada, r.bytes_salida)
         ));
         if r.mayores > 0 {
-            texto.push_str(&format!(
+            texto.push_str(&tr!(
                 "\n{} pesan más que su original (se han guardado igual).",
+                "\n{} weigh more than their original (they have been saved anyway).",
                 r.mayores
             ));
         }
         if let Some(m) = r.nota_media {
-            texto.push_str(&format!(
+            texto.push_str(&tr!(
                 "\nNota media (SSIMULACRA 2): {} ({})",
+                "\nAverage score (SSIMULACRA 2): {} ({})",
                 coma(m, 1),
                 banda(m)
             ));
@@ -1241,8 +1401,14 @@ pub struct EntradaCancelarLote {
 pub fn cancelar_lote(cx: &Contexto, e: EntradaCancelarLote) -> Hecho<Respuesta> {
     let id = id_lote(&e.id)?;
     cx.servicio.estado_lote(id, usize::MAX).map_err(|_| {
-        ErrorMcp::nuevo("lote_no_existe", format!("No hay ningún lote {}.", e.id))
-            .con_pista("El id lo da empezar_lote, como «l-3».")
+        ErrorMcp::nuevo(
+            "lote_no_existe",
+            tr!("No hay ningún lote {}.", "There is no batch {}.", e.id),
+        )
+        .con_pista(trs!(
+            "El id lo da empezar_lote, como «l-3».",
+            "The id comes from empezar_lote, like “l-3”."
+        ))
     })?;
     cx.servicio.cancelar_lote(id);
     // Lo que estuviera a medias se aborta enseguida; se espera un poco a que
@@ -1254,7 +1420,11 @@ pub fn cancelar_lote(cx: &Contexto, e: EntradaCancelarLote) -> Hecho<Respuesta> 
         st = cx.servicio.estado_lote(id, 0)?;
     }
     let mut r = respuesta_lote(id, 0, st);
-    r.texto = format!("Cancelado: lo ya convertido se queda.\n{}", r.texto);
+    r.texto = tr!(
+        "Cancelado: lo ya convertido se queda.\n{}",
+        "Cancelled: what has already been converted stays.\n{}",
+        r.texto
+    );
     Ok(r)
 }
 
@@ -1276,23 +1446,34 @@ struct DatosPreset {
 fn texto_proceso(p: &Proceso) -> Option<String> {
     let mut v = Vec::new();
     if let Some(r) = &p.recorte {
-        v.push(format!("recorta {}×{} en {},{}", r.ancho, r.alto, r.x, r.y));
+        v.push(tr!(
+            "recorta {}×{} en {},{}",
+            "crops {}×{} at {},{}",
+            r.ancho,
+            r.alto,
+            r.x,
+            r.y
+        ));
     }
     if let Some(r) = &p.redimension {
         v.push(match (r.ancho, r.alto) {
-            (Some(a), Some(h)) => format!("redimensiona a {a}×{h} px"),
-            (Some(a), None) if r.solo_reducir => format!("ancho máx. {a} px"),
-            (None, Some(h)) if r.solo_reducir => format!("alto máx. {h} px"),
-            (Some(a), None) => format!("ancho {a} px"),
-            (None, Some(h)) => format!("alto {h} px"),
-            (None, None) => "redimensiona".into(),
+            (Some(a), Some(h)) => tr!("redimensiona a {a}×{h} px", "resizes to {a}×{h} px"),
+            (Some(a), None) if r.solo_reducir => tr!("ancho máx. {a} px", "max. width {a} px"),
+            (None, Some(h)) if r.solo_reducir => tr!("alto máx. {h} px", "max. height {h} px"),
+            (Some(a), None) => tr!("ancho {a} px", "width {a} px"),
+            (None, Some(h)) => tr!("alto {h} px", "height {h} px"),
+            (None, None) => trs!("redimensiona", "resizes").into(),
         });
     }
     if let Some(pa) = &p.paleta {
-        v.push(format!("paleta de {} colores", pa.colores));
+        v.push(tr!(
+            "paleta de {} colores",
+            "palette of {} colors",
+            pa.colores
+        ));
     }
     if !p.enderezar {
-        v.push("sin enderezar".into());
+        v.push(trs!("sin enderezar", "no auto-rotate").into());
     }
     (!v.is_empty()).then(|| v.join(" · "))
 }
@@ -1311,7 +1492,10 @@ pub fn listar_presets(cx: &Contexto) -> Hecho<Respuesta> {
     let lista: Vec<DatosPreset> = cx.servicio.presets().iter().map(datos_preset).collect();
     let carpeta = crate::rutas::con_casa(cx.servicio.carpeta_presets());
     let mut texto = if lista.is_empty() {
-        format!("No hay presets todavía ({carpeta}). Se crean con guardar_preset o en Apolo.")
+        tr!(
+            "No hay presets todavía ({carpeta}). Se crean con guardar_preset o en Apolo.",
+            "There are no presets yet ({carpeta}). They are created with guardar_preset or in Apolo."
+        )
     } else {
         format!("{} presets ({carpeta}):", lista.len())
     };
@@ -1323,7 +1507,8 @@ pub fn listar_presets(cx: &Contexto) -> Hecho<Respuesta> {
             p.orden
         ));
         if let Some(n) = p.nota_objetivo {
-            texto.push_str(&format!(" · nota objetivo {}", coma(n as f64, 0)));
+            let n = coma(n as f64, 0);
+            texto.push_str(&tr!(" · nota objetivo {n}", " · target score {n}"));
         }
         if let Some(pr) = &p.proceso {
             texto.push_str(&format!(" · {pr}"));
@@ -1354,10 +1539,11 @@ pub struct EntradaGuardarPreset {
 pub fn guardar_preset(cx: &Contexto, e: EntradaGuardarPreset) -> Hecho<Respuesta> {
     let nombre = e.nombre.trim().to_string();
     if nombre.is_empty() {
-        return Err(
-            ErrorMcp::nuevo("sin_nombre", "El preset necesita un nombre.")
-                .con_pista("Pasa nombre."),
-        );
+        return Err(ErrorMcp::nuevo(
+            "sin_nombre",
+            trs!("El preset necesita un nombre.", "The preset needs a name."),
+        )
+        .con_pista(trs!("Pasa nombre.", "Pass nombre.")));
     }
     let presets = cx.servicio.presets();
     let ya = presets
@@ -1371,9 +1557,15 @@ pub fn guardar_preset(cx: &Contexto, e: EntradaGuardarPreset) -> Hecho<Respuesta
     if ya {
         return Err(ErrorMcp::nuevo(
             "preset_existe",
-            format!("Ya hay un preset «{nombre}», y no se sobrescribe."),
+            tr!(
+                "Ya hay un preset «{nombre}», y no se sobrescribe.",
+                "There is already a preset “{nombre}”, and it isn't overwritten."
+            ),
         )
-        .con_pista("Elige otro nombre; para cambiarlo o borrarlo, en Apolo › Presets."));
+        .con_pista(trs!(
+            "Elige otro nombre; para cambiarlo o borrarlo, en Apolo › Presets.",
+            "Choose another name; to change or delete it, in Apolo › Presets."
+        )));
     }
     let mut ajuste = e.formato.ajuste(&presets, None, 1)?;
     ajuste.proceso.enderezar = e.formato.enderezar.unwrap_or(true);
@@ -1381,15 +1573,18 @@ pub fn guardar_preset(cx: &Contexto, e: EntradaGuardarPreset) -> Hecho<Respuesta
     cx.servicio.guardar_preset(&p)?;
     let d = datos_preset(&p);
     let detalle = [
-        d.nota_objetivo
-            .map(|n| format!(" · nota objetivo {}", coma(n as f64, 0))),
+        d.nota_objetivo.map(|n| {
+            let n = coma(n as f64, 0);
+            tr!(" · nota objetivo {n}", " · target score {n}")
+        }),
         d.proceso.as_ref().map(|pr| format!(" · {pr}")),
     ]
     .into_iter()
     .flatten()
     .collect::<String>();
-    let texto = format!(
+    let texto = tr!(
         "Preset «{}» guardado: {} · {}{detalle}\nSe usa en Apolo, en empezar_lote con preset, o con apolo {} -apolo_preset \"{}\".",
+        "Preset “{}” saved: {} · {}{detalle}\nIt's used in Apolo, in empezar_lote with preset, or with apolo {} -apolo_preset \"{}\".",
         d.nombre,
         d.formato.nombre(),
         d.orden,
@@ -1413,21 +1608,31 @@ pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
     let relevado_desde = std::env::var(RELEVADO_DESDE).ok();
     let del_paquete = std::env::var_os(DESDE_PAQUETE).is_some();
     let origen = match (&relevado_desde, del_paquete) {
-        (Some(v), _) => format!(
-            "La extensión de Claude Desktop (paquete {v}) ha cedido el turno a la aplicación instalada: se actualiza con ella. No hace falta actualizar ni reinstalar la extensión: su versión no importa mientras ceda el turno."
+        (Some(v), _) => tr!(
+            "La extensión de Claude Desktop (paquete {v}) ha cedido el turno a la aplicación instalada: se actualiza con ella. No hace falta actualizar ni reinstalar la extensión: su versión no importa mientras ceda el turno.",
+            "The Claude Desktop extension (package {v}) has handed over to the installed app: it updates with it. There's no need to update or reinstall the extension: its version doesn't matter as long as it hands over."
         ),
-        (None, true) => "Es la copia del paquete .mcpb y no se ha encontrado Apolo instalado: esta copia no se actualiza sola. Instalar Apolo lo arregla.".into(),
-        (None, false) => "Es el de la aplicación (o el de la línea de órdenes): se actualiza con ella.".into(),
+        (None, true) => trs!(
+            "Es la copia del paquete .mcpb y no se ha encontrado Apolo instalado: esta copia no se actualiza sola. Instalar Apolo lo arregla.",
+            "It's the copy from the .mcpb package and no installed Apolo was found: this copy doesn't update by itself. Installing Apolo fixes it."
+        )
+        .into(),
+        (None, false) => trs!(
+            "Es el de la aplicación (o el de la línea de órdenes): se actualiza con ella.",
+            "It's the app's (or the command line's): it updates with it."
+        )
+        .into(),
     };
     let motores = apolo_nucleo::motores();
-    let texto = format!(
-        "Apolo {version} · {ejecutable}\n{origen} Corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente (su nombre puede no ser el de la persona: es normal).\nMotores: {}\nPresets en {}, fuera de la aplicación: actualizar no los toca.",
-        motores
-            .iter()
-            .map(|m| format!("{} {}", m.nombre, m.version))
-            .collect::<Vec<_>>()
-            .join(", "),
-        crate::rutas::con_casa(cx.servicio.carpeta_presets())
+    let lista = motores
+        .iter()
+        .map(|m| format!("{} {}", m.nombre, m.version))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let carpeta = crate::rutas::con_casa(cx.servicio.carpeta_presets());
+    let texto = tr!(
+        "Apolo {version} · {ejecutable}\n{origen} Corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente (su nombre puede no ser el de la persona: es normal).\nMotores: {lista}\nPresets en {carpeta}, fuera de la aplicación: actualizar no los toca.",
+        "Apolo {version} · {ejecutable}\n{origen} It runs on the person's computer, under the system account in which the agent is open (its name may not be the person's: that's normal).\nEngines: {lista}\nPresets in {carpeta}, outside the app: updating doesn't touch them."
     );
     #[derive(Serialize)]
     struct Datos {

@@ -12,6 +12,7 @@
 //! gris, RGB y RGBA, sin orientación rara. Lo demás pasa por el crate `tiff`
 //! sin garantía de que los píxeles coincidan con los de libtiff (deuda.md).
 
+use crate::{tr, trs};
 use std::io::Cursor;
 
 use tiff::ColorType;
@@ -60,7 +61,12 @@ pub(super) fn leer(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
             .into_iter()
             .map(|x| ((x as u32 + 128) / 257) as u8)
             .collect(),
-        _ => return Err(Error::lectura(F, "profundidad no admitida")),
+        _ => {
+            return Err(Error::lectura(
+                F,
+                trs!("profundidad no admitida", "unsupported bit depth"),
+            ));
+        }
     };
     let mut rgba: Vec<u8> = match tipo {
         ColorType::Gray(_) => muestras.iter().flat_map(|&g| [g, g, g, 255]).collect(),
@@ -80,7 +86,10 @@ pub(super) fn leer(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
         otro => {
             return Err(Error::lectura(
                 F,
-                format!("tipo de color no admitido: {otro:?}"),
+                tr!(
+                    "tipo de color no admitido: {otro:?}",
+                    "unsupported color type: {otro:?}"
+                ),
             ));
         }
     };

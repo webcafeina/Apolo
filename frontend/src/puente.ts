@@ -8,6 +8,7 @@
 
 import { invoke } from "@tauri-apps/api/core";
 import type { Ajuste, FormatoSalida, OpcionesWebp, Preset } from "./estudio/opciones";
+import i18n, { type Idioma } from "./i18n";
 
 export interface Motor {
   nombre: string;
@@ -88,9 +89,11 @@ export interface Inicio {
   presets_cwebp: Preset[];
   carpeta_presets: string;
   version: string;
+  /** El idioma en que arranca: el de los ajustes, o el del sistema (ADR 0025). */
+  idioma: Idioma;
 }
 
-/** Un error de Rust, con su texto ya en español. */
+/** Un error de Rust, con su texto ya en el idioma de la interfaz (ADR 0025). */
 export interface Fallo {
   mensaje: string;
   cancelado: boolean;
@@ -137,11 +140,17 @@ export interface Ajustes {
   buscar_actualizaciones: boolean;
   /** Segundos Unix. */
   ultima_comprobacion: number | null;
+  /** «Idioma» en Ajustes › General (ADR 0025). */
+  idioma: PreferenciaIdioma;
 }
+
+export type PreferenciaIdioma = "sistema" | Idioma;
 
 export const ajustes = () => orden<Ajustes>("ajustes");
 export const buscarActualizaciones = (si: boolean) => orden<Ajustes>("buscar_actualizaciones", { si });
 /** Si toca preguntar a GitHub: una vez al día, o ya si `forzar` («Buscar ahora»). */
+/** Guarda el idioma y lo pone en Rust. Devuelve el que sale de verdad. */
+export const ponerIdioma = (idioma: PreferenciaIdioma) => orden<Idioma>("poner_idioma", { idioma });
 export const reservarComprobacion = (forzar: boolean) => orden<boolean>("reservar_comprobacion", { forzar });
 
 export const inicio = () => orden<Inicio>("inicio");
@@ -183,7 +192,7 @@ export async function abrirFichero(f: File): Promise<InfoImagen> {
 export async function elegirImagen(): Promise<string | File | null> {
   if (enTauri()) {
     const { open } = await import("@tauri-apps/plugin-dialog");
-    const r = await open({ multiple: false, filters: [{ name: "Imágenes", extensions: FORMATOS_ENTRADA }] });
+    const r = await open({ multiple: false, filters: [{ name: i18n.t("estudio.imagenes"), extensions: FORMATOS_ENTRADA }] });
     return typeof r === "string" ? r : null;
   }
   return new Promise((resolver) => {
@@ -363,7 +372,7 @@ export async function elegirEntradas(carpetas: boolean): Promise<string[]> {
   const r = await open(
     carpetas
       ? { multiple: true, directory: true }
-      : { multiple: true, filters: [{ name: "Imágenes", extensions: FORMATOS_ENTRADA }] },
+      : { multiple: true, filters: [{ name: i18n.t("estudio.imagenes"), extensions: FORMATOS_ENTRADA }] },
   );
   return r === null ? [] : Array.isArray(r) ? r : [r];
 }

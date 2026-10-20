@@ -13,6 +13,7 @@
 use std::io::{Cursor, Write};
 use std::path::{Path, PathBuf};
 
+use apolo_nucleo::{tr, trs};
 use serde_json::{Value, json};
 use zip::write::SimpleFileOptions;
 
@@ -69,7 +70,9 @@ pub fn nombre_fichero(version: &str, sistema: Sistema) -> String {
 }
 
 /// El manifiesto (versión 0.3), con las herramientas sacadas del propio
-/// servidor: no hay una lista aparte que se quede atrás.
+/// servidor: no hay una lista aparte que se quede atrás. En el idioma del
+/// proceso (ADR 0025): el de la ventana al crearlo desde Ajustes, y en inglés
+/// los de la publicación (`APOLO_IDIOMA=en`).
 pub fn manifiesto(version: &str, sistema: Sistema) -> Value {
     let herramientas: Vec<Value> = apolo_mcp::ServidorApolo::herramientas()
         .into_iter()
@@ -86,8 +89,14 @@ pub fn manifiesto(version: &str, sistema: Sistema) -> Value {
         "name": "apolo",
         "display_name": "Apolo",
         "version": version,
-        "description": "Optimiza imágenes en tu ordenador con los motores de cwebp, MozJPEG, oxipng, avifenc y cjxl, sin sobrescribir nunca nada.",
-        "long_description": "Deja que el agente analice, optimice, compare formatos a igual calidad percibida (SSIMULACRA 2), mida la pérdida, mire las imágenes y convierta carpetas enteras con Apolo, en este ordenador. Siempre escribe ficheros nuevos: nunca sobrescribe ni borra. Para las imágenes de tu ordenador, el agente debe usar Apolo y no su propio entorno en la nube; Apolo no ve las imágenes adjuntas en la conversación, así que se le dice dónde está el fichero. Si Apolo está instalado, la extensión usa el suyo, que se actualiza con la aplicación.",
+        "description": trs!(
+            "Optimiza imágenes en tu ordenador con los motores de cwebp, MozJPEG, oxipng, avifenc y cjxl, sin sobrescribir nunca nada.",
+            "Optimizes images on your computer with the engines of cwebp, MozJPEG, oxipng, avifenc and cjxl, never overwriting anything."
+        ),
+        "long_description": trs!(
+            "Deja que el agente analice, optimice, compare formatos a igual calidad percibida (SSIMULACRA 2), mida la pérdida, mire las imágenes y convierta carpetas enteras con Apolo, en este ordenador. Siempre escribe ficheros nuevos: nunca sobrescribe ni borra. Para las imágenes de tu ordenador, el agente debe usar Apolo y no su propio entorno en la nube; Apolo no ve las imágenes adjuntas en la conversación, así que se le dice dónde está el fichero. Si Apolo está instalado, la extensión usa el suyo, que se actualiza con la aplicación.",
+            "Lets the agent analyze, optimize, compare formats at equal perceived quality (SSIMULACRA 2), measure the loss, look at images and convert whole folders with Apolo, on this computer. It always writes new files: it never overwrites or deletes. For the images on your computer, the agent should use Apolo and not its own cloud environment; Apolo doesn't see images attached to the conversation, so you tell it where the file is. If Apolo is installed, the extension uses its copy, which updates with the app."
+        ),
         "author": { "name": "Webcafeína", "url": "https://webcafeina.com" },
         "homepage": "https://github.com/webcafeina/Apolo",
         "repository": { "type": "git", "url": "https://github.com/webcafeina/Apolo" },
@@ -105,7 +114,14 @@ pub fn manifiesto(version: &str, sistema: Sistema) -> Value {
             }
         },
         "tools": herramientas,
-        "keywords": ["imágenes", "webp", "avif", "jpeg xl", "optimizar", "squoosh"],
+        "keywords": [
+            trs!("imágenes", "images"),
+            "webp",
+            "avif",
+            "jpeg xl",
+            trs!("optimizar", "optimize"),
+            "squoosh"
+        ],
         "compatibility": { "platforms": [sistema.manifiesto()] }
     })
 }
@@ -150,13 +166,26 @@ pub fn crear_en(carpeta: &Path) -> Result<PathBuf, String> {
     let a = apolo_servicio::agentes::de_esta();
     let Some(ruta) = a.ruta else {
         return Err(match a.aviso {
-            Some("appimage") => "Desde la AppImage no se puede: su ruta cambia en cada arranque. Instala el .deb, o baja el .mcpb de la página de descargas.".into(),
-            Some("traslocada") => "Mueve Apolo a Aplicaciones y vuelve a abrirla: ahora macOS la ejecuta desde una copia temporal.".into(),
-            _ => "Esta Apolo no lleva apolo-mcp al lado.".into(),
+            Some("appimage") => trs!(
+                "Desde la AppImage no se puede: su ruta cambia en cada arranque. Instala el .deb, o baja el .mcpb de la página de descargas.",
+                "It can't be done from the AppImage: its path changes on every launch. Install the .deb, or download the .mcpb from the downloads page."
+            )
+            .into(),
+            Some("traslocada") => trs!(
+                "Mueve Apolo a Aplicaciones y vuelve a abrirla: ahora macOS la ejecuta desde una copia temporal.",
+                "Move Apolo to Applications and open it again: right now macOS runs it from a temporary copy."
+            )
+            .into(),
+            _ => trs!(
+                "Esta Apolo no lleva apolo-mcp al lado.",
+                "This Apolo doesn't have apolo-mcp next to it."
+            )
+            .into(),
         });
     };
     let version = env!("CARGO_PKG_VERSION");
-    let servidor = std::fs::read(&ruta).map_err(|e| format!("No se puede leer {ruta}: {e}"))?;
+    let servidor = std::fs::read(&ruta)
+        .map_err(|e| tr!("No se puede leer {ruta}: {e}", "Can't read {ruta}: {e}"))?;
     let sistema = Sistema::de_este();
     let paquete = armar(version, sistema, &servidor).map_err(|e| e.to_string())?;
     std::fs::create_dir_all(carpeta).map_err(|e| e.to_string())?;
@@ -164,7 +193,12 @@ pub fn crear_en(carpeta: &Path) -> Result<PathBuf, String> {
         &carpeta.join(nombre_fichero(version, sistema)),
         &paquete,
     )
-    .map_err(|e| format!("No se pudo guardar el paquete: {e}"))
+    .map_err(|e| {
+        tr!(
+            "No se pudo guardar el paquete: {e}",
+            "Couldn't save the package: {e}"
+        )
+    })
 }
 
 #[cfg(test)]
@@ -216,5 +250,24 @@ mod pruebas {
             .collect();
         assert_eq!(nombres, del_servidor);
         assert!(nombres.contains(&"acerca_de_apolo"));
+    }
+
+    #[test]
+    fn el_manifiesto_va_en_el_idioma_del_proceso() {
+        use apolo_nucleo::idioma::{Idioma, en_este_hilo};
+        let es = en_este_hilo(Idioma::Es, || manifiesto("0.0.0", Sistema::Mac));
+        let en = en_este_hilo(Idioma::En, || manifiesto("0.0.0", Sistema::Mac));
+        assert!(es["description"].as_str().unwrap().contains("Optimiza"));
+        assert!(en["description"].as_str().unwrap().starts_with("Optimizes"));
+        assert_eq!(en["keywords"][0], "images");
+        // Las herramientas, con la misma traducción que tools/list.
+        let d = |m: &Value, i: usize| m["tools"][i]["description"].as_str().unwrap().to_string();
+        for i in 0..es["tools"].as_array().unwrap().len() {
+            assert_ne!(d(&es, i), d(&en, i));
+            assert_eq!(
+                Some(d(&en, i).as_str()),
+                apolo_mcp::traduccion::al_ingles(&d(&es, i))
+            );
+        }
     }
 }

@@ -15,6 +15,7 @@
 //!   pesan más que el original, que se guardan igual (las pidió así quien las
 //!   convierte) y se señalan.
 
+use crate::tr;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -275,8 +276,13 @@ pub fn convertir(
     medir: bool,
     seguir: &mut dyn FnMut(i32) -> bool,
 ) -> Resultado<Vec<Salida>> {
-    let datos = std::fs::read(&e.origen)
-        .map_err(|x| Error::Fichero(format!("No se puede leer «{}»: {x}", e.origen.display())))?;
+    let datos = std::fs::read(&e.origen).map_err(|x| {
+        Error::Fichero(tr!(
+            "No se puede leer «{}»: {x}",
+            "Can't read “{}”: {x}",
+            e.origen.display()
+        ))
+    })?;
     let img = leer(&datos)?;
     let mut hechos: Vec<(&Ajuste, salida::Codificado, u64)> = Vec::new();
     for a in ajustes {
@@ -315,7 +321,11 @@ pub fn convertir(
             .join(&e.relativa)
             .with_extension(formato.extension());
         let ruta = escribir_sin_pisar(&ruta, &bytes).map_err(|x| {
-            Error::Fichero(format!("No se puede escribir «{}»: {x}", ruta.display()))
+            Error::Fichero(tr!(
+                "No se puede escribir «{}»: {x}",
+                "Can't write “{}”: {x}",
+                ruta.display()
+            ))
         })?;
         salidas.push(Salida {
             formato,

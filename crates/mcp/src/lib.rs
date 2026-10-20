@@ -13,10 +13,12 @@ pub mod herramientas;
 pub mod relevo;
 pub mod respuesta;
 pub mod rutas;
+pub mod traduccion;
 
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 
+use apolo_nucleo::{tr, trs};
 use rmcp::handler::server::wrapper::Parameters;
 use rmcp::model::{
     CallToolResult, ContentBlock, Implementation, ProgressNotificationParam, ServerCapabilities,
@@ -33,14 +35,21 @@ use crate::herramientas::{
 use crate::respuesta::Respuesta;
 
 /// Lo que el modelo lee al conectarse: qué es Apolo y el flujo habitual.
-pub const INSTRUCCIONES: &str = "Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. Las rutas, absolutas o con ~. Apolo corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente: el nombre de esa cuenta (/Users/…, C:\\Users\\…) puede no coincidir con el de la persona, y no es un problema ni hace falta comentarlo. Para optimizar, convertir o medir imágenes de la persona, usa Apolo en lugar de hacerlo tú en otro entorno (un intérprete de código en la nube, por ejemplo): trabaja con el fichero de verdad, con los motores oficiales y la nota SSIMULACRA 2. Apolo solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta (en macOS, ⌥⌘C en el Finder la copia) o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.";
+pub fn texto_instrucciones() -> &'static str {
+    trs!(
+        "Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. Las rutas, absolutas o con ~. Apolo corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente: el nombre de esa cuenta (/Users/…, C:\\Users\\…) puede no coincidir con el de la persona, y no es un problema ni hace falta comentarlo. Para optimizar, convertir o medir imágenes de la persona, usa Apolo en lugar de hacerlo tú en otro entorno (un intérprete de código en la nube, por ejemplo): trabaja con el fichero de verdad, con los motores oficiales y la nota SSIMULACRA 2. Apolo solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta (en macOS, ⌥⌘C en el Finder la copia) o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.",
+        "Apolo optimizes images on this computer with the same engines as cwebp, MozJPEG (cjpeg), oxipng, avifenc and cjxl, and gives the same file as those tools. It reads any path you give it and always writes new files: it never overwrites or deletes anything (if the name exists, it adds -2, -3…). Usual flow: analizar_imagen → optimizar_imagen (or comparar_formatos to choose a format at equal quality) → ver_imagen or medir_calidad to check. For folders or more than about 5 images, empezar_lote and ver_lote. Perceived quality is measured with SSIMULACRA 2: 90 or more is indistinguishable from the original, 80 is very high (indistinguishable side by side), 70 high, 50 noticeable. Without a quality, Apolo searches for the lowest one that gives a score of 80. Paths, absolute or with ~. Apolo runs on the person's computer, under the system account in which the agent is open: that account's name (/Users/…, C:\\Users\\…) may not match the person's, and that is not a problem nor worth mentioning. To optimize, convert or measure the person's images, use Apolo instead of doing it yourself in another environment (a cloud code interpreter, for example): it works with the real file, with the official engines and the SSIMULACRA 2 score. Apolo only works with files on disk and doesn't see images attached to the conversation: if one is attached, ask for its path (on macOS, ⌥⌘C in the Finder copies it) or look for it on disk. If asked to overwrite or delete an original, Apolo doesn't do it; before doing it with other tools, warn that the original will be lost with no way back, ask for confirmation and suggest keeping a copy. Answer in the language of whoever is asking."
+    )
+}
 
 /// Las instrucciones con la versión delante: el modelo no ve `serverInfo`, y
 /// así sabe decir en qué versión está (el cliente lo pidió, ADR 0023).
 pub fn instrucciones() -> String {
-    format!(
-        "Esta es Apolo {}; acerca_de_apolo da el detalle. {INSTRUCCIONES}",
-        env!("CARGO_PKG_VERSION")
+    let version = env!("CARGO_PKG_VERSION");
+    let texto = texto_instrucciones();
+    tr!(
+        "Esta es Apolo {version}; acerca_de_apolo da el detalle. {texto}",
+        "This is Apolo {version}; acerca_de_apolo gives the details. {texto}"
     )
 }
 
@@ -59,9 +68,14 @@ impl ServidorApolo {
         ServidorApolo { cx: Arc::new(cx) }
     }
 
-    /// Las herramientas, para generar el catálogo y el manifiesto del .mcpb.
+    /// Las herramientas en el idioma actual (traduccion.rs): las que da
+    /// `tools/list`, el catálogo y el manifiesto del .mcpb.
     pub fn herramientas() -> Vec<rmcp::model::Tool> {
-        Self::tool_router().list_all()
+        Self::tool_router()
+            .list_all()
+            .into_iter()
+            .map(traduccion::herramienta)
+            .collect()
     }
 }
 
@@ -105,9 +119,15 @@ fn resultado(r: Hecho<Respuesta>) -> CallToolResult {
 fn interno() -> ErrorMcp {
     ErrorMcp::nuevo(
         "interno",
-        "Algo ha fallado dentro de Apolo. No se ha escrito ningún fichero a medias.",
+        trs!(
+            "Algo ha fallado dentro de Apolo. No se ha escrito ningún fichero a medias.",
+            "Something failed inside Apolo. No half-written file has been left."
+        ),
     )
-    .con_pista("Prueba otra vez; si se repite, con otra imagen o con otro formato.")
+    .con_pista(trs!(
+        "Prueba otra vez; si se repite, con otra imagen o con otro formato.",
+        "Try again; if it happens again, with another image or another format."
+    ))
 }
 
 /// Lo pesado va a un hilo aparte: el protocolo sigue atendiendo. Un pánico
@@ -381,8 +401,37 @@ impl ServidorApolo {
     }
 }
 
+// `list_tools` y `get_tool` están escritos aquí (el macro solo pone los que
+// faltan) para darlas en el idioma del proceso: rmcp las sacaría tal cual de
+// los comentarios, en español.
 #[tool_handler]
 impl ServerHandler for ServidorApolo {
+    async fn list_tools(
+        &self,
+        _request: Option<rmcp::model::PaginatedRequestParams>,
+        context: RequestContext<RoleServer>,
+    ) -> Result<rmcp::model::ListToolsResult, rmcp::ErrorData> {
+        // Como lo que genera #[tool_handler] en rmcp 3.5.1.
+        let supports_cache_hints = context
+            .protocol_version()
+            .is_some_and(|version| version >= rmcp::model::ProtocolVersion::V_2026_07_28);
+        Ok(rmcp::model::ListToolsResult {
+            result_type: Some(rmcp::model::ResultType::COMPLETE),
+            tools: Self::herramientas(),
+            meta: None,
+            next_cursor: None,
+            ttl_ms: supports_cache_hints.then_some(0),
+            cache_scope: supports_cache_hints.then_some(rmcp::model::CacheScope::Public),
+        })
+    }
+
+    fn get_tool(&self, name: &str) -> Option<rmcp::model::Tool> {
+        Self::tool_router()
+            .get(name)
+            .cloned()
+            .map(traduccion::herramienta)
+    }
+
     fn get_info(&self) -> ServerConfig {
         ServerConfig::new(ServerCapabilities::builder().enable_tools().build())
             .with_server_info(

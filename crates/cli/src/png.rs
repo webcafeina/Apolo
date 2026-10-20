@@ -11,6 +11,8 @@ use apolo_nucleo::entrada::Formato;
 use apolo_nucleo::formatos::png;
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida};
 
+use apolo_nucleo::{tr, trs};
+
 use crate::comun;
 
 pub fn ejecutar(args: &[String]) -> ExitCode {
@@ -25,7 +27,7 @@ pub fn ejecutar(args: &[String]) -> ExitCode {
 
 fn correr(args: &[String]) -> Result<(), String> {
     if args.is_empty() || args.iter().any(|a| a == "-h" || a == "--help") {
-        println!("{AYUDA}");
+        println!("{}", ayuda());
         return Ok(());
     }
     let (preset, resto) = comun::preset(args)?;
@@ -36,14 +38,22 @@ fn correr(args: &[String]) -> Result<(), String> {
     let o = png::leer_orden_desde(&base, &resto).map_err(|e| e.to_string())?;
     comun::avisar_ignoradas(&o.ignoradas);
     if o.entradas.is_empty() {
-        return Err("falta el fichero de entrada".into());
+        return Err(trs!("falta el fichero de entrada", "the input file is missing").into());
     }
     if o.entradas.len() > 1 && (o.salida.is_some() || o.a_stdout) {
-        return Err("con --out o --stdout, una sola entrada".into());
+        return Err(trs!(
+            "con --out o --stdout, una sola entrada",
+            "with --out or --stdout, a single input"
+        )
+        .into());
     }
     for entrada in &o.entradas {
-        let datos =
-            std::fs::read(entrada).map_err(|e| format!("no se puede leer «{entrada}»: {e}"))?;
+        let datos = std::fs::read(entrada).map_err(|e| {
+            tr!(
+                "no se puede leer «{entrada}»: {e}",
+                "can't read “{entrada}”: {e}"
+            )
+        })?;
         let img = comun::leer(&datos)?;
         let mut ajuste = Ajuste {
             formato: FormatoSalida::Png,
@@ -54,7 +64,13 @@ fn correr(args: &[String]) -> Result<(), String> {
             ajuste.proceso = p.ajuste.proceso;
         }
         if img.formato != Formato::Png {
-            eprintln!("Aviso: «{entrada}» no es un PNG; oxipng no lo abriría.");
+            eprintln!(
+                "{}",
+                tr!(
+                    "Aviso: «{entrada}» no es un PNG; oxipng no lo abriría.",
+                    "Warning: “{entrada}” isn't a PNG; oxipng wouldn't open it."
+                )
+            );
         }
         let r = salida::codificar(&datos, &img, &ajuste, None).map_err(|e| e.to_string())?;
         if o.a_stdout {
@@ -63,15 +79,21 @@ fn correr(args: &[String]) -> Result<(), String> {
                 .map_err(|e| e.to_string())?;
         } else {
             let destino = o.salida.clone().unwrap_or_else(|| entrada.clone());
-            std::fs::write(&destino, &r.datos)
-                .map_err(|e| format!("no se puede escribir «{destino}»: {e}"))?;
+            std::fs::write(&destino, &r.datos).map_err(|e| {
+                tr!(
+                    "no se puede escribir «{destino}»: {e}",
+                    "can't write “{destino}”: {e}"
+                )
+            })?;
             eprintln!("{entrada}: {} → {} bytes", datos.len(), r.datos.len());
         }
     }
     Ok(())
 }
 
-const AYUDA: &str = "\
+fn ayuda() -> &'static str {
+    trs!(
+        "\
 Uso: apolo png [opciones de oxipng] entrada.png [--out salida.png]
 
 Las opciones son las de oxipng 10.2.1, y el fichero es el mismo, byte a byte.
@@ -91,4 +113,27 @@ Propias de Apolo:
   -apolo_enderezar       girar según la orientación EXIF
 
 No están: --keep, las listas de trozos en --strip, --timeout, --dir,
---dry-run y --max-raw-size.";
+--dry-run y --max-raw-size.",
+        "\
+Usage: apolo png [oxipng options] input.png [--out output.png]
+
+The options are those of oxipng 10.2.1, and the file is the same, byte for byte.
+Like oxipng, without --out it overwrites the input. The most used ones:
+
+  -o N          optimization level, 0 to 6 or max (default: 2)
+  -a            alter the color of transparent pixels if it compresses better
+  -i on|off|keep  interlacing (default: off)
+  -s, --strip safe|all  strip metadata that doesn't affect the image, or all
+  -z            Zopfli: much slower, slightly smaller (--zi N, --ziwi N)
+  --nx, --nb, --nc, --np, --ng, --nz, -f LIST, --fast, --zc N,
+  --scale16, --force, --fix, --brute-level N, --brute-lines N
+
+Apolo's own:
+
+  -apolo_preset NAME     start from a saved preset (apolo presets)
+  -apolo_enderezar       auto-rotate according to the EXIF orientation
+
+Not available: --keep, chunk lists in --strip, --timeout, --dir,
+--dry-run and --max-raw-size."
+    )
+}

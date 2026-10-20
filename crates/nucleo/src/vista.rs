@@ -4,6 +4,7 @@
 //! Así ninguno de los dos pasa por la gestión de color del navegador, y lo que
 //! se compara es exactamente lo que hay en cada fichero (ADR 0013).
 
+use crate::trs;
 use libwebp_sys as w;
 
 use crate::entrada::{Imagen, Pixeles};
@@ -16,7 +17,10 @@ pub fn decodificar_webp(datos: &[u8]) -> Resultado<(u32, u32, Vec<u8>)> {
     unsafe {
         let p = w::WebPDecodeRGBA(datos.as_ptr(), datos.len(), &mut ancho, &mut alto);
         if p.is_null() {
-            return Err(Error::lectura("WebP", "no se pudo decodificar"));
+            return Err(Error::lectura(
+                "WebP",
+                trs!("no se pudo decodificar", "couldn't decode"),
+            ));
         }
         let v = std::slice::from_raw_parts(p, (ancho * alto * 4) as usize).to_vec();
         w::WebPFree(p as *mut _);
@@ -123,7 +127,10 @@ pub fn decodificar(datos: &[u8]) -> Resultado<(u32, u32, Vec<u8>)> {
                     .flat_map(|p| [p[0], p[0], p[0], p[1]])
                     .collect(),
                 png::ColorType::Indexed => {
-                    return Err(crate::Error::lectura("PNG", "paleta sin expandir"));
+                    return Err(crate::Error::lectura(
+                        "PNG",
+                        trs!("paleta sin expandir", "palette not expanded"),
+                    ));
                 }
             };
             Ok((w, h, rgba))

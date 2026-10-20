@@ -4,6 +4,7 @@
 //! a usar el codificador (YUV, o ARGB si hace falta), y eso se repite al
 //! importar (`webp::importar`). Aquí se miran las dimensiones y los metadatos.
 
+use crate::trs;
 use libwebp_sys as w;
 
 use super::{Formato, Imagen, Lectura, Pixeles};
@@ -29,7 +30,13 @@ pub(super) fn leer(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
     // SAFETY: inicializado por WebPGetFeatures, que ha devuelto OK.
     let rasgos = unsafe { rasgos.assume_init() };
     if rasgos.has_animation != 0 {
-        return Err(Error::lectura(F, "los WebP animados no se admiten"));
+        return Err(Error::lectura(
+            F,
+            trs!(
+                "los WebP animados no se admiten",
+                "animated WebP isn't supported"
+            ),
+        ));
     }
     let metadatos = if lectura.metadatos {
         metadatos(datos)?
@@ -61,7 +68,13 @@ fn metadatos(datos: &[u8]) -> Resultado<Metadatos> {
             w::WEBP_DEMUX_ABI_VERSION as i32,
         );
         if demux.is_null() {
-            return Err(Error::lectura(F, "no se pudo leer el contenedor"));
+            return Err(Error::lectura(
+                F,
+                trs!(
+                    "no se pudo leer el contenedor",
+                    "couldn't read the container"
+                ),
+            ));
         }
         let banderas = w::WebPDemuxGetI(demux, w::WebPFormatFeature::WEBP_FF_FORMAT_FLAGS);
         for (fourcc, bandera, destino) in [

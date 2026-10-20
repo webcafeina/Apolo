@@ -7,6 +7,11 @@ import { defineConfig, devices } from "@playwright/test";
  * Estudio entero en una máquina sin entorno gráfico.
  *
  * Los presets y los ajustes van a una carpeta temporal, nunca a la del usuario.
+ *
+ * El idioma, el del sistema, que se fija en español con LC_ALL: la batería
+ * comprueba los textos en español en cualquier máquina (en CI el LANG es
+ * C.UTF-8, que daría inglés). La prueba en inglés lo cambia en Ajustes y lo
+ * devuelve al acabar (ADR 0025).
  */
 const config = `${process.env.TMPDIR ?? "/tmp"}/apolo-e2e-config-${process.pid}`;
 
@@ -30,6 +35,7 @@ export default defineConfig({
   webServer: [
     {
       command: `cargo run -q -p apolo-dev -- --direccion 127.0.0.1:34591 --config ${config}`,
+      env: { LC_ALL: "es_ES.UTF-8" },
       cwd: "..",
       url: "http://127.0.0.1:34591/salud",
       reuseExistingServer: false,

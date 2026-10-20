@@ -10,6 +10,7 @@
 //! byte a byte desde el JXL. Para codificar sus píxeles hace falta
 //! `--lossless_jpeg=0`.
 
+use crate::{tr, trs};
 use serde::{Deserialize, Serialize};
 
 use apolo_avifjxl::Herramienta;
@@ -208,7 +209,12 @@ fn decimal(v: &str, que: &str, min: f32, max: f32) -> Resultado<f32> {
         .parse::<f32>()
         .ok()
         .filter(|n| (min..=max).contains(n))
-        .ok_or_else(|| mal(format!("{que} {v}: va de {min} a {max}")))
+        .ok_or_else(|| {
+            mal(tr!(
+                "{que} {v}: va de {min} a {max}",
+                "{que} {v}: must be from {min} to {max}"
+            ))
+        })
 }
 
 fn entero(v: &str, que: &str, min: i64, max: i64) -> Resultado<i64> {
@@ -216,7 +222,12 @@ fn entero(v: &str, que: &str, min: i64, max: i64) -> Resultado<i64> {
         .parse::<i64>()
         .ok()
         .filter(|n| (min..=max).contains(n))
-        .ok_or_else(|| mal(format!("{que} {v}: va de {min} a {max}")))
+        .ok_or_else(|| {
+            mal(tr!(
+                "{que} {v}: va de {min} a {max}",
+                "{que} {v}: must be from {min} to {max}"
+            ))
+        })
 }
 
 /// Lee una orden de cjxl: opciones y ficheros, en cualquier orden. Admite
@@ -262,16 +273,19 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesJxl, args: &[S]) -> Result
             }
         });
         let Some(&(_, nombre, con_valor)) = encontrada else {
-            return Err(mal(format!("cjxl no tiene la opción {a}")));
+            return Err(mal(tr!(
+                "cjxl no tiene la opción {a}",
+                "cjxl has no option {a}"
+            )));
         };
         let separado = en_linea.is_none();
         let valor = match (con_valor, en_linea) {
             (true, Some(v)) => Some(v),
             (true, None) => Some(
                 cola.next()
-                    .ok_or_else(|| mal(format!("falta el valor de {a}")))?,
+                    .ok_or_else(|| mal(tr!("falta el valor de {a}", "missing value for {a}")))?,
             ),
-            (false, Some(_)) => return Err(mal(format!("{a}: no lleva valor"))),
+            (false, Some(_)) => return Err(mal(tr!("{a}: no lleva valor", "{a}: takes no value"))),
             (false, None) => None,
         };
         let v = valor.clone().unwrap_or_default();
@@ -294,9 +308,14 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesJxl, args: &[S]) -> Result
             "gaborish" => op.gaborish = Some(entero(&v, &a, 0, 1)? as u8),
             "faster_decoding" => op.decodificacion_rapida = Some(entero(&v, &a, 0, 4)? as u8),
             "quiet" | "verbose" | "num_reps" => o.ignoradas.push(a),
-            "version" | "help" => return Err(mal(format!("{a}: Apolo no lo enseña"))),
+            "version" | "help" => {
+                return Err(mal(tr!(
+                    "{a}: Apolo no lo enseña",
+                    "{a}: Apolo doesn't show it"
+                )));
+            }
             "disable_output" | "streaming_input" => {
-                return Err(mal(format!("{a} no está en Apolo")));
+                return Err(mal(tr!("{a} no está en Apolo", "{a} isn't in Apolo")));
             }
             "dec-hints"
                 if v.contains("pathname")
@@ -304,8 +323,9 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesJxl, args: &[S]) -> Result
                     || v.starts_with("xmp=")
                     || v.starts_with("jumbf=") =>
             {
-                return Err(mal(format!(
-                    "{a} {v} no está en Apolo: los metadatos salen de la imagen abierta"
+                return Err(mal(tr!(
+                    "{a} {v} no está en Apolo: los metadatos salen de la imagen abierta",
+                    "{a} {v} isn't in Apolo: the metadata comes from the open image"
                 )));
             }
             _ => {
@@ -353,10 +373,12 @@ pub fn codificar(entrada: &[u8], ext: &str, op: &OpcionesJxl) -> Resultado<Vec<u
     let con_perdida =
         op.distancia.is_some_and(|d| d != 0.0) || op.calidad.is_some_and(|q| q != 100.0);
     if ext == "jpg" && op.jpeg_sin_perdida && con_perdida {
-        return Err(mal(
+        return Err(mal(trs!(
             "con un JPEG, cjxl lo recomprime sin pérdida y no admite calidad: \
              desactiva «JPEG sin pérdida» (--lossless_jpeg=0)",
-        ));
+            "with a JPEG, cjxl recompresses it losslessly and takes no quality: \
+             turn off “Lossless JPEG” (--lossless_jpeg=0)"
+        )));
     }
     apolo_avifjxl::convertir(Herramienta::Cjxl, entrada, ext, &op.orden(), "jxl")
         .map_err(Error::Codificacion)

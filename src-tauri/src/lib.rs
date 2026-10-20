@@ -8,12 +8,13 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use apolo_nucleo::Motor;
+use apolo_nucleo::idioma::Idioma;
 use apolo_nucleo::presets::PresetGuardado;
 use apolo_nucleo::salida::{Ajuste, FormatoSalida};
 use apolo_nucleo::webp::{OpcionesWebp, Preset};
 use apolo_servicio::{
-    Ajustes, EstadoLote, Fallo, InfoImagen, Inicio, LoteEmpezado, Recogida, Servicio, Vista,
-    empaquetar_pixeles,
+    Ajustes, EstadoLote, Fallo, InfoImagen, Inicio, LoteEmpezado, PreferenciaIdioma, Recogida,
+    Servicio, Vista, empaquetar_pixeles,
 };
 use tauri::State;
 use tauri::http::{Response, StatusCode, header};
@@ -187,6 +188,13 @@ fn buscar_actualizaciones(s: Estado, si: bool) -> Ajustes {
     s.buscar_actualizaciones(si)
 }
 
+/// «Idioma» en Ajustes › General (ADR 0025): lo guarda y lo pone en el
+/// núcleo. Devuelve el que sale de verdad, para que la interfaz cambie al mismo.
+#[tauri::command]
+fn poner_idioma(s: Estado, idioma: PreferenciaIdioma) -> Idioma {
+    s.poner_idioma(idioma)
+}
+
 #[tauri::command]
 fn reservar_comprobacion(s: Estado, forzar: bool) -> bool {
     s.reservar_comprobacion(forzar)
@@ -224,7 +232,7 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
             .get(1)
             .and_then(|x| x.parse().ok())
             .ok_or_else(|| Fallo {
-                mensaje: "Ruta no válida".into(),
+                mensaje: apolo_nucleo::trs!("Ruta no válida", "Invalid path").into(),
                 cancelado: false,
             })
     };
@@ -248,7 +256,7 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
                 .map(empaquetar_pixeles)
         }
         _ => Err(Fallo {
-            mensaje: "Ruta no válida".into(),
+            mensaje: apolo_nucleo::trs!("Ruta no válida", "Invalid path").into(),
             cancelado: false,
         }),
     }
@@ -265,7 +273,12 @@ pub fn arrancar() {
         .plugin(tauri_plugin_process::init())
         // «Mostrar en la carpeta» al acabar un lote.
         .plugin(tauri_plugin_opener::init())
-        .manage(Arc::new(Servicio::con_carpeta_por_defecto()))
+        .manage({
+            // El idioma de los ajustes, para los mensajes de Rust (ADR 0025).
+            let s = Servicio::con_carpeta_por_defecto();
+            s.aplicar_idioma();
+            Arc::new(s)
+        })
         .register_asynchronous_uri_scheme_protocol("apolo", |ctx, peticion, respuesta| {
             use tauri::Manager;
             let s = ctx.app_handle().state::<Arc<Servicio>>().inner().clone();
@@ -305,6 +318,7 @@ pub fn arrancar() {
             borrar_preset,
             ajustes,
             buscar_actualizaciones,
+            poner_idioma,
             reservar_comprobacion,
             recoger_lote,
             empezar_lote,

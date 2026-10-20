@@ -1,8 +1,9 @@
 //! Los errores de las herramientas (ADR 0023), como en Cronos: un código
-//! estable para la máquina, un mensaje en español y una pista de qué
-//! herramienta o argumento lo arregla.
+//! estable para la máquina, un mensaje en el idioma del proceso (ADR 0025) y
+//! una pista de qué herramienta o argumento lo arregla. El código no se
+//! traduce nunca.
 
-use apolo_nucleo::Error;
+use apolo_nucleo::{Error, tr, trs};
 use apolo_servicio::Fallo;
 use serde::Serialize;
 
@@ -35,31 +36,50 @@ impl ErrorMcp {
     /// El texto para el modelo: el mensaje y, debajo, las pistas.
     pub fn texto(&self) -> String {
         match &self.pista {
-            Some(p) => format!("{}\nPISTAS: {p}", self.mensaje),
+            Some(p) => {
+                let m = &self.mensaje;
+                tr!("{m}\nPISTAS: {p}", "{m}\nHINTS: {p}")
+            }
             None => self.mensaje.clone(),
         }
     }
 
     pub fn cancelado() -> Self {
-        ErrorMcp::nuevo("cancelado", "Cancelado: no se ha escrito nada.")
+        ErrorMcp::nuevo(
+            "cancelado",
+            trs!(
+                "Cancelado: no se ha escrito nada.",
+                "Cancelled: nothing has been written."
+            ),
+        )
     }
 }
 
-pub const FORMATOS_QUE_LEE: &str =
-    "PNG, JPEG, HEIC, AVIF, JPEG XL, WebP, TIFF, GIF, BMP, QOI y PNM";
+/// La pista de un fichero que no es una imagen: qué formatos lee Apolo.
+pub fn formatos_que_lee() -> &'static str {
+    trs!(
+        "Apolo lee PNG, JPEG, HEIC, AVIF, JPEG XL, WebP, TIFF, GIF, BMP, QOI y PNM.",
+        "Apolo reads PNG, JPEG, HEIC, AVIF, JPEG XL, WebP, TIFF, GIF, BMP, QOI and PNM."
+    )
+}
 
 impl From<Error> for ErrorMcp {
     fn from(e: Error) -> Self {
         match e {
             Error::Cancelado => ErrorMcp::cancelado(),
-            Error::FormatoDesconocido => ErrorMcp::nuevo("no_es_imagen", e.to_string())
-                .con_pista(format!("Apolo lee {FORMATOS_QUE_LEE}.")),
-            Error::Lectura { .. } => ErrorMcp::nuevo("no_se_lee", e.to_string())
-                .con_pista("El fichero puede estar dañado; prueba con analizar_imagen."),
+            Error::FormatoDesconocido => {
+                ErrorMcp::nuevo("no_es_imagen", e.to_string()).con_pista(formatos_que_lee())
+            }
+            Error::Lectura { .. } => ErrorMcp::nuevo("no_se_lee", e.to_string()).con_pista(trs!(
+                "El fichero puede estar dañado; prueba con analizar_imagen.",
+                "The file may be damaged; try analizar_imagen."
+            )),
             Error::Configuracion(_) => ErrorMcp::nuevo("configuracion", e.to_string()),
             Error::Codificacion(_) => ErrorMcp::nuevo("codificacion", e.to_string()),
-            Error::Memoria => ErrorMcp::nuevo("memoria", e.to_string())
-                .con_pista("Prueba con una imagen más pequeña, o reduce con ancho o alto."),
+            Error::Memoria => ErrorMcp::nuevo("memoria", e.to_string()).con_pista(trs!(
+                "Prueba con una imagen más pequeña, o reduce con ancho o alto.",
+                "Try a smaller image, or scale it down with ancho or alto."
+            )),
             Error::Fichero(_) => ErrorMcp::nuevo("fichero", e.to_string()),
         }
     }
@@ -79,7 +99,10 @@ impl From<std::io::Error> for ErrorMcp {
     fn from(e: std::io::Error) -> Self {
         match e.kind() {
             std::io::ErrorKind::PermissionDenied => ErrorMcp::nuevo("sin_permiso", e.to_string())
-                .con_pista("Elige otra carpeta con el argumento salida."),
+                .con_pista(trs!(
+                    "Elige otra carpeta con el argumento salida.",
+                    "Choose another folder with the salida argument."
+                )),
             _ => ErrorMcp::nuevo("fichero", e.to_string()),
         }
     }

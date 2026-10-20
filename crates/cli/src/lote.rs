@@ -18,7 +18,9 @@ use std::time::Instant;
 use apolo_nucleo::formatos::png;
 use apolo_nucleo::lote::{self, Resumen};
 use apolo_nucleo::salida::{Ajuste, FormatoSalida};
-use apolo_nucleo::{cwebp, jpeg, presets};
+use apolo_nucleo::{cwebp, jpeg, presets, tr, trs};
+
+use crate::comun::decimal;
 
 pub struct Peticion {
     pub entradas: Vec<PathBuf>,
@@ -40,12 +42,12 @@ pub struct Peticion {
 }
 
 fn bytes(n: u64) -> String {
-    match n {
+    let t = match n {
         n if n < 1024 => format!("{n} B"),
         n if n < 1024 * 1024 => format!("{:.1} KB", n as f64 / 1024.0),
         n => format!("{:.1} MB", n as f64 / 1024.0 / 1024.0),
-    }
-    .replace('.', ",")
+    };
+    decimal(t)
 }
 
 fn ahorro(antes: u64, despues: u64) -> String {
@@ -54,9 +56,9 @@ fn ahorro(antes: u64, despues: u64) -> String {
     }
     let p = (1.0 - despues as f64 / antes as f64) * 100.0;
     if p < 0.0 {
-        format!("+{:.0} %", -p)
+        tr!("+{:.0} %", "+{:.0}%", -p)
     } else {
-        format!("−{p:.0} %")
+        tr!("−{p:.0} %", "−{p:.0}%")
     }
 }
 
@@ -68,8 +70,9 @@ fn formato(s: &str) -> Result<FormatoSalida, String> {
         "qoi" => Ok(FormatoSalida::Qoi),
         "avif" | "avifenc" => Ok(FormatoSalida::Avif),
         "jxl" | "jpegxl" | "cjxl" => Ok(FormatoSalida::Jxl),
-        otro => Err(format!(
-            "no hay formato «{otro}»: webp, jpeg, png, qoi, avif o jxl"
+        otro => Err(tr!(
+            "no hay formato «{otro}»: webp, jpeg, png, qoi, avif o jxl",
+            "there's no format “{otro}”: webp, jpeg, png, qoi, avif or jxl"
         )),
     }
 }
@@ -78,12 +81,18 @@ fn formato(s: &str) -> Result<FormatoSalida, String> {
 fn ajustes(p: &Peticion) -> Result<Vec<Ajuste>, String> {
     let mut v = Vec::new();
     if !p.presets.is_empty() {
-        let carpeta = presets::carpeta().ok_or("No se encuentra la carpeta de configuración")?;
+        let carpeta = presets::carpeta().ok_or(trs!(
+            "No se encuentra la carpeta de configuración",
+            "Can't find the settings folder"
+        ))?;
         for nombre in &p.presets {
             v.push(
                 presets::cargar(&carpeta, nombre)
                     .ok_or_else(|| {
-                        format!("No hay ningún preset «{nombre}» (apolo presets los lista)")
+                        tr!(
+                            "No hay ningún preset «{nombre}» (apolo presets los lista)",
+                            "There's no preset “{nombre}” (apolo presets lists them)"
+                        )
                     })?
                     .ajuste,
             );
@@ -102,13 +111,17 @@ fn ajustes(p: &Peticion) -> Result<Vec<Ajuste>, String> {
     }
     if !p.herramienta.is_empty() {
         let [a] = v.as_mut_slice() else {
-            return Err("Las opciones detrás de «--» van con un solo formato".into());
+            return Err(trs!(
+                "Las opciones detrás de «--» van con un solo formato",
+                "The options after “--” go with a single format"
+            )
+            .into());
         };
         match a.formato {
             FormatoSalida::Webp => {
                 let o = cwebp::leer_desde(&a.webp, &p.herramienta).map_err(|e| e.0)?;
                 if o.entrada.is_some() || o.salida.is_some() {
-                    return Err(SOLO_OPCIONES.into());
+                    return Err(solo_opciones().into());
                 }
                 a.webp = o.opciones;
             }
@@ -118,16 +131,18 @@ fn ajustes(p: &Peticion) -> Result<Vec<Ajuste>, String> {
             FormatoSalida::Png => {
                 let o = png::leer_orden_desde(&a.png, &p.herramienta).map_err(|e| e.to_string())?;
                 if !o.entradas.is_empty() || o.salida.is_some() {
-                    return Err(SOLO_OPCIONES.into());
+                    return Err(solo_opciones().into());
                 }
                 a.png = o.opciones;
             }
-            FormatoSalida::Qoi => return Err("QOI no tiene opciones".into()),
+            FormatoSalida::Qoi => {
+                return Err(trs!("QOI no tiene opciones", "QOI has no options").into());
+            }
             FormatoSalida::Avif => {
                 let o = apolo_nucleo::formatos::avif::leer_orden_desde(&a.avif, &p.herramienta)
                     .map_err(|e| e.to_string())?;
                 if !o.ficheros.is_empty() {
-                    return Err(SOLO_OPCIONES.into());
+                    return Err(solo_opciones().into());
                 }
                 a.avif = o.opciones;
             }
@@ -135,7 +150,7 @@ fn ajustes(p: &Peticion) -> Result<Vec<Ajuste>, String> {
                 let o = apolo_nucleo::formatos::jxl::leer_orden_desde(&a.jxl, &p.herramienta)
                     .map_err(|e| e.to_string())?;
                 if !o.ficheros.is_empty() {
-                    return Err(SOLO_OPCIONES.into());
+                    return Err(solo_opciones().into());
                 }
                 a.jxl = o.opciones;
             }
@@ -147,13 +162,21 @@ fn ajustes(p: &Peticion) -> Result<Vec<Ajuste>, String> {
         }
     }
     if v.iter().any(|a| !a.webp.validar()) {
-        return Err("La configuración no es válida".into());
+        return Err(trs!(
+            "La configuración no es válida",
+            "The configuration isn't valid"
+        )
+        .into());
     }
     Ok(v)
 }
 
-const SOLO_OPCIONES: &str =
-    "Detrás de «--» van solo opciones: las entradas van delante y la salida con --salida";
+fn solo_opciones() -> &'static str {
+    trs!(
+        "Detrás de «--» van solo opciones: las entradas van delante y la salida con --salida",
+        "Only options go after “--”: the inputs go before and the output with --salida"
+    )
+}
 
 pub fn ejecutar(p: Peticion) -> ExitCode {
     let ajustes = match ajustes(&p) {
@@ -168,36 +191,63 @@ pub fn ejecutar(p: Peticion) -> ExitCode {
         .clone()
         .or_else(|| lote::salida_sugerida(&p.entradas, &lote::sufijo(&ajustes)))
     else {
-        eprintln!("Error: falta --salida");
+        eprintln!("Error: {}", trs!("falta --salida", "--salida is missing"));
         return ExitCode::FAILURE;
     };
     let elementos = lote::recoger(&p.entradas, Some(&salida));
     if elementos.is_empty() {
-        eprintln!("Error: no hay imágenes que convertir");
+        eprintln!(
+            "Error: {}",
+            trs!(
+                "no hay imágenes que convertir",
+                "there are no images to convert"
+            )
+        );
         return ExitCode::FAILURE;
     }
     let total = elementos.len();
     if !p.silencio {
         eprintln!(
             "{total} {} → {}",
-            if total == 1 { "imagen" } else { "imágenes" },
+            if total == 1 {
+                trs!("imagen", "image")
+            } else {
+                trs!("imágenes", "images")
+            },
             salida.display()
         );
         for a in &ajustes {
             let args = apolo_nucleo::salida::argumentos(a);
             let herramienta = a.formato.herramienta();
             if args.is_empty() {
-                eprintln!("{}: como {herramienta} (sin opciones)", a.formato.nombre());
+                eprintln!(
+                    "{}",
+                    tr!(
+                        "{}: como {herramienta} (sin opciones)",
+                        "{}: as {herramienta} (no options)",
+                        a.formato.nombre()
+                    )
+                );
             } else {
                 eprintln!(
-                    "{}: como {herramienta} {}",
-                    a.formato.nombre(),
-                    args.join(" ")
+                    "{}",
+                    tr!(
+                        "{}: como {herramienta} {}",
+                        "{}: as {herramienta} {}",
+                        a.formato.nombre(),
+                        args.join(" ")
+                    )
                 );
             }
         }
         if p.mas_ligero && ajustes.len() > 1 {
-            eprintln!("De cada imagen se guarda solo el más ligero.");
+            eprintln!(
+                "{}",
+                trs!(
+                    "De cada imagen se guarda solo el más ligero.",
+                    "Of each image, only the lightest is saved."
+                )
+            );
         }
     }
 
@@ -227,10 +277,10 @@ pub fn ejecutar(p: Peticion) -> ExitCode {
                                     ahorro(h.bytes_entrada, s.bytes)
                                 );
                                 if let Some(q) = s.calidad {
-                                    t.push_str(&format!(" calidad {q}"));
+                                    t.push_str(&tr!(" calidad {q}", " quality {q}"));
                                 }
                                 if let Some(n) = s.nota {
-                                    t.push_str(&format!(" nota {}", nota(n)));
+                                    t.push_str(&tr!(" nota {}", " score {}", nota(n)));
                                 }
                                 t
                             })
@@ -266,9 +316,9 @@ fn imprimir(r: &Resumen, segundos: f64) {
                 f.formato.nombre(),
                 f.ficheros,
                 if f.ficheros == 1 {
-                    "fichero"
+                    trs!("fichero", "file")
                 } else {
-                    "ficheros"
+                    trs!("ficheros", "files")
                 },
                 bytes(f.bytes_entrada),
                 bytes(f.bytes_salida),
@@ -277,26 +327,55 @@ fn imprimir(r: &Resumen, segundos: f64) {
         }
     }
     println!(
-        "{} convertidas en {} s: {} → {} ({})",
-        r.convertidas,
-        format!("{segundos:.1}").replace('.', ","),
-        bytes(r.bytes_entrada),
-        bytes(r.bytes_salida),
-        ahorro(r.bytes_entrada, r.bytes_salida)
+        "{}",
+        tr!(
+            "{} convertidas en {} s: {} → {} ({})",
+            "{} converted in {} s: {} → {} ({})",
+            r.convertidas,
+            decimal(format!("{segundos:.1}")),
+            bytes(r.bytes_entrada),
+            bytes(r.bytes_salida),
+            ahorro(r.bytes_entrada, r.bytes_salida)
+        )
     );
     match r.mayores {
         0 => {}
-        1 => println!("1 pesa más que su original (se ha guardado igual)"),
-        n => println!("{n} pesan más que su original (se han guardado igual)"),
+        1 => println!(
+            "{}",
+            trs!(
+                "1 pesa más que su original (se ha guardado igual)",
+                "1 weighs more than its original (saved anyway)"
+            )
+        ),
+        n => println!(
+            "{}",
+            tr!(
+                "{n} pesan más que su original (se han guardado igual)",
+                "{n} weigh more than their originals (saved anyway)"
+            )
+        ),
     }
     match r.fallidas {
         0 => {}
-        1 => println!("1 no se pudo convertir"),
-        n => println!("{n} no se pudieron convertir"),
+        1 => println!(
+            "{}",
+            trs!("1 no se pudo convertir", "1 couldn't be converted")
+        ),
+        n => println!(
+            "{}",
+            tr!("{n} no se pudieron convertir", "{n} couldn't be converted")
+        ),
     }
     if let Some(m) = r.nota_media {
-        println!("Nota media (SSIMULACRA 2): {}", nota(m));
-        println!("Las de peor nota:");
+        println!(
+            "{}",
+            tr!(
+                "Nota media (SSIMULACRA 2): {}",
+                "Average score (SSIMULACRA 2): {}",
+                nota(m)
+            )
+        );
+        println!("{}", trs!("Las de peor nota:", "Lowest scores:"));
         for d in &r.peores_notas {
             println!(
                 "  {} ({})  {}",
@@ -307,7 +386,7 @@ fn imprimir(r: &Resumen, segundos: f64) {
         }
     }
     if r.convertidas > r.peores.len() {
-        println!("Las que menos ahorran:");
+        println!("{}", trs!("Las que menos ahorran:", "Least savings:"));
         for d in &r.peores {
             println!(
                 "  {} ({})  {} → {}  {}",
@@ -322,5 +401,5 @@ fn imprimir(r: &Resumen, segundos: f64) {
 }
 
 fn nota(n: f64) -> String {
-    format!("{n:.1}").replace('.', ",")
+    decimal(format!("{n:.1}"))
 }

@@ -12,6 +12,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use apolo_nucleo::idioma::{self, Idioma};
 use serde::{Deserialize, Serialize};
 
 /// Cada cuánto se pregunta a GitHub, como mucho.
@@ -24,6 +25,9 @@ pub struct Ajustes {
     pub buscar_actualizaciones: bool,
     /// Cuándo se preguntó a GitHub por última vez (segundos Unix).
     pub ultima_comprobacion: Option<u64>,
+    /// El idioma de la interfaz y de los mensajes de Rust (ADR 0025). Un
+    /// `ajustes.json` de antes no lo lleva: el del sistema.
+    pub idioma: PreferenciaIdioma,
 }
 
 impl Default for Ajustes {
@@ -31,6 +35,28 @@ impl Default for Ajustes {
         Ajustes {
             buscar_actualizaciones: true,
             ultima_comprobacion: None,
+            idioma: PreferenciaIdioma::Sistema,
+        }
+    }
+}
+
+/// «Idioma» en Ajustes › General: el del sistema, español o inglés.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PreferenciaIdioma {
+    #[default]
+    Sistema,
+    Es,
+    En,
+}
+
+impl PreferenciaIdioma {
+    /// El idioma que sale de verdad: con «Sistema», el del sistema.
+    pub fn efectivo(self) -> Idioma {
+        match self {
+            PreferenciaIdioma::Sistema => idioma::del_sistema(),
+            PreferenciaIdioma::Es => Idioma::Es,
+            PreferenciaIdioma::En => Idioma::En,
         }
     }
 }
@@ -76,6 +102,13 @@ impl Almacen {
     pub(crate) fn buscar_actualizaciones(&self, si: bool) -> Ajustes {
         let mut a = self.actual.lock().unwrap();
         a.buscar_actualizaciones = si;
+        self.escribir(&a);
+        a.clone()
+    }
+
+    pub(crate) fn idioma(&self, p: PreferenciaIdioma) -> Ajustes {
+        let mut a = self.actual.lock().unwrap();
+        a.idioma = p;
         self.escribir(&a);
         a.clone()
     }
@@ -145,8 +178,26 @@ mod pruebas {
             b.leer(),
             Ajustes {
                 buscar_actualizaciones: false,
-                ultima_comprobacion: Some(42)
+                ultima_comprobacion: Some(42),
+                idioma: PreferenciaIdioma::Sistema,
             }
         );
+        a.idioma(PreferenciaIdioma::En);
+        assert_eq!(
+            Almacen::abrir(a.ruta.clone()).leer().idioma,
+            PreferenciaIdioma::En
+        );
+    }
+
+    #[test]
+    fn un_fichero_de_antes_sin_idioma_es_el_del_sistema() {
+        let a: Ajustes =
+            serde_json::from_str(r#"{"buscar_actualizaciones": false, "ultima_comprobacion": 7}"#)
+                .unwrap();
+        assert_eq!(a.idioma, PreferenciaIdioma::Sistema);
+        assert!(!a.buscar_actualizaciones);
+        let a: Ajustes = serde_json::from_str(r#"{"idioma": "en"}"#).unwrap();
+        assert_eq!(a.idioma, PreferenciaIdioma::En);
+        assert_eq!(PreferenciaIdioma::Es.efectivo(), Idioma::Es);
     }
 }

@@ -5,6 +5,7 @@
 //! idéntico al de cwebp: el orden de los trozos (ICCP, imagen, EXIF, XMP), el
 //! relleno a par y cómo se monta la cabecera VP8X.
 
+use crate::trs;
 use serde::{Deserialize, Serialize};
 
 /// Los metadatos que trae una imagen. Cada uno, los bytes crudos.
@@ -98,11 +99,19 @@ pub fn escribir(
 
     let mut escritos = Escritos::default();
     if webp.len() < CABECERA_RIFF + CABECERA_TROZO {
-        return Err("El WebP codificado es demasiado corto".into());
+        return Err(trs!(
+            "El WebP codificado es demasiado corto",
+            "The encoded WebP is too short"
+        )
+        .into());
     }
     let maximo = u32::MAX as u64 - CABECERA_TROZO as u64 - 1;
     if (webp.len() - CABECERA_TROZO) as u64 + tamano_metadatos > maximo {
-        return Err("Con los metadatos, el fichero pasaría del límite del contenedor".into());
+        return Err(trs!(
+            "Con los metadatos, el fichero pasaría del límite del contenedor",
+            "With the metadata, the file would exceed the container limit"
+        )
+        .into());
     }
     if tamano_metadatos == 0 {
         return Ok((webp.to_vec(), escritos));

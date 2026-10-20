@@ -13,17 +13,18 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use apolo_nucleo::entrada::{self, Imagen, Lectura, Pixeles};
+use apolo_nucleo::idioma::{self, Idioma};
 use apolo_nucleo::medir::{self, Medidas, TipoMapa};
 use apolo_nucleo::presets::{self, PresetGuardado};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida, Motivo};
 use apolo_nucleo::webp::{self, Estadisticas, OpcionesWebp};
-use apolo_nucleo::{Error, cwebp, orientacion, vista};
+use apolo_nucleo::{Error, cwebp, orientacion, tr, trs, vista};
 use serde::{Deserialize, Serialize};
 
 pub mod agentes;
 mod ajustes;
 mod lotes;
-pub use ajustes::Ajustes;
+pub use ajustes::{Ajustes, PreferenciaIdioma};
 pub use lotes::{EstadoLote, Fila, FilaSalida, LoteEmpezado, Recogida, recoger_lote};
 
 /// Un error para la interfaz: el texto que hay que enseñar, y si fue una
@@ -144,7 +145,9 @@ pub struct Servicio {
 
 impl Servicio {
     /// `carpeta` es la de configuración de Apolo: dentro van `presets/` y
-    /// `ajustes.json`.
+    /// `ajustes.json`. No toca el idioma del proceso: apolo-mcp tiene el suyo
+    /// y las pruebas no deben cambiarlo. La ventana lo pone con
+    /// [`Servicio::aplicar_idioma`].
     pub fn nuevo(carpeta: PathBuf) -> Self {
         Servicio {
             abiertas: Mutex::default(),
@@ -155,6 +158,15 @@ impl Servicio {
             ajustes: ajustes::Almacen::abrir(carpeta.join("ajustes.json")),
             lotes: Mutex::default(),
         }
+    }
+
+    /// Pone en el proceso el idioma de los ajustes (ADR 0025), para que los
+    /// mensajes de Rust salgan en el idioma de la interfaz. Lo llaman la
+    /// ventana y apolo-dev al arrancar.
+    pub fn aplicar_idioma(&self) -> Idioma {
+        let i = self.idioma();
+        idioma::poner(i);
+        i
     }
 
     /// Con la carpeta de configuración de siempre (la misma que la CLI).
@@ -171,6 +183,19 @@ impl Servicio {
         self.ajustes.buscar_actualizaciones(si)
     }
 
+    /// El idioma que se usa: el de los ajustes, o el del sistema.
+    pub fn idioma(&self) -> Idioma {
+        self.ajustes.leer().idioma.efectivo()
+    }
+
+    /// «Idioma» en Ajustes › General: lo guarda, lo pone en el proceso y
+    /// devuelve el que sale de verdad, para que la interfaz cambie al mismo.
+    pub fn poner_idioma(&self, p: PreferenciaIdioma) -> Idioma {
+        let efectivo = self.ajustes.idioma(p).idioma.efectivo();
+        idioma::poner(efectivo);
+        efectivo
+    }
+
     /// Si toca preguntar a GitHub por una versión nueva (ADR 0018).
     pub fn reservar_comprobacion(&self, forzar: bool) -> bool {
         self.ajustes.reservar_comprobacion(forzar)
@@ -182,7 +207,12 @@ impl Servicio {
             .unwrap()
             .get(&id)
             .cloned()
-            .ok_or_else(|| Fallo::nuevo("Esa imagen ya no está abierta"))
+            .ok_or_else(|| {
+                Fallo::nuevo(trs!(
+                    "Esa imagen ya no está abierta",
+                    "That image is no longer open"
+                ))
+            })
     }
 
     fn ultimo(&self, clave: Clave) -> Arc<Mutex<Ultimo>> {
@@ -196,8 +226,13 @@ impl Servicio {
 
     /// Abre una imagen de disco.
     pub fn abrir_ruta(&self, ruta: &Path) -> R<InfoImagen> {
-        let datos = std::fs::read(ruta)
-            .map_err(|e| Fallo::nuevo(format!("No se puede leer «{}»: {e}", ruta.display())))?;
+        let datos = std::fs::read(ruta).map_err(|e| {
+            Fallo::nuevo(tr!(
+                "No se puede leer «{}»: {e}",
+                "Can't read “{}”: {e}",
+                ruta.display()
+            ))
+        })?;
         let nombre = ruta
             .file_name()
             .map(|n| n.to_string_lossy().into_owned())
@@ -278,7 +313,10 @@ impl Servicio {
         let u = self.ultimo((id, lado));
         let u = u.lock().unwrap();
         if u.ajuste.is_none() {
-            return Err(Fallo::nuevo("Todavía no hay resultado"));
+            return Err(Fallo::nuevo(trs!(
+                "Todavía no hay resultado",
+                "There's no result yet"
+            )));
         }
         Ok(u.rgba.clone())
     }
@@ -296,7 +334,10 @@ impl Servicio {
         let (ajuste, resultado, referencia) = {
             let u = u.lock().unwrap();
             let Some(ajuste) = u.ajuste.clone() else {
-                return Err(Fallo::nuevo("Todavía no hay resultado"));
+                return Err(Fallo::nuevo(trs!(
+                    "Todavía no hay resultado",
+                    "There's no result yet"
+                )));
             };
             (ajuste, u.rgba.clone(), u.referencia.clone())
         };
@@ -314,9 +355,13 @@ impl Servicio {
             }
         };
         if (referencia.0, referencia.1) != (resultado.0, resultado.1) {
-            return Err(Fallo::nuevo(format!(
+            return Err(Fallo::nuevo(tr!(
                 "No se puede medir: el resultado mide {} × {} y lo que recibió el codificador, {} × {} (cwebp redimensiona o recorta por su cuenta)",
-                resultado.0, resultado.1, referencia.0, referencia.1
+                "Can't measure: the result is {} × {} and what the encoder received, {} × {} (cwebp resizes or crops on its own)",
+                resultado.0,
+                resultado.1,
+                referencia.0,
+                referencia.1
             )));
         }
         Ok((referencia, resultado))
@@ -461,8 +506,13 @@ impl Servicio {
     /// Escribe el fichero final.
     pub fn exportar(&self, id: u64, ajuste: &Ajuste, lado: u8, ruta: &Path) -> R<usize> {
         let datos = self.bytes_finales(id, ajuste, lado)?;
-        std::fs::write(ruta, &datos)
-            .map_err(|e| Fallo::nuevo(format!("No se puede escribir «{}»: {e}", ruta.display())))?;
+        std::fs::write(ruta, &datos).map_err(|e| {
+            Fallo::nuevo(tr!(
+                "No se puede escribir «{}»: {e}",
+                "Can't write “{}”: {e}",
+                ruta.display()
+            ))
+        })?;
         Ok(datos.len())
     }
 
@@ -477,16 +527,19 @@ impl Servicio {
 
     pub fn guardar_preset(&self, p: &PresetGuardado) -> R<Vec<PresetGuardado>> {
         if p.nombre.trim().is_empty() {
-            return Err(Fallo::nuevo("El preset necesita un nombre"));
+            return Err(Fallo::nuevo(trs!(
+                "El preset necesita un nombre",
+                "The preset needs a name"
+            )));
         }
         presets::guardar(&self.carpeta_presets, p)
-            .map_err(|e| Fallo::nuevo(format!("No se pudo guardar: {e}")))?;
+            .map_err(|e| Fallo::nuevo(tr!("No se pudo guardar: {e}", "Couldn't save: {e}")))?;
         Ok(self.presets())
     }
 
     pub fn borrar_preset(&self, nombre: &str) -> R<Vec<PresetGuardado>> {
         presets::borrar(&self.carpeta_presets, nombre)
-            .map_err(|e| Fallo::nuevo(format!("No se pudo borrar: {e}")))?;
+            .map_err(|e| Fallo::nuevo(tr!("No se pudo borrar: {e}", "Couldn't delete: {e}")))?;
         Ok(self.presets())
     }
 
@@ -508,8 +561,9 @@ pub fn aplicar_preset_cwebp(opciones: &OpcionesWebp, preset: webp::Preset) -> Op
 pub fn nivel_sin_perdida(opciones: &OpcionesWebp, nivel: i32) -> R<OpcionesWebp> {
     let mut o = opciones.clone();
     if !o.aplicar_nivel_sin_perdida(nivel) {
-        return Err(Fallo::nuevo(format!(
-            "Nivel sin pérdida no válido: {nivel}"
+        return Err(Fallo::nuevo(tr!(
+            "Nivel sin pérdida no válido: {nivel}",
+            "Invalid lossless level: {nivel}"
         )));
     }
     Ok(o)
@@ -570,7 +624,10 @@ pub fn leer_orden(texto: &str, base: &Ajuste) -> R<Ajuste> {
         }
         FormatoSalida::Qoi => {
             if palabras.len() > 2 {
-                return Err(Fallo::nuevo("qoiconv solo lleva la entrada y la salida"));
+                return Err(Fallo::nuevo(trs!(
+                    "qoiconv solo lleva la entrada y la salida",
+                    "qoiconv only takes the input and the output"
+                )));
             }
         }
         FormatoSalida::Avif => {
@@ -681,6 +738,9 @@ pub struct Inicio {
     pub carpeta_presets: String,
     /// La versión de Apolo, para la firma y «Acerca de».
     pub version: &'static str,
+    /// El idioma en que arranca la interfaz: el de los ajustes, o el del
+    /// sistema (ADR 0025).
+    pub idioma: Idioma,
 }
 
 impl Servicio {
@@ -691,6 +751,7 @@ impl Servicio {
             presets_cwebp: webp::Preset::TODOS.to_vec(),
             carpeta_presets: self.carpeta_presets.display().to_string(),
             version: env!("CARGO_PKG_VERSION"),
+            idioma: self.idioma(),
         }
     }
 }
@@ -738,6 +799,24 @@ mod pruebas {
         assert_eq!(
             leer_orden("-quality 50", &jpeg).unwrap().jpeg.calidad,
             vec![50.0]
+        );
+    }
+
+    #[test]
+    fn los_fallos_salen_en_el_idioma_puesto() {
+        let qoi = Ajuste {
+            formato: FormatoSalida::Qoi,
+            ..Default::default()
+        };
+        let en = idioma::en_este_hilo(Idioma::En, || leer_orden("qoiconv a b c", &qoi));
+        assert_eq!(
+            en.unwrap_err().mensaje,
+            "qoiconv only takes the input and the output"
+        );
+        let es = idioma::en_este_hilo(Idioma::Es, || leer_orden("qoiconv a b c", &qoi));
+        assert_eq!(
+            es.unwrap_err().mensaje,
+            "qoiconv solo lleva la entrada y la salida"
         );
     }
 

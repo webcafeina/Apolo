@@ -10,6 +10,7 @@
 //! (`-o`) pone los filtros y la compresión, y lo demás los cambia encima. No
 //! importa el orden.
 
+use crate::{tr, trs};
 use serde::{Deserialize, Serialize};
 
 use oxipng::{Deflater, FilterStrategy, Options, StripChunks};
@@ -124,8 +125,9 @@ fn mal(t: impl Into<String>) -> Error {
 /// repetidos. `parse_numeric_range_opts` de oxipng, tal cual.
 fn leer_filtros(s: &str) -> Resultado<Vec<u8>> {
     let error = || {
-        mal(format!(
-            "-f {s}: no es un filtro, un rango ni una lista (de 0 a 9)"
+        mal(tr!(
+            "-f {s}: no es un filtro, un rango ni una lista (de 0 a 9)",
+            "-f {s}: not a filter, a range or a list (0 to 9)"
         ))
     };
     if let Ok(v) = s.parse::<u8>()
@@ -161,7 +163,10 @@ impl OpcionesPng {
     /// Las `Options` del crate, como `parse_opts_into_struct` en oxipng.
     pub fn a_oxipng(&self) -> Resultado<Options> {
         if self.nivel > 6 {
-            return Err(mal("-o va de 0 a 6 (o max)"));
+            return Err(mal(trs!(
+                "-o va de 0 a 6 (o max)",
+                "-o must be from 0 to 6 (or max)"
+            )));
         }
         let mut o = Options::from_preset(self.nivel);
 
@@ -225,8 +230,12 @@ impl OpcionesPng {
         };
         if self.zopfli {
             let n = |v: u64| {
-                std::num::NonZeroU64::new(v)
-                    .ok_or_else(|| mal("--zi y --ziwi van de 1 en adelante"))
+                std::num::NonZeroU64::new(v).ok_or_else(|| {
+                    mal(trs!(
+                        "--zi y --ziwi van de 1 en adelante",
+                        "--zi and --ziwi must be 1 or more"
+                    ))
+                })
             };
             o.deflater = Deflater::Zopfli(oxipng::ZopfliOptions {
                 iteration_count: n(self.iteraciones.unwrap_or(15))?,
@@ -240,7 +249,7 @@ impl OpcionesPng {
         if let (Deflater::Libdeflater { compression }, Some(c)) = (&mut o.deflater, self.compresion)
         {
             if c > 12 {
-                return Err(mal("--zc va de 0 a 12"));
+                return Err(mal(trs!("--zc va de 0 a 12", "--zc must be from 0 to 12")));
             }
             *compression = c;
         }
@@ -400,12 +409,17 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesPng, args: &[S]) -> Result
             en_linea
                 .clone()
                 .or_else(|| cola.pop_front())
-                .ok_or_else(|| mal(format!("falta el valor de {nombre}")))
+                .ok_or_else(|| {
+                    mal(tr!(
+                        "falta el valor de {nombre}",
+                        "missing value for {nombre}"
+                    ))
+                })
         };
         let num = |s: String, que: &str| -> Resultado<u64> {
             s.trim()
                 .parse::<u64>()
-                .map_err(|_| mal(format!("{que} {s}: no es un número")))
+                .map_err(|_| mal(tr!("{que} {s}: no es un número", "{que} {s}: not a number")))
         };
         match nombre.as_str() {
             "-o" | "--opt" => {
@@ -413,10 +427,12 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesPng, args: &[S]) -> Result
                 op.nivel = if v == "max" {
                     6
                 } else {
-                    v.parse::<u8>()
-                        .ok()
-                        .filter(|n| *n <= 6)
-                        .ok_or_else(|| mal(format!("-o {v}: va de 0 a 6, o max")))?
+                    v.parse::<u8>().ok().filter(|n| *n <= 6).ok_or_else(|| {
+                        mal(tr!(
+                            "-o {v}: va de 0 a 6, o max",
+                            "-o {v}: must be from 0 to 6, or max"
+                        ))
+                    })?
                 };
             }
             "-a" | "--alpha" => op.alfa = true,
@@ -425,7 +441,12 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesPng, args: &[S]) -> Result
                     "off" | "0" => Entrelazado::No,
                     "on" | "1" => Entrelazado::Si,
                     "keep" => Entrelazado::Mantener,
-                    v => return Err(mal(format!("-i {v}: tiene que ser off, on o keep"))),
+                    v => {
+                        return Err(mal(tr!(
+                            "-i {v}: tiene que ser off, on o keep",
+                            "-i {v}: must be off, on or keep"
+                        )));
+                    }
                 }
             }
             "-s" => op.quitar = Quitar::Seguro,
@@ -434,14 +455,18 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesPng, args: &[S]) -> Result
                     "safe" => Quitar::Seguro,
                     "all" => Quitar::Todo,
                     v => {
-                        return Err(mal(format!(
-                            "--strip {v}: Apolo acepta safe y all; las listas de trozos no están todavía"
+                        return Err(mal(tr!(
+                            "--strip {v}: Apolo acepta safe y all; las listas de trozos no están todavía",
+                            "--strip {v}: Apolo accepts safe and all; chunk lists aren't supported yet"
                         )));
                     }
                 }
             }
             "--keep" => {
-                return Err(mal("--keep no está todavía en Apolo"));
+                return Err(mal(trs!(
+                    "--keep no está todavía en Apolo",
+                    "--keep isn't in Apolo yet"
+                )));
             }
             "--scale16" => op.escala16 = true,
             "--nb" => op.sin_bits = true,
@@ -459,7 +484,7 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesPng, args: &[S]) -> Result
             "--zc" => {
                 let v = num(valor()?, "--zc")?;
                 if v > 12 {
-                    return Err(mal("--zc va de 0 a 12"));
+                    return Err(mal(trs!("--zc va de 0 a 12", "--zc must be from 0 to 12")));
                 }
                 op.compresion = Some(v as u8);
             }
@@ -469,7 +494,10 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesPng, args: &[S]) -> Result
             "--brute-level" => {
                 let v = num(valor()?, "--brute-level")?;
                 if !(1..=12).contains(&v) {
-                    return Err(mal("--brute-level va de 1 a 12"));
+                    return Err(mal(trs!(
+                        "--brute-level va de 1 a 12",
+                        "--brute-level must be from 1 to 12"
+                    )));
                 }
                 op.bruta_nivel = Some(v as u8);
             }
@@ -486,9 +514,17 @@ pub fn leer_orden_desde<S: AsRef<str>>(base: &OpcionesPng, args: &[S]) -> Result
                 o.ignoradas.push(nombre);
             }
             "--timeout" | "--max-raw-size" | "--dir" | "-d" | "--dry-run" => {
-                return Err(mal(format!("{nombre} no está en Apolo")));
+                return Err(mal(tr!(
+                    "{nombre} no está en Apolo",
+                    "{nombre} isn't in Apolo"
+                )));
             }
-            otro => return Err(mal(format!("oxipng no tiene la opción {otro}"))),
+            otro => {
+                return Err(mal(tr!(
+                    "oxipng no tiene la opción {otro}",
+                    "oxipng has no option {otro}"
+                )));
+            }
         }
     }
     Ok(o)
@@ -549,6 +585,26 @@ pub fn png_de_pixeles(
 #[cfg(test)]
 mod pruebas {
     use super::*;
+
+    #[test]
+    fn los_errores_de_la_orden_en_ingles() {
+        use crate::idioma::{Idioma, en_este_hilo};
+        let error = |a: &[&str]| leer_orden(a).unwrap_err().to_string();
+        assert_eq!(
+            error(&["--foo"]),
+            "La configuración no es válida: oxipng no tiene la opción --foo"
+        );
+        en_este_hilo(Idioma::En, || {
+            assert_eq!(
+                error(&["--foo"]),
+                "Invalid configuration: oxipng has no option --foo"
+            );
+            assert_eq!(
+                error(&["-i", "x"]),
+                "Invalid configuration: -i x: must be off, on or keep"
+            );
+        });
+    }
 
     #[test]
     fn ida_y_vuelta() {

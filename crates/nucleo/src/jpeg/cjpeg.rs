@@ -17,6 +17,7 @@
 //!   80 en adelante lo deja en 2x1;
 //! - el factor de escala de calidad se guarda en un entero: se trunca.
 
+use crate::{tr, trs};
 use std::ffi::c_int;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
@@ -137,7 +138,10 @@ unsafe fn calidad(
             let t = p.trim_start();
             if t.is_empty() || !t.starts_with(|ch: char| ch.is_ascii_digit() || "+-.".contains(ch))
             {
-                return Err(mal(format!("-quality {arg}: no es una lista de números")));
+                return Err(mal(tr!(
+                    "-quality {arg}: no es una lista de números",
+                    "-quality {arg}: not a list of numbers"
+                )));
             }
             let num_fin = t
                 .char_indices()
@@ -146,7 +150,10 @@ unsafe fn calidad(
                 .map(|(i, ch)| i + ch.len_utf8())
                 .unwrap_or(0);
             if num_fin != t.len() {
-                return Err(mal(format!("-quality {arg}: no es una lista de números")));
+                return Err(mal(tr!(
+                    "-quality {arg}: no es una lista de números",
+                    "-quality {arg}: not a list of numbers"
+                )));
             }
             val = atof(t) as f32;
         }
@@ -182,11 +189,17 @@ unsafe fn ranuras(c: &mut j::jpeg_compress_struct, arg: &str) -> Resultado<()> {
     for ci in 0..MAX_COMPONENTS {
         if let Some(p) = partes.get(ci) {
             if p.trim().is_empty() || p.trim().parse::<i32>().is_err() {
-                return Err(mal(format!("-qslots {arg}: no es una lista de números")));
+                return Err(mal(tr!(
+                    "-qslots {arg}: no es una lista de números",
+                    "-qslots {arg}: not a list of numbers"
+                )));
             }
             val = atoi(p);
             if !(0..NUM_QUANT_TBLS as c_int).contains(&val) {
-                return Err(mal("Las tablas de cuantización van de 0 a 3"));
+                return Err(mal(trs!(
+                    "Las tablas de cuantización van de 0 a 3",
+                    "Quantization tables must be from 0 to 3"
+                )));
             }
         }
         unsafe { (*c.comp_info.add(ci)).quant_tbl_no = val };
@@ -200,15 +213,24 @@ unsafe fn muestreo(c: &mut j::jpeg_compress_struct, arg: &str) -> Resultado<()> 
     for ci in 0..MAX_COMPONENTS {
         let (h, v) = match partes.get(ci) {
             Some(p) => {
-                let (h, v) = p
-                    .split_once(['x', 'X'])
-                    .ok_or_else(|| mal(format!("-sample {arg}: tiene que ser HxV")))?;
+                let (h, v) = p.split_once(['x', 'X']).ok_or_else(|| {
+                    mal(tr!(
+                        "-sample {arg}: tiene que ser HxV",
+                        "-sample {arg}: must be HxV"
+                    ))
+                })?;
                 let (h, v) = (h.trim().parse::<c_int>(), v.trim().parse::<c_int>());
                 let (Ok(h), Ok(v)) = (h, v) else {
-                    return Err(mal(format!("-sample {arg}: tiene que ser HxV")));
+                    return Err(mal(tr!(
+                        "-sample {arg}: tiene que ser HxV",
+                        "-sample {arg}: must be HxV"
+                    )));
                 };
                 if !(1..=4).contains(&h) || !(1..=4).contains(&v) {
-                    return Err(mal("Los factores de muestreo van de 1 a 4"));
+                    return Err(mal(trs!(
+                        "Los factores de muestreo van de 1 a 4",
+                        "Sampling factors must be from 1 to 4"
+                    )));
                 }
                 (h, v)
             }
@@ -242,16 +264,23 @@ unsafe fn opciones(
         *n += 1;
         args.get(*n)
             .cloned()
-            .ok_or_else(|| mal(format!("falta el valor de -{que}")))
+            .ok_or_else(|| mal(tr!("falta el valor de -{que}", "missing value for -{que}")))
     };
     while n < args.len() {
         let Some(arg) = args[n].strip_prefix('-') else {
-            return Err(mal(format!("«{}» no es una opción", args[n])));
+            return Err(mal(tr!(
+                "«{}» no es una opción",
+                "“{}” isn't an option",
+                args[n]
+            )));
         };
         unsafe {
             if keymatch(arg, "arithmetic", 1) {
                 // El cjpeg 4.1.5 oficial viene sin codificación aritmética.
-                return Err(mal("cjpeg no tiene codificación aritmética (-arithmetic)"));
+                return Err(mal(trs!(
+                    "cjpeg no tiene codificación aritmética (-arithmetic)",
+                    "cjpeg has no arithmetic coding (-arithmetic)"
+                )));
             } else if keymatch(arg, "baseline", 1) {
                 l.force_baseline = true;
                 l.simple_progressive = false;
@@ -266,7 +295,10 @@ unsafe fn opciones(
                 } else if keymatch(&v, "float", 2) {
                     j::J_DCT_METHOD::JDCT_FLOAT
                 } else {
-                    return Err(mal(format!("-dct {v}: tiene que ser int, fast o float")));
+                    return Err(mal(tr!(
+                        "-dct {v}: tiene que ser int, fast o float",
+                        "-dct {v}: must be int, fast or float"
+                    )));
                 };
             } else if keymatch(arg, "fastcrush", 4) {
                 j::jpeg_c_set_bool_param(c, j::JBOOLEAN_OPTIMIZE_SCANS, 0);
@@ -295,7 +327,10 @@ unsafe fn opciones(
                 let v = atoi(&siguiente(&mut n, "quant-table")?);
                 j::jpeg_c_set_int_param(c, j::JINT_BASE_QUANT_TBL_IDX, v);
                 if j::jpeg_c_get_int_param(c, j::JINT_BASE_QUANT_TBL_IDX) != v {
-                    return Err(mal(format!("-quant-table {v}: tiene que ir de 0 a 8")));
+                    return Err(mal(tr!(
+                        "-quant-table {v}: tiene que ir de 0 a 8",
+                        "-quant-table {v}: must be from 0 to 8"
+                    )));
                 }
                 j::jpeg_set_quality(c, 75, 1);
             } else if keymatch(arg, "quant-baseline", 7) {
@@ -304,7 +339,12 @@ unsafe fn opciones(
                 let v = siguiente(&mut n, "restart")?;
                 let (num, letra) = numero_y_letra(&v)
                     .filter(|(num, _)| (0..=65535).contains(num))
-                    .ok_or_else(|| mal(format!("-restart {v}: tiene que ir de 0 a 65535")))?;
+                    .ok_or_else(|| {
+                        mal(tr!(
+                            "-restart {v}: tiene que ir de 0 a 65535",
+                            "-restart {v}: must be from 0 to 65535"
+                        ))
+                    })?;
                 if matches!(letra, Some('b' | 'B')) {
                     c.restart_interval = num as u32;
                     c.restart_in_rows = 0;
@@ -323,7 +363,12 @@ unsafe fn opciones(
                     .parse::<c_int>()
                     .ok()
                     .filter(|s| (0..=100).contains(s))
-                    .ok_or_else(|| mal(format!("-smooth {v}: tiene que ir de 0 a 100")))?;
+                    .ok_or_else(|| {
+                        mal(tr!(
+                            "-smooth {v}: tiene que ir de 0 a 100",
+                            "-smooth {v}: must be from 0 to 100"
+                        ))
+                    })?;
                 c.smoothing_factor = s;
             } else if keymatch(arg, "notrellis-dc", 11) {
                 j::jpeg_c_set_bool_param(c, j::JBOOLEAN_TRELLIS_QUANT_DC, 0);
@@ -347,7 +392,10 @@ unsafe fn opciones(
             } else if keymatch(arg, "nojfif", 6) {
                 c.write_JFIF_header = 0;
             } else {
-                return Err(mal(format!("cjpeg no tiene la opción -{arg}")));
+                return Err(mal(tr!(
+                    "cjpeg no tiene la opción -{arg}",
+                    "cjpeg has no option -{arg}"
+                )));
             }
         }
         n += 1;
@@ -431,7 +479,7 @@ pub fn ejecutar(entrada: &EntradaJpeg, args: &[String], extra: &Extra) -> Result
         Err(p) => Err(Error::Codificacion(
             p.downcast_ref::<String>()
                 .cloned()
-                .unwrap_or_else(|| "MozJPEG falló".into()),
+                .unwrap_or_else(|| trs!("MozJPEG falló", "MozJPEG failed").into()),
         )),
     }
 }
@@ -496,7 +544,10 @@ unsafe fn ejecutar_sin_proteger(
 
     // start_input del lector: lo que sabe de la imagen.
     if e.ancho == 0 || e.alto == 0 || e.ancho > 65535 || e.alto > 65535 {
-        return Err(mal("JPEG admite de 1 a 65535 píxeles por lado"));
+        return Err(mal(trs!(
+            "JPEG admite de 1 a 65535 píxeles por lado",
+            "JPEG allows 1 to 65535 pixels per side"
+        )));
     }
     c.in_color_space = if e.gris {
         j::J_COLOR_SPACE::JCS_GRAYSCALE

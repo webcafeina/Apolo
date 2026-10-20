@@ -10,17 +10,37 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use apolo_mcpb::{Sistema, armar, nombre_fichero};
+use apolo_nucleo::idioma::{self, Idioma};
+use apolo_nucleo::{tr, trs};
 
 fn main() -> ExitCode {
+    // El idioma del manifiesto (ADR 0025): APOLO_IDIOMA, y si no, el del
+    // sistema. La publicación pone `en`.
+    idioma::poner(
+        std::env::var("APOLO_IDIOMA")
+            .ok()
+            .and_then(|v| Idioma::de_codigo(&v))
+            .unwrap_or_else(idioma::del_sistema),
+    );
     let a: Vec<String> = std::env::args().skip(1).collect();
     let [binario, version, sistema, salida] = &a[..] else {
         eprintln!(
-            "Uso: armar-mcpb <apolo-mcp> <versión> <macos|windows|linux> <carpeta de salida>"
+            "{}",
+            trs!(
+                "Uso: armar-mcpb <apolo-mcp> <versión> <macos|windows|linux> <carpeta de salida>",
+                "Usage: armar-mcpb <apolo-mcp> <version> <macos|windows|linux> <output folder>"
+            )
         );
         return ExitCode::FAILURE;
     };
     let Some(sistema) = Sistema::leer(sistema) else {
-        eprintln!("Sistema desconocido: {sistema}");
+        eprintln!(
+            "{}",
+            tr!(
+                "Sistema desconocido: {sistema}",
+                "Unknown system: {sistema}"
+            )
+        );
         return ExitCode::FAILURE;
     };
     let r = std::fs::read(binario)

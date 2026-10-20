@@ -10,6 +10,7 @@
 //! De otros formatos, Apolo usa 4 canales si hay transparencia y 3 si no;
 //! eso ya no lo da ninguna orden de qoiconv.
 
+use crate::trs;
 use std::io::Cursor;
 
 use png::{ColorType, Transformations};
@@ -33,9 +34,12 @@ pub fn leer_png(datos: &[u8]) -> Resultado<EntradaQoi> {
     d.set_transformations(Transformations::EXPAND | Transformations::STRIP_16);
     d.set_ignore_text_chunk(true);
     let mut lector = d.read_info().map_err(f)?;
-    let tam = lector
-        .output_buffer_size()
-        .ok_or_else(|| Error::lectura("PNG", "la imagen es demasiado grande"))?;
+    let tam = lector.output_buffer_size().ok_or_else(|| {
+        Error::lectura(
+            "PNG",
+            trs!("la imagen es demasiado grande", "the image is too large"),
+        )
+    })?;
     let mut buf = vec![0; tam];
     let marco = lector.next_frame(&mut buf).map_err(f)?;
     buf.truncate(marco.buffer_size());
@@ -69,7 +73,12 @@ pub fn leer_png(datos: &[u8]) -> Resultado<EntradaQoi> {
             .iter()
             .flat_map(|p| [p[0], p[0], p[0], p[1]])
             .collect(),
-        _ => return Err(Error::lectura("PNG", "tipo de color inesperado")),
+        _ => {
+            return Err(Error::lectura(
+                "PNG",
+                trs!("tipo de color inesperado", "unexpected color type"),
+            ));
+        }
     };
     Ok(EntradaQoi {
         ancho,
@@ -106,13 +115,21 @@ pub fn codificar(e: &EntradaQoi) -> Resultado<Vec<u8>> {
     if e.ancho == 0 || e.alto == 0 || !(3..=4).contains(&canales) || e.pixeles.len() != n * canales
     {
         return Err(Error::Codificacion(
-            "QOI: dimensiones o canales no válidos".into(),
+            trs!(
+                "QOI: dimensiones o canales no válidos",
+                "QOI: invalid dimensions or channels"
+            )
+            .into(),
         ));
     }
     // QOI_PIXELS_MAX: 400 millones de píxeles.
     if e.alto as u64 >= 400_000_000 / e.ancho as u64 {
         return Err(Error::Codificacion(
-            "QOI: la imagen es demasiado grande".into(),
+            trs!(
+                "QOI: la imagen es demasiado grande",
+                "QOI: the image is too large"
+            )
+            .into(),
         ));
     }
     const INDEX: u8 = 0x00;

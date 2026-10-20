@@ -23,7 +23,8 @@
     "exportado": "Guardado: {{nombre}}",
     "presetGuardado": "Preset «{{nombre}}» guardado.",
     "avisoOrientacion": "Esta foto lleva una orientación en sus metadatos: sin enderezarla, el resultado sale girado, igual que con cwebp.",
-    "enderezar": "Enderezar"
+    "enderezar": "Enderezar",
+    "imagenes": "Imágenes"
   },
   "comparador": {
     "etiqueta": "Comparación del original y el resultado",
@@ -562,6 +563,12 @@
     "alDia": "Ya tienes la última versión.",
     "hayNueva": "Hay una versión nueva: Apolo {{version}}.",
     "errorBuscar": "No se pudo preguntar a GitHub: {{detalle}}",
+    "idioma": "Idioma",
+    "idiomaSistema": "Igual que el sistema",
+    "idiomas": {
+      "es": "Español",
+      "en": "English"
+    },
     "pestanas": {
       "etiqueta": "Secciones de Ajustes",
       "general": "General",

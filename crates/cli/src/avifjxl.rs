@@ -14,6 +14,8 @@ use apolo_nucleo::entrada::Formato;
 use apolo_nucleo::formatos::{avif, jxl};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida};
 
+use apolo_nucleo::{tr, trs};
+
 use crate::comun;
 
 pub fn ejecutar(formato: FormatoSalida, args: &[String]) -> ExitCode {
@@ -26,7 +28,7 @@ pub fn ejecutar(formato: FormatoSalida, args: &[String]) -> ExitCode {
     if ayuda || !hace_falta_apolo(formato, args) {
         let codigo = apolo_avifjxl::ejecutar(herramienta, args);
         if ayuda {
-            println!("{AYUDA}");
+            println!("{}", texto_de_ayuda());
         }
         return ExitCode::from(codigo.clamp(0, 255) as u8);
     }
@@ -95,27 +97,46 @@ fn correr(formato: FormatoSalida, args: &[String]) -> Result<(), String> {
         }
     };
     let [entrada, destino] = ficheros.as_slice() else {
-        return Err("hacen falta la entrada y la salida".into());
+        return Err(trs!(
+            "hacen falta la entrada y la salida",
+            "the input and the output are needed"
+        )
+        .into());
     };
-    let datos = std::fs::read(entrada).map_err(|e| format!("no se puede leer «{entrada}»: {e}"))?;
+    let datos = std::fs::read(entrada).map_err(|e| {
+        tr!(
+            "no se puede leer «{entrada}»: {e}",
+            "can't read “{entrada}”: {e}"
+        )
+    })?;
     let img = comun::leer(&datos)?;
     if !formato.herramienta_lee(img.formato) {
         eprintln!(
-            "Aviso: «{entrada}» es {}; {} no lo abriría: Apolo le pasa un PNG con sus píxeles.",
-            img.formato.nombre(),
-            formato.herramienta()
+            "{}",
+            tr!(
+                "Aviso: «{entrada}» es {}; {} no lo abriría: Apolo le pasa un PNG con sus píxeles.",
+                "Warning: “{entrada}” is {}; {} wouldn't open it: Apolo passes it a PNG with its pixels.",
+                img.formato.nombre(),
+                formato.herramienta()
+            )
         );
     }
     ajuste.objetivo = objetivo;
     let r = salida::codificar(&datos, &img, &ajuste, None).map_err(|e| e.to_string())?;
     comun::informar_hallada(r.hallada, objetivo);
-    std::fs::write(destino, &r.datos)
-        .map_err(|e| format!("no se puede escribir «{destino}»: {e}"))?;
+    std::fs::write(destino, &r.datos).map_err(|e| {
+        tr!(
+            "no se puede escribir «{destino}»: {e}",
+            "can't write “{destino}”: {e}"
+        )
+    })?;
     eprintln!("{entrada}: {} → {} bytes", datos.len(), r.datos.len());
     Ok(())
 }
 
-const AYUDA: &str = "
+fn texto_de_ayuda() -> &'static str {
+    trs!(
+        "
 Propias de Apolo:
 
   -apolo_preset NOMBRE   partir de un preset guardado (apolo presets)
@@ -123,4 +144,15 @@ Propias de Apolo:
   -apolo_objetivo NOTA   buscar la calidad más baja que da esa nota SSIMULACRA 2
 
 Con una entrada que la herramienta no abre (WebP, HEIC, TIFF…), Apolo la lee
-y le pasa un PNG con sus píxeles.";
+y le pasa un PNG con sus píxeles.",
+        "
+Apolo's own:
+
+  -apolo_preset NAME     start from a saved preset (apolo presets)
+  -apolo_enderezar       auto-rotate according to the EXIF orientation
+  -apolo_objetivo SCORE  find the lowest quality that gives that SSIMULACRA 2 score
+
+With an input the tool can't open (WebP, HEIC, TIFF…), Apolo reads it
+and passes it a PNG with its pixels."
+    )
+}

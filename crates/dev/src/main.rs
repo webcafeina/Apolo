@@ -14,7 +14,7 @@ use std::sync::Arc;
 use apolo_nucleo::presets::PresetGuardado;
 use apolo_nucleo::salida::{Ajuste, FormatoSalida};
 use apolo_nucleo::webp::{OpcionesWebp, Preset};
-use apolo_servicio::{Fallo, Servicio, empaquetar_pixeles};
+use apolo_servicio::{Fallo, PreferenciaIdioma, Servicio, empaquetar_pixeles};
 use axum::Json;
 use axum::Router;
 use axum::body::Bytes;
@@ -137,6 +137,11 @@ struct Nombre {
 #[derive(Deserialize)]
 struct Si {
     si: bool,
+}
+
+#[derive(Deserialize)]
+struct PeticionIdioma {
+    idioma: PreferenciaIdioma,
 }
 
 #[derive(Deserialize)]
@@ -345,6 +350,14 @@ fn rutas(s: Arc<Servicio>) -> Router {
             }),
         )
         .route(
+            "/api/poner_idioma",
+            post(
+                |State(s): Estado, Json(p): Json<PeticionIdioma>| async move {
+                    Json(s.poner_idioma(p.idioma))
+                },
+            ),
+        )
+        .route(
             "/api/reservar_comprobacion",
             post(|State(s): Estado, Json(p): Json<Forzar>| async move {
                 Json(s.reservar_comprobacion(p.forzar))
@@ -474,6 +487,7 @@ async fn main() {
         Some(p) => Servicio::nuevo(p),
         None => Servicio::con_carpeta_por_defecto(),
     });
+    servicio.aplicar_idioma();
     eprintln!(
         "apolo-dev en http://{direccion} · presets en {}",
         servicio.carpeta_presets().display()

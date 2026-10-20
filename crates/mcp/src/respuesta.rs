@@ -2,6 +2,7 @@
 //! compacto para el modelo, una línea por cosa, y los mismos datos en JSON
 //! (`structuredContent`). A veces, una imagen.
 
+use apolo_nucleo::trs;
 use serde::Serialize;
 
 /// Más de esto en el texto no sirve: se corta y se dice.
@@ -26,7 +27,10 @@ impl Respuesta {
         let mut texto: String = texto.into();
         if texto.chars().count() > LIMITE_TEXTO {
             texto = texto.chars().take(LIMITE_TEXTO).collect();
-            texto.push_str("\n… (recortada: pide menos, o usa el cursor desde)");
+            texto.push_str(trs!(
+                "\n… (recortada: pide menos, o usa el cursor desde)",
+                "\n… (truncated: ask for less, or use the desde cursor)"
+            ));
             if let serde_json::Value::Object(m) = &mut datos {
                 m.insert("recortada".into(), true.into());
             }
@@ -41,7 +45,7 @@ impl Respuesta {
 
 /// Un peso legible: «812 B», «48 KB», «1,2 MB».
 pub fn peso(n: u64) -> String {
-    let coma = |s: String| s.replace('.', ",");
+    let coma = decimal;
     if n < 1024 {
         format!("{n} B")
     } else if n < 1024 * 1024 {
@@ -69,25 +73,42 @@ pub fn ahorro_pct(antes: u64, despues: u64) -> f64 {
     (1.0 - despues as f64 / antes as f64) * 100.0
 }
 
-/// Un número con coma decimal.
+/// Un número con coma decimal (en inglés, con punto).
 pub fn coma(n: f64, decimales: usize) -> String {
-    format!("{n:.decimales$}").replace('.', ",")
+    decimal(format!("{n:.decimales$}"))
+}
+
+/// El separador decimal del idioma: coma en español, punto en inglés.
+fn decimal(s: String) -> String {
+    match apolo_nucleo::idioma::actual() {
+        apolo_nucleo::idioma::Idioma::Es => s.replace('.', ","),
+        apolo_nucleo::idioma::Idioma::En => s,
+    }
 }
 
 /// Lo que significa una nota SSIMULACRA 2 (la escala de su autor).
 pub fn banda(nota: f64) -> &'static str {
     if nota >= 90.0 {
-        "no se distingue del original"
+        trs!(
+            "no se distingue del original",
+            "indistinguishable from the original"
+        )
     } else if nota >= 80.0 {
-        "muy alta: no se distingue lado a lado"
+        trs!(
+            "muy alta: no se distingue lado a lado",
+            "very high: indistinguishable side by side"
+        )
     } else if nota >= 70.0 {
-        "alta"
+        trs!("alta", "high")
     } else if nota >= 50.0 {
-        "media: se nota comparando"
+        trs!(
+            "media: se nota comparando",
+            "medium: noticeable when comparing"
+        )
     } else if nota >= 30.0 {
-        "baja"
+        trs!("baja", "low")
     } else {
-        "muy baja"
+        trs!("muy baja", "very low")
     }
 }
 
@@ -102,6 +123,11 @@ mod pruebas {
         assert_eq!(peso(1_258_291), "1,2 MB");
         assert_eq!(ahorro(1000, 390), "−61 %");
         assert_eq!(ahorro(1000, 1040), "+4 %");
+        use apolo_nucleo::idioma::{Idioma, en_este_hilo};
+        en_este_hilo(Idioma::En, || {
+            assert_eq!(peso(1_258_291), "1.2 MB");
+            assert_eq!(coma(80.25, 1), "80.2");
+        });
     }
 
     #[test]

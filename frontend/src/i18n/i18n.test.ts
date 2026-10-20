@@ -1,8 +1,10 @@
 // Vigila la ADR 0007: toda clave que se pide en un componente existe en
-// es.json, y ningún texto está vacío.
+// es.json, y ningún texto está vacío. Y la 0025: en.json tiene las mismas
+// claves, con los mismos datos ({{x}}) en cada una.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import en from "./en.json";
 import es from "./es.json";
 
 const raiz = join(__dirname, "..");
@@ -37,8 +39,27 @@ describe("i18n", () => {
   });
 
   it("ningún texto está vacío", () => {
-    const vacios = hojas(es).filter(([, v]) => typeof v !== "string" || v.trim() === "");
-    expect(vacios).toEqual([]);
+    for (const catalogo of [es, en]) {
+      const vacios = hojas(catalogo).filter(([, v]) => typeof v !== "string" || v.trim() === "");
+      expect(vacios).toEqual([]);
+    }
+  });
+
+  it("en.json tiene las mismas claves que es.json", () => {
+    const claves = (c: object) => hojas(c).map(([k]) => k).sort();
+    expect(claves(en)).toEqual(claves(es));
+  });
+
+  it("cada texto en inglés lleva los mismos datos que en español", () => {
+    const datos = (v: unknown) => [...String(v).matchAll(/\{\{\s*(\w+)\s*\}\}/g)].map((m) => m[1]).sort();
+    const distintos = hojas(es)
+      .filter(([k, v]) => JSON.stringify(datos(v)) !== JSON.stringify(datos(buscar(en, k))))
+      .map(([k]) => k);
+    expect(distintos).toEqual([]);
+  });
+
+  it("las comillas de cada idioma: «» en español, “” en inglés", () => {
+    expect(hojas(en).filter(([, v]) => /[«»]/.test(String(v))).map(([k]) => k)).toEqual([]);
   });
 });
 

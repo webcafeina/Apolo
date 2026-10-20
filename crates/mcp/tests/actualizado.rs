@@ -20,6 +20,7 @@ fn avisa_si_la_aplicacion_se_actualiza_con_el_servidor_en_marcha() {
 
     let mut hijo = Command::new(&binario)
         .env("APOLO_CONFIG", dir.join("config"))
+        .env("APOLO_IDIOMA", "es")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::null())

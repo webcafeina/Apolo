@@ -4,6 +4,7 @@ import * as actualizar from "./actualizar";
 import { Agentes } from "./ajustes/Agentes";
 import { Cabecera, Icono, IconoApp, Marca } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
+import i18n, { lengua } from "./i18n";
 import { Lotes } from "./lotes/Lotes";
 import { BandaNovedad } from "./Novedad";
 import { Presets } from "./presets/Presets";
@@ -139,6 +140,7 @@ function Ajustes({
         </div>
         {pestana === "agentes" && <Agentes />}
         <div className="panel-ajustes" hidden={pestana !== "general"}>
+          <ElegirIdioma />
           <section className="grupo">
             <h2>{t("ajustes.acercaDe")}</h2>
             <div className="ficha">
@@ -163,6 +165,49 @@ function Ajustes({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * «Idioma»: el del sistema, español o inglés (ADR 0025). Se guarda en Rust,
+ * que lo pone también en sus mensajes, y la interfaz cambia al que diga Rust:
+ * con «Igual que el sistema», solo Rust sabe cuál es.
+ */
+function ElegirIdioma() {
+  const { t } = useTranslation();
+  const [preferencia, setPreferencia] = useState<puente.PreferenciaIdioma | null>(null);
+
+  useEffect(() => {
+    puente.ajustes().then((a) => setPreferencia(a.idioma), () => {});
+  }, []);
+
+  function elegir(p: puente.PreferenciaIdioma) {
+    setPreferencia(p);
+    puente.ponerIdioma(p).then((efectivo) => i18n.changeLanguage(efectivo), () => {});
+  }
+
+  return (
+    <section className="grupo" data-prueba="idioma">
+      <h2>{t("ajustes.idioma")}</h2>
+      <div className="pareja">
+        {/* Cada idioma, con su nombre en su idioma: quien no entiende el
+            actual tiene que encontrar el suyo. */}
+        <select
+          value={preferencia ?? "sistema"}
+          disabled={preferencia === null}
+          aria-label={t("ajustes.idioma")}
+          onChange={(e) => elegir(e.target.value as puente.PreferenciaIdioma)}
+        >
+          <option value="sistema">{t("ajustes.idiomaSistema")}</option>
+          <option value="es" lang="es">
+            {t("ajustes.idiomas.es")}
+          </option>
+          <option value="en" lang="en">
+            {t("ajustes.idiomas.en")}
+          </option>
+        </select>
+      </div>
+    </section>
   );
 }
 
@@ -198,7 +243,7 @@ function Actualizaciones({ alEncontrar }: { alEncontrar: (n: actualizar.Novedad)
   }
 
   const fecha = (segundos: number) =>
-    new Intl.DateTimeFormat("es", { dateStyle: "long", timeStyle: "short" }).format(new Date(segundos * 1000));
+    new Intl.DateTimeFormat(lengua(), { dateStyle: "long", timeStyle: "short" }).format(new Date(segundos * 1000));
 
   return (
     <section className="grupo" data-prueba="actualizaciones">

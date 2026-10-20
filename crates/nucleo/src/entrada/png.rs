@@ -5,6 +5,7 @@
 //! imagen queda en 1/2,2 y la corrección es nula; con un `gAMA` distinto de
 //! 1/2,2, cambian los píxeles, y hay que hacerlo con la misma aritmética.
 
+use crate::{tr, trs};
 use std::io::Cursor;
 
 use png::{BitDepth, ColorType, Transformations};
@@ -22,9 +23,12 @@ pub(super) fn leer(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
     let mut lector = decodificador
         .read_info()
         .map_err(|e| Error::lectura(F, e))?;
-    let tamano = lector
-        .output_buffer_size()
-        .ok_or_else(|| Error::lectura(F, "la imagen es demasiado grande"))?;
+    let tamano = lector.output_buffer_size().ok_or_else(|| {
+        Error::lectura(
+            F,
+            trs!("la imagen es demasiado grande", "the image is too large"),
+        )
+    })?;
     let mut buf = vec![0; tamano];
     let marco = lector
         .next_frame(&mut buf)
@@ -43,7 +47,12 @@ pub(super) fn leer(datos: &[u8], lectura: Lectura) -> Resultado<Imagen> {
         ColorType::Rgba => Pixeles::Rgba(buf),
         ColorType::Grayscale => Pixeles::Rgb(gris_a_rgb(&buf)),
         ColorType::GrayscaleAlpha => Pixeles::Rgba(gris_alfa_a_rgba(&buf)),
-        ColorType::Indexed => return Err(Error::lectura(F, "la paleta no se expandió")),
+        ColorType::Indexed => {
+            return Err(Error::lectura(
+                F,
+                trs!("la paleta no se expandió", "the palette wasn't expanded"),
+            ));
+        }
     };
 
     if info.srgb.is_none()
@@ -122,9 +131,12 @@ pub(crate) fn leer_para_cjpeg(datos: &[u8]) -> Resultado<PngCjpeg> {
     let mut lector = decodificador
         .read_info()
         .map_err(|e| Error::lectura(F, e))?;
-    let tamano = lector
-        .output_buffer_size()
-        .ok_or_else(|| Error::lectura(F, "la imagen es demasiado grande"))?;
+    let tamano = lector.output_buffer_size().ok_or_else(|| {
+        Error::lectura(
+            F,
+            trs!("la imagen es demasiado grande", "the image is too large"),
+        )
+    })?;
     let mut buf = vec![0; tamano];
     let marco = lector
         .next_frame(&mut buf)
@@ -134,14 +146,25 @@ pub(crate) fn leer_para_cjpeg(datos: &[u8]) -> Resultado<PngCjpeg> {
     let (tipo, _) = lector.output_color_type();
     let info = lector.info();
     if info.width > 65535 || info.height > 65535 {
-        return Err(Error::lectura(F, "la imagen es demasiado grande para JPEG"));
+        return Err(Error::lectura(
+            F,
+            trs!(
+                "la imagen es demasiado grande para JPEG",
+                "the image is too large for JPEG"
+            ),
+        ));
     }
     let (gris, filas) = match tipo {
         ColorType::Grayscale => (true, buf),
         ColorType::GrayscaleAlpha => (true, buf.as_chunks::<2>().0.iter().map(|p| p[0]).collect()),
         ColorType::Rgb => (false, buf),
         ColorType::Rgba => (false, quitar_alfa(&buf)),
-        ColorType::Indexed => return Err(Error::lectura(F, "la paleta no se expandió")),
+        ColorType::Indexed => {
+            return Err(Error::lectura(
+                F,
+                trs!("la paleta no se expandió", "the palette wasn't expanded"),
+            ));
+        }
     };
     let en_color = matches!(
         info.color_type,
@@ -211,10 +234,20 @@ fn metadatos(info: &png::Info) -> Resultado<Metadatos> {
             continue; // «Ignoring additional»
         }
         let datos = if crudo {
-            perfil_crudo(&texto)
-                .ok_or_else(|| Error::lectura(F, format!("el perfil «{clave}» está mal formado")))?
+            perfil_crudo(&texto).ok_or_else(|| {
+                Error::lectura(
+                    F,
+                    tr!(
+                        "el perfil «{clave}» está mal formado",
+                        "the “{clave}” profile is malformed"
+                    ),
+                )
+            })?
         } else if texto.is_empty() {
-            return Err(Error::lectura(F, format!("«{clave}» está vacío")));
+            return Err(Error::lectura(
+                F,
+                tr!("«{clave}» está vacío", "“{clave}” is empty"),
+            ));
         } else {
             texto
         };

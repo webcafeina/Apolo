@@ -17,6 +17,7 @@ mod webp;
 
 use crate::error::{Error, Resultado};
 use crate::metadatos::Metadatos;
+use crate::tr;
 
 /// Formato de la imagen de partida.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
@@ -172,8 +173,9 @@ pub fn leer_yuv(datos: &[u8], ancho: u32, alto: u32) -> Resultado<Imagen> {
     if datos.len() != esperado {
         return Err(Error::lectura(
             "YUV",
-            format!(
+            tr!(
                 "tiene {} bytes y para {ancho}×{alto} hacen falta {esperado}",
+                "it has {} bytes and {ancho}×{alto} needs {esperado}",
                 datos.len()
             ),
         ));

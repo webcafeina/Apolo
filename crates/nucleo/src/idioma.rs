@@ -6,7 +6,7 @@
 //! ```
 //! use apolo_nucleo::{tr, trs};
 //! let ruta = "a.png";
-//! let m = tr!("No se puede leer «{ruta}»", "Can't read «{ruta}»");
+//! let m = tr!("No se puede leer «{ruta}»", "Can't read “{ruta}”");
 //! let t = trs!("Cancelado", "Cancelled");
 //! ```
 //!

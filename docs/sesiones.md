@@ -21,6 +21,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **El disco del VPS, lleno otra vez**: `target/debug` llegó a 67 GB. Borrado entero.
 - `make comprobar`, e2e 65/65, equivalencia completa, evaluación del MCP 37/37 con seis escenarios
   en inglés. README.en.md y las notas de la v0.12.0 en los dos idiomas.
+- Dos trabajos de la compilación de prueba, cancelados por GitHub a la vez y sin error; a la
+  segunda, bien.
+- **v0.12.0 publicada**, revisada como siempre (los `.mcpb` en inglés).
 
 ---
 

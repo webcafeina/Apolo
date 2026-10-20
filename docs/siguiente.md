@@ -20,7 +20,7 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     para un Mac de 8 GB, sin cambiar ni un byte de salida.~~ Hecha el 2026-10-20: todo por debajo de
     2,3 GB (docs/rendimiento.md); v0.11.0 publicada.
   - ~~**8c · v0.12.0**: todo en inglés.~~ Hecha el 2026-10-20 (ADR 0025): la ventana, la CLI, el
-    agente y el núcleo, con `tr!`/`trs!` en Rust y `en.json`; falta publicar la v0.12.0.
+    agente y el núcleo, con `tr!`/`trs!` en Rust y `en.json`; v0.12.0 publicada.
   - **8d · 1.0.0**:
     - el tap `webcafeina/homebrew-apolo` (fórmula de la CLI y cask de la aplicación);
     - la web en `apolo.webcafeina.com` (GitHub Pages, es + en);

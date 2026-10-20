@@ -8,6 +8,14 @@ fn main() {
     let manifiesto =
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../empaquetado/windows/apolo.manifest");
     println!("cargo:rerun-if-changed={}", manifiesto.display());
+    // El mismo manifiesto lo copia Tauri en un .rc línea a línea (src-tauri/build.rs): sin
+    // declaración XML y en ASCII, o la ventana no arranca. Se mira aquí, en todos los sistemas,
+    // porque la ventana no se compila en todas partes.
+    let texto = std::fs::read_to_string(&manifiesto).expect("el manifiesto de Windows");
+    assert!(
+        texto.is_ascii() && !texto.trim_start().starts_with("<?xml"),
+        "apolo.manifest: solo ASCII y sin <?xml …?>, o apolo-app.exe no arranca en Windows"
+    );
     if std::env::var("CARGO_CFG_TARGET_OS").as_deref() != Ok("windows") {
         return;
     }

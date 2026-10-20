@@ -449,6 +449,7 @@ fn percent_decode(s: &str) -> String {
 
 #[tokio::main]
 async fn main() {
+    apolo_nucleo::memoria::preparar();
     let mut args = std::env::args().skip(1);
     let mut direccion: SocketAddr = "127.0.0.1:34500".parse().unwrap();
     let mut config: Option<PathBuf> = None;

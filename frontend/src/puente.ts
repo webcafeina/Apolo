@@ -285,6 +285,8 @@ export interface Recogida {
   imagenes: number;
   bytes: number;
   salida_sugerida: string | null;
+  /** «-» con carpetas (vacaciones-webp); el separador de rutas con ficheros sueltos (Escritorio/webp). */
+  salida_union: string;
   muestra: string[];
 }
 

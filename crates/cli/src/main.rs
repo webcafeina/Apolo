@@ -69,7 +69,7 @@ enum Accion {
         /// Carpetas o imágenes
         #[arg(required = true)]
         entradas: Vec<PathBuf>,
-        /// Dónde dejarlas (por defecto, junto a la entrada: «-webp», «-jpg»… o «-apolo»)
+        /// Dónde dejarlas (por defecto, junto a la carpeta de entrada: «-webp», «-jpg»… o «-apolo»; con imágenes sueltas, una subcarpeta «webp», «apolo»… junto a ellas)
         #[arg(short, long)]
         salida: Option<PathBuf>,
         /// Un preset guardado (apolo presets los lista); se puede repetir

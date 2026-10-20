@@ -999,7 +999,7 @@ pub struct EntradaLote {
     /// Medir la nota de cada fichero (tarda más).
     #[serde(default)]
     pub medir: bool,
-    /// Carpeta de salida. Por defecto, junto a la de entrada con -webp, -apolo…
+    /// Carpeta de salida. Por defecto, junto a la de entrada con -webp, -apolo…; con imágenes sueltas, una subcarpeta webp/, apolo/… junto a ellas.
     #[serde(default)]
     pub salida: Option<String>,
 }

@@ -51,3 +51,14 @@ escenarios llevaban escritas las medidas de los fractales de antes (2400 × 1600
 peticiones de tamaño piden menos de lo que mide (Apolo no agranda): 400 px, 500 px, un preset de
 600 px. Con la carpeta del VPS regenerada, **30 de 30 a la primera** (ejecución
 `2026-10-19T09-09-55`, apolo-mcp 0.9.1).
+
+## 2026-10-20, fotos grandes
+
+Escenario nuevo, `comp-grande` (8b): comparar formatos con una foto de 24 MP, que con
+`comparar_formatos` tarda unos tres minutos. La descripción manda a `empezar_lote` con
+`mas_ligero`. El agente lo hizo a la primera: miró la foto, usó el lote, guardó solo el AVIF y
+explicó por qué (ejecución `2026-10-20T13-02-10`). La comprobación falló igual: buscaba el
+fichero en la carpeta de trabajo, y el lote lo dejaba al lado, en `trabajo-apolo`. Eso destapó que
+con imágenes sueltas la carpeta propuesta era hermana de la suya (`~/Escritorio-apolo`); el
+cliente eligió una subcarpeta junto a ellas (`~/Escritorio/apolo`, ADR 0019), y con eso el fichero
+cae dentro de la carpeta de trabajo y la comprobación no cambia.

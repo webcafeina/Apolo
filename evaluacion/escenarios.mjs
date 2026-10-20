@@ -221,9 +221,10 @@ export const ESCENARIOS = [
       copyFileSync(GRANDE, c.ruta('grande.jpg'));
     },
     peticion: '¿Qué formato pesa menos para grande.jpg a la misma calidad? Guarda solo el mejor',
+    // Con una foto suelta, el lote la deja en una subcarpeta junto a ella (apolo/).
     comprobar: (c, r) => todas([
       llamo(r, 'empezar_lote') || 'no usó empezar_lote con una foto de 24 MP',
-      c.nuevos().length === 1 || `nuevos: ${c.nuevos().join(', ')}`,
+      c.nuevos().length === 1 || `nuevos: ${c.nuevos().join(', ') || 'ninguno'}`,
     ]),
   },
   {

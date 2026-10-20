@@ -113,3 +113,13 @@ Y lo que decidí yo, dentro de lo que ya decía la 0004:
   abra), y «Mostrar en la carpeta». Aquí no hay webkit; lo verá el cliente;
 - lotes grandes (miles de imágenes, fotos de 24 megapíxeles): memoria y tiempo, sin medir;
 - cancelar desde la interfaz (sí en Rust).
+
+## Matiz del 2026-10-20: imágenes sueltas
+
+Con imágenes sueltas, «junto a la carpeta de entrada» era junto a la carpeta en la que están: una
+foto del Escritorio acababa en `~/Escritorio-webp`, fuera del Escritorio. Lo destapó la
+evaluación del MCP (8b). Decidido con el cliente: **con algún fichero suelto entre lo elegido, una
+subcarpeta junto a ellos** (`~/Escritorio/webp`, o `apolo` con varios formatos). Con carpetas, como
+siempre (`vacaciones-webp`). Es la misma regla en la ventana, la CLI y el agente
+(`lote::salida_base`). Descartado dejar los resultados junto a cada original, por lo de arriba: se
+mezclan con los originales.

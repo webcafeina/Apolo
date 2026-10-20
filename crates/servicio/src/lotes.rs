@@ -22,8 +22,11 @@ pub struct Recogida {
     pub imagenes: usize,
     pub bytes: u64,
     /// La carpeta que se propone, sin el sufijo del formato: la interfaz le
-    /// añade «-webp», «-jpg»… o «-apolo» según lo que se pida.
+    /// añade `salida_union` y «webp», «jpg»… o «apolo» según lo que se pida.
     pub salida_sugerida: Option<String>,
+    /// «-» con carpetas (`vacaciones-webp`) o el separador de rutas con
+    /// ficheros sueltos (`Escritorio/webp`), ver `lote::salida_base`.
+    pub salida_union: String,
     /// Las primeras, para enseñarlas.
     pub muestra: Vec<String>,
 }
@@ -113,11 +116,15 @@ fn rutas(entradas: &[String]) -> Vec<PathBuf> {
 pub fn recoger_lote(entradas: &[String]) -> Recogida {
     let rutas = rutas(entradas);
     let v = lote::recoger(&rutas, None);
+    let base = lote::salida_base(&rutas);
     Recogida {
         imagenes: v.len(),
         bytes: v.iter().map(|e| e.bytes).sum(),
-        salida_sugerida: lote::salida_sugerida(&rutas, "")
-            .map(|p| p.display().to_string().trim_end_matches('-').to_string()),
+        salida_sugerida: base.as_ref().map(|s| s.base.display().to_string()),
+        salida_union: match base {
+            Some(s) if s.subcarpeta => std::path::MAIN_SEPARATOR.to_string(),
+            _ => "-".into(),
+        },
         muestra: v
             .iter()
             .take(8)
@@ -237,7 +244,7 @@ mod pruebas {
 
         let r = recoger_lote(&e);
         assert_eq!(r.imagenes, 2);
-        let salida = format!("{}-webp", r.salida_sugerida.unwrap());
+        let salida = format!("{}{}webp", r.salida_sugerida.unwrap(), r.salida_union);
         assert!(salida.ends_with("fotos-webp"));
 
         let s = Servicio::nuevo(base.join("config"));

@@ -130,17 +130,51 @@ pub fn sufijo(ajustes: &[Ajuste]) -> String {
     }
 }
 
-/// La carpeta de salida que se propone: junto a la carpeta de entrada (o a la
-/// de los ficheros), con `-sufijo` detrás.
+/// La carpeta de salida que se propone: junto a la carpeta de entrada, con
+/// `-sufijo` detrás (`vacaciones` → `vacaciones-webp`). Con ficheros sueltos,
+/// una subcarpeta `sufijo` junto a ellos (`Escritorio/foto.jpg` →
+/// `Escritorio/webp/`): antes era `Escritorio-webp`, al lado del Escritorio
+/// (cambiado con el cliente el 2026-10-20, ADR 0019).
 pub fn salida_sugerida(entradas: &[PathBuf], sufijo: &str) -> Option<PathBuf> {
+    salida_base(entradas).map(|s| s.con(sufijo))
+}
+
+/// La base de la carpeta propuesta y cómo se le une el sufijo: la interfaz
+/// la recalcula al cambiar de formato.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SalidaBase {
+    pub base: PathBuf,
+    /// Subcarpeta (`base/webp`) o carpeta hermana (`base-webp`).
+    pub subcarpeta: bool,
+}
+
+impl SalidaBase {
+    pub fn con(&self, sufijo: &str) -> PathBuf {
+        if self.subcarpeta {
+            self.base.join(sufijo)
+        } else {
+            let nombre = self.base.file_name().unwrap_or_default().to_string_lossy();
+            self.base.with_file_name(format!("{nombre}-{sufijo}"))
+        }
+    }
+}
+
+/// Ver [`salida_sugerida`]: si todo son carpetas, la hermana de la primera (o
+/// de su carpeta, si son varias); si hay algún fichero suelto, una subcarpeta
+/// junto al primero.
+pub fn salida_base(entradas: &[PathBuf]) -> Option<SalidaBase> {
     let primera = std::path::absolute(entradas.first()?).ok()?;
-    let carpeta = if entradas.len() == 1 && primera.is_dir() {
+    let carpetas = entradas.iter().all(|e| e.is_dir());
+    let base = if entradas.len() == 1 && carpetas {
         primera
     } else {
         primera.parent()?.to_path_buf()
     };
-    let nombre = carpeta.file_name()?.to_string_lossy().into_owned();
-    Some(carpeta.with_file_name(format!("{nombre}-{sufijo}")))
+    base.file_name()?;
+    Some(SalidaBase {
+        base,
+        subcarpeta: !carpetas,
+    })
 }
 
 /// Escribe `datos` en `ruta` o, si ya existe, en `nombre-2.ext`, `nombre-3.ext`…
@@ -491,6 +525,33 @@ mod pruebas {
         v.iter()
             .map(|e| e.relativa.to_string_lossy().replace('\\', "/"))
             .collect()
+    }
+
+    #[test]
+    fn la_carpeta_propuesta_es_hermana_de_una_carpeta_y_subcarpeta_de_sueltas() {
+        let d = arbol("propuesta");
+        let fuera = d.parent().unwrap().to_path_buf();
+        // Una carpeta: su hermana, como siempre.
+        assert_eq!(
+            salida_sugerida(std::slice::from_ref(&d), "webp"),
+            Some(fuera.join("vacaciones-webp"))
+        );
+        // Una foto suelta: una subcarpeta junto a ella, no «vacaciones-webp».
+        let suelta = d.join("a.webp");
+        assert_eq!(
+            salida_sugerida(std::slice::from_ref(&suelta), "avif"),
+            Some(d.join("avif"))
+        );
+        // Una carpeta y una suelta: la subcarpeta, junto a la primera.
+        assert_eq!(
+            salida_sugerida(&[suelta, d.join("playa")], "apolo"),
+            Some(d.join("apolo"))
+        );
+        // Dos carpetas: la hermana de la de ambas.
+        assert_eq!(
+            salida_sugerida(&[d.join("playa"), d.join(".oculta")], "jpg"),
+            Some(fuera.join("vacaciones-jpg"))
+        );
     }
 
     #[test]

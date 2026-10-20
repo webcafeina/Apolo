@@ -62,3 +62,12 @@ fichero en la carpeta de trabajo, y el lote lo dejaba al lado, en `trabajo-apolo
 con imágenes sueltas la carpeta propuesta era hermana de la suya (`~/Escritorio-apolo`); el
 cliente eligió una subcarpeta junto a ellas (`~/Escritorio/apolo`, ADR 0019), y con eso el fichero
 cae dentro de la carpeta de trabajo y la comprobación no cambia.
+
+## 2026-10-20, en inglés (8c)
+
+Seis escenarios nuevos en inglés (`en-*`): la petición en inglés y `apolo-mcp` con
+`APOLO_IDIOMA=en`. Comprueban cosas que no dependen del idioma (medidas, ficheros, la versión) y,
+en `en-no-existe`, que el error le llega al agente con «HINTS:». El evaluador pasa ahora el idioma
+a `apolo-mcp` en todos (por defecto, `es`): desde la 8c, sin decirlo, arrancaría en el del sistema
+(en el VPS, `C.UTF-8`, inglés). **37 de 37** a la primera (ejecución `2026-10-20T17-13-33`,
+apolo-mcp 0.11.0 con la 8c).

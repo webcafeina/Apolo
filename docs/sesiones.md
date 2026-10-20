@@ -15,7 +15,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **Banco final, 200 fotos de 24 MP**: medir 1,7 GB, Estudio 1,9 GB, lote a AVIF 1,5 GB, el más
   ligero 2,2 GB, midiendo 2,3 GB, `comparar_formatos` 2,0 GB y 165 s. docs/rendimiento.md y una
   línea en el README.
-- v0.11.0 preparada: notas y versión. Sin publicar.
+- **v0.11.0 publicada**, revisada como siempre.
 
 ---
 

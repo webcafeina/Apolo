@@ -32,6 +32,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   con `-apple-visual-effect` (preferencia privada `_setUseSystemAppearance`, encontrada con un
   agente; técnica de lennondotw/tauri-liquid-glass-demo). **Publicada la v0.14.1** a las 20:12 UTC.
   Un CI de un commit de documentos falló por otro 503 de Google; sin consecuencias.
+- El cliente actualizó su Mac a la v0.14.1: «todo perfecto». Queda un saltito del botón del
+  interruptor al pulsarlo, a la deuda para la siguiente mejora.
 
 ---
 

@@ -8,6 +8,10 @@ import { join } from "node:path";
 const corpus = join(import.meta.dirname, "../../pruebas/corpus");
 
 test.use({ testIdAttribute: "data-prueba" });
+// El panel se anima al plegarse y desplegarse (200 ms): las medidas, sin animaciones.
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+});
 
 test("en Windows: la escala de Fluent, sus iconos y el fondo opaco sin vidrio", async ({ page }) => {
   await page.goto("/?sistema=windows");
@@ -132,4 +136,14 @@ test("en Windows: Ajustes con tarjetas, y los interruptores siguen guardando", a
   await page.getByRole("button", { name: "Ajustes", exact: true }).click();
   await expect(page.getByRole("switch", { name: "Avisarme cuando haya una versión nueva" })).not.toBeChecked();
   await page.getByRole("switch", { name: "Avisarme cuando haya una versión nueva" }).check();
+});
+
+test("en Windows: el panel se pliega y se despliega con su animación", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/?sistema=windows");
+  const ventana = page.locator(".ventana");
+  await expect(ventana).toHaveCSS("transition-duration", "0.2s");
+  await expect(ventana).toHaveCSS("transition-property", "grid-template-columns");
+  await page.getByTestId("boton-menu").click();
+  await expect.poll(() => page.locator(".lateral").evaluate((l) => l.getBoundingClientRect().width)).toBe(320);
 });

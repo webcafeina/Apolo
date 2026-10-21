@@ -30,7 +30,7 @@ el marcado mira `esWindows()`. macOS y Linux quedan como estaban, salvo los inte
 | Iconos | Fluent System Icons (Microsoft, MIT), copiados en `iconos-fluent.ts`, solo en Windows |
 | Interruptores | Con su forma en los tres sistemas (antes salían como casillas) |
 | Barra de título | **Propia, de 48 px** (la alta de WinUI): ☰, icono y nombre a la izquierda; minimizar, maximizar y cerrar de 46 × 48 a la derecha. La ventana, sin marco |
-| Panel de navegación | NavigationView: transparente sobre el marco, filas de 36 con el icono de 16 en 40, el indicador de 3 × 16. ☰ lo pliega a 48 o lo despliega a 320, y se recuerda; **abre plegado** la primera vez (para la imagen). Por debajo de 1008 px de ventana, plegado, y ☰ lo abre encima del contenido |
+| Panel de navegación | NavigationView: transparente sobre el marco, se anima al plegarse (200 ms), filas de 36 con el icono de 16 en 40, el indicador de 3 × 16. ☰ lo pliega a 48 o lo despliega a 320, y se recuerda; **abre plegado** la primera vez (para la imagen). Por debajo de 1008 px de ventana, plegado, y ☰ lo abre encima del contenido |
 | Marca | Fuera del panel: el nombre y el icono los pone la barra de título; la versión, Ajustes › Acerca de |
 | Páginas | La capa del contenido (esquina de arriba a la izquierda de 8 y su filete); el título en Title 28/36 con 36 px a los lados; Ajustes, Lotes (Calidad y Dónde) y MCP con **SettingsCards**: icono, título, descripción y el control a la derecha, a 4 px una de otra y en grupos con encabezado. Lo que no es un ajuste (un preset, el resumen de un lote) sigue como tarjeta |
 | Estudio | Su cabecera es una barra de órdenes: el nombre en BodyStrong, los datos en Caption, las órdenes sin relieve; si falta sitio, el modo de comparar se queda en sus iconos |
@@ -99,6 +99,11 @@ en el navegador de desarrollo, y `make capturas-windows`.
   cliente (dos rondas): «ahora está perfecto».
 - `ventana_windows.rs` compila para `x86_64-pc-windows-msvc` y pasa clippy sin avisos (comprobado
   aparte, con un proyecto mínimo con Tauri 2.12.1).
-- **No verificado**: nada de esto en un Windows de verdad. Mica, el menú de Snap, los botones, el
-  arrastre, el redimensionado y las esquinas, a la espera de la máquina virtual del cliente (Windows
-  11 ARM). Windows 10 y Mica en x64, sin ver.
+- En Windows x64, `humo.yml` instala la compilación de prueba y la ventana arranca y sigue abierta.
+- **En la máquina virtual Windows 11 ARM del cliente** (2026-10-21, compilación de prueba
+  39590749049): Mica, la barra de título (arrastrar, doble clic, los tres botones), el menú de Snap
+  y el encaje en sus zonas, redimensionar, ☰ y todas las pantallas, bien. Pidió que el panel se
+  animara al plegarse, como el nativo: 200 ms con la curva de deceleración de Fluent. Mica, con su
+  tinte normal (no Mica Alt).
+- **No verificado**: el tema oscuro en Windows (su copia no está activada y no deja cambiarlo),
+  Windows 10 y Mica en x64 a ojo.

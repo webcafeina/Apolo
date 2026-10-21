@@ -26,6 +26,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   la web iguales que antes; `ventana_windows.rs` compila para Windows y pasa clippy.
 - **No verificado**: nada en un Windows de verdad (deuda.md).
 - La carpeta temporal se llenó (EDQUOT) con la compilación de prueba para Windows (trampa).
+- Subido (`d8a0f3e`), CI y la compilación de prueba en verde; el humo abrió la ventana en Windows
+  x64. **Prueba en la máquina virtual Windows 11 ARM del cliente, bien**; pidió que el panel se
+  animara al plegarse (hecho, 200 ms). Mica se queda con su tinte normal. El oscuro, sin ver.
 
 ---
 

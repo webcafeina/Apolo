@@ -11,11 +11,25 @@
 > filas agrupadas y la burbuja de vidrio al pulsar. `ventana_macos.rs` pone Liquid Glass (o el
 > material de siempre) y los semáforos van en `trafficLightPosition`. `make comprobar` y e2e en
 > verde; clippy para Apple silicon. **Nada visto aún en un Mac.**
-> **Lo siguiente**: compilación de prueba (`publicar.yml` a mano) y prueba guiada en el Mac del
-> cliente con macOS 27: Liquid Glass en claro y oscuro y con el ajuste de transparencia, los
-> semáforos (afinar `trafficLightPosition`), arrastrar desde la barra, ocultar la barra lateral,
-> la burbuja al pulsar, todas las pantallas. Después, la v0.14.0 con su sí; luego la prueba guiada
-> final y la 1.0.0.
+> **Publicación de la v0.14.0 en marcha** (el cliente pidió publicar directamente, sin `.dmg` de
+> prueba: su Mac se actualiza desde el aviso, y si hay correcciones salen en versiones nuevas).
+> Versión y notas bilingües en `9f31c7b`, CI en verde, etiqueta `v0.14.0` empujada.
+> `publicar.yml` es la ejecución **39628230375**: tres trabajos (macos-universal, cli-macos-universal
+> y cli-windows-x64) fallaron al clonar aom y libyuv por un 503 de googlesource.com (trampa) y se
+> relanzaron con `gh run rerun --failed` a las 16:08 UTC. Se paró sin esperar al resultado.
+> **Lo siguiente, al volver**:
+> 1. `gh run view 39628230375`: todo en verde, con el humo. Si vuelve a fallar al clonar, relanzar;
+>    si es `bundle_dmg.sh`, también.
+> 2. Revisar el borrador como siempre (los pasos de la v0.13.0: `gh release download v0.14.0` al
+>    scratchpad, `sha256sum -c`, `verificar_firmas.py`, `latest.json` con 14 plataformas, CLI y
+>    `apolo-mcp` en 0.14.0, los cinco `.mcpb`, manifiesto ARM64 con 7zz, `sin_dll_de_vc`, AVIF 3/3
+>    frente a avifenc 1.4.2).
+> 3. `gh release edit v0.14.0 --draft=false`; comprobar `latest.json` público y el tap.
+> 4. El cliente actualiza su Mac desde el aviso y hace la prueba guiada de macOS 27: Liquid Glass en
+>    claro y oscuro y con el ajuste de transparencia, los semáforos (afinar `trafficLightPosition`
+>    en `tauri.macos.conf.json`), arrastrar desde la barra, ocultar la barra lateral, la burbuja al
+>    pulsar, todas las pantallas. Correcciones, en versiones nuevas.
+> 5. Después, la prueba guiada final y la 1.0.0.
 >
 > **v0.13.0, Windows con Fluent (2026-10-21), en curso** (ADR 0027). Hecho y revisado con el
 > cliente en capturas («ahora está perfecto»): en Windows, la paleta, la escala, los controles y

@@ -441,3 +441,12 @@ Las demos de «liquid glass» en CSS usan `backdrop-filter: url(#filtro)` con un
 desplazamiento SVG. En WebKit (Safari, y por tanto la ventana de Apolo en macOS) no funciona (bug
 245510): se ve un desenfoque sin más. La refracción solo la da el vidrio nativo
 (`NSGlassEffectView`, `ventana_macos.rs`); en la interfaz, brillo, sombras y `blur()`. · 2026-10-21
+
+## CI: «RPC failed; HTTP 503» al clonar aom o libyuv
+
+Varios trabajos de `publicar.yml` fallan en el paso de los submódulos, todos en el mismo minuto, con
+«The requested URL returned error: 503» de `aomedia.googlesource.com/aom` o
+`chromium.googlesource.com/libyuv/libyuv`. No es Apolo: los servidores git de Google se caen a ratos.
+Se comprueba con `curl -s -o /dev/null -w "%{http_code}"
+'https://aomedia.googlesource.com/aom/info/refs?service=git-upload-pack'` (200 cuando ya responde) y
+se arregla con `gh run rerun <id> --failed`. Pasó con la v0.14.0. · 2026-10-21

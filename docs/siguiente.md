@@ -1,6 +1,6 @@
 # Lo siguiente
 
-Última actualización: **2026-10-14**
+Última actualización: **2026-10-21**
 
 El plan entero salió de la sesión del 2026-10-06, decidido con el cliente en cuatro rondas de
 preguntas (ver [decisiones.md](decisiones.md)). Va **por entregas**; cada una se cierra con sus
@@ -24,8 +24,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
   - **8d · 1.0.0**:
     - ~~el tap `webcafeina/homebrew-apolo` (fórmula de la CLI y cask de la aplicación)~~: hecho el
       2026-10-21 (ADR 0026), se actualiza solo al publicar;
-    - ~~la web en `apolo.webcafeina.com` (GitHub Pages, es + en)~~: publicada el 2026-10-21; falta
-      «Enforce HTTPS» cuando GitHub emita el certificado;
+    - ~~la web en `apolo.webcafeina.com` (GitHub Pages, es + en)~~: publicada el 2026-10-21, con
+      HTTPS forzado;
+    - **v0.13.0, Windows con Fluent** ([ADR 0027](adr/0027-windows-con-fluent.md)), pedida por el
+      cliente antes de la 1.0: hecha en el código y revisada en capturas el 2026-10-21. Falta la
+      prueba guiada en su máquina virtual Windows 11 ARM y publicarla;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

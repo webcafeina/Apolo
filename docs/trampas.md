@@ -397,3 +397,29 @@ línea de órdenes completa de cada proceso, y la del propio shell que lo ejecut
 se mata a sí mismo. Pasó tres veces (2026-10-20 y 21). Se evita buscando el PID con un patrón
 anclado (`pgrep -f "^python3 -m http.server 8765"`) y matando ese PID, o guardando el PID al
 lanzar el proceso. · 2026-10-21
+
+## GitHub Pages con dominio propio: el certificado HTTPS no llega nunca
+
+Con el dominio puesto y el CNAME bien en Cloudflare, Pages decía que el certificado estaba en
+camino durante horas y «Enforce HTTPS» seguía sin poder marcarse. Se arregló quitando el dominio
+personalizado en los ajustes de Pages y volviéndolo a poner: a los pocos minutos lo emitió. Después,
+«Enforce HTTPS» y la web responde 200. · 2026-10-21
+
+## Windows sin marco: el menú de Snap no sale aunque se conteste `HTMAXBUTTON`
+
+En una ventana de Tauri sin marco, contestar `HTMAXBUTTON` a `WM_NCHITTEST` en la ventana principal
+no sirve: el ratón sobre la barra de título está encima de la ventana hija de WebView2, y Windows le
+pregunta a ella. Hace falta otra ventana hija sobre el botón de maximizar que conteste eso
+(`src-tauri/src/ventana_windows.rs`, ADR 0027), con `WS_CLIPSIBLINGS` (sin él, WebView2 le gana) y
+sin `WS_EX_LAYERED` (con él, pierde el ratón); invisible porque no pinta (pincel nulo). Esa ventana
+se queda con el ratón: el `:hover` y el `onclick` del botón HTML de debajo ya no llegan, y por eso
+avisa con el evento `ventana:maximizar` y maximiza ella. Si se cambian las medidas de la barra en
+el CSS, hay que cambiarlas también en `ALTO_BARRA` y `ANCHO_BOTON`. · 2026-10-21
+
+## «EDQUOT» al escribir en la carpeta temporal de Claude Code
+
+`/tmp` es un tmpfs con cuota: comprobar `ventana_windows.rs` para Windows con `cargo check
+--target x86_64-pc-windows-msvc` dejó más de un giga en el scratchpad, y con las descargas de
+versiones viejas se llenó. Fallaron escribir ficheros y hasta la salida de las órdenes (`make
+comprobar` dio error sin decir por qué). Se arregla borrando lo grande del scratchpad
+(`du -sh .../scratchpad/*`); las compilaciones de prueba, mejor fuera de `/tmp`. · 2026-10-21

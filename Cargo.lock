@@ -112,6 +112,9 @@ dependencies = [
  "tauri-plugin-opener",
  "tauri-plugin-process",
  "tauri-plugin-updater",
+ "window-vibrancy",
+ "windows-sys 0.61.2",
+ "windows-version",
 ]
 
 [[package]]

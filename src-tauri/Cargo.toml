@@ -27,3 +27,20 @@ tauri-plugin-dialog = "2"
 tauri-plugin-opener = "2"
 tauri-plugin-process = "2"
 tauri-plugin-updater = "2"
+
+# La ventana de Windows (ADR 0027): Mica, la versión del sistema (Mica solo
+# desde Windows 11) y lo de Win32 para la ventana de Snap. Las tres, MIT o
+# Apache-2.0, y en las versiones que ya trae Tauri: no se compila otra copia.
+[target.'cfg(windows)'.dependencies]
+window-vibrancy = "0.8"
+windows-version = "0.1"
+windows-sys = { version = "0.61", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Dwm",
+  "Win32_Graphics_Gdi",
+  "Win32_System_LibraryLoader",
+  "Win32_UI_HiDpi",
+  "Win32_UI_Input_KeyboardAndMouse",
+  "Win32_UI_Shell",
+  "Win32_UI_WindowsAndMessaging",
+] }

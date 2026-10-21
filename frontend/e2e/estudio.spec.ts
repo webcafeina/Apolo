@@ -134,6 +134,8 @@ test("la marca: firma con la versión, y sin vidrio el fondo es opaco", async ({
   await expect(page.locator("html")).toHaveAttribute("data-vidrio", "no");
   const fondo = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   expect(fondo).not.toBe("rgba(0, 0, 0, 0)");
+  // Fuera de Windows, los iconos de siempre (caja de 18), no los de Fluent (ADR 0027).
+  await expect(page.locator(".lateral nav .icono").first()).toHaveAttribute("viewBox", "0 0 18 18");
 });
 
 test("el zoom del comparador no mueve la ventana, y la vista reducida lo avisa", async ({ page }) => {

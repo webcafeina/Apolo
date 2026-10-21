@@ -27,6 +27,7 @@
   --damero-b: #e6e6ea;
   --anillo: rgb(255 200 61 / 35%);
   --relleno-tenue: rgb(255 200 61 / 18%);
+  --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%2368686d' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 @media (prefers-color-scheme: dark) {
@@ -57,6 +58,7 @@
     --damero-b: #3a3a3c;
     --anillo: rgb(255 200 61 / 45%);
     --relleno-tenue: rgb(255 200 61 / 22%);
+    --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23b6b6bb' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   }
 }
 
@@ -87,4 +89,97 @@
   --damero-b: #3a3a3c;
   --anillo: rgb(255 200 61 / 45%);
   --relleno-tenue: rgb(255 200 61 / 22%);
+  --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23b6b6bb' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+:root[data-sistema="windows"] {
+  color-scheme: light;
+  --lienzo: #f9f9f9;
+  --suave: #f3f3f3;
+  --tarjeta: #ffffff;
+  --elevada: #ebebeb;
+  --filete: #e5e5e5;
+  --filete-fuerte: #878787;
+  --tinta: #1b1b1b;
+  --cuerpo: #3d3d3d;
+  --apagado: #616161;
+  --relleno: #ffc83d;
+  --relleno-vivo: #ebb838;
+  --sobre-acento: #2b2b31;
+  --acento: #2b2b31;
+  --barra: #f3f3f3;
+  --barra-encima: #eaeaea;
+  --campo: #ffffff;
+  --boton: #fbfbfb;
+  --boton-encima: #f6f6f6;
+  --exito: #0f7b0f;
+  --aviso: #9a5b00;
+  --error: #c42b1c;
+  --damero-a: #ffffff;
+  --damero-b: #e6e6e6;
+  --anillo: rgb(255 200 61 / 35%);
+  --relleno-tenue: rgb(255 200 61 / 18%);
+  --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23616161' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-sistema="windows"]:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --lienzo: #272727;
+    --suave: #1c1c1c;
+    --tarjeta: #2b2b2b;
+    --elevada: #383838;
+    --filete: #3a3a3a;
+    --filete-fuerte: #9a9a9a;
+    --tinta: #ffffff;
+    --cuerpo: #e4e4e4;
+    --apagado: #a3a3a3;
+    --relleno: #ffc83d;
+    --relleno-vivo: #ebb838;
+    --sobre-acento: #2b2b31;
+    --acento: #ffffff;
+    --barra: #202020;
+    --barra-encima: #2d2d2d;
+    --campo: #1e1e1e;
+    --boton: #2d2d2d;
+    --boton-encima: #323232;
+    --exito: #6ccb5f;
+    --aviso: #fce100;
+    --error: #ff99a4;
+    --damero-a: #2b2b2b;
+    --damero-b: #383838;
+    --anillo: rgb(255 200 61 / 45%);
+    --relleno-tenue: rgb(255 200 61 / 22%);
+    --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23a3a3a3' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+}
+
+:root[data-sistema="windows"][data-tema="oscuro"] {
+  color-scheme: dark;
+  --lienzo: #272727;
+  --suave: #1c1c1c;
+  --tarjeta: #2b2b2b;
+  --elevada: #383838;
+  --filete: #3a3a3a;
+  --filete-fuerte: #9a9a9a;
+  --tinta: #ffffff;
+  --cuerpo: #e4e4e4;
+  --apagado: #a3a3a3;
+  --relleno: #ffc83d;
+  --relleno-vivo: #ebb838;
+  --sobre-acento: #2b2b31;
+  --acento: #ffffff;
+  --barra: #202020;
+  --barra-encima: #2d2d2d;
+  --campo: #1e1e1e;
+  --boton: #2d2d2d;
+  --boton-encima: #323232;
+  --exito: #6ccb5f;
+  --aviso: #fce100;
+  --error: #ff99a4;
+  --damero-a: #2b2b2b;
+  --damero-b: #383838;
+  --anillo: rgb(255 200 61 / 45%);
+  --relleno-tenue: rgb(255 200 61 / 22%);
+  --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23a3a3a3' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }

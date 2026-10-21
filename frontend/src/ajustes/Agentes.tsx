@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Icono } from "../componentes";
+import { esWindows, Icono, TarjetaAjuste } from "../componentes";
 import * as puente from "../puente";
 
 /** Un texto para copiar, con su botón. */
@@ -62,6 +62,23 @@ export function Agentes() {
     no_encontrado: t("agentes.avisoNoEncontrado"),
   };
 
+  const windows = esWindows();
+  const botones = (
+    <>
+      <button className="principal" onClick={crear} disabled={creando}>
+        {creando ? t("agentes.creando") : t("agentes.crear")}
+      </button>
+      {creada?.ruta && puente.enTauri() && (
+        <button onClick={() => puente.mostrarEnCarpeta(creada.ruta!)}>{t("agentes.mostrar")}</button>
+      )}
+    </>
+  );
+  const creadaTexto = creada && (
+    <p className={creada.error ? "error" : "apagado"} role="status" data-prueba="mcpb-creada">
+      {creada.texto}
+    </p>
+  );
+
   return (
     <div className="panel-ajustes" data-prueba="agentes">
       <section className="grupo">
@@ -88,29 +105,32 @@ export function Agentes() {
 
       {a.ruta && (
         <>
-          <section className="grupo" data-prueba="desktop">
-            <h2>{t("agentes.desktop")}</h2>
-            <p>{t("agentes.desktopTexto")}</p>
-            <div className="pareja">
-              <button className="principal" onClick={crear} disabled={creando}>
-                {creando ? t("agentes.creando") : t("agentes.crear")}
-              </button>
-              {creada?.ruta && puente.enTauri() && (
-                <button onClick={() => puente.mostrarEnCarpeta(creada.ruta!)}>{t("agentes.mostrar")}</button>
-              )}
+          {windows ? (
+            // En Windows, SettingsCards juntas: el botón a la derecha (ADR 0027).
+            <div className="grupo-ajustes">
+              <TarjetaAjuste icono="escritorio" titulo={t("agentes.desktop")} descripcion={t("agentes.desktopTexto")} control={botones} prueba="desktop">
+                {creadaTexto}
+              </TarjetaAjuste>
+              <TarjetaAjuste icono="codigo" titulo={t("agentes.code")} descripcion={t("agentes.codeTexto")}>
+                <ParaCopiar valor={a.claude_code!} prueba="orden-claude-code" />
+              </TarjetaAjuste>
             </div>
-            {creada && (
-              <p className={creada.error ? "error" : "apagado"} role="status" data-prueba="mcpb-creada">
-                {creada.texto}
-              </p>
-            )}
-          </section>
+          ) : (
+            <>
+              <section className="grupo" data-prueba="desktop">
+                <h2>{t("agentes.desktop")}</h2>
+                <p>{t("agentes.desktopTexto")}</p>
+                <div className="pareja">{botones}</div>
+                {creadaTexto}
+              </section>
 
-          <section className="grupo">
-            <h2>{t("agentes.code")}</h2>
-            <p>{t("agentes.codeTexto")}</p>
-            <ParaCopiar valor={a.claude_code!} prueba="orden-claude-code" />
-          </section>
+              <section className="grupo">
+                <h2>{t("agentes.code")}</h2>
+                <p>{t("agentes.codeTexto")}</p>
+                <ParaCopiar valor={a.claude_code!} prueba="orden-claude-code" />
+              </section>
+            </>
+          )}
 
           <section className="grupo">
             <details>

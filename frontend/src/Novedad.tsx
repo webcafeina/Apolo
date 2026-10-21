@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Avance, Novedad } from "./actualizar";
+import { esWindows, Icono } from "./componentes";
 
 type Paso = { es: "aviso" } | { es: "bajando"; avance: Avance } | { es: "lista" } | { es: "instalando" };
 
@@ -62,6 +63,12 @@ export function BandaNovedad({
 
   return (
     <div className="novedad" role="status" data-prueba="novedad">
+      {/* En Windows es una InfoBar, con su icono (ADR 0027). */}
+      {esWindows() && (
+        <span className="icono-infobar">
+          <Icono nombre="infoLlena" lado={16} />
+        </span>
+      )}
       <div className="dice">
         {error ? (
           <span className="error">{error}</span>

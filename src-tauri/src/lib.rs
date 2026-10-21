@@ -19,6 +19,15 @@ use apolo_servicio::{
 use tauri::State;
 use tauri::http::{Response, StatusCode, header};
 
+#[cfg(windows)]
+mod ventana_windows;
+#[cfg(windows)]
+use ventana_windows::hay_mica;
+#[cfg(not(windows))]
+fn hay_mica() -> bool {
+    false
+}
+
 type Estado<'a> = State<'a, Arc<Servicio>>;
 
 async fn bloqueante<T: Send + 'static>(f: impl FnOnce() -> T + Send + 'static) -> T {
@@ -48,9 +57,9 @@ struct Plataforma {
 fn plataforma() -> Plataforma {
     Plataforma {
         sistema: std::env::consts::OS,
-        // Solo macOS, con el material de barra lateral (tauri.macos.conf.json).
-        // En Windows y Linux la ventana es opaca: deuda.md.
-        vidrio: cfg!(target_os = "macos"),
+        // macOS, con el material de barra lateral (tauri.macos.conf.json), y
+        // Windows 11 si se pudo poner Mica (ventana_windows.rs). Linux, opaca.
+        vidrio: cfg!(target_os = "macos") || hay_mica(),
         traslocada: cfg!(target_os = "macos")
             && std::env::current_exe()
                 .is_ok_and(|r| r.to_string_lossy().contains("/AppTranslocation/")),
@@ -273,6 +282,12 @@ pub fn arrancar() {
         .plugin(tauri_plugin_process::init())
         // «Mostrar en la carpeta» al acabar un lote.
         .plugin(tauri_plugin_opener::init())
+        // En Windows, la ventana se crea aquí: sin marco y con Mica (ADR 0027).
+        .setup(|_app| {
+            #[cfg(windows)]
+            ventana_windows::crear(_app)?;
+            Ok(())
+        })
         .manage({
             // El idioma de los ajustes, para los mensajes de Rust (ADR 0025).
             let s = Servicio::con_carpeta_por_defecto();

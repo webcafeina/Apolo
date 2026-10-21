@@ -15,7 +15,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
-import { Cabecera, Icono } from "../componentes";
+import { Cabecera, esWindows, Icono, lleno, TarjetaAjuste } from "../componentes";
 import { EVENTO_PRESETS, formatoBytes } from "../estudio/Estudio";
 import { FORMATOS, type Ajuste, type FormatoSalida, type Preset } from "../estudio/opciones";
 import { banda, nombreFormato } from "../estudio/Panel";
@@ -264,6 +264,71 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
     </section>
   );
 
+  // Lo mismo en todos los sistemas; en Windows va en tarjetas y las casillas
+  // son interruptores (ADR 0027).
+  const casillaMedir = (windows: boolean) => (
+    <input
+      type="checkbox"
+      role={windows ? "switch" : undefined}
+      aria-label={windows ? t("lotes.medir") : undefined}
+      checked={medir}
+      onChange={(e) => setMedir(e.target.checked)}
+    />
+  );
+  const casillaObjetivo = (windows: boolean) => (
+    <input
+      type="checkbox"
+      role={windows ? "switch" : undefined}
+      aria-label={windows ? t("lotes.objetivo") : undefined}
+      checked={objetivo !== null}
+      onChange={(e) => setObjetivo(e.target.checked ? 80 : null)}
+    />
+  );
+  const deslizadorObjetivo = objetivo !== null && (
+    <div className="deslizador objetivo-lote">
+      <input
+        type="range"
+        min={30}
+        max={95}
+        step={1}
+        value={objetivo}
+        style={lleno(objetivo, 30, 95)}
+        onChange={(e) => setObjetivo(Number(e.target.value))}
+        aria-label={t("panel.nota")}
+        data-prueba="nota-objetivo-lote"
+      />
+      <output>{objetivo}</output>
+      <span className="apagado">{t(`nota.${banda(objetivo)}`)}</span>
+    </div>
+  );
+  const carpetaSalida = (
+    <div className="pareja">
+      <input
+        className="ruta-salida"
+        value={salida}
+        onChange={(e) => {
+          salidaElegida.current = true;
+          setSalida(e.target.value);
+        }}
+        aria-label={t("lotes.salida")}
+        data-prueba="salida"
+      />
+      {puente.enTauri() && (
+        <button
+          onClick={async () => {
+            const r = await puente.elegirSalida(salida || null);
+            if (r) {
+              salidaElegida.current = true;
+              setSalida(r);
+            }
+          }}
+        >
+          {t("lotes.cambiar")}
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <div className="seccion columna">
       <Cabecera titulo={t("nav.lotes")} />
@@ -339,65 +404,55 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
                 )}
               </section>
 
-              <section className="grupo">
-                <h2>{t("lotes.calidad")}</h2>
-                <label className="casilla" data-prueba="medir-lote">
-                  <input type="checkbox" checked={medir} onChange={(e) => setMedir(e.target.checked)} />
-                  {t("lotes.medir")}
-                </label>
-                <p className="apagado">{t("lotes.medirDetalle")}</p>
-                <label className="casilla" data-prueba="objetivo-lote">
-                  <input type="checkbox" checked={objetivo !== null} onChange={(e) => setObjetivo(e.target.checked ? 80 : null)} />
-                  {t("lotes.objetivo")}
-                </label>
-                {objetivo !== null && (
-                  <div className="deslizador objetivo-lote">
-                    <input
-                      type="range"
-                      min={30}
-                      max={95}
-                      step={1}
-                      value={objetivo}
-                      onChange={(e) => setObjetivo(Number(e.target.value))}
-                      aria-label={t("panel.nota")}
-                      data-prueba="nota-objetivo-lote"
-                    />
-                    <output>{objetivo}</output>
-                    <span className="apagado">{t(`nota.${banda(objetivo)}`)}</span>
-                  </div>
-                )}
-                <p className="apagado">{t("lotes.objetivoDetalle")}</p>
-              </section>
-
-              <section className="grupo">
-                <h2>{t("lotes.donde")}</h2>
-                <div className="pareja">
-                  <input
-                    className="ruta-salida"
-                    value={salida}
-                    onChange={(e) => {
-                      salidaElegida.current = true;
-                      setSalida(e.target.value);
-                    }}
-                    aria-label={t("lotes.salida")}
-                    data-prueba="salida"
+              {esWindows() ? (
+                // En Windows, SettingsCards con el interruptor a la derecha (ADR 0027).
+                <section className="grupo-ajustes">
+                  <h2>{t("lotes.calidad")}</h2>
+                  <TarjetaAjuste
+                    icono="calidad"
+                    titulo={t("lotes.medir")}
+                    descripcion={t("lotes.medirDetalle")}
+                    control={casillaMedir(true)}
+                    prueba="medir-lote"
                   />
-                  {puente.enTauri() && (
-                    <button
-                      onClick={async () => {
-                        const r = await puente.elegirSalida(salida || null);
-                        if (r) {
-                          salidaElegida.current = true;
-                          setSalida(r);
-                        }
-                      }}
-                    >
-                      {t("lotes.cambiar")}
-                    </button>
-                  )}
-                </div>
-                <p className="apagado">{t("lotes.nuncaPisa")}</p>
-              </section>
+                  <TarjetaAjuste
+                    icono="objetivo"
+                    titulo={t("lotes.objetivo")}
+                    descripcion={t("lotes.objetivoDetalle")}
+                    control={casillaObjetivo(true)}
+                    prueba="objetivo-lote"
+                  >
+                    {deslizadorObjetivo}
+                  </TarjetaAjuste>
+                  <h2>{t("lotes.donde")}</h2>
+                  <TarjetaAjuste icono="carpeta" titulo={t("lotes.salida")} descripcion={t("lotes.nuncaPisa")}>
+                    {carpetaSalida}
+                  </TarjetaAjuste>
+                </section>
+              ) : (
+                <>
+                  <section className="grupo">
+                    <h2>{t("lotes.calidad")}</h2>
+                    <label className="casilla" data-prueba="medir-lote">
+                      {casillaMedir(false)}
+                      {t("lotes.medir")}
+                    </label>
+                    <p className="apagado">{t("lotes.medirDetalle")}</p>
+                    <label className="casilla" data-prueba="objetivo-lote">
+                      {casillaObjetivo(false)}
+                      {t("lotes.objetivo")}
+                    </label>
+                    {deslizadorObjetivo}
+                    <p className="apagado">{t("lotes.objetivoDetalle")}</p>
+                  </section>
+
+                  <section className="grupo">
+                    <h2>{t("lotes.donde")}</h2>
+                    {carpetaSalida}
+                    <p className="apagado">{t("lotes.nuncaPisa")}</p>
+                  </section>
+                </>
+              )}
 
               <div className="pareja">
                 <button

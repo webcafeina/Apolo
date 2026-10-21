@@ -54,3 +54,9 @@ lateral con el vidrio de macOS, como Esfinge (su ADR 0017). En Tauri 2 eso exige
 El vidrio deja de ser solo de macOS: en Windows 11 la ventana lleva Mica, creada desde código para
 saber si se pudo poner (`ventana_windows.rs`), y `data-vidrio="si"` la deja ver detrás de la barra
 de título y del panel. En Windows 10, opaca. Ver la [ADR 0027](0027-windows-con-fluent.md).
+
+## Matiz del 2026-10-21: Liquid Glass en macOS 26 y 27
+
+En macOS 26 y posteriores, el vidrio es Liquid Glass (`NSGlassEffectView`); en los anteriores, el
+material de barra lateral de esta ADR. Se pone en `ventana_macos.rs` y no con `windowEffects`, para
+saber si se pudo poner. Ver la [ADR 0028](0028-macos-con-golden-gate.md).

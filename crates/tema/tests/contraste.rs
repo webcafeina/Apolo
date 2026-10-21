@@ -58,11 +58,17 @@ fn parejas(t: &Tema) -> Vec<(&'static str, Rgb, &'static str, Rgb, f64)> {
     for (nf, f) in [("elevada", t.elevada), ("barra", t.barra)] {
         v.push(("acento", t.acento, nf, f, AA_GRANDE));
     }
-    // Solo en Windows (ADR 0027): el borde inferior de un campo y el
-    // interruptor apagado de Fluent son un trazo de `filete-fuerte` sobre el
-    // campo y sobre la pista. En macOS y Linux el interruptor apagado va
-    // relleno de `filete-fuerte`, medido arriba contra los fondos.
-    if t.nombre.starts_with("windows") {
+    // Los iconos de la barra lateral en el oro hecho línea (ADR 0028), sobre la
+    // barra y sobre la fila elegida.
+    for (nf, f) in [("barra", t.barra), ("barra-encima", t.barra_encima)] {
+        v.push(("oro-trazo", t.oro_trazo, nf, f, AA_GRANDE));
+    }
+    // En Windows (ADR 0027) el borde inferior de un campo y el interruptor
+    // apagado de Fluent son un trazo de `filete-fuerte` sobre el campo y sobre
+    // la pista. En macOS (ADR 0028), el borde del campo y de la casilla, sobre
+    // los mismos fondos. En Linux el interruptor apagado va relleno de
+    // `filete-fuerte`, medido arriba contra los fondos.
+    if t.nombre.starts_with("windows") || t.nombre.starts_with("macos") {
         for (nf, f) in [("campo", t.campo), ("elevada", t.elevada)] {
             v.push(("filete-fuerte", t.filete_fuerte, nf, f, AA_GRANDE));
         }

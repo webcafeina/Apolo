@@ -9,9 +9,13 @@ import { basename, join } from "node:path";
 const INGLES = process.env.CAPTURAS_IDIOMA === "en";
 // La foto y la carpeta del lote: las del corpus de pruebas, o, para la web (`make capturas-web`),
 // una foto de Kodak y una carpeta con varias, que se ven mejor que una imagen de 128 × 128.
-const FOTO = process.env.CAPTURAS_FOTO ?? join(import.meta.dirname, "../../pruebas/corpus/foto.webp");
+const FOTO =
+  process.env.CAPTURAS_FOTO ??
+  join(import.meta.dirname, "../../pruebas/corpus/foto.webp");
 const NOMBRE_FOTO = basename(FOTO);
-const LOTE = process.env.CAPTURAS_LOTE ?? join(import.meta.dirname, "../../pruebas/corpus");
+const LOTE =
+  process.env.CAPTURAS_LOTE ??
+  join(import.meta.dirname, "../../pruebas/corpus");
 // La calidad del Estudio: 10 para que se vea la pérdida en la imagen pequeña; en la web, 50.
 const CALIDAD = process.env.CAPTURAS_FOTO ? "50" : "10";
 // El aspecto de otro sistema (ADR 0027): `CAPTURAS_SISTEMA=windows` (o macos, linux) y
@@ -19,7 +23,9 @@ const CALIDAD = process.env.CAPTURAS_FOTO ? "50" : "10";
 // Van a capturas/<sistema>[-vidrio]/ (y en/ dentro, en inglés).
 const SISTEMA = process.env.CAPTURAS_SISTEMA ?? "";
 const VIDRIO = process.env.CAPTURAS_VIDRIO === "si";
-const BASE = SISTEMA ? `capturas/${SISTEMA}${VIDRIO ? "-vidrio" : ""}` : "capturas";
+const BASE = SISTEMA
+  ? `capturas/${SISTEMA}${VIDRIO ? "-vidrio" : ""}`
+  : "capturas";
 const CARPETA = INGLES ? `${BASE}/en` : BASE;
 function raiz(extra = ""): string {
   const q = new URLSearchParams(extra);
@@ -33,10 +39,20 @@ mkdirSync(CARPETA, { recursive: true });
 // Los textos de los botones, en el idioma de las capturas: se busca la clave
 // del texto en es.json y se toma la misma de en.json. Si no está (un nombre
 // de fichero, «VS Code»), se queda igual.
-const catalogo = (idioma: string) => JSON.parse(readFileSync(join(import.meta.dirname, `../src/i18n/${idioma}.json`), "utf8"));
+const catalogo = (idioma: string) =>
+  JSON.parse(
+    readFileSync(
+      join(import.meta.dirname, `../src/i18n/${idioma}.json`),
+      "utf8",
+    ),
+  );
 const [ES, EN] = [catalogo("es"), catalogo("en")];
 function hojas(o: Record<string, unknown>, p = ""): [string, string][] {
-  return Object.entries(o).flatMap(([k, v]) => (typeof v === "object" && v ? hojas(v as Record<string, unknown>, `${p}${k}.`) : [[`${p}${k}`, String(v)] as [string, string]]));
+  return Object.entries(o).flatMap(([k, v]) =>
+    typeof v === "object" && v
+      ? hojas(v as Record<string, unknown>, `${p}${k}.`)
+      : [[`${p}${k}`, String(v)] as [string, string]],
+  );
 }
 const enPorClave = new Map(hojas(EN));
 const claves = hojas(ES);
@@ -65,12 +81,16 @@ test("estudio", async ({ page }, info) => {
   await page.locator("#control-calidad").fill(CALIDAD);
   await page.waitForTimeout(800);
   await page.getByTestId("nivel-avanzado").locator("summary").click();
-  await page.screenshot({ path: `${CARPETA}/estudio-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/estudio-${info.project.name}.png`,
+  });
   await page.getByRole("radio", { name: n("Lado a lado") }).click();
   await page.getByRole("button", { name: n("Acercar") }).click();
   await page.getByRole("button", { name: n("Acercar") }).click();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${CARPETA}/lado-a-lado-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/lado-a-lado-${info.project.name}.png`,
+  });
   // El mapa de lo que se pierde, con la pérdida de la calidad de arriba (la de la web).
   await page.getByRole("radio", { name: n("Diferencias") }).click();
   await page.getByTestId("tipo-mapa").selectOption("estructura");
@@ -102,23 +122,39 @@ test("medidas y diferencias", async ({ page }, info) => {
   await page.getByTestId("formato").selectOption("jpeg");
   await page.getByTestId("control-notaObjetivo").getByRole("switch").check();
   await page.getByTestId("buscando").waitFor();
-  await page.screenshot({ path: `${CARPETA}/buscando-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/buscando-${info.project.name}.png`,
+  });
   await page.getByTestId("nota").waitFor({ timeout: 60_000 });
-  await page.screenshot({ path: `${CARPETA}/medidas-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/medidas-${info.project.name}.png`,
+  });
   // La nota más alta: «Ni con calidad 100…», el texto más largo, junto a Exportar.
   await page.getByTestId("nota-objetivo").fill("95");
-  await page.getByTestId("hallada").filter({ hasText: n("No llega ni con calidad 100") }).waitFor({ timeout: 60_000 });
-  await page.screenshot({ path: `${CARPETA}/no-alcanzada-${info.project.name}.png` });
+  await page
+    .getByTestId("hallada")
+    .filter({ hasText: n("No llega ni con calidad 100") })
+    .waitFor({ timeout: 60_000 });
+  await page.screenshot({
+    path: `${CARPETA}/no-alcanzada-${info.project.name}.png`,
+  });
   await page.getByRole("radio", { name: n("Diferencias") }).click();
   await page.waitForTimeout(1500);
-  await page.screenshot({ path: `${CARPETA}/diferencias-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/diferencias-${info.project.name}.png`,
+  });
   await page.getByTestId("tipo-mapa").selectOption("estructura");
   // Alejada, con el aviso de vista reducida: no tiene que pisar el selector ni el rótulo.
-  for (let i = 0; i < 8; i++) await page.getByRole("button", { name: n("Alejar") }).click();
+  for (let i = 0; i < 8; i++)
+    await page.getByRole("button", { name: n("Alejar") }).click();
   await page.getByTestId("nota-reducida").waitFor();
-  await page.screenshot({ path: `${CARPETA}/diferencias-reducida-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/diferencias-reducida-${info.project.name}.png`,
+  });
   await page.waitForTimeout(1500);
-  await page.screenshot({ path: `${CARPETA}/estructura-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/estructura-${info.project.name}.png`,
+  });
 });
 
 test("vacío", async ({ page }, info) => {
@@ -131,7 +167,9 @@ test("ajustes", async ({ page }, info) => {
   await page.goto(raiz());
   await page.getByRole("button", { name: n("Ajustes") }).click();
   await page.getByRole("heading", { name: n("Acerca de") }).waitFor();
-  await page.screenshot({ path: `${CARPETA}/ajustes-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/ajustes-${info.project.name}.png`,
+  });
 });
 
 test("presets", async ({ page }, info) => {
@@ -146,7 +184,9 @@ test("presets", async ({ page }, info) => {
   await page.getByRole("button", { name: n("Presets") }).click();
   await page.getByTestId("preset").waitFor();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${CARPETA}/presets-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/presets-${info.project.name}.png`,
+  });
 });
 
 test("novedad", async ({ page }, info) => {
@@ -154,25 +194,38 @@ test("novedad", async ({ page }, info) => {
   await page.getByRole("button", { name: n("Ajustes") }).click();
   await page.getByRole("button", { name: n("Buscar ahora") }).click();
   await page.getByTestId("novedad").waitFor();
-  await page.screenshot({ path: `${CARPETA}/novedad-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/novedad-${info.project.name}.png`,
+  });
   await page.getByRole("button", { name: n("Descargar") }).click();
   await page.getByRole("button", { name: n("Instalar y reiniciar") }).waitFor();
-  await page.screenshot({ path: `${CARPETA}/novedad-lista-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/novedad-lista-${info.project.name}.png`,
+  });
 });
 
 test("lotes", async ({ page }, info) => {
   await page.goto(raiz());
   await page.getByRole("button", { name: n("Lotes") }).click();
   await page.waitForTimeout(200);
-  await page.screenshot({ path: `${CARPETA}/lotes-vacio-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/lotes-vacio-${info.project.name}.png`,
+  });
   await page.getByTestId("ruta-dev").fill(LOTE);
   await page.getByRole("button", { name: n("Añadir"), exact: true }).click();
   await page.getByTestId("recogida").waitFor();
-  await page.getByTestId("salida").fill(join(mkdtempSync(join(tmpdir(), "apolo-capturas-")), "fotos-webp"));
-  await page.screenshot({ path: `${CARPETA}/lotes-preparado-${info.project.name}.png` });
+  await page
+    .getByTestId("salida")
+    .fill(join(mkdtempSync(join(tmpdir(), "apolo-capturas-")), "fotos-webp"));
+  await page.screenshot({
+    path: `${CARPETA}/lotes-preparado-${info.project.name}.png`,
+  });
   await page.getByRole("button", { name: empieza("Convertir") }).click();
   await page.getByTestId("resumen").waitFor();
-  await page.screenshot({ path: `${CARPETA}/lotes-resumen-${info.project.name}.png`, fullPage: true });
+  await page.screenshot({
+    path: `${CARPETA}/lotes-resumen-${info.project.name}.png`,
+    fullPage: true,
+  });
 });
 
 test("formatos", async ({ page }, info) => {
@@ -182,12 +235,20 @@ test("formatos", async ({ page }, info) => {
   await (await elegir).setFiles(FOTO);
   await page.getByTestId("peso-resultado").waitFor();
   await page.getByRole("radio", { name: n("Lado a lado") }).click();
-  await page.getByTestId("lados").getByRole("radio", { name: new RegExp(n("Izquierda")) }).click();
+  await page
+    .getByTestId("lados")
+    .getByRole("radio", { name: new RegExp(n("Izquierda")) })
+    .click();
   await page.getByTestId("comparar-formato").click();
   await page.locator("#control-calidadJpeg").fill("30");
-  await page.getByTestId("rotulo-izquierda").filter({ hasText: "JPEG ·" }).waitFor();
+  await page
+    .getByTestId("rotulo-izquierda")
+    .filter({ hasText: "JPEG ·" })
+    .waitFor();
   await page.waitForTimeout(500);
-  await page.screenshot({ path: `${CARPETA}/formatos-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/formatos-${info.project.name}.png`,
+  });
 });
 
 test("lotes-formatos", async ({ page }, info) => {
@@ -199,7 +260,10 @@ test("lotes-formatos", async ({ page }, info) => {
   await page.getByTestId("formato-lote-1").selectOption("png");
   await page.getByTestId("mas-ligero").waitFor();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${CARPETA}/lotes-formatos-${info.project.name}.png`, fullPage: true });
+  await page.screenshot({
+    path: `${CARPETA}/lotes-formatos-${info.project.name}.png`,
+    fullPage: true,
+  });
 });
 
 test("agentes", async ({ page }, info) => {
@@ -212,10 +276,16 @@ test("agentes", async ({ page }, info) => {
     await page.getByRole("button", { name: n("Crear la extensión") }).click();
     await page.getByTestId("mcpb-creada").waitFor({ timeout: 60_000 });
   }
-  await page.screenshot({ path: `${CARPETA}/agentes-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/agentes-${info.project.name}.png`,
+  });
   await page.getByText(n("VS Code"), { exact: true }).click();
-  await page.getByTestId("agentes").evaluate((e) => e.closest(".contenido")!.scrollTo(0, 10_000));
-  await page.screenshot({ path: `${CARPETA}/agentes-abajo-${info.project.name}.png` });
+  await page
+    .getByTestId("agentes")
+    .evaluate((e) => e.closest(".contenido")!.scrollTo(0, 10_000));
+  await page.screenshot({
+    path: `${CARPETA}/agentes-abajo-${info.project.name}.png`,
+  });
 });
 
 test("recorte", async ({ page }, info) => {
@@ -228,10 +298,14 @@ test("recorte", async ({ page }, info) => {
   await page.getByTestId("proporcion").selectOption("4:3");
   await page.getByTestId("recortar-en-imagen").click();
   await page.waitForTimeout(500);
-  await page.screenshot({ path: `${CARPETA}/recorte-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/recorte-${info.project.name}.png`,
+  });
   await page.getByTestId("recorte-listo").click();
   await page.waitForTimeout(1500);
-  await page.screenshot({ path: `${CARPETA}/recorte-hecho-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/recorte-hecho-${info.project.name}.png`,
+  });
 });
 
 // Los interruptores y el foco con el teclado (ADR 0027): el panel con uno encendido y los demás
@@ -244,7 +318,9 @@ test("interruptores y foco", async ({ page }, info) => {
   await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
   await page.getByRole("switch", { name: n("Recortar"), exact: true }).check();
   await page.waitForTimeout(500);
-  await page.locator(".panel").screenshot({ path: `${CARPETA}/interruptores-${info.project.name}.png` });
+  await page
+    .locator(".panel")
+    .screenshot({ path: `${CARPETA}/interruptores-${info.project.name}.png` });
   await page.locator("#control-calidad").focus();
   await page.keyboard.press("Tab");
   await page.waitForTimeout(200);
@@ -267,11 +343,101 @@ test("panel de navegación", async ({ page }, info) => {
   // Abre plegado; ☰ lo despliega.
   await page.getByTestId("boton-menu").click();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${CARPETA}/panel-desplegado-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/panel-desplegado-${info.project.name}.png`,
+  });
   await page.getByTestId("boton-menu").click();
   await page.setViewportSize({ width: 960, height: 700 });
   await page.getByTestId("boton-menu").click();
   await page.getByRole("button", { name: n("Lotes") }).hover();
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${CARPETA}/panel-encima-${info.project.name}.png` });
+  await page.screenshot({
+    path: `${CARPETA}/panel-encima-${info.project.name}.png`,
+  });
+});
+
+// Solo en macOS: la barra lateral oculta con su botón (ADR 0028).
+test("barra lateral oculta", async ({ page }, info) => {
+  test.skip(SISTEMA !== "macos", "solo en macOS");
+  await page.goto(raiz());
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
+  await (await elegir).setFiles(FOTO);
+  await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
+  await page.waitForTimeout(800);
+  await page.getByTestId("boton-lateral").click();
+  await page.waitForTimeout(400);
+  await page.screenshot({
+    path: `${CARPETA}/lateral-oculta-${info.project.name}.png`,
+  });
+});
+
+// Solo en macOS: los controles pulsados, con la burbuja de vidrio de macOS 27
+// (ADR 0028). Una imagen fija no enseña la animación, pero sí cómo queda. A
+// doble resolución, que son recortes pequeños.
+test.describe("de cerca", () => {
+  test.use({ deviceScaleFactor: 2 });
+  test("burbuja al pulsar", async ({ page }, info) => {
+    test.skip(SISTEMA !== "macos", "solo en macOS");
+    await page.goto(raiz());
+    const elegir = page.waitForEvent("filechooser");
+    await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
+    await (await elegir).setFiles(FOTO);
+    await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
+    await page.waitForTimeout(800);
+    const recorte = (c: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }) => ({
+      x: Math.max(0, c.x - 40),
+      y: Math.max(0, c.y - 30),
+      width: c.width + 80,
+      height: c.height + 60,
+    });
+    // El deslizador de calidad, pulsado en su botón.
+    const deslizador = page.locator(
+      '[data-prueba="control-calidad"] input[type="range"]',
+    );
+    await deslizador.scrollIntoViewIfNeeded();
+    const d = (await deslizador.boundingBox())!;
+    await page.screenshot({
+      path: `${CARPETA}/deslizador-reposo-${info.project.name}.png`,
+      clip: recorte(d),
+    });
+    await page.mouse.move(d.x + 11 + (d.width - 22) * 0.1, d.y + d.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(350);
+    await page.screenshot({
+      path: `${CARPETA}/deslizador-pulsado-${info.project.name}.png`,
+      clip: recorte(d),
+    });
+    await page.mouse.up();
+    // Un interruptor pulsado.
+    const interruptor = page.getByRole("switch", {
+      name: n("Recortar"),
+      exact: true,
+    });
+    const s = (await interruptor.boundingBox())!;
+    await page.mouse.move(s.x + s.width / 2, s.y + s.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(300);
+    await page.screenshot({
+      path: `${CARPETA}/interruptor-pulsado-${info.project.name}.png`,
+      clip: recorte(s),
+    });
+    await page.mouse.up();
+    // Una cápsula de la barra pulsada.
+    const abrir = page.getByRole("button", { name: n("Abrir otra…") });
+    const a = (await abrir.boundingBox())!;
+    await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(250);
+    await page.screenshot({
+      path: `${CARPETA}/capsula-pulsada-${info.project.name}.png`,
+      clip: { x: a.x - 380, y: 0, width: a.width + 400, height: 52 },
+    });
+    await page.mouse.up();
+  });
 });

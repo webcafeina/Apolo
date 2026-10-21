@@ -19,13 +19,26 @@ use apolo_servicio::{
 use tauri::State;
 use tauri::http::{Response, StatusCode, header};
 
+#[cfg(target_os = "macos")]
+mod ventana_macos;
 #[cfg(windows)]
 mod ventana_windows;
-#[cfg(windows)]
-use ventana_windows::hay_mica;
-#[cfg(not(windows))]
-fn hay_mica() -> bool {
-    false
+
+/// Si la ventana tiene vidrio detrás: Liquid Glass o el material de barra
+/// lateral en macOS (ventana_macos.rs), Mica en Windows 11 (ventana_windows.rs).
+fn hay_vidrio() -> bool {
+    #[cfg(target_os = "macos")]
+    {
+        ventana_macos::hay_vidrio()
+    }
+    #[cfg(windows)]
+    {
+        ventana_windows::hay_mica()
+    }
+    #[cfg(not(any(target_os = "macos", windows)))]
+    {
+        false
+    }
 }
 
 type Estado<'a> = State<'a, Arc<Servicio>>;
@@ -57,9 +70,9 @@ struct Plataforma {
 fn plataforma() -> Plataforma {
     Plataforma {
         sistema: std::env::consts::OS,
-        // macOS, con el material de barra lateral (tauri.macos.conf.json), y
-        // Windows 11 si se pudo poner Mica (ventana_windows.rs). Linux, opaca.
-        vidrio: cfg!(target_os = "macos") || hay_mica(),
+        // macOS con Liquid Glass o el material de barra lateral, y Windows 11
+        // con Mica, si se pudieron poner. Linux, opaca.
+        vidrio: hay_vidrio(),
         traslocada: cfg!(target_os = "macos")
             && std::env::current_exe()
                 .is_ok_and(|r| r.to_string_lossy().contains("/AppTranslocation/")),
@@ -283,9 +296,12 @@ pub fn arrancar() {
         // «Mostrar en la carpeta» al acabar un lote.
         .plugin(tauri_plugin_opener::init())
         // En Windows, la ventana se crea aquí: sin marco y con Mica (ADR 0027).
+        // En macOS, se le pone el vidrio (ADR 0028).
         .setup(|_app| {
             #[cfg(windows)]
             ventana_windows::crear(_app)?;
+            #[cfg(target_os = "macos")]
+            ventana_macos::poner_vidrio(_app);
             Ok(())
         })
         .manage({

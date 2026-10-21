@@ -44,3 +44,8 @@ windows-sys = { version = "0.61", features = [
   "Win32_UI_Shell",
   "Win32_UI_WindowsAndMessaging",
 ] }
+
+# La ventana de macOS (ADR 0028): Liquid Glass (NSGlassEffectView) en macOS 26
+# y 27, o el material de barra lateral. El mismo crate que en Windows.
+[target.'cfg(target_os = "macos")'.dependencies]
+window-vibrancy = "0.8"

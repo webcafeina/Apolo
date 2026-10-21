@@ -52,6 +52,11 @@ pub struct Tema {
     pub relleno_vivo: Rgb,
     pub sobre_acento: Rgb,
     pub acento: Rgb,
+    /// El oro hecho línea: oscurecido lo justo para llegar a 3:1 (un objeto
+    /// gráfico) sobre la peor superficie. Solo para iconos que van en el
+    /// color de acento, como los de la barra lateral de macOS 27 (ADR 0028);
+    /// nunca para texto.
+    pub oro_trazo: Rgb,
 
     // El oro con transparencia: el halo del foco (`anillo`) y el fondo de lo
     // seleccionado sin rellenar (`relleno_tenue`). Decoración: no llevan
@@ -116,6 +121,7 @@ pub fn claro() -> Tema {
         apagado: contraste::acento_legible(Rgb::hex(0x6c6c72), peor, AA_NORMAL),
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
         sobre_acento: PIEDRA,
         acento: PIEDRA,
         anillo: (ORO, 35),
@@ -155,6 +161,7 @@ pub fn oscuro() -> Tema {
         apagado: contraste::acento_legible(Rgb::hex(0xa1a1a8), peor, AA_NORMAL),
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
         sobre_acento: PIEDRA,
         acento: BLANCO,
         anillo: (ORO, 45),
@@ -200,6 +207,8 @@ pub fn windows_claro() -> Tema {
         apagado: contraste::acento_legible(Rgb::hex(0x616161), peor, AA_NORMAL),
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
+        // Sobre la fila con el puntero encima, algo más oscura que `peor`.
+        oro_trazo: contraste::acento_legible(ORO, Rgb::hex(0xeaeaea), AA_GRANDE),
         sobre_acento: PIEDRA,
         acento: PIEDRA,
         anillo: (ORO, 35),
@@ -238,6 +247,7 @@ pub fn windows_oscuro() -> Tema {
         apagado: contraste::acento_legible(Rgb::hex(0x9d9d9d), peor, AA_NORMAL),
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
         sobre_acento: PIEDRA,
         acento: BLANCO,
         anillo: (ORO, 45),
@@ -255,8 +265,96 @@ pub fn windows_oscuro() -> Tema {
     }
 }
 
-/// Todas las paletas: las dos de siempre y las dos de Windows. La prueba de
-/// contraste las mide todas.
-pub fn temas() -> [Tema; 4] {
-    [claro(), oscuro(), windows_claro(), windows_oscuro()]
+/// El modo claro en macOS (ADR 0028): los neutros de macOS 27 Golden Gate, del
+/// kit de diseño de Apple (`Window Background`, `Fills - Vibrant`, `Labels`).
+/// El contenido va en blanco; los grupos, los botones y la barra lateral, en los
+/// rellenos grises del sistema. El oro, la piedra y el acento, los de siempre.
+pub fn macos_claro() -> Tema {
+    let lienzo = Rgb::hex(0xffffff);
+    let tarjeta = Rgb::hex(0xf2f2f2);
+    // La selección de la barra lateral es la superficie más oscura.
+    let peor = Rgb::hex(0xd9d9d9);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
+
+    Tema {
+        nombre: "macos-claro",
+        oscuro: false,
+        lienzo,
+        suave: Rgb::hex(0xf7f7f7),
+        tarjeta,
+        elevada: Rgb::hex(0xe6e6e6),
+        filete: Rgb::hex(0xe5e5e5),
+        filete_fuerte: contraste::acento_legible(Rgb::hex(0x8c8c8c), peor, AA_GRANDE),
+        tinta: Rgb::hex(0x1a1a1a),
+        cuerpo: Rgb::hex(0x3b3b3b),
+        apagado: contraste::acento_legible(Rgb::hex(0x727272), peor, AA_NORMAL),
+        relleno,
+        relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        sobre_acento: PIEDRA,
+        acento: PIEDRA,
+        anillo: (ORO, 35),
+        relleno_tenue: (ORO, 18),
+        barra: Rgb::hex(0xe6e6e6),
+        barra_encima: peor,
+        campo: lienzo,
+        boton: Rgb::hex(0xebebeb),
+        boton_encima: Rgb::hex(0xe1e1e1),
+        exito: contraste::acento_legible(VERDE, peor, AA_NORMAL),
+        aviso: contraste::acento_legible(AMBAR, peor, AA_NORMAL),
+        error: contraste::acento_legible(ROJO, peor, AA_NORMAL),
+        damero_a: Rgb::hex(0xffffff),
+        damero_b: Rgb::hex(0xe6e6e6),
+    }
+}
+
+/// El modo oscuro en macOS (ADR 0028), con los neutros de macOS 27.
+pub fn macos_oscuro() -> Tema {
+    // Los botones con el puntero encima son la superficie más clara.
+    let peor = Rgb::hex(0x404040);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
+
+    Tema {
+        nombre: "macos-oscuro",
+        oscuro: true,
+        lienzo: Rgb::hex(0x1e1e1e),
+        suave: Rgb::hex(0x191919),
+        tarjeta: Rgb::hex(0x282828),
+        elevada: Rgb::hex(0x323232),
+        filete: Rgb::hex(0x363636),
+        filete_fuerte: contraste::acento_legible(Rgb::hex(0x8a8a8a), peor, AA_GRANDE),
+        tinta: Rgb::hex(0xf5f5f5),
+        cuerpo: Rgb::hex(0xdcdcdc),
+        apagado: contraste::acento_legible(Rgb::hex(0x9a9a9a), peor, AA_NORMAL),
+        relleno,
+        relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        sobre_acento: PIEDRA,
+        acento: BLANCO,
+        anillo: (ORO, 45),
+        relleno_tenue: (ORO, 22),
+        barra: Rgb::hex(0x161616),
+        barra_encima: Rgb::hex(0x2a2a2a),
+        campo: Rgb::hex(0x262626),
+        boton: Rgb::hex(0x383838),
+        boton_encima: peor,
+        exito: contraste::acento_legible(VERDE, peor, AA_NORMAL),
+        aviso: contraste::acento_legible(AMBAR, peor, AA_NORMAL),
+        error: contraste::acento_legible(ROJO, peor, AA_NORMAL),
+        damero_a: Rgb::hex(0x282828),
+        damero_b: Rgb::hex(0x363636),
+    }
+}
+
+/// Todas las paletas: las dos de siempre, las dos de Windows y las dos de
+/// macOS. La prueba de contraste las mide todas.
+pub fn temas() -> [Tema; 6] {
+    [
+        claro(),
+        oscuro(),
+        windows_claro(),
+        windows_oscuro(),
+        macos_claro(),
+        macos_oscuro(),
+    ]
 }

@@ -2,7 +2,7 @@
 //! ventana y la web (entrega 8d) usan la misma paleta, medida en
 //! `tests/contraste.rs`.
 
-use crate::{Rgb, Tema, claro, oscuro, windows_claro, windows_oscuro};
+use crate::{Rgb, Tema, claro, macos_claro, macos_oscuro, oscuro, windows_claro, windows_oscuro};
 
 /// Ruta del fichero generado, relativa a la raíz del repositorio.
 pub const RUTA: &str = "frontend/src/tokens.css";
@@ -28,6 +28,7 @@ fn variables(t: &Tema) -> Vec<(&'static str, Rgb)> {
         ("relleno-vivo", t.relleno_vivo),
         ("sobre-acento", t.sobre_acento),
         ("acento", t.acento),
+        ("oro-trazo", t.oro_trazo),
         ("barra", t.barra),
         ("barra-encima", t.barra_encima),
         ("campo", t.campo),
@@ -67,9 +68,9 @@ fn bloque(selector: &str, t: &Tema, sangria: &str) -> String {
 }
 
 /// El CSS completo. El modo sigue al sistema; `data-tema` en `<html>` lo fuerza.
-/// Después, la misma pareja para Windows (ADR 0027) bajo `data-sistema`: son
-/// selectores más específicos que los de siempre, así que mandan en Windows sea
-/// cual sea el modo.
+/// Después, la misma pareja para Windows (ADR 0027) y para macOS (ADR 0028) bajo
+/// `data-sistema`: son selectores más específicos que los de siempre, así que
+/// mandan en su sistema sea cual sea el modo.
 pub fn css() -> String {
     let mut s = String::from(
         "/* Generado por `make tokens` desde crates/tema. No se edita a mano (ADR 0008). */\n\n",
@@ -81,6 +82,7 @@ pub fn css() -> String {
             windows_claro(),
             windows_oscuro(),
         ),
+        ("[data-sistema=\"macos\"]", macos_claro(), macos_oscuro()),
     ] {
         if !sistema.is_empty() {
             s += "\n";

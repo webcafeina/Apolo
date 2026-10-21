@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import * as actualizar from "./actualizar";
 import { Agentes } from "./ajustes/Agentes";
 import { BarraTitulo } from "./BarraTitulo";
-import { Cabecera, esWindows, Icono, IconoApp, Marca, TarjetaAjuste } from "./componentes";
+import { Cabecera, esMac, esWindows, formularioNativo, Icono, IconoApp, Marca, TarjetaAjuste } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
 import i18n, { lengua } from "./i18n";
 import { Lotes } from "./lotes/Lotes";
@@ -18,6 +18,9 @@ type Seccion = "estudio" | "lotes" | "presets" | "mcp" | "ajustes";
 // La ventana, con la anatomía de la de Esfinge: la barra lateral de 225 px con
 // el hueco de los semáforos, el sello y las secciones (Ajustes abajo del todo),
 // y a la derecha cada sección con su cabecera de 52 px y el título a la izquierda.
+// En Windows, la de WinUI (ADR 0027); en macOS, la de macOS 27 (ADR 0028): la
+// barra lateral de borde a borde, que se oculta con su botón, y la cabecera de
+// cada sección hecha barra de herramientas unificada (sistema-macos.css).
 export function App() {
   const { t } = useTranslation();
   const [seccion, setSeccion] = useState<Seccion>("estudio");
@@ -25,12 +28,21 @@ export function App() {
   const [fallo, setFallo] = useState<string | null>(null);
   const [novedad, setNovedad] = useState<actualizar.Novedad | null>(null);
   const [traslocada, setTraslocada] = useState(false);
+  const [simulado, setSimulado] = useState(false);
   const windows = esWindows();
+  const mac = esMac();
   const { panel, alMenu, setEncima } = usePanel();
+  const { visible: lateralVisible, alternar: alternarLateral } = useLateral();
 
   useEffect(() => {
     puente.inicio().then(setInicio, (e: puente.Fallo) => setFallo(e.mensaje));
-    puente.plataforma().then((p) => setTraslocada(p.traslocada), () => {});
+    puente.plataforma().then(
+      (p) => {
+        setTraslocada(p.traslocada);
+        setSimulado(!!p.simulado);
+      },
+      () => {},
+    );
   }, []);
 
   // Al abrir y luego cada hora, como Esfinge; la puerta de Rust deja preguntar
@@ -69,18 +81,45 @@ export function App() {
         setEncima(false);
       }}
     >
-      <Icono nombre={s} lado={windows ? 16 : 18} />
+      <Icono nombre={s} lado={windows || mac ? 16 : 18} />
       <span className="etiqueta">{t(`nav.${s}`)}</span>
     </button>
   );
 
   return (
-    <div className="ventana" data-panel={windows ? panel : undefined}>
+    <div
+      className="ventana"
+      data-panel={windows ? panel : undefined}
+      data-lateral={mac ? (lateralVisible ? "visible" : "oculta") : undefined}
+    >
       {windows && <BarraTitulo panelAbierto={panel !== "compacto"} alMenu={alMenu} />}
-      <aside className="lateral" data-tauri-drag-region>
-        {/* En Windows, el nombre y el icono los pone la barra de título, y la
-            versión está en Ajustes › Acerca de: el panel solo navega (ADR 0027). */}
-        {!windows && (
+      {/* En el navegador no hay semáforos: unos dibujados ocupan su sitio en
+          las capturas de macOS. */}
+      {mac && simulado && (
+        <div className="semaforos-simulados" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </div>
+      )}
+      {mac && (
+        <button
+          className="boton-lateral"
+          aria-label={t(lateralVisible ? "ventana.ocultarLateral" : "ventana.mostrarLateral")}
+          title={t(lateralVisible ? "ventana.ocultarLateral" : "ventana.mostrarLateral")}
+          aria-expanded={lateralVisible}
+          onClick={alternarLateral}
+          data-prueba="boton-lateral"
+        >
+          <Icono nombre="lateral" lado={16} />
+        </button>
+      )}
+      <aside className="lateral" data-tauri-drag-region inert={mac && !lateralVisible ? true : undefined}>
+        {mac && <div className="cabeza-lateral" data-tauri-drag-region />}
+        {/* En Windows y en macOS, el nombre y el icono los pone la ventana, y la
+            versión está en Ajustes › Acerca de: el panel solo navega (ADR 0027
+            y 0028). */}
+        {!windows && !mac && (
           <>
             <div className="semaforos" data-tauri-drag-region />
             <div className="sello" data-tauri-drag-region>
@@ -94,7 +133,7 @@ export function App() {
           {fila("mcp")}
           {fila("ajustes")}
         </nav>
-        {inicio && !windows && (
+        {inicio && !windows && !mac && (
           <p className="firma" data-prueba="firma">
             {t("app.casa")}
             <span className="firma-barra" aria-hidden="true">▍</span>
@@ -124,6 +163,32 @@ export function App() {
       </main>
     </div>
   );
+}
+
+const CLAVE_LATERAL = "apolo.lateral";
+
+/**
+ * La barra lateral de macOS (ADR 0028), como la de Finder: su botón la oculta
+ * entera o la muestra, con su animación, y se recuerda. Abre visible.
+ */
+function useLateral() {
+  const [visible, setVisible] = useState(() => {
+    try {
+      return localStorage.getItem(CLAVE_LATERAL) !== "oculta";
+    } catch {
+      return true;
+    }
+  });
+  const alternar = () =>
+    setVisible((v) => {
+      try {
+        localStorage.setItem(CLAVE_LATERAL, v ? "oculta" : "visible");
+      } catch {
+        // Sin almacenamiento, se oculta igual; no se recordará.
+      }
+      return !v;
+    });
+  return { visible, alternar };
 }
 
 const ANCHA = "(min-width: 1008px)";
@@ -216,9 +281,10 @@ function Ajustes({
           ))}
         </div>
         {pestana === "agentes" && <Agentes />}
-        {esWindows() ? (
-          // Como la Configuración de Windows 11: tarjetas en grupos, y «Acerca
-          // de» al final (ADR 0027).
+        {formularioNativo() ? (
+          // Como la Configuración de Windows 11 (tarjetas) o los Ajustes del
+          // Sistema de macOS (filas agrupadas), y «Acerca de» al final (ADR 0027
+          // y 0028).
           <div className="panel-ajustes" hidden={pestana !== "general"}>
             <ElegirIdioma />
             <Actualizaciones alEncontrar={alEncontrar} />
@@ -296,7 +362,7 @@ function ElegirIdioma() {
         </select>
   );
 
-  if (esWindows()) {
+  if (formularioNativo()) {
     return (
       <TarjetaAjuste icono="idioma" titulo={t("ajustes.idioma")} descripcion={t("ajustes.idiomaDetalle")} control={desplegable} prueba="idioma" />
     );
@@ -375,8 +441,8 @@ function Actualizaciones({ alEncontrar }: { alEncontrar: (n: actualizar.Novedad)
     </span>
   );
 
-  if (esWindows()) {
-    // En Windows, un interruptor (ToggleSwitch), como en la Configuración.
+  if (formularioNativo()) {
+    // En Windows y en macOS, un interruptor, como en sus ajustes.
     return (
       <section className="grupo-ajustes" data-prueba="actualizaciones">
         <h2>{t("ajustes.actualizaciones")}</h2>

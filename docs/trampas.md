@@ -423,3 +423,21 @@ el CSS, hay que cambiarlas también en `ALTO_BARRA` y `ANCHO_BOTON`. · 2026-10-
 versiones viejas se llenó. Fallaron escribir ficheros y hasta la salida de las órdenes (`make
 comprobar` dio error sin decir por qué). Se arregla borrando lo grande del scratchpad
 (`du -sh .../scratchpad/*`); las compilaciones de prueba, mejor fuera de `/tmp`. · 2026-10-21
+
+## El conector de Figma: «you don't have edit access» y el límite de consultas
+
+El conector de Figma exige **permiso de edición** sobre el archivo aunque solo vaya a leer, y la
+cuenta del conector es la de quien lo conectó (aquí `nacho@webcafeina.com`), no la que tenga abierta
+el cliente. Un archivo duplicado en otra cuenta da «Looks like you don't have edit access» aunque se
+vea en el navegador. Con un plan gratuito no se puede dar edición a otro: hay que duplicar el kit en
+la misma cuenta del conector (se hizo pasándolo a `info@` y compartiéndolo). Además, con un asiento
+de solo lectura («View») Figma limita mucho las consultas: con unas 20 se cortó. Mejor
+`get_metadata` de cada página, que trae nombres y tamaños de todo, que muchas consultas pequeñas; y
+encargarlo a un agente que escriba las medidas en un fichero. · 2026-10-21
+
+## WebKit no imita la refracción de Liquid Glass
+
+Las demos de «liquid glass» en CSS usan `backdrop-filter: url(#filtro)` con un mapa de
+desplazamiento SVG. En WebKit (Safari, y por tanto la ventana de Apolo en macOS) no funciona (bug
+245510): se ve un desenfoque sin más. La refracción solo la da el vidrio nativo
+(`NSGlassEffectView`, `ventana_macos.rs`); en la interfaz, brillo, sombras y `blur()`. · 2026-10-21

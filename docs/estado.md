@@ -4,6 +4,19 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **v0.14.0, macOS con Golden Gate (2026-10-21), en curso** (ADR 0028). Hecho y revisado con el
+> cliente en capturas («está perfecto como está ahora»; iconos de la barra lateral en oro): el
+> diseño de macOS 27 medido en el kit oficial de Apple (Figma), con la barra lateral de borde a
+> borde que se oculta, la barra de herramientas unificada con cápsulas de vidrio, controles de 24,
+> filas agrupadas y la burbuja de vidrio al pulsar. `ventana_macos.rs` pone Liquid Glass (o el
+> material de siempre) y los semáforos van en `trafficLightPosition`. `make comprobar` y e2e en
+> verde; clippy para Apple silicon. **Nada visto aún en un Mac.**
+> **Lo siguiente**: compilación de prueba (`publicar.yml` a mano) y prueba guiada en el Mac del
+> cliente con macOS 27: Liquid Glass en claro y oscuro y con el ajuste de transparencia, los
+> semáforos (afinar `trafficLightPosition`), arrastrar desde la barra, ocultar la barra lateral,
+> la burbuja al pulsar, todas las pantallas. Después, la v0.14.0 con su sí; luego la prueba guiada
+> final y la 1.0.0.
+>
 > **v0.13.0, Windows con Fluent (2026-10-21), en curso** (ADR 0027). Hecho y revisado con el
 > cliente en capturas («ahora está perfecto»): en Windows, la paleta, la escala, los controles y
 > los iconos de WinUI con el oro de Apolo, y la estructura de una aplicación de WinUI (barra de

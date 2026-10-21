@@ -4,7 +4,8 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **v0.14.0, macOS con Golden Gate (2026-10-21), en curso** (ADR 0028). Hecho y revisado con el
+> **macOS con Golden Gate: v0.14.0 y v0.14.1 publicadas el 2026-10-21 y vistas bien en el Mac del
+> cliente** (ADR 0028). Hecho y revisado con el
 > cliente en capturas («está perfecto como está ahora»; iconos de la barra lateral en oro): el
 > diseño de macOS 27 medido en el kit oficial de Apple (Figma), con la barra lateral de borde a
 > borde que se oculta, la barra de herramientas unificada con cápsulas de vidrio, controles de 24,

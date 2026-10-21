@@ -75,15 +75,14 @@ fn todas_las_parejas_llegan_a_aa() {
 
 #[test]
 fn tokens_css_esta_al_dia() {
-    let ruta = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join(apolo_tema::tokens::RUTA);
-    let en_disco = std::fs::read_to_string(&ruta).unwrap_or_default();
-    assert!(
-        en_disco == apolo_tema::tokens::css(),
-        "{} no coincide con la paleta: corre `make tokens` (y no lo edites a mano)",
-        apolo_tema::tokens::RUTA
-    );
+    for r in apolo_tema::tokens::RUTAS {
+        let ruta = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..").join(r);
+        let en_disco = std::fs::read_to_string(&ruta).unwrap_or_default();
+        assert!(
+            en_disco == apolo_tema::tokens::css(),
+            "{r} no coincide con la paleta: corre `make tokens` (y no lo edites a mano)"
+        );
+    }
 }
 
 #[test]

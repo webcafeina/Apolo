@@ -1,0 +1,34 @@
+# La web de Apolo (apolo.webcafeina.com, entrega 8d, ADR 0026): la carpeta web/ tal cual, con
+# GitHub Pages. Es estática: no hay nada que compilar. Las capturas se hacen a mano con
+# `make capturas-web` y van en web/img/; los tokens, con `make tokens`.
+#
+# Solo se lanza a mano hasta que Pages esté activado en el repositorio (con «GitHub Actions» como
+# origen) y el dominio apuntado: entonces se le añade `push` a main con `paths: [web/**]`.
+name: Web
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: web
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: despliegue
+        uses: actions/deploy-pages@v4

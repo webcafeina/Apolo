@@ -411,7 +411,14 @@ fn rutas(s: Arc<Servicio>) -> Router {
         )
         .route(
             "/api/agentes",
-            post(|| async { Json(apolo_servicio::agentes::de_esta()) }),
+            // Con APOLO_DEV_RUTA_MCP, esa ruta en vez de la del binario de desarrollo: las
+            // capturas de la web (`make capturas-web`) enseñan la de una instalación de verdad.
+            post(|| async {
+                Json(match std::env::var_os("APOLO_DEV_RUTA_MCP") {
+                    Some(r) => apolo_servicio::agentes::agentes(Ok(PathBuf::from(r))),
+                    None => apolo_servicio::agentes::de_esta(),
+                })
+            }),
         )
         .route(
             "/api/crear_mcpb",

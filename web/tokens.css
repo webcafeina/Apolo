@@ -1,0 +1,90 @@
+/* Generado por `make tokens` desde crates/tema. No se edita a mano (ADR 0008). */
+
+:root {
+  color-scheme: light;
+  --lienzo: #ffffff;
+  --suave: #f7f7f9;
+  --tarjeta: #f2f2f7;
+  --elevada: #e8e8ed;
+  --filete: #d8d8de;
+  --filete-fuerte: #8b8b90;
+  --tinta: #1c1c1e;
+  --cuerpo: #3c3c43;
+  --apagado: #68686d;
+  --relleno: #ffc83d;
+  --relleno-vivo: #ebb838;
+  --sobre-acento: #2b2b31;
+  --acento: #2b2b31;
+  --barra: #f6f6f8;
+  --barra-encima: #e8e8ed;
+  --campo: #ffffff;
+  --boton: #ffffff;
+  --boton-encima: #f2f2f5;
+  --exito: #1f7735;
+  --aviso: #995900;
+  --error: #c42d25;
+  --damero-a: #ffffff;
+  --damero-b: #e6e6ea;
+  --anillo: rgb(255 200 61 / 35%);
+  --relleno-tenue: rgb(255 200 61 / 18%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --lienzo: #1e1e1e;
+    --suave: #252527;
+    --tarjeta: #2c2c2e;
+    --elevada: #3a3a3c;
+    --filete: #3f3f42;
+    --filete-fuerte: #7a7a80;
+    --tinta: #ffffff;
+    --cuerpo: #e3e3e6;
+    --apagado: #b6b6bb;
+    --relleno: #ffc83d;
+    --relleno-vivo: #ebb838;
+    --sobre-acento: #2b2b31;
+    --acento: #ffffff;
+    --barra: #242426;
+    --barra-encima: #343437;
+    --campo: #1a1a1c;
+    --boton: #3a3a3c;
+    --boton-encima: #48484a;
+    --exito: #4cce6d;
+    --aviso: #ffa11c;
+    --error: #ff9b95;
+    --damero-a: #2c2c2e;
+    --damero-b: #3a3a3c;
+    --anillo: rgb(255 200 61 / 45%);
+    --relleno-tenue: rgb(255 200 61 / 22%);
+  }
+}
+
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
+  --lienzo: #1e1e1e;
+  --suave: #252527;
+  --tarjeta: #2c2c2e;
+  --elevada: #3a3a3c;
+  --filete: #3f3f42;
+  --filete-fuerte: #7a7a80;
+  --tinta: #ffffff;
+  --cuerpo: #e3e3e6;
+  --apagado: #b6b6bb;
+  --relleno: #ffc83d;
+  --relleno-vivo: #ebb838;
+  --sobre-acento: #2b2b31;
+  --acento: #ffffff;
+  --barra: #242426;
+  --barra-encima: #343437;
+  --campo: #1a1a1c;
+  --boton: #3a3a3c;
+  --boton-encima: #48484a;
+  --exito: #4cce6d;
+  --aviso: #ffa11c;
+  --error: #ff9b95;
+  --damero-a: #2c2c2e;
+  --damero-b: #3a3a3c;
+  --anillo: rgb(255 200 61 / 45%);
+  --relleno-tenue: rgb(255 200 61 / 22%);
+}

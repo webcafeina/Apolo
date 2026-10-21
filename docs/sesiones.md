@@ -29,6 +29,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - Subido (`d8a0f3e`), CI y la compilación de prueba en verde; el humo abrió la ventana en Windows
   x64. **Prueba en la máquina virtual Windows 11 ARM del cliente, bien**; pidió que el panel se
   animara al plegarse (hecho, 200 ms). Mica se queda con su tinte normal. El oscuro, sin ver.
+- «Adelante, publica»: v0.13.0 con notas bilingües (`cbf32ef`), CI en verde, etiqueta empujada;
+  `publicar.yml` 39601235133 en marcha al parar. Falta revisar el borrador y publicarlo
+  (estado.md tiene los pasos).
 
 ---
 

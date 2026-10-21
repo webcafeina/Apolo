@@ -26,9 +26,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       2026-10-21 (ADR 0026), se actualiza solo al publicar;
     - ~~la web en `apolo.webcafeina.com` (GitHub Pages, es + en)~~: publicada el 2026-10-21, con
       HTTPS forzado;
-    - **v0.13.0, Windows con Fluent** ([ADR 0027](adr/0027-windows-con-fluent.md)), pedida por el
-      cliente antes de la 1.0: hecha en el código y revisada en capturas el 2026-10-21. Falta la
-      prueba guiada en su máquina virtual Windows 11 ARM y publicarla;
+    - ~~**v0.13.0, Windows con Fluent** ([ADR 0027](adr/0027-windows-con-fluent.md))~~, pedida por
+      el cliente antes de la 1.0: probada en su máquina virtual Windows 11 ARM y publicada el
+      2026-10-21;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

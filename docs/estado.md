@@ -15,22 +15,14 @@
 > **Prueba guiada en la máquina virtual Windows 11 ARM, bien** (compilación de prueba
 > 39590749049, CI y humo en verde): Mica, la barra, Snap, redimensionar, ☰ y las pantallas. Pidió
 > animar el panel al plegarse: hecho. El tema oscuro, sin ver (Windows sin activar).
-> **Publicación de la v0.13.0 en marcha (el cliente dijo «adelante, publica» el 2026-10-21)**:
-> versión subida y notas bilingües (`cbf32ef`), CI en verde, etiqueta `v0.13.0` empujada a las
-> 12:38 UTC; `publicar.yml` es la ejecución **39601235133** (detrás, `humo.yml`). Se paró sin
-> esperar a que acabara.
-> **Lo siguiente, al volver**:
-> 1. `gh run view 39601235133` (y el humo): todo en verde; si algo falla en macOS por
->    `bundle_dmg.sh`, `gh run rerun <id> --failed` (trampas.md).
-> 2. Revisar el borrador como siempre: `gh release download v0.13.0` a una carpeta del
->    scratchpad, `sha256sum -c SHA256SUMS.txt`, `python3 -I pruebas/referencias/verificar_firmas.py
->    src-tauri/tauri.conf.json <dir>`, `latest.json` con 14 plataformas, versiones de la CLI y de
->    `apolo-mcp` en 0.13.0, manifiestos de los `.mcpb`, manifiesto de `apolo-app.exe` ARM64 válido
->    y en ASCII (con 7zz de `scratchpad/sxs/tool/7zz`), `humo.py` sin DLL de Visual C++, AVIF frente
->    a `target/avifenc-1.4.2/avifenc` con `pruebas/corpus/orientacion-6.png` (3/3).
-> 3. `gh release edit v0.13.0 --draft=false`, comprobar `latest.json` público y que
->    `homebrew.yml` actualizó el tap.
-> 4. Apuntar en sesiones.md y aquí que está publicada. Luego, la prueba guiada final y la 1.0.0.
+> **Publicada la v0.13.0 (2026-10-21, 13:56 UTC)**. `publicar.yml` 39601235133: el `.dmg` de
+> macOS falló por `bundle_dmg.sh` (la trampa de siempre) y salió a la segunda con `gh run rerun
+> --failed`; humo en verde en los tres sistemas. Borrador revisado como siempre: 27 ficheros,
+> sumas, 7 firmas, `latest.json` con 14 plataformas, CLI y `apolo-mcp` en 0.13.0, los cinco `.mcpb`
+> en 0.13.0, manifiesto de `apolo-app.exe` ARM64 válido, en ASCII y con UTF-8, sin DLL de Visual
+> C++, AVIF 3/3 frente a avifenc 1.4.2. `latest.json` público en 0.13.0 y el tap de Homebrew
+> actualizado solo (fórmula y cask en 0.13.0).
+> **Lo siguiente**: la prueba guiada final (Mac, Windows ARM, Ubuntu ARM) y la 1.0.0.
 >
 > **La 8c está hecha y publicada la v0.12.0 (2026-10-20 por la noche)**, revisada como siempre
 > (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones en 0.12.0, los cinco

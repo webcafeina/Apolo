@@ -1,9 +1,23 @@
 # Estado
 
-Última actualización: **2026-10-19**
+Última actualización: **2026-10-21**
 
 ## Dónde se paró, y por dónde se sigue
 
+> **v0.13.0, Windows con Fluent (2026-10-21), en curso** (ADR 0027). Hecho y revisado con el
+> cliente en capturas («ahora está perfecto»): en Windows, la paleta, la escala, los controles y
+> los iconos de WinUI con el oro de Apolo, y la estructura de una aplicación de WinUI (barra de
+> título propia de 48 px con ☰, panel de navegación plegable que abre plegado, capa del contenido,
+> SettingsCards, InfoBar). La ventana sin marco y con Mica se crea desde código
+> (`src-tauri/src/ventana_windows.rs`), con una ventana Win32 invisible sobre «Maximizar» para el
+> menú de Snap. Interruptores con su forma en los tres sistemas. `make comprobar` y e2e en verde;
+> el código de Windows compila y pasa clippy, **pero no se ha ejecutado nunca**.
+> **Lo siguiente**: CI en verde y una compilación de prueba (`publicar.yml` a mano) para la
+> **prueba guiada en la máquina virtual Windows 11 ARM** del cliente: Mica en claro y oscuro, la
+> barra (arrastrar, doble clic, los tres botones, atenuada sin foco), el menú de Snap, redimensionar,
+> las esquinas, ☰, todas las pantallas. Después, la v0.13.0 con su sí; luego la prueba guiada final
+> y la 1.0.0. «Enforce HTTPS» de la web, ya hecho.
+>
 > **La 8c está hecha y publicada la v0.12.0 (2026-10-20 por la noche)**, revisada como siempre
 > (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones en 0.12.0, los cinco
 > `.mcpb` en inglés, la CLI en los dos idiomas, manifiesto ARM64 válido, sin DLL de Visual C++,

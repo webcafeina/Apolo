@@ -21,6 +21,7 @@
   --radio-chico: 6px;
   --radio-grande: 14px;
   --alto-control: 28px;
+  --alto-campo: 30px;
   --alto-fila: 38px;
   --barra-lateral: 225px;
   --hueco-semaforos: 52px;
@@ -85,7 +86,7 @@ button.principal { background: var(--relleno); border-color: transparent; color:
 button.principal:hover:not(:disabled) { background: var(--relleno-vivo); }
 
 input[type="number"], input:not([type]), input[type="text"], select {
-  height: 30px;
+  height: var(--alto-campo);
   padding: 0 var(--espacio-3);
   border: var(--linea) solid var(--filete-fuerte);
   border-radius: var(--radio);
@@ -108,6 +109,28 @@ button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-v
 }
 
 input[type="checkbox"] { accent-color: var(--relleno); width: 16px; height: 16px; margin: 0; flex: none; }
+
+/* El interruptor (ADR 0027): una casilla con role="switch", con su forma. Hasta
+   la v0.13.0 salía como una casilla cuadrada en todos los sistemas. Esta es la
+   de macOS (y la de la web); Windows y Linux tienen la suya en su fichero. El
+   botón es un degradado del fondo, no un ::before: WebKit (macOS, Linux) no
+   pinta pseudoelementos dentro de un <input>. Apagado, la pista va en
+   `--filete-fuerte`, que llega a 3:1 sobre los fondos (crates/tema); encendido,
+   el oro rellena. */
+input[type="checkbox"][role="switch"] {
+  --pomo: #ffffff;
+  --pomo-tam: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 32px;
+  height: 18px;
+  border: 0;
+  border-radius: 9px;
+  background: radial-gradient(circle closest-side, var(--pomo) 92%, transparent) no-repeat 2px 50% / var(--pomo-tam) var(--pomo-tam), var(--filete-fuerte);
+  transition: background-position 0.15s, background-color 0.15s, background-size 0.1s;
+}
+input[type="checkbox"][role="switch"]:checked { background-color: var(--relleno); background-position: calc(100% - 2px) 50%; }
+input[type="checkbox"][role="switch"]:disabled { opacity: 0.4; }
 input[type="range"] { accent-color: var(--relleno); }
 
 /* El segmentado de Esfinge: un carril hundido y la opción elegida levantada. */
@@ -398,12 +421,12 @@ input[type="range"] { accent-color: var(--relleno); }
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  height: 30px;
+  height: var(--alto-campo);
   padding: 0 var(--espacio-3);
   border-radius: var(--radio);
   background: var(--campo);
   border: var(--linea) solid var(--filete);
-  font: 12px/30px var(--mono);
+  font: 12px/var(--alto-campo) var(--mono);
   color: var(--tinta);
   user-select: text;
 }
@@ -499,29 +522,16 @@ input[type="range"] { accent-color: var(--relleno); }
 :root[data-vidrio="si"] body { background: transparent; }
 :root[data-vidrio="si"] .lateral { background: transparent; }
 
-/* Windows: filas de 40 con radio 4, y la sección activa con el oro tenue y una
-   barra de 3 px en la tinta (el oro a 3 px no se vería), como en Esfinge. */
-:root[data-sistema="windows"] .lateral nav button { height: 40px; border-radius: 4px; position: relative; }
-:root[data-sistema="windows"] .lateral nav button[aria-current="page"] { background: var(--relleno-tenue); color: var(--tinta); font-weight: 600; }
-:root[data-sistema="windows"] .lateral nav button[aria-current="page"] .icono { color: var(--acento); }
-:root[data-sistema="windows"] .lateral nav button[aria-current="page"]::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 12px;
-  width: 3px;
-  height: 16px;
-  border-radius: 2px;
-  background: var(--acento);
+/* En el navegador de desarrollo no hay vidrio de verdad: con `?vidrio=si` (y
+   `?sistema=`), un degradado lo imita para las capturas (ADR 0027). En la
+   ventana nunca se pone. */
+:root[data-vidrio-simulado="si"] body { background: linear-gradient(135deg, #dde5f1 0%, #eef0f3 45%, #f2ece5 100%); }
+@media (prefers-color-scheme: dark) {
+  :root[data-vidrio-simulado="si"]:not([data-tema="claro"]) body { background: linear-gradient(135deg, #1a2233 0%, #202020 50%, #241f1b 100%); }
 }
-:root[data-sistema="windows"] button, :root[data-sistema="windows"] input, :root[data-sistema="windows"] select { border-radius: 4px; }
-:root[data-sistema="windows"] .grupo { border-radius: 8px; }
 
-/* Linux (GNOME): líneas de 1 px, filas de 36 y la cabecera con su borde. */
-:root[data-sistema="linux"] { --linea: 1px; }
-:root[data-sistema="linux"] .lateral nav button { height: 36px; border-radius: 6px; }
-:root[data-sistema="linux"] .grupo { border-radius: 12px; }
-:root[data-sistema="linux"] .herramientas { border-bottom: 1px solid var(--filete); }
+/* Lo propio de Windows y de Linux está en sistema-windows.css y
+   sistema-linux.css, que main.tsx importa después de este. */
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
@@ -690,7 +700,7 @@ button.discreto:hover:not(:disabled) { background: var(--elevada); color: var(--
 .salida-lote { display: flex; flex-direction: column; gap: var(--espacio-2); padding-bottom: var(--espacio-3); border-bottom: var(--linea) solid var(--filete); }
 .salida-lote .pareja { align-items: flex-end; flex-wrap: nowrap; }
 .campo.crece { flex: 1; min-width: 0; }
-.quitar-salida { height: 30px; }
+.quitar-salida { height: var(--alto-campo); }
 
 .por-formato { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .por-formato li { display: flex; align-items: baseline; gap: var(--espacio-2); }

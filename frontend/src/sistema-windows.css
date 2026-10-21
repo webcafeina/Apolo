@@ -1,0 +1,547 @@
+/* Apolo en Windows 11, con el lenguaje de Fluent 2 / WinUI 3 (ADR 0027).
+
+   La anatomía y las medidas son las de WinUI: texto de 14 (Body) con Segoe UI
+   Variable, controles de 32, radios de 4 en los controles y de 8 en las
+   tarjetas, líneas de 1 px, el borde inferior de un botón o de un campo algo
+   más fuerte, el foco con un contorno de 2 px. Los colores son los neutros de
+   WinUI (tokens.css, bloque `data-sistema="windows"`, desde crates/tema). La
+   marca es la misma: **el oro rellena y la piedra escribe**; el oro nunca es
+   línea ni texto (el foco, las pistas y los indicadores van en --acento).
+
+   Todo cuelga de :root[data-sistema="windows"], que pone main.tsx según la
+   orden `plataforma`; en el navegador se pide con ?sistema=windows. Nada de
+   aquí cambia lo que hace la ventana: solo cómo se ve. */
+
+:root[data-sistema="windows"] {
+  --radio: 4px;
+  --radio-chico: 4px;
+  --radio-grande: 8px;
+  --alto-control: 32px;
+  --alto-campo: 32px;
+  --alto-fila: 40px;
+  --texto-chico: 12px;
+  --texto: 14px;
+  --texto-grande: 14px;
+  --titulo: 20px;
+  --linea: 1px;
+  --fuente: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  /* El borde inferior de un control, el que le da relieve en Fluent. */
+  --borde-bajo: color-mix(in srgb, var(--filete-fuerte) 45%, var(--filete));
+}
+
+:root[data-sistema="windows"] body { line-height: 20px; -webkit-font-smoothing: auto; }
+
+/* La escala de Fluent: Title (28) en la cabecera de cada página, más abajo;
+   Subtitle (20) en la bienvenida, y el antetítulo como Caption (Fluent no
+   escribe en mayúsculas). */
+:root[data-sistema="windows"] h1 { font-size: 20px; line-height: 28px; letter-spacing: 0; }
+:root[data-sistema="windows"] .titulos h1 { letter-spacing: 0; }
+:root[data-sistema="windows"] .bienvenida-cabecera h2 { font-size: 20px; line-height: 28px; }
+:root[data-sistema="windows"] .antetitulo { font-size: 12px; font-weight: 400; letter-spacing: 0; text-transform: none; }
+:root[data-sistema="windows"] .campo > span,
+:root[data-sistema="windows"] .cabecera-control label { font-weight: 400; }
+
+/* Barras de desplazamiento finas, como las de WinUI. */
+:root[data-sistema="windows"] * { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--apagado) 55%, transparent) transparent; }
+
+/* ── Botones ────────────────────────────────────────────────────────────── */
+
+:root[data-sistema="windows"] button {
+  height: var(--alto-control);
+  padding: 0 12px;
+  border: 1px solid var(--filete);
+  border-bottom-color: var(--borde-bajo);
+  border-radius: 4px;
+  background: var(--boton);
+  box-shadow: none;
+  font-weight: 400;
+  transition: background 0.08s;
+}
+:root[data-sistema="windows"] button:hover:not(:disabled) { background: var(--boton-encima); }
+:root[data-sistema="windows"] button:active:not(:disabled) { background: var(--elevada); color: var(--cuerpo); }
+:root[data-sistema="windows"] button.principal {
+  background: var(--relleno);
+  border-color: rgb(0 0 0 / 0.08);
+  border-bottom-color: rgb(0 0 0 / 0.25);
+  color: var(--sobre-acento);
+}
+:root[data-sistema="windows"] button.principal:hover:not(:disabled) { background: var(--relleno-vivo); }
+:root[data-sistema="windows"] button.principal:active:not(:disabled) { background: var(--relleno-vivo); color: var(--sobre-acento); }
+:root[data-sistema="windows"] button.discreto { border-color: transparent; background: transparent; }
+:root[data-sistema="windows"] button.discreto:hover:not(:disabled) { background: var(--barra-encima); }
+:root[data-sistema="windows"] button.peligro { border-color: var(--error); }
+/* ── Campos y desplegables ──────────────────────────────────────────────── */
+
+:root[data-sistema="windows"] input[type="number"],
+:root[data-sistema="windows"] input:not([type]),
+:root[data-sistema="windows"] input[type="text"],
+:root[data-sistema="windows"] select {
+  height: var(--alto-campo);
+  padding: 0 11px;
+  border: 1px solid var(--filete);
+  border-bottom-color: var(--filete-fuerte);
+  border-radius: 4px;
+  background-color: var(--campo);
+  transition: none;
+}
+:root[data-sistema="windows"] select {
+  padding-right: 32px;
+  background: var(--campo) var(--flecha-select) no-repeat right 11px center / 12px 12px;
+  border-bottom-color: var(--borde-bajo);
+}
+:root[data-sistema="windows"] select:hover:not(:disabled) { background-color: var(--boton-encima); }
+
+/* El foco de un campo: la línea de abajo, de 2 px, en la tinta. */
+:root[data-sistema="windows"] input[type="number"]:focus-visible,
+:root[data-sistema="windows"] input:not([type]):focus-visible,
+:root[data-sistema="windows"] input[type="text"]:focus-visible {
+  border-color: var(--filete);
+  border-bottom-color: var(--acento);
+  box-shadow: inset 0 -1px 0 var(--acento);
+  outline: none;
+}
+
+/* El foco de todo lo demás: el contorno de Fluent, 2 px en la tinta, separado
+   1 px del control. Sin el halo de oro de macOS. */
+:root[data-sistema="windows"] button:focus-visible,
+:root[data-sistema="windows"] select:focus-visible,
+:root[data-sistema="windows"] summary:focus-visible,
+:root[data-sistema="windows"] canvas:focus-visible,
+:root[data-sistema="windows"] input[type="checkbox"]:focus-visible,
+:root[data-sistema="windows"] input[type="range"]:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+:root[data-sistema="windows"] button:focus-visible { border-color: var(--filete); border-bottom-color: var(--borde-bajo); }
+:root[data-sistema="windows"] select:focus-visible { border-color: var(--filete); }
+
+/* ── Casilla ────────────────────────────────────────────────────────────── */
+
+:root[data-sistema="windows"] input[type="checkbox"]:not([role="switch"]) {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--filete-fuerte);
+  border-radius: 4px;
+  background: var(--campo) no-repeat center / 12px 12px;
+}
+:root[data-sistema="windows"] input[type="checkbox"]:not([role="switch"]):checked {
+  border-color: var(--relleno);
+  background-color: var(--relleno);
+  /* La marca, en la piedra (la misma en claro y en oscuro). */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.2 6.3 4.8 8.8 9.8 3.6' fill='none' stroke='%232b2b31' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+:root[data-sistema="windows"] input[type="checkbox"]:not([role="switch"]):disabled { opacity: 0.4; }
+
+/* ── Interruptor (ToggleSwitch) ─────────────────────────────────────────── */
+
+/* 40 × 20. Apagado, un trazo de --filete-fuerte y el botón en --cuerpo (que
+   crece al pasar el puntero); encendido, la pista en oro y el botón en piedra. */
+:root[data-sistema="windows"] input[type="checkbox"][role="switch"] {
+  --pomo: var(--cuerpo);
+  --pomo-tam: 12px;
+  width: 40px;
+  height: 20px;
+  border: 1px solid var(--filete-fuerte);
+  border-radius: 10px;
+  background-color: transparent;
+  background-position: 3px 50%;
+}
+:root[data-sistema="windows"] input[type="checkbox"][role="switch"]:hover:not(:disabled) { --pomo-tam: 14px; background-position: 2px 50%; }
+:root[data-sistema="windows"] input[type="checkbox"][role="switch"]:checked {
+  --pomo: var(--sobre-acento);
+  border-color: var(--relleno);
+  background-color: var(--relleno);
+  background-position: calc(100% - 3px) 50%;
+}
+:root[data-sistema="windows"] input[type="checkbox"][role="switch"]:checked:hover:not(:disabled) { background-position: calc(100% - 2px) 50%; }
+
+/* ── Deslizador (Slider) ────────────────────────────────────────────────── */
+
+/* La pista de 4 px, lo recorrido en la tinta (--lleno lo pone el componente),
+   y el botón redondo con el punto de oro en medio, que crece al pasar por
+   encima y se encoge al arrastrarlo. */
+:root[data-sistema="windows"] input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 20px;
+  background: transparent;
+}
+:root[data-sistema="windows"] input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--acento) var(--lleno, 0%), var(--filete-fuerte) var(--lleno, 0%));
+}
+:root[data-sistema="windows"] input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border: 1px solid var(--filete);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--relleno) 0 6px, var(--boton) 6.5px);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.16);
+}
+:root[data-sistema="windows"] input[type="range"]:hover::-webkit-slider-thumb { background: radial-gradient(circle, var(--relleno) 0 7px, var(--boton) 7.5px); }
+:root[data-sistema="windows"] input[type="range"]:active::-webkit-slider-thumb { background: radial-gradient(circle, var(--relleno) 0 5px, var(--boton) 5.5px); }
+:root[data-sistema="windows"] input[type="range"]:disabled { opacity: 0.4; }
+
+/* ── Segmentado y pestañas ──────────────────────────────────────────────── */
+
+:root[data-sistema="windows"] .segmentado { border-radius: 4px; padding: 2px; }
+:root[data-sistema="windows"] .segmentado button {
+  position: relative;
+  height: 28px;
+  /* Con el texto a 14, el de la cabecera del Estudio no dejaba sitio al
+     nombre de la imagen: 10 de margen y 6 entre el icono y el texto. */
+  padding: 0 10px;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+}
+:root[data-sistema="windows"] .segmentado button[aria-checked="true"] {
+  background: var(--tarjeta);
+  border-color: var(--filete);
+  box-shadow: none;
+}
+/* La elegida, con el indicador de Fluent abajo: 16 × 3, en la tinta. */
+:root[data-sistema="windows"] .segmentado button[aria-checked="true"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 1px;
+  width: 16px;
+  height: 3px;
+  margin-left: -8px;
+  border-radius: 2px;
+  background: var(--acento);
+}
+
+/* Las pestañas de Ajustes, como una SelectorBar: texto, y la elegida en
+   negrita con el indicador debajo. */
+:root[data-sistema="windows"] .pestanas-ajustes { background: transparent; padding: 0; gap: var(--espacio-1); }
+:root[data-sistema="windows"] .pestanas-ajustes button { height: 36px; border: 0; }
+:root[data-sistema="windows"] .pestanas-ajustes button[aria-checked="true"] { background: transparent; border: 0; font-weight: 600; }
+:root[data-sistema="windows"] .pestanas-ajustes button[aria-checked="true"]::after { bottom: 2px; }
+
+/* ── Tarjetas, desplegables y avisos ────────────────────────────────────── */
+
+:root[data-sistema="windows"] .grupo { border-radius: 4px; border: 1px solid var(--filete); }
+
+/* Expander: la flecha a la derecha, que gira al abrir. */
+:root[data-sistema="windows"] .panel summary,
+:root[data-sistema="windows"] .grupo details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  list-style: none;
+}
+:root[data-sistema="windows"] .panel summary { min-height: 48px; padding-block: 0; }
+:root[data-sistema="windows"] .panel summary::-webkit-details-marker,
+:root[data-sistema="windows"] .grupo details summary::-webkit-details-marker { display: none; }
+:root[data-sistema="windows"] .panel summary::after,
+:root[data-sistema="windows"] .grupo details summary::after {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  background: var(--flecha-select) no-repeat center / 12px 12px;
+  transition: transform 0.1s;
+}
+:root[data-sistema="windows"] details[open] > summary::after { transform: rotate(180deg); }
+
+:root[data-sistema="windows"] .aviso { border-radius: 4px; border-left-width: 3px; }
+
+/* La barra de progreso de Fluent: 3 px, lo hecho en la tinta. Sin transición:
+   avanza a pasos de un 1 % (y la prueba e2e mide su ancho). */
+:root[data-sistema="windows"] .barra-progreso { height: 3px; border-radius: 2px; }
+:root[data-sistema="windows"] .barra-progreso.ancha { height: 4px; }
+
+/* Lo que flota sobre la imagen (el zoom): radio 8 y la sombra de elevación 8. */
+:root[data-sistema="windows"] .zoom { border-radius: 8px; box-shadow: 0 8px 16px rgb(0 0 0 / 0.14); }
+@media (prefers-color-scheme: dark) {
+  :root[data-sistema="windows"]:not([data-tema="claro"]) .zoom { box-shadow: 0 8px 16px rgb(0 0 0 / 0.26); }
+}
+:root[data-sistema="windows"] .zona-soltar { border-width: 1px; }
+:root[data-sistema="windows"] .rasgos li { border-radius: 4px; }
+
+/* ══ La estructura de una aplicación de WinUI ═══════════════════════════════
+
+   Va al final para ganar a las reglas de los controles de arriba. Las medidas
+   salen del código de WinUI (NavigationView, TitleBar, InfoBar), del Windows
+   Community Toolkit (SettingsCard) y de la Galería de WinUI; están anotadas en
+   la ADR 0027. Tres capas: el marco (Mica en Windows 11, --barra si no), con
+   la barra de título y el panel de navegación transparentes encima; y la capa
+   del contenido, con la esquina de arriba a la izquierda redondeada. */
+
+/* Los rellenos sutiles de WinUI (SubtleFillColorSecondary y Tertiary), lo que
+   se ilumina al pasar el puntero o pulsar en algo sin fondo; la capa del
+   contenido sobre Mica (LayerFillColorDefault), y el fondo de una InfoBar
+   (SystemFillColorAttentionBackground). */
+:root[data-sistema="windows"] {
+  --sutil-encima: rgb(0 0 0 / 0.037);
+  --sutil-pulsado: rgb(0 0 0 / 0.024);
+  --capa: rgb(255 255 255 / 0.5);
+  --fondo-infobar: rgb(246 246 246 / 0.5);
+  --ancho-panel: 320px;
+  --panel-compacto: 48px;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-sistema="windows"]:not([data-tema="claro"]) {
+    --sutil-encima: rgb(255 255 255 / 0.06);
+    --sutil-pulsado: rgb(255 255 255 / 0.04);
+    --capa: rgb(58 58 58 / 0.3);
+    --fondo-infobar: rgb(255 255 255 / 0.03);
+  }
+}
+:root[data-sistema="windows"][data-tema="oscuro"] {
+  --sutil-encima: rgb(255 255 255 / 0.06);
+  --sutil-pulsado: rgb(255 255 255 / 0.04);
+  --capa: rgb(58 58 58 / 0.3);
+  --fondo-infobar: rgb(255 255 255 / 0.03);
+}
+
+/* Sin Mica (Windows 10, o las transparencias apagadas), el marco es el color
+   de Mica sin el fondo de pantalla. */
+:root[data-sistema="windows"]:not([data-vidrio="si"]) body { background: var(--barra); }
+
+/* La rejilla: la barra de título arriba, a todo el ancho; debajo, el panel y
+   el contenido. */
+:root[data-sistema="windows"] .ventana {
+  position: relative;
+  grid-template-columns: var(--ancho-panel) minmax(0, 1fr);
+  grid-template-rows: 48px minmax(0, 1fr);
+}
+:root[data-sistema="windows"] .ventana:not([data-panel="abierto"]) { grid-template-columns: var(--panel-compacto) minmax(0, 1fr); }
+:root[data-sistema="windows"] .lateral { grid-row: 2; grid-column: 1; }
+:root[data-sistema="windows"] .zona { grid-row: 2; grid-column: 2; }
+
+/* ── La barra de título (48 px, la alta de WinUI) ───────────────────────── */
+
+:root[data-sistema="windows"] .barra-titulo {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding-left: 4px;
+  min-width: 0;
+}
+/* ☰ en la misma columna que los iconos del panel: centrado a 24 px del borde. */
+:root[data-sistema="windows"] .boton-menu {
+  width: 40px;
+  height: 36px;
+  padding: 0;
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: var(--tinta);
+}
+:root[data-sistema="windows"] .boton-menu:hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="windows"] .boton-menu:active:not(:disabled) { background: var(--sutil-pulsado); color: var(--apagado); }
+:root[data-sistema="windows"] .icono-ventana { display: flex; flex: none; margin-left: 12px; }
+:root[data-sistema="windows"] .titulo-ventana {
+  margin-left: 16px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--tinta);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Minimizar, maximizar y cerrar: 46 × 48, sin borde ni radio, con los dibujos
+   de 10 px de Segoe Fluent Icons. Cerrar se pone en el rojo de Windows. Sobre
+   «Maximizar» hay una ventana nativa invisible (la del menú de Snap), que no
+   deja llegar el ratón: dice ella si está encima o pulsado (`data-encima`,
+   `data-pulsado`). **Estas medidas están también en
+   src-tauri/src/ventana_windows.rs** (ALTO_BARRA, ANCHO_BOTON). */
+:root[data-sistema="windows"] .botones-ventana { display: flex; margin-left: auto; align-self: stretch; flex: none; }
+:root[data-sistema="windows"] .botones-ventana button {
+  width: 46px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--tinta);
+  transition: none;
+}
+:root[data-sistema="windows"] .botones-ventana svg { fill: none; stroke: currentColor; stroke-width: 1; }
+:root[data-sistema="windows"] .botones-ventana button:hover:not(:disabled),
+:root[data-sistema="windows"] .botones-ventana button[data-encima="si"] { background: var(--sutil-encima); }
+:root[data-sistema="windows"] .botones-ventana button:active:not(:disabled),
+:root[data-sistema="windows"] .botones-ventana button[data-pulsado="si"] { background: var(--sutil-pulsado); color: var(--apagado); }
+:root[data-sistema="windows"] .botones-ventana button.cerrar:hover:not(:disabled) { background: #c42b1c; color: #ffffff; }
+:root[data-sistema="windows"] .botones-ventana button.cerrar:active:not(:disabled) { background: rgb(196 43 28 / 0.9); color: rgb(255 255 255 / 0.7); }
+/* La ventana de atrás: el nombre y los dibujos se apagan, como en Windows. */
+:root[data-sistema="windows"] .barra-titulo[data-activa="no"] .titulo-ventana,
+:root[data-sistema="windows"] .barra-titulo[data-activa="no"] .botones-ventana button:not(:hover) { color: var(--apagado); }
+
+/* ── El panel de navegación (NavigationView) ────────────────────────────── */
+
+/* Transparente sobre el marco. Filas de 36 con 4 px a los lados y 4 entre una
+   y otra, radio 4; el icono de 16 en una caja de 40. La sección elegida, con el
+   relleno sutil y el indicador de 3 × 16. */
+:root[data-sistema="windows"] .lateral {
+  background: transparent;
+  border: 0;
+  padding: 4px 0 8px;
+  overflow: hidden;
+}
+:root[data-sistema="windows"] .lateral nav { gap: 4px; padding: 0 4px; }
+:root[data-sistema="windows"] .lateral nav.abajo { padding-top: 4px; }
+:root[data-sistema="windows"] .lateral nav button {
+  position: relative;
+  width: 100%;
+  height: 36px;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--tinta);
+  font-size: 14px;
+  font-weight: 400;
+}
+:root[data-sistema="windows"] .lateral nav .icono { width: 16px; height: 16px; margin: 0 12px; color: var(--tinta); }
+:root[data-sistema="windows"] .lateral nav .etiqueta { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+:root[data-sistema="windows"] .lateral nav button:hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="windows"] .lateral nav button:active:not(:disabled) { background: var(--sutil-pulsado); color: var(--apagado); }
+:root[data-sistema="windows"] .lateral nav button[aria-current="page"] { background: var(--sutil-encima); }
+:root[data-sistema="windows"] .lateral nav button[aria-current="page"]:hover:not(:disabled) { background: var(--sutil-pulsado); }
+:root[data-sistema="windows"] .lateral nav button[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--acento);
+}
+/* Plegado: solo los iconos (el nombre sale al dejar el puntero). */
+:root[data-sistema="windows"] .ventana[data-panel="compacto"] .lateral nav .etiqueta { display: none; }
+/* Con la ventana estrecha, ☰ abre el panel encima del contenido, con el fondo
+   de acrílico y la sombra de un panel flotante, hasta que se elige algo. Sigue
+   en su celda de la rejilla, que es desde donde cuentan `top` y `bottom`. */
+:root[data-sistema="windows"] .ventana[data-panel="encima"] .lateral {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--ancho-panel);
+  z-index: 30;
+  background: color-mix(in srgb, var(--barra) 90%, transparent);
+  backdrop-filter: blur(30px) saturate(1.25);
+  border: 1px solid var(--filete);
+  border-left: 0;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 8px 16px rgb(0 0 0 / 0.14);
+}
+
+/* ── La capa del contenido ──────────────────────────────────────────────── */
+
+:root[data-sistema="windows"] .zona {
+  border-top: 1px solid var(--filete);
+  border-left: 1px solid var(--filete);
+  border-top-left-radius: 8px;
+}
+:root[data-sistema="windows"][data-vidrio="si"] .zona { background: var(--capa); }
+/* Lo que va dentro no se pinta encima de la capa: el panel de opciones del
+   Estudio y su barra de abajo quedan sobre ella, separados por un filete. La
+   imagen sí tiene su gris (ADR 0015). */
+:root[data-sistema="windows"] .panel,
+:root[data-sistema="windows"] .barra-estado { background: transparent; }
+
+/* La cabecera de cada página: Title (28/36, Segoe UI Variable Display), con
+   36 px a los lados como la Galería de WinUI. El contenido, a 36 también, y
+   hasta 1000 px de ancho, como la Configuración. */
+:root[data-sistema="windows"] .herramientas { min-height: 0; padding: 28px 36px 20px; }
+:root[data-sistema="windows"] .herramientas h1 {
+  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 600;
+}
+:root[data-sistema="windows"] .contenido { padding: 0 36px 36px; }
+:root[data-sistema="windows"] .panel-ajustes,
+:root[data-sistema="windows"] .panel-ajustes.lotes { max-width: 1000px; }
+
+/* El Estudio con una imagen es una herramienta, no una página: su cabecera es
+   una barra de órdenes de 48 (CommandBar), con el nombre en BodyStrong, sus
+   datos debajo en Caption, y las órdenes sin relieve (AppBarButton). */
+:root[data-sistema="windows"] .estudio .herramientas { min-height: 56px; padding: 6px 12px 6px 20px; }
+:root[data-sistema="windows"] .estudio .herramientas h1 { font-family: inherit; font-size: 14px; line-height: 20px; }
+:root[data-sistema="windows"] .estudio .titulos { gap: 0; }
+:root[data-sistema="windows"] .estudio .herramientas .aparte { gap: 4px; }
+:root[data-sistema="windows"] .estudio .herramientas .aparte > button { border-color: transparent; background: transparent; }
+:root[data-sistema="windows"] .estudio .herramientas .aparte > button:hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="windows"] .estudio .herramientas .aparte > button:active:not(:disabled) { background: var(--sutil-pulsado); }
+
+/* ── Tarjetas de ajuste (SettingsCard) y grupos ─────────────────────────── */
+
+/* Un grupo: el encabezado en BodyStrong y las tarjetas a 4 px una de otra; un
+   segundo encabezado en el mismo grupo deja 30 px encima. */
+:root[data-sistema="windows"] .grupo-ajustes { display: flex; flex-direction: column; gap: 4px; }
+:root[data-sistema="windows"] .grupo-ajustes > h2 { font-size: 14px; line-height: 20px; font-weight: 600; margin-bottom: 4px; }
+:root[data-sistema="windows"] .grupo-ajustes > h2:not(:first-child) { margin-top: 26px; }
+
+/* La tarjeta: 68 de alto como mínimo, 16 de relleno, radio 4 y su filete; el
+   icono de 20 con 20 hasta el texto; el título en Body y la descripción en
+   Caption; el control a la derecha. Lo de debajo se alinea con el texto. */
+:root[data-sistema="windows"] .tarjeta-ajuste {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-height: 68px;
+  padding: 16px;
+  border: 1px solid var(--filete);
+  border-radius: 4px;
+  background: var(--tarjeta);
+}
+:root[data-sistema="windows"] .tarjeta-fila { display: flex; align-items: center; gap: 16px; min-width: 0; }
+:root[data-sistema="windows"] .tarjeta-fila > .icono,
+:root[data-sistema="windows"] .tarjeta-fila > img { flex: none; margin-right: 4px; color: var(--tinta); }
+:root[data-sistema="windows"] .tarjeta-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+:root[data-sistema="windows"] .tarjeta-titulo { color: var(--tinta); font-size: 14px; line-height: 20px; }
+:root[data-sistema="windows"] .tarjeta-descripcion { color: var(--apagado); font-size: 12px; line-height: 16px; }
+:root[data-sistema="windows"] .tarjeta-descripcion .apagado { color: inherit; }
+:root[data-sistema="windows"] .tarjeta-control { flex: none; display: flex; align-items: center; gap: 8px; }
+:root[data-sistema="windows"] .tarjeta-control select { min-width: 160px; }
+:root[data-sistema="windows"] .tarjeta-abajo { display: flex; flex-direction: column; gap: 8px; }
+:root[data-sistema="windows"] .tarjeta-ajuste:has(> .tarjeta-fila > .icono) .tarjeta-abajo { padding-left: 40px; }
+:root[data-sistema="windows"] .tarjeta-ajuste:has(> .tarjeta-fila > img) .tarjeta-abajo { padding-left: 52px; }
+:root[data-sistema="windows"] .tarjeta-abajo .deslizador { max-width: 420px; }
+
+/* Las tarjetas que no son un ajuste (lo que entra en un lote, un preset, lo
+   que hace el conector): radio 4 y 16 de relleno, como las de arriba. */
+:root[data-sistema="windows"] .grupo { padding: 16px; }
+:root[data-sistema="windows"] .grupo h2 { font-size: 14px; line-height: 20px; }
+
+/* ── La versión nueva, como una InfoBar ─────────────────────────────────── */
+
+/* Dentro del contenido y no de lado a lado: 48 de alto, radio 4, su filete, el
+   icono de 16 y el título en semibold. */
+:root[data-sistema="windows"] .novedad {
+  margin: 12px 16px 4px;
+  padding: 8px 8px 8px 16px;
+  gap: 12px;
+  border: 1px solid var(--filete);
+  border-radius: 4px;
+  background: var(--fondo-infobar);
+}
+:root[data-sistema="windows"] .icono-infobar { display: flex; flex: none; color: var(--acento); }
+
+/* Con el panel desplegado y el de opciones, la barra de órdenes del Estudio va
+   justa: los datos de la imagen se cortan con puntos suspensivos y, si aun así
+   no cabe, el modo de comparar se queda en sus iconos (con su nombre al lado
+   para el lector de pantalla), como hace una CommandBar con sus etiquetas. */
+:root[data-sistema="windows"] .lienzo-y-barra { container-type: inline-size; }
+:root[data-sistema="windows"] .estudio .antetitulo { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@container (max-width: 700px) {
+  :root[data-sistema="windows"] .estudio .segmentado.con-iconos .etiqueta { display: none; }
+}

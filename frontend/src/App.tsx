@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as actualizar from "./actualizar";
 import { Agentes } from "./ajustes/Agentes";
-import { Cabecera, Icono, IconoApp, Marca } from "./componentes";
+import { BarraTitulo } from "./BarraTitulo";
+import { Cabecera, esWindows, Icono, IconoApp, Marca, TarjetaAjuste } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
 import i18n, { lengua } from "./i18n";
 import { Lotes } from "./lotes/Lotes";
@@ -24,6 +25,8 @@ export function App() {
   const [fallo, setFallo] = useState<string | null>(null);
   const [novedad, setNovedad] = useState<actualizar.Novedad | null>(null);
   const [traslocada, setTraslocada] = useState(false);
+  const windows = esWindows();
+  const { panel, alMenu, setEncima } = usePanel();
 
   useEffect(() => {
     puente.inicio().then(setInicio, (e: puente.Fallo) => setFallo(e.mensaje));
@@ -55,26 +58,43 @@ export function App() {
   }, []);
 
   const fila = (s: Seccion) => (
-    <button key={s} aria-current={seccion === s ? "page" : undefined} onClick={() => setSeccion(s)}>
-      <Icono nombre={s} lado={18} />
-      {t(`nav.${s}`)}
+    <button
+      key={s}
+      aria-current={seccion === s ? "page" : undefined}
+      aria-label={t(`nav.${s}`)}
+      // Plegado, solo queda el icono: el nombre sale al dejar el puntero.
+      title={windows && panel === "compacto" ? t(`nav.${s}`) : undefined}
+      onClick={() => {
+        setSeccion(s);
+        setEncima(false);
+      }}
+    >
+      <Icono nombre={s} lado={windows ? 16 : 18} />
+      <span className="etiqueta">{t(`nav.${s}`)}</span>
     </button>
   );
 
   return (
-    <div className="ventana">
+    <div className="ventana" data-panel={windows ? panel : undefined}>
+      {windows && <BarraTitulo panelAbierto={panel !== "compacto"} alMenu={alMenu} />}
       <aside className="lateral" data-tauri-drag-region>
-        <div className="semaforos" data-tauri-drag-region />
-        <div className="sello" data-tauri-drag-region>
-          <Marca lado={26} />
-          <span>{t("app.nombre")}</span>
-        </div>
+        {/* En Windows, el nombre y el icono los pone la barra de título, y la
+            versión está en Ajustes › Acerca de: el panel solo navega (ADR 0027). */}
+        {!windows && (
+          <>
+            <div className="semaforos" data-tauri-drag-region />
+            <div className="sello" data-tauri-drag-region>
+              <Marca lado={26} />
+              <span>{t("app.nombre")}</span>
+            </div>
+          </>
+        )}
         <nav aria-label={t("app.nombre")}>{(["estudio", "lotes", "presets"] as const).map(fila)}</nav>
         <nav className="abajo" aria-label={t("nav.ajustes")}>
           {fila("mcp")}
           {fila("ajustes")}
         </nav>
-        {inicio && (
+        {inicio && !windows && (
           <p className="firma" data-prueba="firma">
             {t("app.casa")}
             <span className="firma-barra" aria-hidden="true">▍</span>
@@ -106,6 +126,52 @@ export function App() {
   );
 }
 
+const ANCHA = "(min-width: 1008px)";
+const CLAVE_PANEL = "apolo.panel";
+
+/**
+ * El panel de navegación de Windows, como el NavigationView de WinUI en modo
+ * automático: con la ventana ancha, ☰ lo pliega a solo iconos (48 px) o lo
+ * despliega (320), y se recuerda; con la ventana estrecha va plegado, y ☰ lo
+ * abre encima del contenido hasta que se elige una sección. La primera vez
+ * abre plegado, para dejarle sitio a la imagen (lo eligió el cliente).
+ */
+function usePanel() {
+  const [ancha, setAncha] = useState(() => window.matchMedia(ANCHA).matches);
+  const [plegado, setPlegado] = useState(() => {
+    try {
+      return localStorage.getItem(CLAVE_PANEL) !== "abierto";
+    } catch {
+      return true;
+    }
+  });
+  const [encima, setEncima] = useState(false);
+
+  useEffect(() => {
+    const m = window.matchMedia(ANCHA);
+    const cambiar = () => {
+      setAncha(m.matches);
+      setEncima(false);
+    };
+    m.addEventListener("change", cambiar);
+    return () => m.removeEventListener("change", cambiar);
+  }, []);
+
+  const panel: "abierto" | "compacto" | "encima" = ancha ? (plegado ? "compacto" : "abierto") : encima ? "encima" : "compacto";
+  const alMenu = () => {
+    if (!ancha) return setEncima((e) => !e);
+    setPlegado((p) => {
+      try {
+        localStorage.setItem(CLAVE_PANEL, p ? "abierto" : "plegado");
+      } catch {
+        // Sin almacenamiento, se pliega igual; no se recordará.
+      }
+      return !p;
+    });
+  };
+  return { panel, alMenu, setEncima };
+}
+
 function Ajustes({
   inicio,
   alEncontrar,
@@ -127,6 +193,17 @@ function Ajustes({
   // cambia de pestaña: no se vuelve a montar.
   useEffect(() => setPestana(porLosAgentes ? "agentes" : "general"), [porLosAgentes]);
 
+  const motores = (
+    <dl className="motores">
+      {lista?.map((m) => (
+        <div key={m.nombre}>
+          <dt>{m.nombre}</dt>
+          <dd>{m.version}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+
   return (
     <div className="seccion columna">
       <Cabecera titulo={t("nav.ajustes")} />
@@ -139,30 +216,44 @@ function Ajustes({
           ))}
         </div>
         {pestana === "agentes" && <Agentes />}
-        <div className="panel-ajustes" hidden={pestana !== "general"}>
-          <ElegirIdioma />
-          <section className="grupo">
-            <h2>{t("ajustes.acercaDe")}</h2>
-            <div className="ficha">
-              <IconoApp lado={64} />
-              <div>
-                <p className="ficha-nombre">{t("app.nombre")}</p>
-                <p className="apagado">{inicio ? t("ajustes.version", { version: inicio.version }) : ""}</p>
+        {esWindows() ? (
+          // Como la Configuración de Windows 11: tarjetas en grupos, y «Acerca
+          // de» al final (ADR 0027).
+          <div className="panel-ajustes" hidden={pestana !== "general"}>
+            <ElegirIdioma />
+            <Actualizaciones alEncontrar={alEncontrar} />
+            <section className="grupo-ajustes">
+              <h2>{t("ajustes.acercaDe")}</h2>
+              <TarjetaAjuste
+                icono={<IconoApp lado={32} />}
+                titulo={t("app.nombre")}
+                descripcion={inicio ? t("ajustes.version", { version: inicio.version }) : ""}
+              >
                 <p>{t("app.lema")}</p>
-              </div>
-            </div>
-            <dl className="motores">
-              {lista?.map((m) => (
-                <div key={m.nombre}>
-                  <dt>{m.nombre}</dt>
-                  <dd>{m.version}</dd>
+                {motores}
+                <p className="apagado">{t("ajustes.licencia")}</p>
+              </TarjetaAjuste>
+            </section>
+          </div>
+        ) : (
+          <div className="panel-ajustes" hidden={pestana !== "general"}>
+            <ElegirIdioma />
+            <section className="grupo">
+              <h2>{t("ajustes.acercaDe")}</h2>
+              <div className="ficha">
+                <IconoApp lado={64} />
+                <div>
+                  <p className="ficha-nombre">{t("app.nombre")}</p>
+                  <p className="apagado">{inicio ? t("ajustes.version", { version: inicio.version }) : ""}</p>
+                  <p>{t("app.lema")}</p>
                 </div>
-              ))}
-            </dl>
-            <p className="apagado">{t("ajustes.licencia")}</p>
-          </section>
-          <Actualizaciones alEncontrar={alEncontrar} />
-        </div>
+              </div>
+              {motores}
+              <p className="apagado">{t("ajustes.licencia")}</p>
+            </section>
+            <Actualizaciones alEncontrar={alEncontrar} />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -186,13 +277,10 @@ function ElegirIdioma() {
     puente.ponerIdioma(p).then((efectivo) => i18n.changeLanguage(efectivo), () => {});
   }
 
-  return (
-    <section className="grupo" data-prueba="idioma">
-      <h2>{t("ajustes.idioma")}</h2>
-      <div className="pareja">
-        {/* Cada idioma, con su nombre en su idioma: quien no entiende el
-            actual tiene que encontrar el suyo. */}
-        <select
+  // Cada idioma, con su nombre en su idioma: quien no entiende el actual tiene
+  // que encontrar el suyo.
+  const desplegable = (
+    <select
           value={preferencia ?? "sistema"}
           disabled={preferencia === null}
           aria-label={t("ajustes.idioma")}
@@ -206,7 +294,17 @@ function ElegirIdioma() {
             {t("ajustes.idiomas.en")}
           </option>
         </select>
-      </div>
+  );
+
+  if (esWindows()) {
+    return (
+      <TarjetaAjuste icono="idioma" titulo={t("ajustes.idioma")} descripcion={t("ajustes.idiomaDetalle")} control={desplegable} prueba="idioma" />
+    );
+  }
+  return (
+    <section className="grupo" data-prueba="idioma">
+      <h2>{t("ajustes.idioma")}</h2>
+      <div className="pareja">{desplegable}</div>
     </section>
   );
 }
@@ -245,40 +343,59 @@ function Actualizaciones({ alEncontrar }: { alEncontrar: (n: actualizar.Novedad)
   const fecha = (segundos: number) =>
     new Intl.DateTimeFormat(lengua(), { dateStyle: "long", timeStyle: "short" }).format(new Date(segundos * 1000));
 
+  // Hasta que llegan los ajustes, la casilla no se toca: el clic no tendría de
+  // dónde partir y volvería sola a como estaba (Esfinge).
+  const casilla = (windows: boolean) => (
+    <input
+      type="checkbox"
+      role={windows ? "switch" : undefined}
+      aria-label={windows ? t("ajustes.avisarme") : undefined}
+      checked={ajustes?.buscar_actualizaciones ?? true}
+      disabled={ajustes === null}
+      onChange={(e) => {
+        // Se marca ya, sin esperar a Rust, que la guarda detrás.
+        setAjustes({ ...ajustes!, buscar_actualizaciones: e.target.checked });
+        puente.buscarActualizaciones(e.target.checked).then(setAjustes, () => {});
+      }}
+    />
+  );
+  const ultimaVez = ajustes?.ultima_comprobacion != null && (
+    <span className="apagado" data-prueba="ultima-vez">
+      {t("ajustes.ultimaVez", { fecha: fecha(ajustes.ultima_comprobacion) })}
+    </span>
+  );
+  const boton = (
+    <button onClick={buscarAhora} disabled={buscando}>
+      {buscando ? t("ajustes.buscando") : t("ajustes.buscarAhora")}
+    </button>
+  );
+  const respuesta = dicho && (
+    <span className={dicho.error ? "error" : undefined} role="status">
+      {dicho.texto}
+    </span>
+  );
+
+  if (esWindows()) {
+    // En Windows, un interruptor (ToggleSwitch), como en la Configuración.
+    return (
+      <section className="grupo-ajustes" data-prueba="actualizaciones">
+        <h2>{t("ajustes.actualizaciones")}</h2>
+        <TarjetaAjuste icono="avisos" titulo={t("ajustes.avisarme")} descripcion={t("ajustes.privacidad")} control={casilla(true)} />
+        <TarjetaAjuste icono="actualizar" titulo={t("ajustes.comprobar")} descripcion={respuesta || ultimaVez} control={boton} />
+      </section>
+    );
+  }
   return (
     <section className="grupo" data-prueba="actualizaciones">
       <h2>{t("ajustes.actualizaciones")}</h2>
       <label className="casilla">
-        {/* Hasta que llegan los ajustes, la casilla no se toca: el clic no
-            tendría de dónde partir y volvería sola a como estaba (Esfinge). */}
-        <input
-          type="checkbox"
-          checked={ajustes?.buscar_actualizaciones ?? true}
-          disabled={ajustes === null}
-          onChange={(e) => {
-            // Se marca ya, sin esperar a Rust, que la guarda detrás.
-            setAjustes({ ...ajustes!, buscar_actualizaciones: e.target.checked });
-            puente.buscarActualizaciones(e.target.checked).then(setAjustes, () => {});
-          }}
-        />
+        {casilla(false)}
         {t("ajustes.avisarme")}
       </label>
       <p className="apagado">{t("ajustes.privacidad")}</p>
-      {ajustes?.ultima_comprobacion != null && (
-        <p className="apagado" data-prueba="ultima-vez">
-          {t("ajustes.ultimaVez", { fecha: fecha(ajustes.ultima_comprobacion) })}
-        </p>
-      )}
-      <div className="pareja">
-        <button onClick={buscarAhora} disabled={buscando}>
-          {buscando ? t("ajustes.buscando") : t("ajustes.buscarAhora")}
-        </button>
-      </div>
-      {dicho && (
-        <p className={dicho.error ? "error" : undefined} role="status">
-          {dicho.texto}
-        </p>
-      )}
+      {ultimaVez && <p>{ultimaVez}</p>}
+      <div className="pareja">{boton}</div>
+      {respuesta && <p>{respuesta}</p>}
     </section>
   );
 }

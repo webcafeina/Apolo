@@ -64,3 +64,9 @@ Decidida el 2026-10-06 y hecha el mismo día (entrega 3).
   - la hoja de estilos rehecha con las medidas de Esfinge, iconos de línea y variantes de Windows y
     Linux.
 - **No verificado**: el icono del volumen en un Mac y el instalador de Windows en un Windows.
+
+## Matiz del 2026-10-21: Windows con Fluent
+
+En Windows, la anatomía de Esfinge para Mac deja paso a la de WinUI: su escala, sus controles, sus
+iconos y su estructura (barra de título propia, NavigationView, SettingsCards), con el oro de Apolo
+como acento. La marca sigue siendo la misma; cambian las formas. Ver la [ADR 0027](0027-windows-con-fluent.md).

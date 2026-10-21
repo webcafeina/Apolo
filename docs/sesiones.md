@@ -4,6 +4,31 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-21 · Windows con Fluent (v0.13.0)
+
+- Pedido por el cliente antes de la 1.0: que en Windows Apolo parezca una aplicación de Microsoft
+  sin cambiar lo que hace. Plan aprobado en dos fases (capturas primero, la ventana después).
+- **Primera vuelta, los controles**: paleta de WinUI en `crates/tema` (cuatro paletas medidas),
+  escala de Fluent, `sistema-windows.css` con la anatomía de cada control, iconos de Fluent
+  (MIT) copiados, interruptores con su forma en los tres sistemas, `?sistema=windows&vidrio=si`
+  y `make capturas-windows`. El cliente: los controles bien, pero «se sigue pareciendo a la que
+  está».
+- **Investigación de la estructura** con las fuentes de WinUI, del Toolkit y de la Galería, y de
+  la barra de título en Tauri. Recomendé la barra del sistema sobre Mica; el cliente eligió la
+  barra propia de 48 px, el panel plegable, la marca fuera del panel y las SettingsCards.
+- **Segunda vuelta**: `BarraTitulo.tsx`, el panel como NavigationView (`usePanel`, modo
+  automático de WinUI), la capa del contenido, títulos de página de 28, `TarjetaAjuste` en
+  Ajustes, Lotes y MCP, la cabecera del Estudio como barra de órdenes, la InfoBar.
+  `ventana_windows.rs`: la ventana desde código con Mica y la ventana de Snap (técnica estudiada en
+  Zbrooklyn/tauri-snap-layouts y en `snap.rs` de tauri-plugin-frame, escrita aquí). Revisión en
+  capturas: «ahora está perfecto»; el panel, plegado de inicio.
+- Verificado: `make comprobar`, e2e (las de siempre y `windows.spec.ts`), las capturas de macOS y
+  la web iguales que antes; `ventana_windows.rs` compila para Windows y pasa clippy.
+- **No verificado**: nada en un Windows de verdad (deuda.md).
+- La carpeta temporal se llenó (EDQUOT) con la compilación de prueba para Windows (trampa).
+
+---
+
 ## 2026-10-21 · La 8d: la web y Homebrew
 
 - **La web**, en `web/`, estática, en español e inglés: la paleta de la aplicación (`make tokens`

@@ -172,7 +172,91 @@ pub fn oscuro() -> Tema {
     }
 }
 
-/// Los dos modos, en el orden en que se escriben en el CSS.
-pub fn temas() -> [Tema; 2] {
-    [claro(), oscuro()]
+// Los colores de estado de Windows 11 (los System*Foreground de WinUI).
+const VERDE_WINDOWS: Rgb = Rgb::hex(0x0f7b0f);
+const AMBAR_WINDOWS: Rgb = Rgb::hex(0x9d5d00);
+const ROJO_WINDOWS: Rgb = Rgb::hex(0xc42b1c);
+
+/// El modo claro en Windows (ADR 0027): los neutros de WinUI 3 en vez de los
+/// de macOS, aplanados sobre el gris de Mica (`SolidBackgroundFillColorBase`).
+/// El oro, la piedra y el acento son los mismos: la marca no cambia de sistema.
+pub fn windows_claro() -> Tema {
+    let lienzo = Rgb::hex(0xf9f9f9);
+    let tarjeta = Rgb::hex(0xffffff);
+    let peor = Rgb::hex(0xebebeb);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
+
+    Tema {
+        nombre: "windows-claro",
+        oscuro: false,
+        lienzo,
+        suave: Rgb::hex(0xf3f3f3),
+        tarjeta,
+        elevada: peor,
+        filete: Rgb::hex(0xe5e5e5),
+        filete_fuerte: contraste::acento_legible(Rgb::hex(0x8a8a8a), peor, AA_GRANDE),
+        tinta: Rgb::hex(0x1b1b1b),
+        cuerpo: Rgb::hex(0x3d3d3d),
+        apagado: contraste::acento_legible(Rgb::hex(0x616161), peor, AA_NORMAL),
+        relleno,
+        relleno_vivo: relleno.oscurecer(0.92),
+        sobre_acento: PIEDRA,
+        acento: PIEDRA,
+        anillo: (ORO, 35),
+        relleno_tenue: (ORO, 18),
+        barra: Rgb::hex(0xf3f3f3),
+        barra_encima: Rgb::hex(0xeaeaea),
+        campo: tarjeta,
+        boton: Rgb::hex(0xfbfbfb),
+        boton_encima: Rgb::hex(0xf6f6f6),
+        exito: contraste::acento_legible(VERDE_WINDOWS, peor, AA_NORMAL),
+        aviso: contraste::acento_legible(AMBAR_WINDOWS, peor, AA_NORMAL),
+        error: contraste::acento_legible(ROJO_WINDOWS, peor, AA_NORMAL),
+        damero_a: Rgb::hex(0xffffff),
+        damero_b: Rgb::hex(0xe6e6e6),
+    }
+}
+
+/// El modo oscuro en Windows (ADR 0027), con los neutros de WinUI 3.
+pub fn windows_oscuro() -> Tema {
+    let elevada = Rgb::hex(0x383838);
+    // Los botones con el puntero encima son la superficie más clara.
+    let peor = Rgb::hex(0x3a3a3a);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
+
+    Tema {
+        nombre: "windows-oscuro",
+        oscuro: true,
+        lienzo: Rgb::hex(0x272727),
+        suave: Rgb::hex(0x1c1c1c),
+        tarjeta: Rgb::hex(0x2b2b2b),
+        elevada,
+        filete: Rgb::hex(0x3a3a3a),
+        filete_fuerte: contraste::acento_legible(Rgb::hex(0x9a9a9a), peor, AA_GRANDE),
+        tinta: Rgb::hex(0xffffff),
+        cuerpo: Rgb::hex(0xe4e4e4),
+        apagado: contraste::acento_legible(Rgb::hex(0x9d9d9d), peor, AA_NORMAL),
+        relleno,
+        relleno_vivo: relleno.oscurecer(0.92),
+        sobre_acento: PIEDRA,
+        acento: BLANCO,
+        anillo: (ORO, 45),
+        relleno_tenue: (ORO, 22),
+        barra: Rgb::hex(0x202020),
+        barra_encima: Rgb::hex(0x2d2d2d),
+        campo: Rgb::hex(0x1e1e1e),
+        boton: Rgb::hex(0x2d2d2d),
+        boton_encima: Rgb::hex(0x323232),
+        exito: contraste::acento_legible(Rgb::hex(0x6ccb5f), peor, AA_NORMAL),
+        aviso: contraste::acento_legible(Rgb::hex(0xfce100), peor, AA_NORMAL),
+        error: contraste::acento_legible(Rgb::hex(0xff99a4), peor, AA_NORMAL),
+        damero_a: Rgb::hex(0x2b2b2b),
+        damero_b: Rgb::hex(0x383838),
+    }
+}
+
+/// Todas las paletas: las dos de siempre y las dos de Windows. La prueba de
+/// contraste las mide todas.
+pub fn temas() -> [Tema; 4] {
+    [claro(), oscuro(), windows_claro(), windows_oscuro()]
 }

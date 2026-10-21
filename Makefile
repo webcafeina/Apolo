@@ -8,7 +8,7 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -107,6 +107,13 @@ capturas:
 capturas-en:
 	cargo build -p apolo-dev -p apolo-mcp
 	CAPTURAS=1 CAPTURAS_IDIOMA=en pnpm -C frontend exec playwright test capturas
+
+# El aspecto de Windows (ADR 0027), en el navegador: claro y oscuro, sin y con el vidrio simulado
+# (frontend/capturas/windows/ y windows-vidrio/). Mica de verdad solo se ve en la ventana.
+capturas-windows:
+	cargo build -p apolo-dev -p apolo-mcp
+	CAPTURAS=1 CAPTURAS_SISTEMA=windows pnpm -C frontend exec playwright test capturas
+	CAPTURAS=1 CAPTURAS_SISTEMA=windows CAPTURAS_VIDRIO=si pnpm -C frontend exec playwright test capturas
 
 # Las de la web (web/img/), en los dos idiomas, con fotos de Kodak (pruebas/lotes/generar.sh las
 # deja en la caché) en vez de las del corpus, y pasadas a WebP con el propio Apolo: las que llevan

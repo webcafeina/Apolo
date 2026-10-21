@@ -48,3 +48,9 @@ lateral con el vidrio de macOS, como Esfinge (su ADR 0017). En Tauri 2 eso exige
 - CI compila la ventana con la característica `macos-private-api`.
 - **No verificado**: que en un Mac de verdad se vea el vidrio y no un fondo opaco o un agujero.
   Lo tiene que mirar el cliente con la v0.3.0.
+
+## Matiz del 2026-10-21: Mica en Windows 11
+
+El vidrio deja de ser solo de macOS: en Windows 11 la ventana lleva Mica, creada desde código para
+saber si se pudo poner (`ventana_windows.rs`), y `data-vidrio="si"` la deja ver detrás de la barra
+de título y del panel. En Windows 10, opaca. Ver la [ADR 0027](0027-windows-con-fluent.md).

@@ -8,7 +8,8 @@
 // (componentes.tsx de Esfinge): caja de 18, trazo de 1,4, puntas redondeadas y
 // el color del texto que acompañan.
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { ICONOS_FLUENT } from "./iconos-fluent";
 import icono from "./marca/icono.svg";
 import marca from "./marca/marca.svg?raw";
 
@@ -100,6 +101,17 @@ export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | st
       </svg>
     );
   }
+  // En Windows, los iconos de Fluent (ADR 0027), con los mismos nombres. Se mira
+  // al dibujar, no al cargar el módulo: el sistema llega de Rust después.
+  const fluent = document.documentElement.dataset.sistema === "windows" ? ICONOS_FLUENT[nombre] : undefined;
+  if (fluent) {
+    const caja = lado < 18 ? 16 : 20;
+    return (
+      <svg className="icono" width={lado} height={lado} viewBox={`0 0 ${caja} ${caja}`} fill="currentColor" aria-hidden="true">
+        <path d={fluent[caja]} />
+      </svg>
+    );
+  }
   return (
     <svg
       className="icono"
@@ -116,6 +128,51 @@ export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | st
       {DIBUJOS[nombre]}
     </svg>
   );
+}
+
+/** Si la interfaz es la de Windows (ADR 0027). main.tsx pone el sistema antes
+ *  de dibujar nada, así que se puede mirar al dibujar. */
+export const esWindows = () => document.documentElement.dataset.sistema === "windows";
+
+/** Una SettingsCard de WinUI, solo en Windows (ADR 0027): el icono, el título,
+ *  la descripción y el control a la derecha; lo de dentro va debajo, a todo el
+ *  ancho. El control lleva su propio `aria-label`. */
+export function TarjetaAjuste({
+  icono,
+  titulo,
+  descripcion,
+  control,
+  prueba,
+  children,
+}: {
+  /** El nombre de un icono, o lo que vaya en su sitio (el de la aplicación en «Acerca de»). */
+  icono?: string | ReactNode;
+  titulo: ReactNode;
+  descripcion?: ReactNode;
+  control?: ReactNode;
+  prueba?: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div className="tarjeta-ajuste" data-prueba={prueba}>
+      <div className="tarjeta-fila">
+        {typeof icono === "string" ? <Icono nombre={icono} lado={20} /> : icono}
+        <div className="tarjeta-texto">
+          <span className="tarjeta-titulo">{titulo}</span>
+          {descripcion && <span className="tarjeta-descripcion">{descripcion}</span>}
+        </div>
+        {control && <div className="tarjeta-control">{control}</div>}
+      </div>
+      {children && <div className="tarjeta-abajo">{children}</div>}
+    </div>
+  );
+}
+
+/** Lo recorrido de un deslizador, en `--lleno`: el de Fluent lo pinta en la
+ *  pista (sistema-windows.css). En los demás sistemas no se usa. */
+export function lleno(valor: number, min: number, max: number): CSSProperties {
+  const p = max > min ? ((valor - min) / (max - min)) * 100 : 0;
+  return { "--lleno": `${Math.min(100, Math.max(0, p))}%` } as CSSProperties;
 }
 
 /** La cabecera de cada sección, como la de Esfinge: 52 px, el título a la

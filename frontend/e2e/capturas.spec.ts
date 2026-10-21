@@ -14,7 +14,20 @@ const NOMBRE_FOTO = basename(FOTO);
 const LOTE = process.env.CAPTURAS_LOTE ?? join(import.meta.dirname, "../../pruebas/corpus");
 // La calidad del Estudio: 10 para que se vea la pérdida en la imagen pequeña; en la web, 50.
 const CALIDAD = process.env.CAPTURAS_FOTO ? "50" : "10";
-const CARPETA = INGLES ? "capturas/en" : "capturas";
+// El aspecto de otro sistema (ADR 0027): `CAPTURAS_SISTEMA=windows` (o macos, linux) y
+// `CAPTURAS_VIDRIO=si` piden `?sistema=` y `?vidrio=si`, que el navegador simula (puente.ts).
+// Van a capturas/<sistema>[-vidrio]/ (y en/ dentro, en inglés).
+const SISTEMA = process.env.CAPTURAS_SISTEMA ?? "";
+const VIDRIO = process.env.CAPTURAS_VIDRIO === "si";
+const BASE = SISTEMA ? `capturas/${SISTEMA}${VIDRIO ? "-vidrio" : ""}` : "capturas";
+const CARPETA = INGLES ? `${BASE}/en` : BASE;
+function raiz(extra = ""): string {
+  const q = new URLSearchParams(extra);
+  if (SISTEMA) q.set("sistema", SISTEMA);
+  if (VIDRIO) q.set("vidrio", "si");
+  const s = q.toString();
+  return s ? `/?${s}` : "/";
+}
 mkdirSync(CARPETA, { recursive: true });
 
 // Los textos de los botones, en el idioma de las capturas: se busca la clave
@@ -44,7 +57,7 @@ test.skip(!process.env.CAPTURAS, "solo con CAPTURAS=1");
 test.use({ testIdAttribute: "data-prueba" });
 
 test("estudio", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   const elegir = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
   await (await elegir).setFiles(FOTO);
@@ -67,7 +80,7 @@ test("estudio", async ({ page }, info) => {
 });
 
 test("avif y jpeg xl", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   const elegir = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
   await (await elegir).setFiles(FOTO);
@@ -81,7 +94,7 @@ test("avif y jpeg xl", async ({ page }, info) => {
 });
 
 test("medidas y diferencias", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   const elegir = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
   await (await elegir).setFiles(FOTO);
@@ -109,20 +122,20 @@ test("medidas y diferencias", async ({ page }, info) => {
 });
 
 test("vacío", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   await page.getByRole("button", { name: n("Abrir una imagen…") }).waitFor();
   await page.screenshot({ path: `${CARPETA}/vacio-${info.project.name}.png` });
 });
 
 test("ajustes", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   await page.getByRole("button", { name: n("Ajustes") }).click();
   await page.getByRole("heading", { name: n("Acerca de") }).waitFor();
   await page.screenshot({ path: `${CARPETA}/ajustes-${info.project.name}.png` });
 });
 
 test("presets", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   const elegir = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
   await (await elegir).setFiles(FOTO);
@@ -137,7 +150,7 @@ test("presets", async ({ page }, info) => {
 });
 
 test("novedad", async ({ page }, info) => {
-  await page.goto("/?novedad=0.3.4");
+  await page.goto(raiz("novedad=0.3.4"));
   await page.getByRole("button", { name: n("Ajustes") }).click();
   await page.getByRole("button", { name: n("Buscar ahora") }).click();
   await page.getByTestId("novedad").waitFor();
@@ -148,7 +161,7 @@ test("novedad", async ({ page }, info) => {
 });
 
 test("lotes", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   await page.getByRole("button", { name: n("Lotes") }).click();
   await page.waitForTimeout(200);
   await page.screenshot({ path: `${CARPETA}/lotes-vacio-${info.project.name}.png` });
@@ -163,7 +176,7 @@ test("lotes", async ({ page }, info) => {
 });
 
 test("formatos", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   const elegir = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
   await (await elegir).setFiles(FOTO);
@@ -178,7 +191,7 @@ test("formatos", async ({ page }, info) => {
 });
 
 test("lotes-formatos", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   await page.getByRole("button", { name: n("Lotes") }).click();
   await page.getByTestId("ruta-dev").fill(LOTE);
   await page.getByRole("button", { name: n("Añadir"), exact: true }).click();
@@ -191,7 +204,7 @@ test("lotes-formatos", async ({ page }, info) => {
 
 test("agentes", async ({ page }, info) => {
   test.setTimeout(90_000);
-  await page.goto("/");
+  await page.goto(raiz());
   await page.getByRole("button", { name: n("MCP") }).click();
   await page.getByTestId("orden-claude-code").waitFor();
   // En la web, sin crearla: enseñaría la carpeta temporal donde la guarda.
@@ -206,7 +219,7 @@ test("agentes", async ({ page }, info) => {
 });
 
 test("recorte", async ({ page }, info) => {
-  await page.goto("/");
+  await page.goto(raiz());
   const elegir = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
   await (await elegir).setFiles(FOTO);
@@ -219,4 +232,46 @@ test("recorte", async ({ page }, info) => {
   await page.getByTestId("recorte-listo").click();
   await page.waitForTimeout(1500);
   await page.screenshot({ path: `${CARPETA}/recorte-hecho-${info.project.name}.png` });
+});
+
+// Los interruptores y el foco con el teclado (ADR 0027): el panel con uno encendido y los demás
+// apagados, y el contorno del foco al recorrer el panel con Tab.
+test("interruptores y foco", async ({ page }, info) => {
+  await page.goto(raiz());
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
+  await (await elegir).setFiles(FOTO);
+  await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
+  await page.getByRole("switch", { name: n("Recortar"), exact: true }).check();
+  await page.waitForTimeout(500);
+  await page.locator(".panel").screenshot({ path: `${CARPETA}/interruptores-${info.project.name}.png` });
+  await page.locator("#control-calidad").focus();
+  await page.keyboard.press("Tab");
+  await page.waitForTimeout(200);
+  await page.screenshot({ path: `${CARPETA}/foco-${info.project.name}.png` });
+  await page.keyboard.press("Tab");
+  await page.waitForTimeout(200);
+  await page.screenshot({ path: `${CARPETA}/foco-2-${info.project.name}.png` });
+});
+
+// Solo en Windows: el panel de navegación desplegado con ☰, y abierto encima del
+// contenido con la ventana estrecha (ADR 0027).
+test("panel de navegación", async ({ page }, info) => {
+  test.skip(SISTEMA !== "windows", "solo en Windows");
+  await page.goto(raiz());
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
+  await (await elegir).setFiles(FOTO);
+  await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
+  await page.waitForTimeout(800);
+  // Abre plegado; ☰ lo despliega.
+  await page.getByTestId("boton-menu").click();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${CARPETA}/panel-desplegado-${info.project.name}.png` });
+  await page.getByTestId("boton-menu").click();
+  await page.setViewportSize({ width: 960, height: 700 });
+  await page.getByTestId("boton-menu").click();
+  await page.getByRole("button", { name: n("Lotes") }).hover();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${CARPETA}/panel-encima-${info.project.name}.png` });
 });

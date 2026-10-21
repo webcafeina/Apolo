@@ -1,0 +1,18 @@
+/* Linux (GNOME): líneas de 1 px, filas de 36 y la cabecera con su borde (ADR
+   0015). Todo cuelga de :root[data-sistema="linux"]; en el navegador se pide
+   con ?sistema=linux. */
+
+:root[data-sistema="linux"] { --linea: 1px; }
+:root[data-sistema="linux"] .lateral nav button { height: 36px; border-radius: 6px; }
+:root[data-sistema="linux"] .grupo { border-radius: 12px; }
+:root[data-sistema="linux"] .herramientas { border-bottom: 1px solid var(--filete); }
+
+/* El interruptor de libadwaita (ADR 0027): 46 × 26, el botón blanco de 20. */
+:root[data-sistema="linux"] input[type="checkbox"][role="switch"] {
+  --pomo-tam: 20px;
+  width: 46px;
+  height: 26px;
+  border-radius: 13px;
+  background-position: 3px 50%;
+}
+:root[data-sistema="linux"] input[type="checkbox"][role="switch"]:checked { background-position: calc(100% - 3px) 50%; }

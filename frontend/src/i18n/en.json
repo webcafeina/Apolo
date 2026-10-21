@@ -12,6 +12,14 @@
     "presets": "Presets",
     "mcp": "MCP"
   },
+  "ventana": {
+    "abrirNavegacion": "Open navigation",
+    "cerrarNavegacion": "Close navigation",
+    "minimizar": "Minimize",
+    "maximizar": "Maximize",
+    "restaurar": "Restore down",
+    "cerrar": "Close"
+  },
   "estudio": {
     "soltar": "Drag an image here",
     "soltarDetalle": "PNG, JPEG, HEIC (iPhone), AVIF, JPEG XL, WebP, TIFF, GIF, BMP, QOI or PNM",
@@ -573,7 +581,9 @@
       "etiqueta": "Settings sections",
       "general": "General",
       "agentes": "AI agents"
-    }
+    },
+    "idiomaDetalle": "For Apolo's menus, notices and messages",
+    "comprobar": "Check for a new version"
   },
   "pesos": {
     "original": "Original · {{formato}}",

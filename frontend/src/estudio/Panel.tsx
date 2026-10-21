@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Icono } from "../componentes";
+import { Icono, lleno } from "../componentes";
 import * as puente from "../puente";
 import {
   CONTROLES_PROCESO,
@@ -267,6 +267,7 @@ function Fila({ control: c, ajuste: a, contexto, cambiar, nivelSinPerdida }: Pro
             max={c.max}
             step={c.paso}
             value={v}
+            style={lleno(v, c.min, c.max)}
             disabled={!activo}
             // Un campo que puede faltar (null) vuelve a faltar al llevarlo a 0.
             onChange={(e) => {
@@ -473,6 +474,7 @@ function Especial({
             max={100}
             step={1}
             value={q}
+            style={lleno(q, 0, 100)}
             onChange={(e) => cambiar({ ...a, jpeg: { ...a.jpeg, calidad: [Number(e.target.value)] } })}
           />
           <output htmlFor={id}>{q}</output>
@@ -609,6 +611,7 @@ function Especial({
                   max={95}
                   step={1}
                   value={nota}
+                  style={lleno(nota, 30, 95)}
                   disabled={!activo}
                   onChange={(e) => cambiar({ ...a, objetivo: Number(e.target.value) })}
                   data-prueba="nota-objetivo"
@@ -638,7 +641,7 @@ function Especial({
               <label className="sub-control">
                 <span>{t("panel.colores")}</span>
                 <div className="deslizador">
-                  <input type="range" min={2} max={256} step={1} value={pal.colores} onChange={(e) => proceso({ paleta: { ...pal, colores: Number(e.target.value) } })} />
+                  <input type="range" min={2} max={256} step={1} value={pal.colores} style={lleno(pal.colores, 2, 256)} onChange={(e) => proceso({ paleta: { ...pal, colores: Number(e.target.value) } })} />
                   <output>{pal.colores}</output>
                 </div>
               </label>
@@ -651,6 +654,7 @@ function Especial({
                     max={100}
                     step={1}
                     value={Math.round(pal.tramado * 100)}
+                    style={lleno(pal.tramado * 100, 0, 100)}
                     onChange={(e) => proceso({ paleta: { ...pal, tramado: Number(e.target.value) / 100 } })}
                   />
                   <output>{Math.round(pal.tramado * 100)} %</output>

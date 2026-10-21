@@ -332,9 +332,9 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
         >
           <div className="segmentado con-iconos" role="radiogroup" aria-label={t("comparador.modo")}>
             {(["deslizador", "ladoALado", "diferencias"] as const).map((m) => (
-              <button key={m} role="radio" aria-checked={modo === m} onClick={() => setModo(m)}>
+              <button key={m} role="radio" aria-checked={modo === m} aria-label={t(`comparador.${m}`)} onClick={() => setModo(m)}>
                 <Icono nombre={m} lado={15} />
-                {t(`comparador.${m}`)}
+                <span className="etiqueta">{t(`comparador.${m}`)}</span>
               </button>
             ))}
           </div>

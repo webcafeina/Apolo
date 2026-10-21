@@ -124,16 +124,28 @@ async function orden<T>(nombre: string, args: Record<string, unknown> = {}): Pro
 export interface Plataforma {
   /** "macos", "windows", "linux", o "web" en el navegador de desarrollo. */
   sistema: string;
-  /** Si la ventana tiene vidrio detrás (ADR 0016): solo macOS, por ahora. */
+  /** Si la ventana tiene vidrio detrás (ADR 0016): el de macOS, o Mica en Windows 11 (ADR 0027). */
   vidrio: boolean;
   /** macOS la ejecuta desde una copia de solo lectura: no se puede actualizar sola. */
   traslocada: boolean;
+  /** Solo en el navegador: el sistema y el vidrio salen de la URL (`?sistema=windows&vidrio=si`). */
+  simulado?: boolean;
+}
+
+// En el navegador de desarrollo, el aspecto de otro sistema se puede pedir en la URL, como la
+// banda de versión nueva (`?novedad=`): `?sistema=windows` (o macos, linux) y `?vidrio=si`. Sirve
+// para las capturas y las pruebas del aspecto de cada sistema (ADR 0027). En la ventana no cuenta.
+function simulada(): Plataforma {
+  const q = new URLSearchParams(window.location.search);
+  const sistema = q.get("sistema");
+  if (!sistema || !["windows", "macos", "linux"].includes(sistema)) {
+    return { sistema: "web", vidrio: false, traslocada: false };
+  }
+  return { sistema, vidrio: q.get("vidrio") === "si", traslocada: false, simulado: true };
 }
 
 export const plataforma = (): Promise<Plataforma> =>
-  enTauri()
-    ? orden<Plataforma>("plataforma")
-    : Promise.resolve({ sistema: "web", vidrio: false, traslocada: false });
+  enTauri() ? orden<Plataforma>("plataforma") : Promise.resolve(simulada());
 
 /** Lo que se guarda entre sesiones (ADR 0018). */
 export interface Ajustes {
@@ -406,3 +418,41 @@ export interface Agentes {
 export const agentes = () => orden<Agentes>("agentes");
 /** El .mcpb de Claude Desktop, en Descargas. Devuelve la ruta. */
 export const crearMcpb = () => orden<string>("crear_mcpb");
+
+/**
+ * La barra de título propia de Windows (ADR 0027): la ventana no tiene marco y
+ * Apolo dibuja sus tres botones. En el navegador no hacen nada.
+ */
+export async function botonVentana(que: "minimizar" | "maximizar" | "cerrar"): Promise<void> {
+  if (!enTauri()) return;
+  const { getCurrentWindow } = await import("@tauri-apps/api/window");
+  const v = getCurrentWindow();
+  await (que === "minimizar" ? v.minimize() : que === "maximizar" ? v.toggleMaximize() : v.close());
+}
+
+export interface EstadoVentana {
+  maximizada: boolean;
+  activa: boolean;
+}
+
+/** Si está maximizada (el botón del medio cambia de dibujo) y si es la activa (la barra se apaga si no). */
+export async function alCambiarVentana(f: (e: EstadoVentana) => void): Promise<() => void> {
+  if (!enTauri()) return () => {};
+  const { getCurrentWindow } = await import("@tauri-apps/api/window");
+  const v = getCurrentWindow();
+  const leer = async () => f({ maximizada: await v.isMaximized(), activa: await v.isFocused() });
+  const quitar = await Promise.all([v.onResized(() => void leer()), v.onFocusChanged(() => void leer())]);
+  void leer();
+  return () => quitar.forEach((q) => q());
+}
+
+/**
+ * Lo que cuenta la ventana de Snap de Windows (src-tauri/src/ventana_windows.rs):
+ * se queda con el ratón sobre «Maximizar», así que el botón no se entera de
+ * que lo tiene encima ni de que lo pulsan, y se lo dice ella.
+ */
+export async function alBotonMaximizar(f: (estado: "encima" | "pulsado" | "fuera") => void): Promise<() => void> {
+  if (!enTauri()) return () => {};
+  const { listen } = await import("@tauri-apps/api/event");
+  return listen<"encima" | "pulsado" | "fuera">("ventana:maximizar", (e) => f(e.payload));
+}

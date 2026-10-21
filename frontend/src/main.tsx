@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import i18n from "./i18n";
 import "./tokens.css";
 import "./estilos.css";
+import "./sistema-windows.css";
+import "./sistema-linux.css";
 import { App } from "./App";
 import { inicio, plataforma } from "./puente";
 
@@ -14,6 +16,8 @@ void Promise.allSettled([
   plataforma().then((p) => {
     document.documentElement.dataset.sistema = p.sistema;
     document.documentElement.dataset.vidrio = p.vidrio ? "si" : "no";
+    // En el navegador no hay vidrio de verdad: un degradado lo imita para las capturas.
+    if (p.simulado && p.vidrio) document.documentElement.dataset.vidrioSimulado = "si";
   }),
   inicio().then((i) => i18n.changeLanguage(i.idioma)),
 ]).finally(() =>

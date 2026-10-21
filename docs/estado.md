@@ -13,10 +13,9 @@
 > Ajustes › General); `en.json` con las 578 claves; las descripciones del MCP, con una tabla.
 > Hecho con cuatro agentes en paralelo por crates. `make comprobar`, e2e 65/65, equivalencia y
 > evaluación del MCP 37/37 en verde. README.en.md.
-> **Lo siguiente**: la prueba guiada en **Windows ARM**: actualizar desde la banda de la 0.10.2 a
-> la 0.12.0 (lo único de Windows sin ver), Lotes con una foto suelta (subcarpeta) y Apolo en
-> inglés (Ajustes › General). Si el cliente quiere, ver también el inglés en su Mac. Después, la
-> **8d** (Homebrew, la web y la 1.0).
+> ~~Prueba guiada en Windows ARM~~: **perfecta el 2026-10-21** (actualizar de la 0.10.2 a la
+> 0.12.0 desde la banda, Lotes con una foto suelta en su subcarpeta, Apolo en inglés).
+> **Lo siguiente: la 8d** (Homebrew, la web y la 1.0).
 >
 > **La 8b está hecha y publicada la v0.11.0 (2026-10-20 por la tarde)**, revisada como siempre
 > (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones y `.mcpb` en 0.11.0,

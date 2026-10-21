@@ -4,6 +4,14 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-21 · Windows ARM, visto entero
+
+- Prueba guiada en Windows ARM con la v0.12.0, **perfecta**: la banda actualizó de la 0.10.2 a la
+  0.12.0 (lo último de Windows que faltaba ver), Lotes propuso la subcarpeta con una foto suelta,
+  y la ventana cambió a inglés en Ajustes, errores incluidos.
+
+---
+
 ## 2026-10-20 (tarde y noche) · La 8c: Apolo en inglés
 
 - **v0.11.0 publicada** (la 8b), revisada como siempre.

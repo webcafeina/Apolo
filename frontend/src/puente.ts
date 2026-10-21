@@ -130,6 +130,8 @@ export interface Plataforma {
   traslocada: boolean;
   /** Solo en el navegador: el sistema y el vidrio salen de la URL (`?sistema=windows&vidrio=si`). */
   simulado?: boolean;
+  /** En macOS 26+, si la interfaz puede pintar el vidrio del sistema en sus controles (ADR 0028). */
+  vidrio_controles?: boolean;
 }
 
 // En el navegador de desarrollo, el aspecto de otro sistema se puede pedir en la URL, como la

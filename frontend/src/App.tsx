@@ -81,7 +81,7 @@ export function App() {
         setEncima(false);
       }}
     >
-      <Icono nombre={s} lado={windows || mac ? 16 : 18} />
+      <Icono nombre={s} lado={mac ? 20 : windows ? 16 : 18} />
       <span className="etiqueta">{t(`nav.${s}`)}</span>
     </button>
   );

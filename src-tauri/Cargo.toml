@@ -49,3 +49,6 @@ windows-sys = { version = "0.61", features = [
 # y 27, o el material de barra lateral. El mismo crate que en Windows.
 [target.'cfg(target_os = "macos")'.dependencies]
 window-vibrancy = "0.8"
+# Para encender el vidrio de los controles (una preferencia de WKPreferences,
+# ventana_macos.rs). Ya lo trae Tauri; MIT.
+objc2 = "0.6"

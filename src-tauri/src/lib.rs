@@ -64,6 +64,9 @@ struct Plataforma {
     /// arrastró a Aplicaciones (App Translocation). Así no se puede actualizar
     /// sola: la interfaz pide moverla antes (ADR 0018).
     traslocada: bool,
+    /// En macOS 26+, la interfaz puede pintar el vidrio del sistema en sus
+    /// controles (`-apple-visual-effect`, ventana_macos.rs, ADR 0028).
+    vidrio_controles: bool,
 }
 
 #[tauri::command]
@@ -76,6 +79,18 @@ fn plataforma() -> Plataforma {
         traslocada: cfg!(target_os = "macos")
             && std::env::current_exe()
                 .is_ok_and(|r| r.to_string_lossy().contains("/AppTranslocation/")),
+        vidrio_controles: hay_vidrio_controles(),
+    }
+}
+
+fn hay_vidrio_controles() -> bool {
+    #[cfg(target_os = "macos")]
+    {
+        ventana_macos::hay_vidrio_web()
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        false
     }
 }
 

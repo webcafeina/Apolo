@@ -1,0 +1,32 @@
+/* El vidrio de verdad en los controles de macOS 26 y 27 (ADR 0028).
+
+   `-apple-visual-effect: -apple-system-glass-material` es una propiedad propia
+   de WebKit que pinta debajo del elemento el material de vidrio del sistema, el
+   de SwiftUI, con su refracción y su brillo. Solo existe si Rust ha encendido
+   la preferencia privada que la activa (src-tauri/src/ventana_macos.rs), y
+   WebKit descarta la propiedad si lee el CSS antes: por eso esta hoja no se
+   importa con las demás, sino que main.tsx la inyecta cuando `plataforma`
+   dice `vidrio_controles`. Sin ella se queda la imitación de sistema-macos.css.
+
+   El material va en lugar del relleno, el brillo, el desenfoque y la sombra de
+   la imitación: el sistema pinta los suyos. */
+
+:root[data-sistema="macos"] .boton-lateral,
+:root[data-sistema="macos"] .herramientas .aparte > button,
+:root[data-sistema="macos"] .herramientas .segmentado,
+:root[data-sistema="macos"] .novedad {
+  -apple-visual-effect: -apple-system-glass-material;
+  background: transparent;
+  background-image: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+/* Al pulsar o arrastrar el deslizador, su botón se vuelve una burbuja de
+   vidrio del sistema que desborda la pista. */
+:root[data-sistema="macos"] input[type="range"]:active:not(:disabled)::-webkit-slider-thumb {
+  -apple-visual-effect: -apple-system-glass-material;
+  background: transparent;
+  box-shadow: none;
+}

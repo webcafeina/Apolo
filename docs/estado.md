@@ -18,10 +18,10 @@
 > siempre (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones y `.mcpb` en
 > 0.14.1, manifiesto ARM64, sin DLL de Visual C++, AVIF 3/3); tap actualizado. La v0.14.0 se
 > publicó a las 18:40 UTC.
-> **Lo siguiente**: el cliente actualiza su Mac y mira, sobre todo, si el vidrio del sistema se ve
-> en las cápsulas de la barra, el aviso y el botón del deslizador al pulsarlo; la barra lateral,
-> el interruptor y el selector; y los semáforos (afinar `trafficLightPosition`). Correcciones, en
-> versiones nuevas. Después, la prueba guiada final y la 1.0.0.
+> **Vista en el Mac del cliente (macOS 27): «todo perfecto»**, con el vidrio del sistema y los
+> semáforos en su sitio. Solo un saltito del botón del interruptor al pulsarlo, apuntado en la deuda
+> para la siguiente mejora.
+> **Lo siguiente**: la prueba guiada final (Mac, Windows ARM, Ubuntu ARM) y la 1.0.0.
 >
 > **v0.13.0, Windows con Fluent (2026-10-21), en curso** (ADR 0027). Hecho y revisado con el
 > cliente en capturas («ahora está perfecto»): en Windows, la paleta, la escala, los controles y

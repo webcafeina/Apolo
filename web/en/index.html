@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apolo · Optimize images on your desktop</title>
+  <meta name="description" content="Apolo compresses images to WebP, AVIF, JPEG XL, MozJPEG, PNG and QOI with Squoosh's engines, and you see the result right away. For macOS, Windows and Linux. Free and open source.">
+  <link rel="alternate" hreflang="es" href="https://apolo.webcafeina.com/">
+  <link rel="alternate" hreflang="en" href="https://apolo.webcafeina.com/en/">
+  <link rel="icon" href="../img/icono.png">
+  <link rel="preload" href="../fuentes/marcellus-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="../estilos.css">
+  <meta property="og:title" content="Apolo · Optimize images on your desktop">
+  <meta property="og:description" content="Squoosh's engines in a native app: the same file as cwebp, cjpeg, oxipng, avifenc and cjxl, and you see the result right away.">
+  <meta property="og:image" content="https://apolo.webcafeina.com/img/en/estudio-oscuro.webp">
+  <script type="module" src="../descargas.js"></script>
+</head>
+<body>
+  <header class="cabecera">
+    <div class="contenedor">
+      <a class="marca" href="./"><img src="../img/icono.png" alt="" width="28" height="28">Apolo</a>
+      <nav class="navegacion" aria-label="Sections">
+        <a href="#what-it-does">What it does</a>
+        <a href="#agents">With an agent</a>
+        <a href="#command-line">Command line</a>
+        <a href="#downloads">Downloads</a>
+      </nav>
+      <a class="idioma" href="../" hreflang="es" lang="es">Español</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="heroe">
+      <div class="contenedor">
+        <img class="icono" src="../img/icono.png" alt="" width="112" height="112">
+        <h1>Optimize images on your desktop</h1>
+        <p class="lema">With Squoosh's engines: WebP, AVIF, JPEG XL, MozJPEG, OxiPNG and QOI. The same file as the
+          official tools, and you see the result right away.</p>
+        <div class="acciones">
+          <a class="boton principal" href="https://github.com/webcafeina/Apolo/releases/latest" data-descarga-principal
+             data-nombre-macos="Download for macOS" data-nombre-windows-x64="Download for Windows"
+             data-nombre-windows-arm64="Download for Windows ARM" data-nombre-linux-x64="Download for Linux"><span>Download</span></a>
+          <a class="boton" href="#downloads">All downloads</a>
+        </div>
+        <p class="letra-chica">Version <span data-version>0.12.0</span> · macOS, Windows and Linux · free and open source (GPLv3)</p>
+        <picture>
+          <source srcset="../img/en/estudio-oscuro.webp" media="(prefers-color-scheme: dark)">
+          <img class="captura" src="../img/en/estudio-claro.webp" width="1280" height="800"
+               alt="Apolo's Studio: a photo compared with its compressed version, with the slider in the middle and cwebp's options on the right">
+        </picture>
+      </div>
+    </section>
+
+    <section class="seccion" id="what-it-does">
+      <div class="contenedor">
+        <h2>Compress while seeing what you lose</h2>
+        <p class="entradilla">You compare the original and the compressed image with a slider, see how much it weighs
+          and where quality is lost, and adjust until you're happy.</p>
+        <ul class="formatos" aria-label="Formats">
+          <li>WebP</li><li>AVIF</li><li>JPEG XL</li><li>MozJPEG</li><li>PNG (OxiPNG)</li><li>QOI</li>
+        </ul>
+        <div class="rejilla">
+          <article class="tarjeta">
+            <h3>The same file as the official tools</h3>
+            <p><code>cwebp</code>, <code>cjpeg</code>, <code>oxipng</code>, <code>avifenc</code> and <code>cjxl</code> are
+              built into Apolo and produce the same file, byte for byte. You use all their options while you watch, and
+              copy the equivalent command.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Quality measured, not guessed</h3>
+            <p>SSIMULACRA 2, PSNR and SSIM, a map of where detail is lost, and quality by score: Apolo finds the lowest
+              quality that can't be told apart from the original.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Studio and batches</h3>
+            <p>You fine-tune one image, save the setting as a preset and apply it to whole folders, with their
+              subfolders and without overwriting anything.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Crop, resize and reduce the palette</h3>
+            <p>Like in Squoosh, and in any format: cropping with the mouse, with aspect ratios.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Opens iPhone photos</h3>
+            <p>HEIC, as well as PNG, JPEG, WebP, AVIF, JPEG XL, TIFF, GIF, BMP, QOI and PNM, and auto-rotates them by
+              their orientation.</p>
+          </article>
+          <article class="tarjeta">
+            <h3>Native, light and offline</h3>
+            <p>Your images never leave your computer. With 24-megapixel photos it stays around 2 GB of memory, even in
+              batches of hundreds: it fits on an 8 GB Mac.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion suave">
+      <div class="contenedor dos">
+        <div>
+          <h2>Where it's lost, in plain sight</h2>
+          <p class="entradilla">Differences mode paints where the result drifts from the original. With the
+            SSIMULACRA 2 score, the same one libjxl's tool gives, you know whether it will show before you publish.</p>
+          <ul>
+            <li>90 or more: can't be told apart from the original.</li>
+            <li>80: can't be told apart side by side.</li>
+            <li>70: high quality. 50: it shows.</li>
+          </ul>
+        </div>
+        <picture>
+          <source srcset="../img/en/mapa-oscuro.webp" media="(prefers-color-scheme: dark)">
+          <img class="captura" src="../img/en/mapa-claro.webp" width="1280" height="800" loading="lazy"
+               alt="Differences mode: a heat map over the photo marks where detail is lost, with the SSIMULACRA 2 score next to it">
+        </picture>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <div class="contenedor dos">
+        <div>
+          <h2>Whole folders</h2>
+          <p class="entradilla">Drop a folder on Batches and it converts it in parallel, to one or more formats, with a
+            preset or aiming for a score.</p>
+          <ul>
+            <li>It keeps the subfolders and never overwrites: if a name exists, <code>photo-2.webp</code>.</li>
+            <li>“Only the lightest”: for each image, the format that weighs least.</li>
+            <li>When it's done, how much was saved and which ones came out worse.</li>
+          </ul>
+        </div>
+        <picture>
+          <source srcset="../img/en/lotes-resumen-oscuro.webp" media="(prefers-color-scheme: dark)">
+          <img class="captura" src="../img/en/lotes-resumen-claro.webp" width="1280" height="800" loading="lazy"
+               alt="Batches when done: how many images were converted, how much was saved and the list of files">
+        </picture>
+      </div>
+    </section>
+
+    <section class="seccion suave" id="agents">
+      <div class="contenedor dos">
+        <div>
+          <h2>With an AI agent</h2>
+          <p class="entradilla">From Claude, Cursor, VS Code or any agent that speaks
+            <a href="https://modelcontextprotocol.io">MCP</a>: it analyzes, optimizes, compares formats at the same
+            quality, measures, crops and converts folders, with Apolo's engines and on your computer. It never
+            overwrites or deletes.</p>
+          <p>The server comes with the app and updates with it. In Apolo, the <strong>MCP</strong> row has what to copy
+            for each agent and the Claude Desktop extension. In Claude Code:</p>
+          <pre><span class="comentario"># macOS</span>
+claude mcp add --scope user apolo -- "/Applications/Apolo.app/Contents/MacOS/apolo-mcp"
+<span class="comentario"># Windows</span>
+claude mcp add --scope user apolo -- "%LOCALAPPDATA%\Apolo\apolo-mcp.exe"
+<span class="comentario"># Linux (.deb)</span>
+claude mcp add --scope user apolo -- /usr/bin/apolo-mcp</pre>
+        </div>
+        <picture>
+          <source srcset="../img/en/agentes-oscuro.webp" media="(prefers-color-scheme: dark)">
+          <img class="captura" src="../img/en/agentes-claro.webp" width="1280" height="800" loading="lazy"
+               alt="Apolo's MCP section, with the Claude Desktop extension and what to copy for each agent">
+        </picture>
+      </div>
+    </section>
+
+    <section class="seccion" id="command-line">
+      <div class="contenedor">
+        <h2>Command line</h2>
+        <p class="entradilla"><code>apolo</code> does the same as the window, with the same presets, for your scripts.
+          <code>apolo webp</code>, <code>jpeg</code> and <code>png</code> take the options of <code>cwebp</code>,
+          <code>cjpeg</code> and <code>oxipng</code>; <code>apolo avif</code> and <code>jxl</code> are
+          <code>avifenc</code> and <code>cjxl</code>.</p>
+        <pre><span class="comentario"># With Homebrew, on macOS and Linux</span>
+brew install webcafeina/apolo/apolo
+
+apolo webp -q 80 photo.jpg -o photo.webp
+apolo avif -q 60 photo.png photo.avif
+apolo lote photos/ --formato webp,avif --mas-ligero
+apolo medir photo.png photo.webp</pre>
+        <p class="letra-chica">Also in the downloads, without Homebrew. It speaks your system's language; force English
+          with <code>--idioma en</code>.</p>
+      </div>
+    </section>
+
+    <section class="seccion suave" id="downloads">
+      <div class="contenedor">
+        <h2>Downloads</h2>
+        <p class="entradilla">Version <span data-version>0.12.0</span>. Once installed, Apolo tells you about new
+          versions and updates itself with one click.</p>
+        <table class="tabla">
+          <thead>
+            <tr><th>System</th><th>App</th><th>Command line</th><th>Claude Desktop</th></tr>
+          </thead>
+          <tbody>
+            <tr data-sistema="macos">
+              <td class="sistema">macOS 11 or later<br><span class="letra-chica">Apple Silicon and Intel</span></td>
+              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.dmg</a></td>
+              <td data-columna="cli"><a href="https://github.com/webcafeina/Apolo/releases/latest">tar.gz</a></td>
+              <td data-columna="mcpb"><a href="https://github.com/webcafeina/Apolo/releases/latest">.mcpb</a></td>
+            </tr>
+            <tr data-sistema="windows-x64">
+              <td class="sistema">Windows 10 and 11<br><span class="letra-chica">x64</span></td>
+              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.exe</a></td>
+              <td data-columna="cli"><a href="https://github.com/webcafeina/Apolo/releases/latest">zip</a></td>
+              <td data-columna="mcpb"><a href="https://github.com/webcafeina/Apolo/releases/latest">.mcpb</a></td>
+            </tr>
+            <tr data-sistema="windows-arm64">
+              <td class="sistema">Windows 10 and 11<br><span class="letra-chica">ARM64</span></td>
+              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.exe</a></td>
+              <td data-columna="cli"><a href="https://github.com/webcafeina/Apolo/releases/latest">zip</a></td>
+              <td data-columna="mcpb"><a href="https://github.com/webcafeina/Apolo/releases/latest">.mcpb</a></td>
+            </tr>
+            <tr data-sistema="linux-x64">
+              <td class="sistema">Debian 12+ and Ubuntu 22.04+<br><span class="letra-chica">amd64</span></td>
+              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.deb · AppImage</a></td>
+              <td data-columna="cli"><a href="https://github.com/webcafeina/Apolo/releases/latest">tar.gz</a></td>
+              <td>—</td>
+            </tr>
+            <tr data-sistema="linux-arm64">
+              <td class="sistema">Debian 12+ and Ubuntu 22.04+<br><span class="letra-chica">arm64</span></td>
+              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.deb · AppImage</a></td>
+              <td data-columna="cli"><a href="https://github.com/webcafeina/Apolo/releases/latest">tar.gz</a></td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="notas">
+          <div class="tarjeta">
+            <h3>macOS, the first time</h3>
+            <p>Apolo isn't signed: open it and, in System Settings › Privacy &amp; Security, click “Open Anyway”. If it
+              says it's damaged: <code>xattr -dr com.apple.quarantine /Applications/Apolo.app</code>. Or with Homebrew:
+              <code>brew install --cask webcafeina/apolo/apolo</code>.</p>
+          </div>
+          <div class="tarjeta">
+            <h3>Windows, the first time</h3>
+            <p>SmartScreen warns because it isn't signed: “More info” › “Run anyway”.</p>
+          </div>
+          <div class="tarjeta">
+            <h3>Linux</h3>
+            <p>With the package, <code>sudo apt install ./Apolo_X.Y.Z_amd64.deb</code>. The AppImage: <code>chmod +x</code>
+              and open it.</p>
+          </div>
+        </div>
+        <p class="letra-chica"><a href="https://github.com/webcafeina/Apolo/releases/latest">All versions on GitHub</a>,
+          with <code>SHA256SUMS.txt</code> to check every file.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor">
+      <span>Apolo is free software (<a href="https://github.com/webcafeina/Apolo/blob/main/LICENSE">GPLv3</a>):
+        <a href="https://github.com/webcafeina/Apolo">the code, on GitHub</a>.</span>
+      <span>Made by <a href="https://webcafeina.com">Webcafeína</a> · <a href="../" hreflang="es" lang="es">Español</a></span>
+    </div>
+  </footer>
+</body>
+</html>

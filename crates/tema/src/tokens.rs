@@ -1,9 +1,17 @@
-//! El generador de `frontend/src/tokens.css`.
+//! El generador de `frontend/src/tokens.css` y de `web/tokens.css`: la
+//! ventana y la web (entrega 8d) usan la misma paleta, medida en
+//! `tests/contraste.rs`.
 
 use crate::{Rgb, Tema, temas};
 
 /// Ruta del fichero generado, relativa a la raíz del repositorio.
 pub const RUTA: &str = "frontend/src/tokens.css";
+
+/// El mismo CSS para la web (`web/`, ADR 0024).
+pub const RUTA_WEB: &str = "web/tokens.css";
+
+/// Los dos ficheros que se generan con el mismo contenido.
+pub const RUTAS: [&str; 2] = [RUTA, RUTA_WEB];
 
 fn variables(t: &Tema) -> Vec<(&'static str, Rgb)> {
     vec![

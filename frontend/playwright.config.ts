@@ -35,7 +35,13 @@ export default defineConfig({
   webServer: [
     {
       command: `cargo run -q -p apolo-dev -- --direccion 127.0.0.1:34591 --config ${config}`,
-      env: { LC_ALL: "es_ES.UTF-8" },
+      // Las capturas para la web en inglés (`CAPTURAS_IDIOMA=en`, `make capturas-en`) arrancan
+      // apolo-dev en inglés; todo lo demás, en español.
+      env: {
+        LC_ALL: process.env.CAPTURAS_IDIOMA === "en" ? "en_US.UTF-8" : "es_ES.UTF-8",
+        // La ruta de apolo-mcp que enseña la sección MCP en las capturas de la web.
+        ...(process.env.APOLO_DEV_RUTA_MCP ? { APOLO_DEV_RUTA_MCP: process.env.APOLO_DEV_RUTA_MCP } : {}),
+      },
       cwd: "..",
       url: "http://127.0.0.1:34591/salud",
       reuseExistingServer: false,

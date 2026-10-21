@@ -8,7 +8,7 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -102,6 +102,34 @@ e2e:
 capturas:
 	cargo build -p apolo-dev -p apolo-mcp
 	CAPTURAS=1 pnpm -C frontend exec playwright test capturas
+
+# Las mismas, con la interfaz en inglés (frontend/capturas/en/).
+capturas-en:
+	cargo build -p apolo-dev -p apolo-mcp
+	CAPTURAS=1 CAPTURAS_IDIOMA=en pnpm -C frontend exec playwright test capturas
+
+# Las de la web (web/img/), en los dos idiomas, con fotos de Kodak (pruebas/lotes/generar.sh las
+# deja en la caché) en vez de las del corpus, y pasadas a WebP con el propio Apolo: las que llevan
+# la foto, casi sin pérdida (SSIMULACRA 2 de 93: con pérdida, el texto de la interfaz no deja pasar
+# de 84 ni con calidad 100); las que son solo interfaz, sin pérdida, que pesa menos.
+KODAK := $(or $(XDG_CACHE_HOME),$(HOME)/.cache)/apolo-kodak
+capturas-web:
+	cargo build -p apolo-dev -p apolo-mcp
+	cargo build --release -p apolo-cli
+	@test -f $(KODAK)/kodim23.png || { echo "Faltan las fotos de Kodak: pruebas/lotes/generar.sh"; exit 1; }
+	rm -rf target/capturas-lote && mkdir -p target/capturas-lote/fotos
+	for n in 03 05 07 12 15 20 22 23; do cp $(KODAK)/kodim$$n.png target/capturas-lote/fotos/; done
+	for idioma in es en; do \
+	  CAPTURAS=1 CAPTURAS_IDIOMA=$$idioma CAPTURAS_FOTO=$(KODAK)/kodim23.png \
+	    APOLO_DEV_RUTA_MCP=/Applications/Apolo.app/Contents/MacOS/apolo-mcp \
+	    CAPTURAS_LOTE=$(CURDIR)/target/capturas-lote/fotos pnpm -C frontend exec playwright test capturas || exit 1; \
+	done
+	mkdir -p web/img/en
+	for f in estudio mapa lotes-resumen agentes; do for t in claro oscuro; do \
+	  case $$f in estudio|mapa) o="-near_lossless 60 -m 6";; *) o="-lossless -z 6";; esac; \
+	  target/release/apolo webp $$o -quiet frontend/capturas/$$f-$$t.png -o web/img/$$f-$$t.webp; \
+	  target/release/apolo webp $$o -quiet frontend/capturas/en/$$f-$$t.png -o web/img/en/$$f-$$t.webp; \
+	done; done
 
 # La prueba de la ADR 0002 contra el cwebp oficial de Google, de la misma
 # versión que la libwebp enlazada. El binario se descarga una vez y se

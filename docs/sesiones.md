@@ -26,6 +26,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   En `publicar.yml` 39628230375, tres trabajos fallaron por un 503 de googlesource.com al clonar
   aom y libyuv (trampa); relanzados, salieron bien. Borrador revisado entero y **publicada la
   v0.14.0** a las 18:40 UTC; el tap se actualizó solo.
+- El cliente vio la v0.14.0 en su Mac: barra lateral pequeña, el interruptor como una elipse que
+  tapaba la pista, el selector que botaba, y la refracción que otras apps sí consiguen. Hecho:
+  tamaño grande, píldora en SVG, selección deslizante (`segmentados.ts`), y el vidrio del sistema
+  con `-apple-visual-effect` (preferencia privada `_setUseSystemAppearance`, encontrada con un
+  agente; técnica de lennondotw/tauri-liquid-glass-demo). **Publicada la v0.14.1** a las 20:12 UTC.
+  Un CI de un commit de documentos falló por otro 503 de Google; sin consecuencias.
 
 ---
 

@@ -11,17 +11,17 @@
 > filas agrupadas y la burbuja de vidrio al pulsar. `ventana_macos.rs` pone Liquid Glass (o el
 > material de siempre) y los semáforos van en `trafficLightPosition`. `make comprobar` y e2e en
 > verde; clippy para Apple silicon. **Nada visto aún en un Mac.**
-> **Publicada la v0.14.0 (2026-10-21, 18:40 UTC)**, directamente y sin `.dmg` de prueba, como pidió
-> el cliente. En `publicar.yml` 39628230375 tres trabajos fallaron por un 503 de googlesource.com y
-> salieron al relanzarlos; humo en verde en los tres sistemas. Borrador revisado como siempre: 27
-> ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, CLI y `apolo-mcp` en 0.14.0, los cinco
-> `.mcpb` en 0.14.0, manifiesto ARM64 válido, en ASCII y con UTF-8, sin DLL de Visual C++, AVIF 3/3.
-> `latest.json` público en 0.14.0 y el tap actualizado solo.
-> **Lo siguiente**: el cliente actualiza su Mac desde el aviso y hace la prueba guiada de macOS 27:
-> Liquid Glass en claro y oscuro y con el ajuste de transparencia, los semáforos (afinar
-> `trafficLightPosition` en `tauri.macos.conf.json`), arrastrar desde la barra, ocultar la barra
-> lateral, la burbuja al pulsar, todas las pantallas. Correcciones, en versiones nuevas. Después,
-> la prueba guiada final y la 1.0.0.
+> **Publicada la v0.14.1 (2026-10-21, 20:12 UTC)**, lo que salió de ver la v0.14.0 en el Mac del
+> cliente (macOS 27): la barra lateral en el tamaño grande, el interruptor como píldora, el selector
+> que no bota y cuya selección se desliza, y **el vidrio del sistema en los controles** con la
+> propiedad privada de WebKit `-apple-visual-effect` (ADR 0028, matiz). Borrador revisado como
+> siempre (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones y `.mcpb` en
+> 0.14.1, manifiesto ARM64, sin DLL de Visual C++, AVIF 3/3); tap actualizado. La v0.14.0 se
+> publicó a las 18:40 UTC.
+> **Lo siguiente**: el cliente actualiza su Mac y mira, sobre todo, si el vidrio del sistema se ve
+> en las cápsulas de la barra, el aviso y el botón del deslizador al pulsarlo; la barra lateral,
+> el interruptor y el selector; y los semáforos (afinar `trafficLightPosition`). Correcciones, en
+> versiones nuevas. Después, la prueba guiada final y la 1.0.0.
 >
 > **v0.13.0, Windows con Fluent (2026-10-21), en curso** (ADR 0027). Hecho y revisado con el
 > cliente en capturas («ahora está perfecto»): en Windows, la paleta, la escala, los controles y

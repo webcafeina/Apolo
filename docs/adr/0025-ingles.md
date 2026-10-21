@@ -110,6 +110,6 @@ Comillas: «» en español, “” en inglés. Mayúscula inicial en cada frase,
 - `make equivalencia`, igual: ningún fichero cambia;
 - la evaluación del MCP, 37 de 37, con seis escenarios en inglés.
 
-**No se ha comprobado**: el inglés en la ventana de verdad (macOS, Windows, Linux), solo en el
+**Visto el 2026-10-21 en Windows ARM** (v0.12.0): el inglés en la ventana de verdad, al cambiarlo en Ajustes. **No se ha comprobado** en macOS ni en Linux de escritorio, solo en el
 navegador contra `apolo-dev`; ni que el idioma del sistema se lea bien en macOS y Windows con
 `sys-locale`. Lo verá el cliente.

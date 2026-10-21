@@ -9,7 +9,7 @@
   macOS · Windows · Linux
 </p>
 
-<p align="center"><a href="README.en.md">English</a></p>
+<p align="center"><a href="https://apolo.webcafeina.com">apolo.webcafeina.com</a> · <a href="README.en.md">English</a></p>
 
 <p align="center">
   <a href="https://github.com/webcafeina/Apolo/releases/latest"><img src="https://img.shields.io/github/v/release/webcafeina/Apolo?label=versi%C3%B3n" alt="Versión"></a>
@@ -33,6 +33,13 @@ sistema en esta tabla:
 | **Debian 12+ / Ubuntu 22.04+**, arm64 | `Apolo_X.Y.Z_arm64.deb` o `.AppImage` | `apolo-cli-X.Y.Z-linux-arm64.tar.gz` | — |
 
 `SHA256SUMS.txt` tiene la suma de cada fichero.
+
+**Con Homebrew**, en macOS y Linux (con el nombre completo: así Homebrew confía en el tap):
+
+```sh
+brew install webcafeina/apolo/apolo          # la línea de órdenes y apolo-mcp
+brew install --cask webcafeina/apolo/apolo   # la aplicación (macOS)
+```
 
 **Se actualiza sola**: cuando hay una versión nueva, Apolo lo avisa y se instala con un clic.
 

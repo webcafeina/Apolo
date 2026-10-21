@@ -450,3 +450,18 @@ Varios trabajos de `publicar.yml` fallan en el paso de los submódulos, todos en
 Se comprueba con `curl -s -o /dev/null -w "%{http_code}"
 'https://aomedia.googlesource.com/aom/info/refs?service=git-upload-pack'` (200 cuando ya responde) y
 se arregla con `gh run rerun <id> --failed`. Pasó con la v0.14.0. · 2026-10-21
+
+## `-apple-visual-effect` se descarta si el CSS llega antes que la preferencia
+
+La propiedad privada de WebKit para el vidrio del sistema (ADR 0028) solo la reconoce el analizador
+de CSS si la preferencia `_setUseSystemAppearance` ya está encendida. Si la hoja se lee antes, la
+declaración se tira sin avisar y `@supports` dice que no. Por eso `vidrio-macos.css` se importa con
+`?inline` y main.tsx la inyecta con un `<style>` cuando `plataforma` dice `vidrio_controles`, y no
+con las demás hojas. · 2026-10-21
+
+## El botón de un interruptor hecho con un degradado sale como una elipse
+
+En WebKit un `<input>` no pinta `::before`, así que el botón del interruptor va en el fondo. Con
+`radial-gradient(ellipse …)` sale una elipse, no una píldora, y en Safari se veía enorme (v0.14.0 en
+el Mac del cliente). Un SVG de fondo con un `rect` de radio la mitad del alto da la píldora, con su
+sombra (`feDropShadow`). · 2026-10-21

@@ -61,7 +61,7 @@ interruptor y del deslizador en reposo, y los colores de separador y de control.
 - **SF Symbols**: su licencia limita el uso; incrustarlos en Apolo es zona gris. Se quedan los
   iconos de línea propios.
 - **Imitar la refracción de Liquid Glass en CSS** (`backdrop-filter: url()` con un mapa de
-  desplazamiento): WebKit no lo admite (bug 245510). Solo el vidrio nativo la tiene.
+  desplazamiento): WebKit no lo admite (bug 245510). Se usa el vidrio del sistema (matiz de abajo).
 - **Los estilos de vidrio privados** de `window-vibrancy` (`Sidebar`, `Inspector`…): API privada.
 - **Mover las órdenes de cada sección a la barra con un portal**: no hizo falta; la cabecera de cada
   sección ya está arriba y el CSS la convierte en barra.
@@ -89,3 +89,31 @@ interruptor y del deslizador en reposo, y los colores de separador y de control.
 - **No verificado**: nada en un Mac todavía. Liquid Glass, la posición de los semáforos, la letra SF
   Pro y las animaciones, a la espera de la compilación de prueba en el Mac del cliente (macOS 27).
   macOS 26 y 11–15, y los Mac Intel, sin ver.
+
+## Matiz del 2026-10-21: lo que salió de verlo en el Mac (v0.14.1)
+
+El cliente actualizó su Mac (macOS 27) a la v0.14.0 y vio tres cosas:
+
+- **La barra lateral, pequeña** para su ancho: pasa al tamaño «large» del kit (filas de 36, iconos
+  de 20, letra de 15).
+- **El interruptor**: su botón era una elipse dibujada con un degradado, que llenaba la pista y al
+  pulsarlo la tapaba entera. Ahora es una píldora en SVG (26 × 16, 2 de margen y su sombra) en una
+  pista de 44 × 20 («small»), que al pulsarla se estira 4 px.
+- **El selector de modo daba un bote** al pulsarlo (se abombaba entero): ya no; la selección se
+  desliza de una opción a otra (`segmentados.ts` mide la elegida y el CSS pinta su fondo).
+
+Y preguntó por la refracción, que otras aplicaciones de Mac consiguen. **WebKit tiene una propiedad
+propia, `-apple-visual-effect: -apple-system-glass-material`**, que pinta debajo de un elemento el
+material de vidrio del sistema (el de SwiftUI), en macOS 26+. Está detrás de una preferencia privada
+de `WKPreferences` (`_setUseSystemAppearance:`). `ventana_macos.rs` la enciende si existe (con
+Liquid Glass), `plataforma` lo dice (`vidrio_controles`), y main.tsx inyecta entonces
+`vidrio-macos.css`, que pone el material en las cápsulas de la barra, el aviso de versión nueva y el
+botón del deslizador al pulsarlo. Se inyecta después porque WebKit descarta la propiedad si lee el
+CSS antes de encenderla. Sin ella, la imitación de siempre. Es API privada: vale fuera de la Mac App
+Store, que es como se distribuye Apolo. La técnica, de lennondotw/tauri-liquid-glass-demo (MIT).
+
+**Verificación**: e2e de macOS (14, con el segmentado que se desliza, el interruptor de 44 × 20 y
+las filas de 36); el minificado conserva la propiedad y solo en la hoja inyectada; clippy de
+`ventana_macos.rs` para Apple silicon. **No verificado**: que el material se vea en las cápsulas y en
+el botón del deslizador en el Mac (solo existe allí); el botón del interruptor no puede llevarlo (es
+el fondo del `<input>`).

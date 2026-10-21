@@ -13,8 +13,22 @@
 //! ventana; la interfaz solo lo deja ver en la barra lateral: el contenido
 //! lleva su fondo (sistema-macos.css).
 
-use std::sync::OnceLock;
+//!
+//! **El vidrio de los controles.** WebKit tiene una propiedad CSS propia de
+//! Apple, `-apple-visual-effect: -apple-system-glass-material`, que pinta
+//! debajo de un elemento HTML el material de vidrio del sistema (el de SwiftUI,
+//! con su refracción), desde macOS 26. Viene apagada, detrás de una preferencia
+//! privada de `WKPreferences` (`_setUseSystemAppearance:`). Aquí se enciende si
+//! existe, y la interfaz pone el vidrio de verdad en las cápsulas de la barra
+//! (vidrio-macos.css); si no, se queda la imitación de sistema-macos.css. Es
+//! API privada: vale fuera de la Mac App Store, que es como se distribuye
+//! Apolo. La técnica, de lennondotw/tauri-liquid-glass-demo (MIT).
 
+use std::sync::OnceLock;
+use std::sync::atomic::{AtomicBool, Ordering};
+
+use objc2::runtime::AnyObject;
+use objc2::{msg_send, sel};
 use tauri::Manager;
 use window_vibrancy::{
     LiquidGlassOptions, NSGlassEffectViewStyle, NSVisualEffectMaterial, NSVisualEffectState,
@@ -22,10 +36,42 @@ use window_vibrancy::{
 };
 
 static VIDRIO: OnceLock<bool> = OnceLock::new();
+static VIDRIO_WEB: AtomicBool = AtomicBool::new(false);
 
 /// Si la ventana tiene vidrio: la orden `plataforma` lo cuenta.
 pub fn hay_vidrio() -> bool {
     VIDRIO.get().copied().unwrap_or(false)
+}
+
+/// Si la interfaz puede pintar el vidrio del sistema en sus controles.
+pub fn hay_vidrio_web() -> bool {
+    VIDRIO_WEB.load(Ordering::Relaxed)
+}
+
+/// Enciende `-apple-visual-effect` en el WKWebView de la ventana. Solo con
+/// Liquid Glass (macOS 26+): antes, la propiedad no tiene el material de vidrio.
+fn encender_vidrio_web(ventana: &tauri::WebviewWindow) {
+    let _ = ventana.with_webview(|w| unsafe {
+        let vista = w.inner().cast::<AnyObject>();
+        if vista.is_null() {
+            return;
+        }
+        // `configuration` y `preferences` son públicas; solo el último no.
+        let configuracion: *mut AnyObject = msg_send![&*vista, configuration];
+        if configuracion.is_null() {
+            return;
+        }
+        let preferencias: *mut AnyObject = msg_send![&*configuracion, preferences];
+        if preferencias.is_null() {
+            return;
+        }
+        let existe: bool =
+            msg_send![&*preferencias, respondsToSelector: sel!(_setUseSystemAppearance:)];
+        if existe {
+            let _: () = msg_send![&*preferencias, _setUseSystemAppearance: true];
+            VIDRIO_WEB.store(true, Ordering::Relaxed);
+        }
+    });
 }
 
 /// Le pone el vidrio a la ventana principal. `setup` corre en el hilo de la
@@ -41,6 +87,9 @@ pub fn poner_vidrio(app: &tauri::App) {
         LiquidGlassOptions::new(NSGlassEffectViewStyle::Regular),
     )
     .is_ok();
+    if cristal {
+        encender_vidrio_web(&ventana);
+    }
     let vidrio = cristal
         || apply_vibrancy(
             &ventana,

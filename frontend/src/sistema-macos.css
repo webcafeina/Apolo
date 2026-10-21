@@ -22,7 +22,9 @@
   --radio-grande: 10px;
   --alto-control: 24px;
   --alto-campo: 24px;
-  --alto-fila: 32px;
+  /* Las filas de la barra lateral, en el tamaño «large» del kit: con el
+     «medium» (32, letra de 13) se veían pequeñas en el Mac (v0.14.0). */
+  --alto-fila: 36px;
   --barra-lateral: 240px;
   --alto-barra: 52px;
   --texto-chico: 11px;
@@ -139,8 +141,8 @@
 
 /* ── La barra lateral ───────────────────────────────────────────────────── */
 
-/* Filas de 32 (el tamaño «medium»), el icono de 16 a 18 px del borde y el
-   nombre 8 más allá, como en el kit. La elegida, en el relleno gris del
+/* Filas de 36 (el tamaño «large» del kit), el icono de 20 a 18 px del borde
+   y el nombre 9 más allá. La elegida, en el relleno gris del
    sistema con radio 8, de 10 a 230; sin cambio al pasar el puntero, como en
    Finder. */
 :root[data-sistema="macos"] .lateral {
@@ -154,14 +156,14 @@
 :root[data-sistema="macos"] .lateral nav button {
   height: var(--alto-fila);
   padding: 0 8px;
-  gap: 8px;
+  gap: 9px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 400;
   color: var(--tinta);
   white-space: nowrap;
 }
-:root[data-sistema="macos"] .lateral nav button .icono { width: 16px; height: 16px; color: var(--oro-trazo); }
+:root[data-sistema="macos"] .lateral nav button .icono { width: 20px; height: 20px; color: var(--oro-trazo); }
 :root[data-sistema="macos"] .lateral nav button:hover:not([aria-current="page"]) { background: transparent; }
 :root[data-sistema="macos"] .lateral nav button[aria-current="page"] {
   background: var(--barra-encima);
@@ -318,22 +320,24 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.4 4.9 8.8 9.6 3.4' fill='none' stroke='%232b2b31' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
-/* Interruptor de macOS 27: la pista en cápsula de 36 × 16 (la de los
-   formularios del kit), apagada en el gris de los rellenos con su filete y
-   encendida en oro; el botón blanco, más ancho que alto. */
+/* Interruptor de macOS 27: la pista en cápsula de 44 × 20 (el tamaño «small»
+   del kit, el de Ajustes del Sistema), apagada en el gris de los rellenos con
+   su filete y encendida en oro; el botón, una píldora blanca de 26 × 16 con
+   2 de margen y su sombra. Es un SVG de fondo: WebKit no pinta un ::before
+   dentro de un <input>, y un degradado solo da elipses (lo que se veía en la
+   v0.14.0, una elipse que llenaba la pista). */
 :root[data-sistema="macos"] input[type="checkbox"][role="switch"] {
-  --pomo: #ffffff;
-  width: 36px;
-  height: 16px;
-  border-radius: 8px;
-  background:
-    radial-gradient(ellipse closest-side, var(--pomo) 88%, transparent) no-repeat 1px 50% / 22px 14px,
-    var(--elevada);
+  --pomo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='20' viewBox='0 0 30 20'%3E%3Cfilter id='s' x='-20%25' y='-30%25' width='140%25' height='160%25'%3E%3CfeDropShadow dy='0.5' stdDeviation='0.7' flood-opacity='0.28'/%3E%3C/filter%3E%3Crect x='2' y='2' width='26' height='16' rx='8' fill='%23fff' stroke='%23000' stroke-opacity='0.06' stroke-width='0.5' filter='url(%23s)'/%3E%3C/svg%3E");
+  --pomo-pulsado: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='20' viewBox='0 0 34 20'%3E%3Cfilter id='s' x='-20%25' y='-30%25' width='140%25' height='160%25'%3E%3CfeDropShadow dy='0.5' stdDeviation='0.7' flood-opacity='0.28'/%3E%3C/filter%3E%3Crect x='2' y='2' width='30' height='16' rx='8' fill='%23fff' stroke='%23000' stroke-opacity='0.06' stroke-width='0.5' filter='url(%23s)'/%3E%3C/svg%3E");
+  width: 44px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--pomo) no-repeat 0 50% / 30px 20px, var(--elevada);
   box-shadow: inset 0 0 0 0.5px var(--filete-fuerte);
 }
 :root[data-sistema="macos"] input[type="checkbox"][role="switch"]:checked {
   background-color: var(--relleno);
-  background-position: calc(100% - 1px) 50%;
+  background-position: 100% 50%;
   box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.1);
 }
 
@@ -462,8 +466,28 @@
   transition: transform 160ms cubic-bezier(0.3, 1.4, 0.5, 1), background-color 120ms;
 }
 :root[data-sistema="macos"] .boton-lateral:active:not(:disabled),
-:root[data-sistema="macos"] .herramientas .aparte > button:active:not(:disabled),
-:root[data-sistema="macos"] .herramientas .segmentado:active { transform: scale(1.05); }
+:root[data-sistema="macos"] .herramientas .aparte > button:active:not(:disabled) { transform: scale(1.05); }
+/* El segmentado no se abomba entero (en la v0.14.0 lo hacía, y daba un bote):
+   lo que se mueve es la selección, que se desliza de una opción a otra. */
+:root[data-sistema="macos"] .segmentado { position: relative; isolation: isolate; }
+:root[data-sistema="macos"] .segmentado[data-medido]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: var(--sel-x);
+  top: var(--sel-y);
+  width: var(--sel-w);
+  height: var(--sel-h);
+  border-radius: var(--sel-r);
+  background: var(--lienzo);
+  box-shadow: 0 0.5px 2px rgb(0 0 0 / 0.18);
+  transition:
+    left 320ms cubic-bezier(0.3, 1.25, 0.5, 1),
+    width 320ms cubic-bezier(0.3, 1.25, 0.5, 1);
+}
+:root[data-sistema="macos"] .herramientas .segmentado[data-medido]::before { background: var(--elevada); box-shadow: none; }
+/* Con el fondo deslizante, el botón elegido ya no lleva el suyo. */
+:root[data-sistema="macos"] .segmentado[data-medido] button[aria-checked="true"] { background: transparent; box-shadow: none; }
 /* El botón de la barra lateral también se mueve: las dos transiciones. */
 :root[data-sistema="macos"] .boton-lateral {
   transition: left 250ms cubic-bezier(0.2, 0.8, 0.2, 1), transform 160ms cubic-bezier(0.3, 1.4, 0.5, 1);
@@ -480,13 +504,11 @@
   box-shadow: var(--burbuja-sombra);
 }
 
-/* El interruptor: el botón no puede salirse de su pista (es el fondo del
-   control), así que al pulsarlo se estira a lo ancho y se vuelve de vidrio,
-   con un filo encendido, y la pista se oscurece un poco. */
+/* El interruptor: al pulsarlo, la píldora se estira 4 px hacia donde va a
+   ir, como en macOS; sin taparle la pista. */
 :root[data-sistema="macos"] input[type="checkbox"][role="switch"]:active:not(:disabled) {
-  --pomo: rgb(255 255 255 / 0.88);
-  background-size: 30px 15px;
-  box-shadow: inset 0 0 0 0.5px var(--filete-fuerte), inset 0 1px 2px rgb(0 0 0 / 0.12);
+  background-image: var(--pomo-pulsado);
+  background-size: 34px 20px;
 }
 :root[data-sistema="macos"] input[type="checkbox"][role="switch"] {
   transition: background-position 180ms cubic-bezier(0.3, 1.3, 0.5, 1), background-size 140ms, background-color 150ms;
@@ -496,5 +518,6 @@
 @media (prefers-reduced-motion: reduce) {
   :root[data-sistema="macos"] .ventana,
   :root[data-sistema="macos"] .boton-lateral,
-  :root[data-sistema="macos"] .herramientas { transition: none; }
+  :root[data-sistema="macos"] .herramientas,
+  :root[data-sistema="macos"] .segmentado::before { transition: none; }
 }

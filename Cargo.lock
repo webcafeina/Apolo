@@ -104,6 +104,7 @@ dependencies = [
  "apolo-mcpb",
  "apolo-nucleo",
  "apolo-servicio",
+ "objc2",
  "serde",
  "serde_json",
  "tauri",

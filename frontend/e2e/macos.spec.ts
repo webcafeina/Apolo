@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 const alto = (l: import("@playwright/test").Locator) => l.evaluate((e) => e.getBoundingClientRect().height);
 const ancho = (l: import("@playwright/test").Locator) => l.evaluate((e) => e.getBoundingClientRect().width);
 
-test("en macOS: la escala del kit, la barra lateral de 240 sin marca y filas de 32", async ({ page }) => {
+test("en macOS: la escala del kit, la barra lateral de 240 sin marca y filas de 36", async ({ page }) => {
   await page.goto("/?sistema=macos");
   await expect(page.locator("html")).toHaveAttribute("data-sistema", "macos");
   expect(await page.evaluate(() => getComputedStyle(document.body).fontSize)).toBe("13px");
@@ -25,7 +25,7 @@ test("en macOS: la escala del kit, la barra lateral de 240 sin marca y filas de 
   expect(await ancho(page.locator(".lateral"))).toBe(240);
   await expect(page.locator(".lateral .sello")).toHaveCount(0);
   await expect(page.getByTestId("firma")).toHaveCount(0);
-  expect(await alto(page.getByRole("button", { name: "Lotes", exact: true }))).toBe(32);
+  expect(await alto(page.getByRole("button", { name: "Lotes", exact: true }))).toBe(36);
 });
 
 test("en macOS: la cabecera de cada sección es la barra de herramientas de 52, y en el Estudio cubre el inspector", async ({ page }) => {
@@ -90,4 +90,37 @@ test("en macOS con vidrio: la barra lateral deja ver el material, el contenido n
   }));
   expect(fondos.lateral).toBe("rgba(0, 0, 0, 0)");
   expect(fondos.zona).not.toBe("rgba(0, 0, 0, 0)");
+});
+
+test("en macOS: la selección del segmentado se desliza, y el control no se abomba", async ({ page }) => {
+  await page.goto("/?sistema=macos");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(corpus, "foto.webp"));
+  await expect(page.getByTestId("peso-resultado")).not.toHaveText("…");
+  const grupo = page.locator(".herramientas .segmentado");
+  await expect(grupo).toHaveAttribute("data-medido", "si");
+  const x = () => grupo.evaluate((g) => g.style.getPropertyValue("--sel-x"));
+  const antes = await x();
+  const lado = page.getByRole("radio", { name: "Lado a lado" });
+  await lado.click();
+  await expect.poll(x).not.toBe(antes);
+  // El fondo lo pinta el segmentado, no el botón, y el control no cambia de tamaño al pulsarlo.
+  expect(await lado.evaluate((b) => getComputedStyle(b).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+  await lado.hover();
+  await page.mouse.down();
+  expect(await grupo.evaluate((g) => getComputedStyle(g).transform)).toBe("none");
+  await page.mouse.up();
+});
+
+test("en macOS: el interruptor es una píldora de 44 × 20 y la barra lateral va en el tamaño grande", async ({ page }) => {
+  await page.goto("/?sistema=macos");
+  await page.getByRole("button", { name: "Ajustes", exact: true }).click();
+  const avisar = page.getByRole("switch", { name: "Avisarme cuando haya una versión nueva" });
+  expect(await ancho(avisar)).toBe(44);
+  expect(await alto(avisar)).toBe(20);
+  expect(await avisar.evaluate((i) => getComputedStyle(i).backgroundImage)).toContain("svg");
+  const fila = page.getByRole("button", { name: "Lotes", exact: true });
+  expect(await alto(fila)).toBe(36);
+  expect(await fila.locator(".icono").evaluate((i) => i.getBoundingClientRect().width)).toBe(20);
 });

@@ -389,3 +389,11 @@ Es glibc: cada hilo tiene su reserva (arena) y lo liberado en ella no vuelve al 
 `MALLOC_ARENA_MAX=2`, 1,5 GB y más rápido. `apolo_nucleo::memoria::preparar()` lo pone con
 `mallopt` al arrancar cada programa. macOS y Windows devuelven los bloques grandes al liberarlos. Se
 ve con `scripts/banco.sh` o con `/usr/bin/time -f %M`. · 2026-10-20
+
+## Un `pkill -f` que se mata a sí mismo
+
+La orden termina con el código 144 y no hace lo que venía detrás. `pkill -f patrón` busca en la
+línea de órdenes completa de cada proceso, y la del propio shell que lo ejecuta contiene el patrón:
+se mata a sí mismo. Pasó tres veces (2026-10-20 y 21). Se evita buscando el PID con un patrón
+anclado (`pgrep -f "^python3 -m http.server 8765"`) y matando ese PID, o guardando el PID al
+lanzar el proceso. · 2026-10-21

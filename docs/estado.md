@@ -15,7 +15,13 @@
 > evaluación del MCP 37/37 en verde. README.en.md.
 > ~~Prueba guiada en Windows ARM~~: **perfecta el 2026-10-21** (actualizar de la 0.10.2 a la
 > 0.12.0 desde la banda, Lotes con una foto suelta en su subcarpeta, Apolo en inglés).
-> **Lo siguiente: la 8d** (Homebrew, la web y la 1.0).
+> **La 8d, casi (2026-10-21)**: la **web** publicada en `apolo.webcafeina.com` (Pages, DNS puesto
+> por el cliente; el certificado HTTPS, pendiente de GitHub al parar) y **Homebrew** (tap
+> `webcafeina/homebrew-apolo` en verde: fórmula en macOS y Linux, cask en macOS; se actualiza solo
+> al publicar una versión con `homebrew.yml` y la deploy key `HOMEBREW_TAP_CLAVE`). ADR 0026.
+> **Lo que queda para la 1.0**: «Enforce HTTPS» cuando GitHub emita el certificado; que el cliente
+> mire la web y pruebe `brew install` en su Mac; la prueba guiada final (Mac, Windows ARM, Ubuntu
+> ARM) y la 1.0.0.
 >
 > **La 8b está hecha y publicada la v0.11.0 (2026-10-20 por la tarde)**, revisada como siempre
 > (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones y `.mcpb` en 0.11.0,

@@ -77,5 +77,15 @@ Investigado el 2026-10-21 (Homebrew 7.0.10):
   el botón detecta el sistema y enlaza al fichero real de la última versión;
 - el contraste, por `tests/contraste.rs` con `web/tokens.css`.
 
-**No se ha comprobado**: Safari ni Firefox; un móvil de verdad; la web publicada; Homebrew entero
-(ni el tap ni un `brew install`).
+Publicada el 2026-10-21 en Pages, con el dominio: responde en español e inglés (probado contra las
+IP de GitHub mientras se propagaba el DNS).
+
+Homebrew, el 2026-10-21: el tap `webcafeina/homebrew-apolo` instala en su propia prueba la fórmula
+en macOS 15 y Ubuntu (`brew test`: `apolo` y `apolo-mcp` dan la versión) y el cask en macOS 15
+(en `/Applications`, sin cuarentena, y su `apolo-mcp` responde). `brew style` marca la fórmula por
+llevar `url` dentro de `on_macos`/`on_linux` (regla del repositorio oficial): se queda así, y solo
+se revisa el cask. `homebrew.yml` lanzado a mano con la 0.12.0: entra con la deploy key y no empuja
+nada porque ya estaba.
+
+**No se ha comprobado**: Safari ni Firefox; un móvil de verdad; que `homebrew.yml` empuje de
+verdad (será con la próxima versión publicada); un `brew install` en el Mac del cliente.

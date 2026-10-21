@@ -22,8 +22,10 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
   - ~~**8c · v0.12.0**: todo en inglés.~~ Hecha el 2026-10-20 (ADR 0025): la ventana, la CLI, el
     agente y el núcleo, con `tr!`/`trs!` en Rust y `en.json`; v0.12.0 publicada.
   - **8d · 1.0.0**:
-    - el tap `webcafeina/homebrew-apolo` (fórmula de la CLI y cask de la aplicación);
-    - la web en `apolo.webcafeina.com` (GitHub Pages, es + en);
+    - ~~el tap `webcafeina/homebrew-apolo` (fórmula de la CLI y cask de la aplicación)~~: hecho el
+      2026-10-21 (ADR 0026), se actualiza solo al publicar;
+    - ~~la web en `apolo.webcafeina.com` (GitHub Pages, es + en)~~: publicada el 2026-10-21; falta
+      «Enforce HTTPS» cuando GitHub emita el certificado;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

@@ -4,6 +4,27 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-21 · La 8d: la web y Homebrew
+
+- **La web**, en `web/`, estática, en español e inglés: la paleta de la aplicación (`make tokens`
+  escribe también `web/tokens.css`, con el contraste medido), la estructura del sistema «raycast»,
+  Marcellus y Figtree alojadas (sin Google Fonts), y las descargas por la API de GitHub según el
+  sistema. Las capturas, con `make capturas-web`: una foto de Kodak (la del corpus, de 128 px, se
+  veía pixelada), en los dos idiomas (la especificación traduce los botones por sus claves), la
+  sección MCP con una ruta de instalación (`APOLO_DEV_RUTA_MCP`) y un mapa de dónde se pierde
+  detalle a calidad 50; pasadas a WebP con Apolo (casi sin pérdida las de foto: SSIMULACRA 2 93).
+  Revisada en Chromium a 1280 y 390 px; en móvil, un bloque de código desbordaba la rejilla.
+- **Pages** activado (Actions, dominio en los ajustes), el cliente puso el CNAME en Cloudflare.
+  Responde; el certificado, pendiente al parar.
+- **Homebrew**: investigado con un agente (Homebrew 7.0.10). El corte de casks sin firmar es solo
+  del repositorio oficial; `--no-quarantine` ya no existe; `postflight_steps` quita la cuarentena.
+  Tap `webcafeina/homebrew-apolo` creado, con su prueba: fórmula en macOS y Linux, cask en macOS,
+  en verde (`brew style` solo al cask, en macOS). `homebrew.yml` actualiza el tap al publicar una
+  versión con una deploy key (`HOMEBREW_TAP_CLAVE`); la copia local de la clave, borrada.
+- Dos veces más, `pkill -f` se mató a sí mismo por llevar el patrón en su propia orden (trampa).
+
+---
+
 ## 2026-10-21 · Windows ARM, visto entero
 
 - Prueba guiada en Windows ARM con la v0.12.0, **perfecta**: la banda actualizó de la 0.10.2 a la

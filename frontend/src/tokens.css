@@ -15,6 +15,7 @@
   --relleno-vivo: #ebb838;
   --sobre-acento: #2b2b31;
   --acento: #2b2b31;
+  --oro-trazo: #a38027;
   --barra: #f6f6f8;
   --barra-encima: #e8e8ed;
   --campo: #ffffff;
@@ -46,6 +47,7 @@
     --relleno-vivo: #ebb838;
     --sobre-acento: #2b2b31;
     --acento: #ffffff;
+    --oro-trazo: #ffc83d;
     --barra: #242426;
     --barra-encima: #343437;
     --campo: #1a1a1c;
@@ -77,6 +79,7 @@
   --relleno-vivo: #ebb838;
   --sobre-acento: #2b2b31;
   --acento: #ffffff;
+  --oro-trazo: #ffc83d;
   --barra: #242426;
   --barra-encima: #343437;
   --campo: #1a1a1c;
@@ -107,6 +110,7 @@
   --relleno-vivo: #ebb838;
   --sobre-acento: #2b2b31;
   --acento: #2b2b31;
+  --oro-trazo: #a38027;
   --barra: #f3f3f3;
   --barra-encima: #eaeaea;
   --campo: #ffffff;
@@ -138,6 +142,7 @@
     --relleno-vivo: #ebb838;
     --sobre-acento: #2b2b31;
     --acento: #ffffff;
+    --oro-trazo: #ffc83d;
     --barra: #202020;
     --barra-encima: #2d2d2d;
     --campo: #1e1e1e;
@@ -169,6 +174,7 @@
   --relleno-vivo: #ebb838;
   --sobre-acento: #2b2b31;
   --acento: #ffffff;
+  --oro-trazo: #ffc83d;
   --barra: #202020;
   --barra-encima: #2d2d2d;
   --campo: #1e1e1e;
@@ -182,4 +188,99 @@
   --anillo: rgb(255 200 61 / 45%);
   --relleno-tenue: rgb(255 200 61 / 22%);
   --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23a3a3a3' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+:root[data-sistema="macos"] {
+  color-scheme: light;
+  --lienzo: #ffffff;
+  --suave: #f7f7f7;
+  --tarjeta: #f2f2f2;
+  --elevada: #e6e6e6;
+  --filete: #e5e5e5;
+  --filete-fuerte: #7a7a7a;
+  --tinta: #1a1a1a;
+  --cuerpo: #3b3b3b;
+  --apagado: #5f5f5f;
+  --relleno: #ffc83d;
+  --relleno-vivo: #ebb838;
+  --sobre-acento: #2b2b31;
+  --acento: #2b2b31;
+  --oro-trazo: #967624;
+  --barra: #e6e6e6;
+  --barra-encima: #d9d9d9;
+  --campo: #ffffff;
+  --boton: #ebebeb;
+  --boton-encima: #e1e1e1;
+  --exito: #1d6d31;
+  --aviso: #8a5000;
+  --error: #b32922;
+  --damero-a: #ffffff;
+  --damero-b: #e6e6e6;
+  --anillo: rgb(255 200 61 / 35%);
+  --relleno-tenue: rgb(255 200 61 / 18%);
+  --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%235f5f5f' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-sistema="macos"]:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --lienzo: #1e1e1e;
+    --suave: #191919;
+    --tarjeta: #282828;
+    --elevada: #323232;
+    --filete: #363636;
+    --filete-fuerte: #8a8a8a;
+    --tinta: #f5f5f5;
+    --cuerpo: #dcdcdc;
+    --apagado: #ababab;
+    --relleno: #ffc83d;
+    --relleno-vivo: #ebb838;
+    --sobre-acento: #2b2b31;
+    --acento: #ffffff;
+    --oro-trazo: #ffc83d;
+    --barra: #161616;
+    --barra-encima: #2a2a2a;
+    --campo: #262626;
+    --boton: #383838;
+    --boton-encima: #404040;
+    --exito: #34c759;
+    --aviso: #ff9500;
+    --error: #ff8983;
+    --damero-a: #282828;
+    --damero-b: #363636;
+    --anillo: rgb(255 200 61 / 45%);
+    --relleno-tenue: rgb(255 200 61 / 22%);
+    --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23ababab' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+}
+
+:root[data-sistema="macos"][data-tema="oscuro"] {
+  color-scheme: dark;
+  --lienzo: #1e1e1e;
+  --suave: #191919;
+  --tarjeta: #282828;
+  --elevada: #323232;
+  --filete: #363636;
+  --filete-fuerte: #8a8a8a;
+  --tinta: #f5f5f5;
+  --cuerpo: #dcdcdc;
+  --apagado: #ababab;
+  --relleno: #ffc83d;
+  --relleno-vivo: #ebb838;
+  --sobre-acento: #2b2b31;
+  --acento: #ffffff;
+  --oro-trazo: #ffc83d;
+  --barra: #161616;
+  --barra-encima: #2a2a2a;
+  --campo: #262626;
+  --boton: #383838;
+  --boton-encima: #404040;
+  --exito: #34c759;
+  --aviso: #ff9500;
+  --error: #ff8983;
+  --damero-a: #282828;
+  --damero-b: #363636;
+  --anillo: rgb(255 200 61 / 45%);
+  --relleno-tenue: rgb(255 200 61 / 22%);
+  --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23ababab' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }

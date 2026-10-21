@@ -29,6 +29,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     - ~~**v0.13.0, Windows con Fluent** ([ADR 0027](adr/0027-windows-con-fluent.md))~~, pedida por
       el cliente antes de la 1.0: probada en su máquina virtual Windows 11 ARM y publicada el
       2026-10-21;
+    - **v0.14.0, macOS con Golden Gate** ([ADR 0028](adr/0028-macos-con-golden-gate.md)), pedida
+      por el cliente: hecha en el código y revisada en capturas el 2026-10-21. Falta la prueba en su
+      Mac con macOS 27 y publicarla;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

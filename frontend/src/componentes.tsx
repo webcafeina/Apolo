@@ -89,6 +89,14 @@ const DIBUJOS: Record<string, ReactNode> = {
     </>
   ),
   guardar: <path d="M4 2.5h8l2.5 2.5v9.5a1 1 0 0 1-1 1h-9.5a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1zM6 2.5V6h5V2.5M5.5 15.5V11h7v4.5" />,
+  // El botón de la barra lateral de macOS (ADR 0028): una ventana con su
+  // panel a la izquierda.
+  lateral: (
+    <>
+      <rect x="2" y="3.5" width="14" height="11" rx="2.2" />
+      <path d="M7 3.5v11M3.9 6.3h1.4M3.9 8.3h1.4" />
+    </>
+  ),
 };
 
 export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | string; lado?: number }) {
@@ -134,9 +142,18 @@ export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | st
  *  de dibujar nada, así que se puede mirar al dibujar. */
 export const esWindows = () => document.documentElement.dataset.sistema === "windows";
 
-/** Una SettingsCard de WinUI, solo en Windows (ADR 0027): el icono, el título,
- *  la descripción y el control a la derecha; lo de dentro va debajo, a todo el
- *  ancho. El control lleva su propio `aria-label`. */
+/** Si la interfaz es la de macOS 27 (ADR 0028). */
+export const esMac = () => document.documentElement.dataset.sistema === "macos";
+
+/** Si los ajustes van como en el sistema: SettingsCards en Windows (ADR 0027) y
+ *  filas agrupadas, como en Ajustes del Sistema, en macOS (ADR 0028). El mismo
+ *  marcado; cambia el CSS. En Linux y en la web, las tarjetas de siempre. */
+export const formularioNativo = () => esWindows() || esMac();
+
+/** Una SettingsCard de WinUI en Windows (ADR 0027), y una fila de formulario
+ *  agrupado en macOS (ADR 0028): el icono, el título, la descripción y el
+ *  control a la derecha; lo de dentro va debajo, a todo el ancho. El control
+ *  lleva su propio `aria-label`. */
 export function TarjetaAjuste({
   icono,
   titulo,

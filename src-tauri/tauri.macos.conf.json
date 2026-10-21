@@ -12,11 +12,9 @@
         "transparent": true,
         "titleBarStyle": "Overlay",
         "hiddenTitle": true,
-        "windowEffects": {
-          "effects": [
-            "sidebar"
-          ],
-          "state": "followsWindowActiveState"
+        "trafficLightPosition": {
+          "x": 19,
+          "y": 24
         }
       }
     ]

@@ -15,7 +15,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
-import { Cabecera, esWindows, Icono, lleno, TarjetaAjuste } from "../componentes";
+import { Cabecera, formularioNativo, Icono, lleno, TarjetaAjuste } from "../componentes";
 import { EVENTO_PRESETS, formatoBytes } from "../estudio/Estudio";
 import { FORMATOS, type Ajuste, type FormatoSalida, type Preset } from "../estudio/opciones";
 import { banda, nombreFormato } from "../estudio/Panel";
@@ -404,8 +404,9 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
                 )}
               </section>
 
-              {esWindows() ? (
-                // En Windows, SettingsCards con el interruptor a la derecha (ADR 0027).
+              {formularioNativo() ? (
+                // En Windows (SettingsCards) y en macOS (filas agrupadas), con el
+                // interruptor a la derecha (ADR 0027 y 0028).
                 <section className="grupo-ajustes">
                   <h2>{t("lotes.calidad")}</h2>
                   <TarjetaAjuste

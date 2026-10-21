@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { esWindows, Icono, TarjetaAjuste } from "../componentes";
+import { formularioNativo, Icono, TarjetaAjuste } from "../componentes";
 import * as puente from "../puente";
 
 /** Un texto para copiar, con su botón. */
@@ -62,7 +62,7 @@ export function Agentes() {
     no_encontrado: t("agentes.avisoNoEncontrado"),
   };
 
-  const windows = esWindows();
+  const nativo = formularioNativo();
   const botones = (
     <>
       <button className="principal" onClick={crear} disabled={creando}>
@@ -105,8 +105,9 @@ export function Agentes() {
 
       {a.ruta && (
         <>
-          {windows ? (
-            // En Windows, SettingsCards juntas: el botón a la derecha (ADR 0027).
+          {nativo ? (
+            // En Windows (SettingsCards) y en macOS (filas agrupadas), juntas y
+            // con el botón a la derecha (ADR 0027 y 0028).
             <div className="grupo-ajustes">
               <TarjetaAjuste icono="escritorio" titulo={t("agentes.desktop")} descripcion={t("agentes.desktopTexto")} control={botones} prueba="desktop">
                 {creadaTexto}

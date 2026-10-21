@@ -18,7 +18,9 @@
     "minimizar": "Minimizar",
     "maximizar": "Maximizar",
     "restaurar": "Restaurar",
-    "cerrar": "Cerrar"
+    "cerrar": "Cerrar",
+    "ocultarLateral": "Ocultar la barra lateral",
+    "mostrarLateral": "Mostrar la barra lateral"
   },
   "estudio": {
     "soltar": "Arrastra una imagen aquí",

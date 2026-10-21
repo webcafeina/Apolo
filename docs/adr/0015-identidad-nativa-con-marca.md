@@ -70,3 +70,10 @@ Decidida el 2026-10-06 y hecha el mismo día (entrega 3).
 En Windows, la anatomía de Esfinge para Mac deja paso a la de WinUI: su escala, sus controles, sus
 iconos y su estructura (barra de título propia, NavigationView, SettingsCards), con el oro de Apolo
 como acento. La marca sigue siendo la misma; cambian las formas. Ver la [ADR 0027](0027-windows-con-fluent.md).
+
+## Matiz del 2026-10-21: macOS con Golden Gate
+
+En macOS, la anatomía de Esfinge deja paso a la de macOS 27 Golden Gate: barra lateral de borde a
+borde, barra de herramientas unificada, controles y filas agrupadas del kit de Apple. El oro sigue
+siendo el acento; los iconos de la barra lateral van en un oro oscurecido a 3:1, el único sitio donde
+el oro es línea. Ver la [ADR 0028](0028-macos-con-golden-gate.md).

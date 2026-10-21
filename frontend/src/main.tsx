@@ -4,6 +4,7 @@ import i18n from "./i18n";
 import "./tokens.css";
 import "./estilos.css";
 import "./sistema-windows.css";
+import "./sistema-macos.css";
 import "./sistema-linux.css";
 import { App } from "./App";
 import { inicio, plataforma } from "./puente";

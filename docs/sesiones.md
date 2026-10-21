@@ -4,6 +4,26 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-21 · macOS con Golden Gate (v0.14.0)
+
+- Tras publicar la v0.13.0, el cliente pidió lo mismo para Mac: las reglas de macOS 27 Golden Gate.
+  Planteado en modo plan con dos rondas de preguntas: oro de acento, barra unificada, Liquid Glass
+  nativo, iconos propios, filas agrupadas, barra lateral que se oculta, medidas del kit de Figma, su
+  Mac con macOS 27.
+- Investigado con tres agentes: la ventana de ahora, el diseño de macOS 27 (Golden Gate refina
+  Liquid Glass; la HIG no da medidas; SF Symbols, zona gris) y las medidas. Las del kit, con el
+  conector de Figma tras pasar el kit a la cuenta del conector; un agente leyó ~20 páginas hasta el
+  límite del asiento de solo lectura (trampa).
+- Hecho: paletas `macos_claro` y `macos_oscuro` y el token `oro-trazo` (las seis paletas medidas),
+  `sistema-macos.css`, `esMac` y `formularioNativo` (las mismas ramas que Windows), `useLateral`, el
+  botón de la barra lateral, `ventana_macos.rs` con Liquid Glass y `trafficLightPosition`,
+  `macos.spec.ts`, `make capturas-macos`. Segunda vuelta, a petición del cliente: el vidrio en los
+  controles (brillo, abombado y la burbuja al pulsar). «Está perfecto como está ahora».
+- Verificado: `make comprobar`, e2e (91), capturas; clippy de `ventana_macos.rs` para Apple silicon.
+- **No verificado**: nada en un Mac (deuda.md).
+
+---
+
 ## 2026-10-21 · Windows con Fluent (v0.13.0)
 
 - Pedido por el cliente antes de la 1.0: que en Windows Apolo parezca una aplicación de Microsoft

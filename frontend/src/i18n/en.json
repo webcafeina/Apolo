@@ -18,7 +18,9 @@
     "minimizar": "Minimize",
     "maximizar": "Maximize",
     "restaurar": "Restore down",
-    "cerrar": "Close"
+    "cerrar": "Close",
+    "ocultarLateral": "Hide sidebar",
+    "mostrarLateral": "Show sidebar"
   },
   "estudio": {
     "soltar": "Drag an image here",

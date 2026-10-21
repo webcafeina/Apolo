@@ -12,11 +12,11 @@
 > (`src-tauri/src/ventana_windows.rs`), con una ventana Win32 invisible sobre «Maximizar» para el
 > menú de Snap. Interruptores con su forma en los tres sistemas. `make comprobar` y e2e en verde;
 > el código de Windows compila y pasa clippy, **pero no se ha ejecutado nunca**.
-> **Lo siguiente**: CI en verde y una compilación de prueba (`publicar.yml` a mano) para la
-> **prueba guiada en la máquina virtual Windows 11 ARM** del cliente: Mica en claro y oscuro, la
-> barra (arrastrar, doble clic, los tres botones, atenuada sin foco), el menú de Snap, redimensionar,
-> las esquinas, ☰, todas las pantallas. Después, la v0.13.0 con su sí; luego la prueba guiada final
-> y la 1.0.0. «Enforce HTTPS» de la web, ya hecho.
+> **Prueba guiada en la máquina virtual Windows 11 ARM, bien** (compilación de prueba
+> 39590749049, CI y humo en verde): Mica, la barra, Snap, redimensionar, ☰ y las pantallas. Pidió
+> animar el panel al plegarse: hecho. El tema oscuro, sin ver (Windows sin activar).
+> **Lo siguiente**: publicar la v0.13.0 cuando lo diga el cliente (notas bilingües en
+> `.github/notas/v0.13.0.md`); luego la prueba guiada final y la 1.0.0.
 >
 > **La 8c está hecha y publicada la v0.12.0 (2026-10-20 por la noche)**, revisada como siempre
 > (27 ficheros, sumas, 7 firmas, `latest.json` con 14 plataformas, versiones en 0.12.0, los cinco

@@ -21,6 +21,10 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   controles (brillo, abombado y la burbuja al pulsar). «Está perfecto como está ahora».
 - Verificado: `make comprobar`, e2e (91), capturas; clippy de `ventana_macos.rs` para Apple silicon.
 - **No verificado**: nada en un Mac (deuda.md).
+- Subido (`44daf82`). El cliente prefirió publicar la v0.14.0 directamente y actualizar su Mac desde
+  el aviso: cancelada la compilación de prueba; versión y notas (`9f31c7b`), CI en verde, etiqueta.
+  En `publicar.yml` 39628230375, tres trabajos fallaron por un 503 de googlesource.com al clonar
+  aom y libyuv (trampa); relanzados. Se paró esperando el resultado.
 
 ---
 

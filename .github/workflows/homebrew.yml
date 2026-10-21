@@ -1,0 +1,63 @@
+# El tap de Homebrew (ADR 0026): cuando se publica una versión, rellena la fórmula y el cask con su
+# número y sus sumas (empaquetado/homebrew/rellenar.py) y los empuja a webcafeina/homebrew-apolo.
+#
+# Al publicar y no al etiquetar: las versiones salen como borrador y se publican tras revisarlas, y
+# hasta entonces sus ficheros no se pueden descargar. Empuja con una deploy key de escritura solo en
+# el tap (el secreto HOMEBREW_TAP_CLAVE), que nunca se escribe en ningún sitio más.
+name: Homebrew
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión publicada, sin la v (p. ej. 0.12.0)"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: homebrew
+  cancel-in-progress: false
+
+jobs:
+  tap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: La versión y sus sumas
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ETIQUETA: ${{ github.event.release.tag_name }}
+          A_MANO: ${{ inputs.version }}
+        run: |
+          version="${A_MANO:-${ETIQUETA#v}}"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          gh release download "v$version" --pattern SHA256SUMS.txt --dir "$RUNNER_TEMP"
+      - name: El tap, con la deploy key
+        env:
+          CLAVE: ${{ secrets.HOMEBREW_TAP_CLAVE }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$CLAVE" > ~/.ssh/tap
+          chmod 600 ~/.ssh/tap
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/tap -o IdentitiesOnly=yes" \
+            git clone --depth 1 git@github.com:webcafeina/homebrew-apolo.git "$RUNNER_TEMP/tap"
+      - name: Rellenar y empujar
+        run: |
+          python3 -I empaquetado/homebrew/rellenar.py "$VERSION" "$RUNNER_TEMP/SHA256SUMS.txt" "$RUNNER_TEMP/tap"
+          cd "$RUNNER_TEMP/tap"
+          if git diff --quiet; then
+            echo "El tap ya estaba en la $VERSION"
+            exit 0
+          fi
+          git -c user.name="Apolo" -c user.email="info@webcafeina.com" \
+            commit -qam "Apolo $VERSION"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/tap -o IdentitiesOnly=yes" git push -q origin HEAD:main
+          echo "Tap en la $VERSION"
+      - name: Fuera la clave
+        if: always()
+        run: rm -f ~/.ssh/tap

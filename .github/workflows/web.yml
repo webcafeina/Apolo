@@ -9,7 +9,7 @@
 # Con la web van los repositorios APT y RPM de Linux (ADR 0030): /apt y /rpm, con los .deb y .rpm
 # de la última versión publicada, firmados con la clave de los paquetes (PAQUETES_GPG_CLAVE, la
 # misma que firma el .rpm). Los paquetes no se guardan en git: se bajan de la Release al desplegar,
-# y por eso se despliega también al publicar una versión.
+# y por eso se despliega también al publicar una versión. Y en /aur, el PKGBUILD de apolo-bin.
 name: Web
 
 on:
@@ -49,6 +49,10 @@ jobs:
           # Las versiones de antes de la 0.16.0 no tienen .rpm.
           gh release download "$etiqueta" -p '*.rpm' -D web/rpm || true
           ls -la web/apt/pool/main web/rpm
+          # El PKGBUILD de apolo-bin, relleno con esta versión, para Arch mientras el AUR no
+          # admite cuentas nuevas (trampas.md): `makepkg -si`.
+          gh release download "$etiqueta" -p SHA256SUMS.txt -D "$RUNNER_TEMP"
+          python3 -I empaquetado/aur/rellenar.py "${etiqueta#v}" "$RUNNER_TEMP/SHA256SUMS.txt" web/aur/PKGBUILD
       - name: La clave de los paquetes
         env:
           CLAVE: ${{ secrets.PAQUETES_GPG_CLAVE }}

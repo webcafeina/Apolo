@@ -62,12 +62,14 @@ sudo dnf install apolo
 sudo zypper addrepo https://apolo.webcafeina.com/rpm/apolo.repo
 sudo zypper install apolo
 
-# Arch, Manjaro, EndeavourOS, CachyOS (AUR)
-yay -S apolo-bin
+# Arch, Manjaro, EndeavourOS, CachyOS (pronto en el AUR, como apolo-bin)
+mkdir apolo && cd apolo
+curl -fsSLO https://apolo.webcafeina.com/aur/PKGBUILD
+makepkg -si
 ```
 
 **Se actualiza sola**: cuando hay una versión nueva, Apolo lo avisa y se instala con un clic. Con
-el paquete del AUR, se actualiza con el gestor de paquetes.
+el PKGBUILD de Arch, se actualiza volviendo a construirlo (y, cuando esté en el AUR, con `yay`).
 
 ### La primera vez
 

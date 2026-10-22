@@ -81,6 +81,18 @@
 }
 :root[data-sistema="linux"] .barra-sistema-simulada .botones-gnome { position: absolute; right: 6px; top: 6px; }
 
+/* Con la barra propia en Wayland, la ventana es transparente y GTK dibuja su
+   marco (sombra y radio 15, como libadwaita; src-tauri/src/ventana_linux.rs).
+   El radio del marco no recorta la página: la recorta la interfaz, con el
+   mismo radio. Maximizada o en mosaico, rectas (`data-esquinas`). */
+:root[data-sistema="linux"][data-esquinas="redondas"],
+:root[data-sistema="linux"][data-esquinas="redondas"] body { background: transparent; }
+:root[data-sistema="linux"][data-esquinas="redondas"] .ventana {
+  border-radius: 15px;
+  overflow: hidden;
+  background: var(--lienzo);
+}
+
 /* ── La barra lateral ───────────────────────────────────────────────────── */
 
 /* Su cabecera de 46 con el nombre en el centro (Heading), y las filas de 36 de

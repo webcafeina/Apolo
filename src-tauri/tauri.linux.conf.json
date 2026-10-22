@@ -14,8 +14,8 @@
     ]
   },
   "bundle": {
-    "shortDescription": "Optimize images with the Squoosh engines",
-    "longDescription": "Apolo compresses images to WebP, AVIF, JPEG XL, MozJPEG and PNG with the same engines as Squoosh and cwebp, showing the result as you go.",
+    "shortDescription": "Optimiza fotos con los motores de Squoosh",
+    "longDescription": "Apolo convierte fotos a WebP, AVIF, JPEG XL, MozJPEG y PNG con los mismos motores que Squoosh y cwebp, viendo el resultado al momento.",
     "linux": {
       "deb": {
         "desktopTemplate": "../empaquetado/linux/apolo.desktop",

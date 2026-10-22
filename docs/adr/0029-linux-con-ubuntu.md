@@ -101,8 +101,23 @@ Tauri, MIT).
 En la prueba de la compilación de prueba en su máquina virtual, el cliente vio el `.deb` en el
 Centro de aplicaciones sin icono, con «Editor desconocido», licencia «unknown» y «?» en las tildes.
 El Centro de aplicaciones no lee esos datos de un `.deb` suelto (trampas.md). En
-`tauri.linux.conf.json`: la descripción del paquete en inglés (ASCII, sin «?»), el lanzador con su
-plantilla (`empaquetado/linux/apolo.desktop`, con `Comment[es]`) y un `metainfo.xml` de AppStream
+`tauri.linux.conf.json`: la descripción del paquete en español sin palabras con tilde (ASCII, sin
+«?»; el cliente la prefirió al inglés), el lanzador con su plantilla
+(`empaquetado/linux/apolo.desktop`, con `Comment[es]` con tildes y `Comment[en]`) y un `metainfo.xml` de AppStream
 (`empaquetado/linux/com.webcafeina.apolo.metainfo.xml`: desarrollador Webcafeína, GPL-3.0-or-later,
 resumen y descripción en inglés y español), que leen los catálogos con Apolo instalada. El icono, el
 editor y la licencia en esa pantalla, solo desde un repositorio propio (deuda.md).
+
+## Matiz del 2026-10-22: el marco de la ventana (sombra y esquinas)
+
+En la misma prueba, el cliente vio la ventana sin las esquinas redondeadas ni la sombra de las de
+Ubuntu. Sin decoraciones, GTK no dibuja el marco: ni sombra, ni radio, ni el borde exterior de
+redimensionado. En Wayland, tao pone de barra de título un `EventBox` vacío; `ventana_linux.rs`
+vuelve a decorar la ventana (`set_decorated(true)`, sin rehacerla) y GTK dibuja su marco alrededor de
+esa barra de 0 px, con un `CssProvider` como el de libadwaita (radio 15 en las cuatro esquinas y su
+sombra; sin radio ni sombra maximizada o a pantalla completa, y en mosaico solo el filo). El radio
+del marco no recorta el webview: la ventana es transparente y la interfaz redondea las suyas
+(`data-esquinas`), cuadrándolas cuando GTK avisa de que está maximizada o en mosaico
+(`ventana:esquinas`). En X11 no se hace (volvería la barra del servidor). **Sin verificar**: todo,
+hasta verlo en la máquina virtual (la transparencia con su gráfica, el borde de redimensionado, el
+mosaico).

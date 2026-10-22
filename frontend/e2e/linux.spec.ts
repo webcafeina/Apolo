@@ -96,3 +96,13 @@ test("en Linux: Ajustes en lista en tarjeta, y el interruptor de libadwaita guar
   await expect(page.getByRole("switch", { name: "Avisarme cuando haya una versión nueva" })).not.toBeChecked();
   await page.getByRole("switch", { name: "Avisarme cuando haya una versión nueva" }).check();
 });
+
+test("en Linux con el marco de GTK: la interfaz redondea sus esquinas como libadwaita", async ({ page }) => {
+  await page.goto("/?sistema=linux&barra=propia&esquinas=si");
+  await expect(page.locator("html")).toHaveAttribute("data-esquinas", "redondas");
+  expect(await page.locator(".ventana").evaluate((v) => getComputedStyle(v).borderRadius)).toBe("15px");
+  expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+  // Sin marco (X11, otros escritorios, la barra del sistema), rectas y con fondo.
+  await page.goto("/?sistema=linux&barra=sistema");
+  expect(await page.locator(".ventana").evaluate((v) => getComputedStyle(v).borderRadius)).toBe("0px");
+});

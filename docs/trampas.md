@@ -484,7 +484,18 @@ desconocido», licencia «unknown», pone un icono genérico y cambia las tildes
 PackageKit pone la licencia a «unknown» y lee la descripción sin UTF-8 (apt la pasa a ASCII con
 `UTF8ToCodeset`, que cambia lo que no sabe por «?»). Código de `ubuntu/app-center`
 (`local_deb_model.dart`, `app_title.dart`) e issues #120 y #1679. Lo único que se arregla desde el
-paquete son las tildes: la descripción del `control` en inglés, que es ASCII
-(`tauri.linux.conf.json`); el lanzador conserva el español con `Comment[es]` en su plantilla
-(`empaquetado/linux/apolo.desktop`). El icono, el editor y la licencia solo saldrían desde un
+paquete son las tildes: la descripción del `control` en español sin palabras con tilde (ASCII,
+que sobrevive; lo eligió el cliente frente al inglés), en `tauri.linux.conf.json`; el lanzador
+lleva la frase con sus tildes en `Comment[es]` y la inglesa en `Comment[en]` (plantilla
+`empaquetado/linux/apolo.desktop`). El icono, el editor y la licencia solo saldrían desde un
 repositorio con catálogo AppStream (PPA o snap). · 2026-10-22
+
+## Linux sin decoraciones: sin sombra ni esquinas redondeadas
+
+Con `decorations: false`, GTK3 no dibuja el marco de la ventana (sombra, radio y el borde exterior de
+redimensionado): `get_shadow_width()` sale sin sombra si la ventana no está decorada. La opción
+`shadow` de Tauri no hace nada en Linux. En Wayland, tao pone de barra un `EventBox` vacío, así que
+basta con `set_decorated(true)` después de crearla para tener el marco sin barra (con `set_titlebar`
+GTK desrealiza la ventana y puede romper el webview). El radio no recorta el webview: hacen falta la
+ventana transparente y el radio en la página. En X11, no (volvería la barra del servidor). ·
+2026-10-22

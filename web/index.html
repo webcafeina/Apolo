@@ -149,7 +149,7 @@
 claude mcp add --scope user apolo -- "/Applications/Apolo.app/Contents/MacOS/apolo-mcp"
 <span class="comentario"># Windows</span>
 claude mcp add --scope user apolo -- "%LOCALAPPDATA%\Apolo\apolo-mcp.exe"
-<span class="comentario"># Linux (.deb)</span>
+<span class="comentario"># Linux (.deb, .rpm y AUR)</span>
 claude mcp add --scope user apolo -- /usr/bin/apolo-mcp</pre>
         </div>
         <picture>
@@ -207,14 +207,14 @@ apolo medir foto.png foto.webp</pre>
               <td data-columna="mcpb"><a href="https://github.com/webcafeina/Apolo/releases/latest">.mcpb</a></td>
             </tr>
             <tr data-sistema="linux-x64">
-              <td class="sistema">Debian 12+ y Ubuntu 22.04+<br><span class="letra-chica">amd64</span></td>
-              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.deb · AppImage</a></td>
+              <td class="sistema">Linux<br><span class="letra-chica">Debian, Ubuntu, Fedora, openSUSE, Arch · amd64</span></td>
+              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.deb · .rpm · AppImage</a></td>
               <td data-columna="cli"><a href="https://github.com/webcafeina/Apolo/releases/latest">tar.gz</a></td>
               <td>—</td>
             </tr>
             <tr data-sistema="linux-arm64">
-              <td class="sistema">Debian 12+ y Ubuntu 22.04+<br><span class="letra-chica">arm64</span></td>
-              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.deb · AppImage</a></td>
+              <td class="sistema">Linux<br><span class="letra-chica">Debian, Ubuntu, Fedora, openSUSE, Arch · arm64</span></td>
+              <td data-columna="app"><a href="https://github.com/webcafeina/Apolo/releases/latest">.deb · .rpm · AppImage</a></td>
               <td data-columna="cli"><a href="https://github.com/webcafeina/Apolo/releases/latest">tar.gz</a></td>
               <td>—</td>
             </tr>
@@ -233,10 +233,30 @@ apolo medir foto.png foto.webp</pre>
           </div>
           <div class="tarjeta">
             <h3>Linux</h3>
-            <p>Con el paquete, <code>sudo apt install ./Apolo_X.Y.Z_amd64.deb</code>. La AppImage, con
-              <code>chmod +x</code> y abrirla.</p>
+            <p>Mejor con tu gestor de paquetes (<a href="#linux">abajo</a>). Si no, el paquete suelto:
+              <code>sudo apt install ./Apolo_X.Y.Z_amd64.deb</code> o <code>sudo dnf install ./Apolo-X.Y.Z-1.x86_64.rpm</code>.
+              La AppImage vale para cualquier distribución: <code>chmod +x</code> y abrirla.</p>
           </div>
         </div>
+        <h3 id="linux">Linux, con tu gestor de paquetes</h3>
+        <p>Apolo se instala y se actualiza con los de tu sistema. Los repositorios están firmados con
+          <a href="apolo.asc">la clave de Apolo</a>.</p>
+        <pre><span class="comentario"># Debian y Ubuntu</span>
+sudo install -dm755 /etc/apt/keyrings
+sudo curl -fsSLo /etc/apt/keyrings/apolo.asc https://apolo.webcafeina.com/apolo.asc
+sudo curl -fsSLo /etc/apt/sources.list.d/apolo.sources https://apolo.webcafeina.com/apt/apolo.sources
+sudo apt update &amp;&amp; sudo apt install apolo
+
+<span class="comentario"># Fedora</span>
+sudo curl -fsSLo /etc/yum.repos.d/apolo.repo https://apolo.webcafeina.com/rpm/apolo.repo
+sudo dnf install apolo
+
+<span class="comentario"># openSUSE</span>
+sudo zypper addrepo https://apolo.webcafeina.com/rpm/apolo.repo
+sudo zypper install apolo
+
+<span class="comentario"># Arch, Manjaro, EndeavourOS, CachyOS (AUR)</span>
+yay -S apolo-bin</pre>
         <p class="letra-chica"><a href="https://github.com/webcafeina/Apolo/releases/latest">Todas las versiones en GitHub</a>,
           con <code>SHA256SUMS.txt</code> para comprobar cada fichero.</p>
       </div>

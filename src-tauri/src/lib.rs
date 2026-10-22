@@ -78,6 +78,11 @@ struct Plataforma {
     /// esquinas (hay marco de GTK y la ventana está suelta). Cambia con el
     /// evento `ventana:esquinas`.
     esquinas: bool,
+    /// En Linux, el gestor de paquetes que lleva Apolo, si no es el suyo: el
+    /// paquete del AUR deja `pacman` en `/usr/share/apolo/gestor` (ADR 0030).
+    /// Entonces no se actualiza sola: el binario es el del .deb, y su
+    /// actualizador haría `dpkg -i` en un Arch.
+    gestor: Option<String>,
 }
 
 #[tauri::command]
@@ -94,7 +99,18 @@ fn plataforma() -> Plataforma {
         barra_propia: barra_propia(),
         botones: botones_ventana(),
         esquinas: esquinas(),
+        gestor: gestor(),
     }
+}
+
+fn gestor() -> Option<String> {
+    if !cfg!(target_os = "linux") {
+        return None;
+    }
+    std::fs::read_to_string("/usr/share/apolo/gestor")
+        .ok()
+        .map(|g| g.trim().to_string())
+        .filter(|g| !g.is_empty())
 }
 
 fn esquinas() -> bool {

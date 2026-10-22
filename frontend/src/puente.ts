@@ -140,6 +140,9 @@ export interface Plataforma {
   /** En Linux con la barra propia en Wayland, si la interfaz redondea sus esquinas (hay marco de
    *  GTK y la ventana está suelta, ADR 0029). Cambia con `alCambiarEsquinas`. */
   esquinas?: boolean;
+  /** En Linux, el gestor de paquetes que lleva Apolo, si no es el suyo («pacman», con el paquete
+   *  del AUR): entonces no se actualiza sola (ADR 0030). En el navegador, `?gestor=pacman`. */
+  gestor?: string | null;
 }
 
 // En el navegador de desarrollo, el aspecto de otro sistema se puede pedir en la URL, como la
@@ -148,8 +151,9 @@ export interface Plataforma {
 function simulada(): Plataforma {
   const q = new URLSearchParams(window.location.search);
   const sistema = q.get("sistema");
+  const gestor = q.get("gestor");
   if (!sistema || !["windows", "macos", "linux"].includes(sistema)) {
-    return { sistema: "web", vidrio: false, traslocada: false };
+    return { sistema: "web", vidrio: false, traslocada: false, gestor };
   }
   return {
     sistema,
@@ -161,6 +165,7 @@ function simulada(): Plataforma {
     barra_propia: q.get("barra") === "propia",
     botones: q.get("botones") ?? ":minimize,maximize,close",
     esquinas: q.get("esquinas") === "si",
+    gestor,
   };
 }
 

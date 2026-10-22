@@ -15,10 +15,13 @@ const texto = (e: unknown) => (e && typeof e === "object" && "message" in e ? St
 export function BandaNovedad({
   novedad,
   traslocada,
+  gestor,
   alCerrar,
 }: {
   novedad: Novedad;
   traslocada: boolean;
+  /** Con un gestor de paquetes que no es el de Apolo (el AUR), se actualiza con él (ADR 0030). */
+  gestor: string | null;
   alCerrar: () => void;
 }) {
   const { t } = useTranslation();
@@ -86,6 +89,7 @@ export function BandaNovedad({
           <span>
             {t("novedad.hay")} <strong>{t("novedad.nombre", { version })}</strong>
             {traslocada && <span className="apagado"> · {t("novedad.traslocada")}</span>}
+            {gestor && <span className="apagado"> · {t("novedad.gestor", { gestor })}</span>}
           </span>
         )}
         {paso.es === "bajando" && (
@@ -103,7 +107,7 @@ export function BandaNovedad({
         )}
         {paso.es === "aviso" && (
           <>
-            {!traslocada && (
+            {!traslocada && !gestor && (
               <button className="principal" onClick={descargar}>
                 {t("novedad.descargar")}
               </button>

@@ -29,6 +29,7 @@ export function App() {
   const [fallo, setFallo] = useState<string | null>(null);
   const [novedad, setNovedad] = useState<actualizar.Novedad | null>(null);
   const [traslocada, setTraslocada] = useState(false);
+  const [gestor, setGestor] = useState<string | null>(null);
   const [simulado, setSimulado] = useState(false);
   const [disposicion, setDisposicion] = useState(":minimize,maximize,close");
   const windows = esWindows();
@@ -44,6 +45,7 @@ export function App() {
     puente.plataforma().then(
       (p) => {
         setTraslocada(p.traslocada);
+        setGestor(p.gestor ?? null);
         setSimulado(!!p.simulado);
         if (p.botones) setDisposicion(p.botones);
       },
@@ -177,7 +179,7 @@ export function App() {
         )}
       </aside>
       <main className="zona">
-        {novedad && <BandaNovedad novedad={novedad} traslocada={traslocada} alCerrar={() => setNovedad(null)} />}
+        {novedad && <BandaNovedad novedad={novedad} traslocada={traslocada} gestor={gestor} alCerrar={() => setNovedad(null)} />}
         {fallo && (
           <p className="error mensaje" role="alert">
             {t("app.sinServicio")} {fallo}

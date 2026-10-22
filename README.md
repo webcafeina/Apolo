@@ -29,8 +29,11 @@ sistema en esta tabla:
 | **macOS 11+**, Apple Silicon e Intel | `Apolo_X.Y.Z_universal.dmg` | `apolo-cli-X.Y.Z-macos-universal.tar.gz` | `Apolo-X.Y.Z-macos.mcpb` |
 | **Windows 10/11**, x64 | `Apolo_X.Y.Z_x64-setup.exe` | `apolo-cli-X.Y.Z-windows-x64.zip` | `Apolo-X.Y.Z-windows-x64.mcpb` |
 | **Windows 10/11**, ARM64 | `Apolo_X.Y.Z_arm64-setup.exe` | `apolo-cli-X.Y.Z-windows-arm64.zip` | `Apolo-X.Y.Z-windows-arm64.mcpb` |
-| **Debian 12+ / Ubuntu 22.04+**, amd64 | `Apolo_X.Y.Z_amd64.deb` o `.AppImage` | `apolo-cli-X.Y.Z-linux-amd64.tar.gz` | — |
-| **Debian 12+ / Ubuntu 22.04+**, arm64 | `Apolo_X.Y.Z_arm64.deb` o `.AppImage` | `apolo-cli-X.Y.Z-linux-arm64.tar.gz` | — |
+| **Linux**, amd64 | `Apolo_X.Y.Z_amd64.deb`, `Apolo-X.Y.Z-1.x86_64.rpm` o `.AppImage` | `apolo-cli-X.Y.Z-linux-amd64.tar.gz` | — |
+| **Linux**, arm64 | `Apolo_X.Y.Z_arm64.deb`, `Apolo-X.Y.Z-1.aarch64.rpm` o `.AppImage` | `apolo-cli-X.Y.Z-linux-arm64.tar.gz` | — |
+
+El `.deb` es para Debian 12+ y Ubuntu 22.04+; el `.rpm`, para Fedora y openSUSE; la AppImage, para
+cualquier distribución.
 
 `SHA256SUMS.txt` tiene la suma de cada fichero.
 
@@ -41,7 +44,30 @@ brew install webcafeina/apolo/apolo          # la línea de órdenes y apolo-mcp
 brew install --cask webcafeina/apolo/apolo   # la aplicación (macOS)
 ```
 
-**Se actualiza sola**: cuando hay una versión nueva, Apolo lo avisa y se instala con un clic.
+**En Linux, con tu gestor de paquetes** (los repositorios están firmados con
+[la clave de Apolo](https://apolo.webcafeina.com/apolo.asc)):
+
+```sh
+# Debian y Ubuntu
+sudo install -dm755 /etc/apt/keyrings
+sudo curl -fsSLo /etc/apt/keyrings/apolo.asc https://apolo.webcafeina.com/apolo.asc
+sudo curl -fsSLo /etc/apt/sources.list.d/apolo.sources https://apolo.webcafeina.com/apt/apolo.sources
+sudo apt update && sudo apt install apolo
+
+# Fedora
+sudo curl -fsSLo /etc/yum.repos.d/apolo.repo https://apolo.webcafeina.com/rpm/apolo.repo
+sudo dnf install apolo
+
+# openSUSE
+sudo zypper addrepo https://apolo.webcafeina.com/rpm/apolo.repo
+sudo zypper install apolo
+
+# Arch, Manjaro, EndeavourOS, CachyOS (AUR)
+yay -S apolo-bin
+```
+
+**Se actualiza sola**: cuando hay una versión nueva, Apolo lo avisa y se instala con un clic. Con
+el paquete del AUR, se actualiza con el gestor de paquetes.
 
 ### La primera vez
 
@@ -51,7 +77,8 @@ Los instaladores **no están firmados**, así que cada sistema avisa la primera 
   igualmente». Si dice que está dañada: `xattr -dr com.apple.quarantine /Applications/Apolo.app`.
 - **Windows**: en SmartScreen, «Más información» › «Ejecutar de todos modos».
 - **Linux**:
-  - con el paquete: `sudo apt install ./Apolo_X.Y.Z_amd64.deb`;
+  - con el paquete suelto: `sudo apt install ./Apolo_X.Y.Z_amd64.deb` o
+    `sudo dnf install ./Apolo-X.Y.Z-1.x86_64.rpm`;
   - con la AppImage: `chmod +x` y ábrela.
 
 ## Qué es
@@ -99,7 +126,7 @@ Para Claude Code, según el sistema:
 claude mcp add --scope user apolo -- "/Applications/Apolo.app/Contents/MacOS/apolo-mcp"
 # Windows
 claude mcp add --scope user apolo -- "%LOCALAPPDATA%\Apolo\apolo-mcp.exe"
-# Linux (.deb)
+# Linux (.deb, .rpm y AUR)
 claude mcp add --scope user apolo -- /usr/bin/apolo-mcp
 ```
 

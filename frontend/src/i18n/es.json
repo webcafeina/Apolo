@@ -630,6 +630,7 @@
     "instalar": "Instalar y reiniciar",
     "instalando": "Instalando Apolo {{version}}. La ventana se cerrará y volverá a abrirse…",
     "traslocada": "Para actualizarse sola, Apolo tiene que estar en Aplicaciones: arrástrala allí y ábrela desde esa carpeta",
+    "gestor": "Apolo se actualiza con tu gestor de paquetes ({{gestor}})",
     "errorDescarga": "No se pudo descargar la versión nueva: {{detalle}}",
     "errorInstalar": "No se pudo instalar la versión nueva: {{detalle}}"
   },

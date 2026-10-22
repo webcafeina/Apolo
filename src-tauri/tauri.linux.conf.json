@@ -22,6 +22,14 @@
         "files": {
           "/usr/share/metainfo/com.webcafeina.apolo.metainfo.xml": "../empaquetado/linux/com.webcafeina.apolo.metainfo.xml"
         }
+      },
+      "rpm": {
+        "release": "1",
+        "depends": ["webkit2gtk4.1", "gtk3"],
+        "desktopTemplate": "../empaquetado/linux/apolo.desktop",
+        "files": {
+          "/usr/share/metainfo/com.webcafeina.apolo.metainfo.xml": "../empaquetado/linux/com.webcafeina.apolo.metainfo.xml"
+        }
       }
     }
   }

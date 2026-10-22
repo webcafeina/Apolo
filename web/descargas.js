@@ -10,8 +10,8 @@ const FICHEROS = {
   "macos": { app: ["_universal.dmg"], cli: ["-macos-universal.tar.gz"], mcpb: ["-macos.mcpb"] },
   "windows-x64": { app: ["_x64-setup.exe"], cli: ["-windows-x64.zip"], mcpb: ["-windows-x64.mcpb"] },
   "windows-arm64": { app: ["_arm64-setup.exe"], cli: ["-windows-arm64.zip"], mcpb: ["-windows-arm64.mcpb"] },
-  "linux-x64": { app: ["_amd64.deb", "_amd64.AppImage"], cli: ["-linux-amd64.tar.gz"], mcpb: [] },
-  "linux-arm64": { app: ["_arm64.deb", "_aarch64.AppImage"], cli: ["-linux-arm64.tar.gz"], mcpb: [] },
+  "linux-x64": { app: ["_amd64.deb", ".x86_64.rpm", "_amd64.AppImage"], cli: ["-linux-amd64.tar.gz"], mcpb: [] },
+  "linux-arm64": { app: ["_arm64.deb", ".aarch64.rpm", "_aarch64.AppImage"], cli: ["-linux-arm64.tar.gz"], mcpb: [] },
 };
 
 // El sistema de quien visita. La arquitectura de Windows solo la dicen los navegadores Chromium
@@ -78,7 +78,11 @@ async function rellenar() {
     e.textContent = version.tag_name?.replace(/^v/, "") ?? e.textContent;
   });
 
-  if (boton && tuyo) {
+  // En Linux no se sabe la distribución: el botón lleva a los gestores de paquetes (ADR 0030).
+  if (boton && tuyo?.startsWith("linux")) {
+    boton.href = "#linux";
+    if (boton.dataset.nombreLinuxX64) boton.querySelector("span").textContent = boton.dataset.nombreLinuxX64;
+  } else if (boton && tuyo) {
     const [app] = busca(FICHEROS[tuyo].app);
     if (app) {
       boton.href = app.browser_download_url;

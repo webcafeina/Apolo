@@ -36,6 +36,16 @@ test("«Ahora no» quita la banda", async ({ page }) => {
   await expect(banda).toHaveCount(0);
 });
 
+test("con el paquete del AUR, la banda remite al gestor de paquetes y no descarga", async ({ page }) => {
+  // El PKGBUILD deja `pacman` en /usr/share/apolo/gestor (ADR 0030); aquí, `?gestor=pacman`.
+  await buscarAhora(page, "/?novedad=9.9.9&gestor=pacman");
+  const banda = page.getByTestId("novedad");
+  await expect(banda).toContainText("Hay una versión nueva: Apolo 9.9.9");
+  await expect(banda).toContainText("Apolo se actualiza con tu gestor de paquetes (pacman)");
+  await expect(banda.getByRole("button", { name: "Descargar" })).toHaveCount(0);
+  await expect(banda.getByRole("button", { name: "Ahora no" })).toBeVisible();
+});
+
 test("sin versión nueva lo dice, y la casilla se recuerda", async ({ page }, info) => {
   // La carpeta de ajustes es la misma para los dos temas, que corren a la vez.
   test.skip(info.project.name !== "claro", "la casilla se prueba en un solo tema");

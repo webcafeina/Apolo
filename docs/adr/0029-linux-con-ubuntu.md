@@ -95,3 +95,14 @@ Tauri, MIT).
   compila CI. Nada en un Ubuntu de verdad todavía: la prueba guiada en la máquina virtual va con
   una compilación de prueba. Otros escritorios, X11, la AppImage con el aspecto nuevo y las
   pantallas táctiles, sin ver.
+
+## Matiz del 2026-10-22: el paquete en el Centro de aplicaciones
+
+En la prueba de la compilación de prueba en su máquina virtual, el cliente vio el `.deb` en el
+Centro de aplicaciones sin icono, con «Editor desconocido», licencia «unknown» y «?» en las tildes.
+El Centro de aplicaciones no lee esos datos de un `.deb` suelto (trampas.md). En
+`tauri.linux.conf.json`: la descripción del paquete en inglés (ASCII, sin «?»), el lanzador con su
+plantilla (`empaquetado/linux/apolo.desktop`, con `Comment[es]`) y un `metainfo.xml` de AppStream
+(`empaquetado/linux/com.webcafeina.apolo.metainfo.xml`: desarrollador Webcafeína, GPL-3.0-or-later,
+resumen y descripción en inglés y español), que leen los catálogos con Apolo instalada. El icono, el
+editor y la licencia en esa pantalla, solo desde un repositorio propio (deuda.md).

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Los datos de Apolo para los catálogos de aplicaciones de Linux (AppStream), dentro del .deb
+     (src-tauri/tauri.linux.conf.json, ADR 0029). Los leen GNOME Software, la búsqueda del
+     escritorio y el Centro de aplicaciones de Ubuntu con Apolo ya instalada; la pantalla de
+     instalar un .deb suelto del Centro de aplicaciones no los lee (trampas.md). -->
+<component type="desktop-application">
+  <id>com.webcafeina.apolo</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Apolo</name>
+  <summary>Optimize images with the Squoosh engines</summary>
+  <summary xml:lang="es">Optimiza imágenes con los motores de Squoosh</summary>
+  <developer id="com.webcafeina">
+    <name>Webcafeína</name>
+  </developer>
+  <description>
+    <p>Apolo compresses images to WebP, AVIF, JPEG XL, MozJPEG and PNG with the same engines as Squoosh and cwebp, showing the result as you go.</p>
+    <p xml:lang="es">Apolo comprime imágenes a WebP, AVIF, JPEG XL, MozJPEG y PNG con los mismos motores que Squoosh y cwebp, viendo el resultado al momento.</p>
+  </description>
+  <launchable type="desktop-id">Apolo.desktop</launchable>
+  <icon type="stock">apolo-app</icon>
+  <url type="homepage">https://apolo.webcafeina.com</url>
+  <url type="bugtracker">https://github.com/webcafeina/Apolo/issues</url>
+  <url type="vcs-browser">https://github.com/webcafeina/Apolo</url>
+  <categories>
+    <category>Graphics</category>
+  </categories>
+  <content_rating type="oars-1.1"/>
+</component>

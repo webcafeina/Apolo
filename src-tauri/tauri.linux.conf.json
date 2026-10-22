@@ -12,5 +12,17 @@
         "create": false
       }
     ]
+  },
+  "bundle": {
+    "shortDescription": "Optimize images with the Squoosh engines",
+    "longDescription": "Apolo compresses images to WebP, AVIF, JPEG XL, MozJPEG and PNG with the same engines as Squoosh and cwebp, showing the result as you go.",
+    "linux": {
+      "deb": {
+        "desktopTemplate": "../empaquetado/linux/apolo.desktop",
+        "files": {
+          "/usr/share/metainfo/com.webcafeina.apolo.metainfo.xml": "../empaquetado/linux/com.webcafeina.apolo.metainfo.xml"
+        }
+      }
+    }
   }
 }

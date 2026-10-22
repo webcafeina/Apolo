@@ -124,17 +124,10 @@ pub fn crear(app: &tauri::App) -> tauri::Result<()> {
     // compilación de prueba que vio el cliente (el plan B): sin sombra y con
     // las esquinas rectas, pero sin transparencia. Sin transparencia no hay
     // marco posible: la sombra de GTK necesita una ventana con alfa.
+    // Los huecos al repintar que vio el cliente en su máquina virtual no son
+    // del marco: salen igual sin él y con la primera compilación de prueba
+    // (trampas.md).
     let marco = propia && wayland && std::env::var_os("APOLO_ESQUINAS_RECTAS").is_none();
-    // Con la ventana transparente, WebKitGTK 2.52 pintando por GPU dejaba
-    // huecos al repintar: un rectángulo transparente en la esquina de arriba
-    // a la izquierda, del tamaño de lo repintado (lo vio el cliente; ADR
-    // 0029, trampas.md). Pintando la página por CPU (la composición sigue por
-    // GPU) no debería. Si quien lo arranca ya la ha puesto, se respeta.
-    if marco && std::env::var_os("WEBKIT_SKIA_ENABLE_CPU_RENDERING").is_none() {
-        // SAFETY: `setup` corre en el hilo principal antes de que exista el
-        // webview ni otro hilo que lea el entorno.
-        unsafe { std::env::set_var("WEBKIT_SKIA_ENABLE_CPU_RENDERING", "1") };
-    }
     let ventana = WebviewWindowBuilder::from_config(app.handle(), &config)?
         .decorations(!propia)
         .transparent(marco)

@@ -500,17 +500,16 @@ GTK desrealiza la ventana y puede romper el webview). El radio no recorta el web
 ventana transparente y el radio en la página. En X11, no (volvería la barra del servidor). ·
 2026-10-22
 
-## Linux con la ventana transparente: huecos en la esquina de arriba a la izquierda
+## Linux en la máquina virtual: huecos en la esquina de arriba a la izquierda
 
-Con la ventana transparente (para redondear las esquinas, ADR 0029), en la máquina virtual Ubuntu
-26.10 ARM64 salían huecos por los que se veía el escritorio, siempre anclados en la esquina de
-arriba a la izquierda y del tamaño de lo que se acababa de repintar (el botón de la barra lateral al
-moverse, la fila elegida al cambiar de sección). Opaca, no pasa. No hay un fallo conocido que
-encaje (WebKitGTK 2.52.6): lo más probable es el pintado por GPU de la página con fondo transparente,
-que limpia la zona repintada con el desplazamiento mal puesto. Las preferencias de daño de WebKit no
-son (en GTK3 el proceso de la interfaz invalida el widget entero). Se prueba pintando la página por
-CPU (`WEBKIT_SKIA_ENABLE_CPU_RENDERING=1`, que `ventana_linux.rs` pone si no está); si no basta,
-`WEBKIT_DISABLE_COMPOSITING_MODE=1`; y `APOLO_ESQUINAS_RECTAS=1` vuelve a la ventana sin marco. Para
-ver dónde se pierde el desplazamiento, `WEBKIT_SHOW_DAMAGE=1`. Y el código de la ventana de Linux
-solo lo revisa clippy en CI: en el VPS no hay GTK (con la v0.15.0, un `if` anidado que pedía
-juntarse). · 2026-10-22
+En la máquina virtual del cliente (VMPal, Ubuntu 26.10 ARM64, WebKitGTK 2.52.6) salen huecos al
+repintar, siempre anclados en la esquina de arriba a la izquierda y del tamaño de lo repintado (el
+botón de la barra lateral al moverse, la fila elegida al cambiar de sección). Con la ventana
+transparente se ve el escritorio por ellos; opaca, salen en negro o en gris oscuro. **No son del
+marco ni de la transparencia, ni de nuestro código**: salen igual con `APOLO_ESQUINAS_RECTAS=1` y con
+la primera compilación de prueba, de antes del marco; la primera vez no se vieron porque en gris
+oscuro casi no se distinguen. Tampoco los quitan `WEBKIT_SKIA_ENABLE_CPU_RENDERING=1`,
+`WEBKIT_DISABLE_COMPOSITING_MODE=1` ni `WEBKIT_DISABLE_DMABUF_RENDERER=1`. Queda la gráfica virtual
+de la máquina con WebKitGTK; en un Linux de verdad, sin ver (deuda.md). Para ver dónde se pierde el
+desplazamiento, `WEBKIT_SHOW_DAMAGE=1`. Y el código de la ventana de Linux solo lo revisa clippy en
+CI: en el VPS no hay GTK (con la v0.15.0, un `if` anidado que pedía juntarse). · 2026-10-22

@@ -36,6 +36,12 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       capturas el 2026-10-22. Probada en la máquina virtual Ubuntu 26.10 (bien, salvo huecos al
       repintar que son de la máquina virtual: deuda.md). **Publicada el 2026-10-22.** Falta verla
       actualizada en el Mac (el interruptor) y en Windows (el editor);
+    - ~~**v0.16.0, Linux más allá de Debian** ([ADR 0030](adr/0030-linux-mas-alla-de-debian.md))~~:
+      `.rpm`, repositorios APT y RPM, PKGBUILD para Arch. Publicada el 2026-10-22. Falta la cuenta del
+      AUR (registro cerrado) y ver el rpm actualizarse desde la banda;
+    - **v0.17.0, KDE con Breeze** (ADR 0031, plan en `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`,
+      fase B): medidas y colores de Breeze, paletas `kde_*`, `sistema-kde.css`, iconos de Breeze, la
+      barra sobre capturas; prueba en Kubuntu y Fedora KDE;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

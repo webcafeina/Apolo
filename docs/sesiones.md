@@ -4,6 +4,24 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-22 (tarde) · Linux más allá de Debian (v0.16.0)
+
+- v0.15.0 revisada y publicada (borrador bajado a `~/.cache/apolo-revision/`: en `/tmp` no cabe).
+- Planteado en modo plan con el cliente: otras distribuciones (como Warp) y adaptar la interfaz a
+  KDE. Dos agentes (empaquetado actual e investigación fuera) y dos rondas de preguntas. Decidido:
+  RPM, AUR y repositorios APT/RPM en apolo.webcafeina.com (v0.16.0); KDE con Breeze y la barra
+  sobre capturas (v0.17.0). CachyOS no existe para ARM: Arch Linux ARM.
+- Hecho (ADR 0030): clave GPG (RSA 4096) y SSH del AUR, en `~/.config/apolo/claves/` y como
+  secretos; `rpm` en los objetivos y en `latest.json`; `web.yml` con `/apt`, `/rpm` y `/aur`; el
+  PKGBUILD y `aur.yml`; `gestor` en `plataforma` y la banda; humo en Fedora y Arch; web y README.
+  El entorno de Pages admite etiquetas `v*` (trampa). **El AUR cerró el registro**: `aur.yml`
+  desactivado y el PKGBUILD en la web.
+- Verificado: compilación de prueba 39816771619 en verde; el cliente, en su Fedora ARM (GNOME), «va
+  perfecto» y sin los huecos de la VM de Ubuntu. v0.16.0 revisada y publicada (19:03 UTC).
+- Abierto: el rpm actualizándose desde la banda, la cuenta del AUR, openSUSE; la fase B (KDE).
+
+---
+
 ## 2026-10-22 · Linux con Ubuntu 26.10 (v0.15.0)
 
 - El cliente preguntó por qué el interruptor de macOS no hacía la burbuja de vidrio (Tailscale sí)

@@ -74,6 +74,10 @@ struct Plataforma {
     barra_propia: bool,
     /// En Linux, los botones de la ventana, como `gtk-decoration-layout`.
     botones: String,
+    /// En Linux con la barra propia en Wayland, si la interfaz redondea sus
+    /// esquinas (hay marco de GTK y la ventana está suelta). Cambia con el
+    /// evento `ventana:esquinas`.
+    esquinas: bool,
 }
 
 #[tauri::command]
@@ -89,6 +93,18 @@ fn plataforma() -> Plataforma {
         vidrio_controles: hay_vidrio_controles(),
         barra_propia: barra_propia(),
         botones: botones_ventana(),
+        esquinas: esquinas(),
+    }
+}
+
+fn esquinas() -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        ventana_linux::esquinas()
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        false
     }
 }
 

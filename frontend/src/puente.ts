@@ -137,6 +137,9 @@ export interface Plataforma {
   /** En Linux, la disposición de los botones de la ventana, como `gtk-decoration-layout`
    *  («appmenu:minimize,maximize,close»: a la izquierda de los dos puntos, a la derecha después). */
   botones?: string;
+  /** En Linux con la barra propia en Wayland, si la interfaz redondea sus esquinas (hay marco de
+   *  GTK y la ventana está suelta, ADR 0029). Cambia con `alCambiarEsquinas`. */
+  esquinas?: boolean;
 }
 
 // En el navegador de desarrollo, el aspecto de otro sistema se puede pedir en la URL, como la
@@ -157,6 +160,7 @@ function simulada(): Plataforma {
     // y `?botones=` para ponerlos a la izquierda (`close,minimize,maximize:`).
     barra_propia: q.get("barra") === "propia",
     botones: q.get("botones") ?? ":minimize,maximize,close",
+    esquinas: q.get("esquinas") === "si",
   };
 }
 
@@ -471,4 +475,12 @@ export async function alBotonMaximizar(f: (estado: "encima" | "pulsado" | "fuera
   if (!enTauri()) return () => {};
   const { listen } = await import("@tauri-apps/api/event");
   return listen<"encima" | "pulsado" | "fuera">("ventana:maximizar", (e) => f(e.payload));
+}
+
+/** En Linux, cuando la ventana se maximiza o se pone en mosaico (esquinas cuadradas) o se suelta
+ *  (redondeadas): lo avisa src-tauri/src/ventana_linux.rs. */
+export async function alCambiarEsquinas(f: (redondas: boolean) => void): Promise<() => void> {
+  if (!enTauri()) return () => {};
+  const { listen } = await import("@tauri-apps/api/event");
+  return listen<boolean>("ventana:esquinas", (e) => f(e.payload));
 }

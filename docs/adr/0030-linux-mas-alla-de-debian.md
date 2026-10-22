@@ -102,6 +102,7 @@ publicada, y volver a `yay -S apolo-bin` en la web y el README.
 - **v0.16.0 publicada** (2026-10-22): `latest.json` con 16 entradas (`linux-{x86_64,aarch64}-rpm`
   al `.rpm`), los dos `.rpm` con firma, humo de Fedora y Arch en verde; `web.yml` al publicar montó
   el repositorio RPM (`repomd.xml.asc` válido contra `apolo.asc`), el APT y el PKGBUILD en 0.16.0.
-- **No verificado**: las entradas `-rpm` de `latest.json` y la actualización del rpm desde la banda
-  (con la v0.16.0), el repositorio RPM (sale con la v0.16.0), el repositorio APT en una máquina,
+- **El rpm se actualiza desde la banda** (2026-10-22): en la Fedora ARM del cliente, de la 0.15.0
+  de la compilación de prueba a la 0.16.0, con «Descargar» e «Instalar y reiniciar».
+- **No verificado**: el repositorio RPM (sale con la v0.16.0), el repositorio APT en una máquina,
   Arch Linux ARM y el AUR (registro cerrado). openSUSE, sin máquina.

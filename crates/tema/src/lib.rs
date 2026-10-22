@@ -434,9 +434,98 @@ pub fn linux_oscuro() -> Tema {
     }
 }
 
+const VERDE_BREEZE: Rgb = Rgb::hex(0x27ae60);
+const NARANJA_BREEZE: Rgb = Rgb::hex(0xf67400);
+const ROJO_BREEZE: Rgb = Rgb::hex(0xda4453);
+
+/// Linux con KDE Plasma (ADR 0031), con los colores de Breeze
+/// (`BreezeLight.colors`): ventana `#eff0f1`, vistas y barra lateral en
+/// blanco, cabecera `#dee0e2`, texto `#232629`, y los bordes y separadores
+/// como los calcula Breeze, el texto al 20 % sobre la ventana (`#c6c8c9`). El
+/// acento, el oro en vez del azul `#3daee9`.
+pub fn kde_claro() -> Tema {
+    // La cabecera es la superficie más oscura.
+    let peor = Rgb::hex(0xdee0e2);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
+
+    Tema {
+        nombre: "kde-claro",
+        oscuro: false,
+        lienzo: Rgb::hex(0xeff0f1),
+        suave: Rgb::hex(0xe3e5e7),
+        tarjeta: Rgb::hex(0xffffff),
+        elevada: peor,
+        filete: Rgb::hex(0xc6c8c9),
+        filete_fuerte: contraste::acento_legible(Rgb::hex(0x8e9396), peor, AA_GRANDE),
+        tinta: Rgb::hex(0x232629),
+        cuerpo: Rgb::hex(0x232629),
+        apagado: contraste::acento_legible(Rgb::hex(0x707d8a), peor, AA_NORMAL),
+        relleno,
+        relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        sobre_acento: PIEDRA,
+        acento: PIEDRA,
+        anillo: (ORO, 50),
+        relleno_tenue: (ORO, 18),
+        barra: Rgb::hex(0xffffff),
+        // Con el puntero encima, la fila de la barra lateral se tiñe del
+        // acento, como en Breeze (aquí el oro al 20 % sobre blanco).
+        barra_encima: Rgb::hex(0xfff4d8),
+        campo: Rgb::hex(0xffffff),
+        boton: Rgb::hex(0xfcfcfc),
+        boton_encima: Rgb::hex(0xe1e1e2),
+        exito: contraste::acento_legible(VERDE_BREEZE, peor, AA_NORMAL),
+        aviso: contraste::acento_legible(NARANJA_BREEZE, peor, AA_NORMAL),
+        error: contraste::acento_legible(ROJO_BREEZE, peor, AA_NORMAL),
+        damero_a: Rgb::hex(0xffffff),
+        damero_b: Rgb::hex(0xe6e6e6),
+    }
+}
+
+/// El modo oscuro de KDE (ADR 0031), con `BreezeDark.colors`: ventana
+/// `#202326`, vistas `#141618`, cabecera y botones `#292c30`, texto `#fcfcfc`
+/// y los bordes `#4c4e51`.
+pub fn kde_oscuro() -> Tema {
+    // Un botón pulsado es la superficie más clara.
+    let peor = Rgb::hex(0x43464a);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
+
+    Tema {
+        nombre: "kde-oscuro",
+        oscuro: true,
+        lienzo: Rgb::hex(0x202326),
+        suave: Rgb::hex(0x292c30),
+        tarjeta: Rgb::hex(0x141618),
+        elevada: Rgb::hex(0x292c30),
+        filete: Rgb::hex(0x4c4e51),
+        filete_fuerte: contraste::acento_legible(Rgb::hex(0x8a8f94), peor, AA_GRANDE),
+        tinta: Rgb::hex(0xfcfcfc),
+        cuerpo: Rgb::hex(0xeff0f1),
+        apagado: contraste::acento_legible(Rgb::hex(0xa1a9b1), peor, AA_NORMAL),
+        relleno,
+        relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        sobre_acento: PIEDRA,
+        acento: BLANCO,
+        anillo: (ORO, 50),
+        relleno_tenue: (ORO, 22),
+        barra: Rgb::hex(0x141618),
+        barra_encima: Rgb::hex(0x433a1f),
+        campo: Rgb::hex(0x141618),
+        boton: Rgb::hex(0x292c30),
+        boton_encima: peor,
+        exito: contraste::acento_legible(VERDE_BREEZE, peor, AA_NORMAL),
+        aviso: contraste::acento_legible(NARANJA_BREEZE, peor, AA_NORMAL),
+        error: contraste::acento_legible(ROJO_BREEZE, peor, AA_NORMAL),
+        damero_a: Rgb::hex(0x292c30),
+        damero_b: Rgb::hex(0x36393d),
+    }
+}
+
 /// Todas las paletas: las dos de siempre y las dos de cada sistema (Windows,
-/// macOS y Linux). La prueba de contraste las mide todas.
-pub fn temas() -> [Tema; 8] {
+/// macOS, Linux con GNOME y Linux con KDE). La prueba de contraste las mide
+/// todas.
+pub fn temas() -> [Tema; 10] {
     [
         claro(),
         oscuro(),
@@ -446,5 +535,7 @@ pub fn temas() -> [Tema; 8] {
         macos_oscuro(),
         linux_claro(),
         linux_oscuro(),
+        kde_claro(),
+        kde_oscuro(),
     ]
 }

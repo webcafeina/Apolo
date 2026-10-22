@@ -8,7 +8,7 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
@@ -125,6 +125,12 @@ capturas-linux:
 	cargo build -p apolo-dev -p apolo-mcp
 	CAPTURAS=1 CAPTURAS_SISTEMA=linux CAPTURAS_BARRA=propia pnpm -C frontend exec playwright test capturas
 	CAPTURAS=1 CAPTURAS_SISTEMA=linux CAPTURAS_BARRA=sistema pnpm -C frontend exec playwright test capturas
+
+# KDE con Breeze (ADR 0031), con las dos partes de arriba para elegir.
+capturas-kde:
+	cargo build -p apolo-dev -p apolo-mcp
+	CAPTURAS=1 CAPTURAS_SISTEMA=linux CAPTURAS_ESCRITORIO=kde CAPTURAS_BARRA=sistema pnpm -C frontend exec playwright test capturas
+	CAPTURAS=1 CAPTURAS_SISTEMA=linux CAPTURAS_ESCRITORIO=kde CAPTURAS_BARRA=propia pnpm -C frontend exec playwright test capturas
 
 # Las de la web (web/img/), en los dos idiomas, con fotos de Kodak (pruebas/lotes/generar.sh las
 # deja en la caché) en vez de las del corpus, y pasadas a WebP con el propio Apolo: las que llevan

@@ -90,10 +90,23 @@ pub fn botones() -> String {
         .unwrap_or_else(|| BOTONES_POR_DEFECTO.to_string())
 }
 
-/// GNOME (en Ubuntu, `XDG_CURRENT_DESKTOP=ubuntu:GNOME`).
+/// El escritorio, para el aspecto de la interfaz: `gnome`, `kde` (ADR 0031)
+/// u `otro`, que se queda con el de GNOME. `XDG_CURRENT_DESKTOP` es una lista
+/// (en Ubuntu, `ubuntu:GNOME`; en Budgie, `Budgie:GNOME`).
+pub fn escritorio() -> &'static str {
+    let lista = std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_default();
+    let tiene = |n: &str| lista.split(':').any(|p| p.eq_ignore_ascii_case(n));
+    if tiene("kde") {
+        "kde"
+    } else if tiene("gnome") {
+        "gnome"
+    } else {
+        "otro"
+    }
+}
+
 fn es_gnome() -> bool {
-    std::env::var("XDG_CURRENT_DESKTOP")
-        .is_ok_and(|d| d.split(':').any(|p| p.eq_ignore_ascii_case("gnome")))
+    escritorio() == "gnome"
 }
 
 /// Crea la ventana principal con la configuración de `tauri.linux.conf.json`.

@@ -25,8 +25,10 @@ const SISTEMA = process.env.CAPTURAS_SISTEMA ?? "";
 const VIDRIO = process.env.CAPTURAS_VIDRIO === "si";
 // En Linux, la parte de arriba (ADR 0029): `CAPTURAS_BARRA=propia` o `sistema`.
 const BARRA = process.env.CAPTURAS_BARRA ?? "";
+// Y el escritorio (ADR 0031): `CAPTURAS_ESCRITORIO=kde` pide `?escritorio=kde`.
+const ESCRITORIO = process.env.CAPTURAS_ESCRITORIO ?? "";
 const BASE = SISTEMA
-  ? `capturas/${SISTEMA}${VIDRIO ? "-vidrio" : ""}${BARRA ? `-${BARRA}` : ""}`
+  ? `capturas/${SISTEMA}${ESCRITORIO ? `-${ESCRITORIO}` : ""}${VIDRIO ? "-vidrio" : ""}${BARRA ? `-${BARRA}` : ""}`
   : "capturas";
 const CARPETA = INGLES ? `${BASE}/en` : BASE;
 function raiz(extra = ""): string {
@@ -34,6 +36,7 @@ function raiz(extra = ""): string {
   if (SISTEMA) q.set("sistema", SISTEMA);
   if (VIDRIO) q.set("vidrio", "si");
   if (BARRA) q.set("barra", BARRA);
+  if (ESCRITORIO) q.set("escritorio", ESCRITORIO);
   const s = q.toString();
   return s ? `/?${s}` : "/";
 }

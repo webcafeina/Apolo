@@ -132,7 +132,8 @@ export interface Plataforma {
   simulado?: boolean;
   /** En macOS 26+, si la interfaz puede pintar el vidrio del sistema en sus controles (ADR 0028). */
   vidrio_controles?: boolean;
-  /** En Linux con GNOME, si la ventana va sin la barra del sistema y Apolo pinta la suya (ADR 0029). */
+  /** En Linux con GNOME o KDE, si la ventana va sin la barra del sistema y Apolo pinta la suya
+   *  (ADR 0029 y 0031). */
   barra_propia?: boolean;
   /** En Linux, la disposición de los botones de la ventana, como `gtk-decoration-layout`
    *  («appmenu:minimize,maximize,close»: a la izquierda de los dos puntos, a la derecha después). */

@@ -69,8 +69,8 @@ struct Plataforma {
     /// En macOS 26+, la interfaz puede pintar el vidrio del sistema en sus
     /// controles (`-apple-visual-effect`, ventana_macos.rs, ADR 0028).
     vidrio_controles: bool,
-    /// En Linux con GNOME, la ventana va sin la barra del sistema y Apolo pinta
-    /// la suya (ventana_linux.rs, ADR 0029).
+    /// En Linux con GNOME o KDE, la ventana va sin la barra del sistema y Apolo
+    /// pinta la suya (ventana_linux.rs, ADR 0029 y 0031).
     barra_propia: bool,
     /// En Linux, los botones de la ventana, como `gtk-decoration-layout`.
     botones: String,
@@ -390,7 +390,7 @@ pub fn arrancar() {
         .plugin(tauri_plugin_opener::init())
         // En Windows, la ventana se crea aquí: sin marco y con Mica (ADR 0027).
         // En macOS, se le pone el vidrio (ADR 0028). En Linux, se crea aquí,
-        // sin la barra del sistema en GNOME (ADR 0029).
+        // sin la barra del sistema en GNOME y KDE (ADR 0029 y 0031).
         .setup(|_app| {
             #[cfg(windows)]
             ventana_windows::crear(_app)?;

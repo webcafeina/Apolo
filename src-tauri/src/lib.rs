@@ -19,6 +19,8 @@ use apolo_servicio::{
 use tauri::State;
 use tauri::http::{Response, StatusCode, header};
 
+#[cfg(target_os = "linux")]
+mod ventana_linux;
 #[cfg(target_os = "macos")]
 mod ventana_macos;
 #[cfg(windows)]
@@ -67,6 +69,11 @@ struct Plataforma {
     /// En macOS 26+, la interfaz puede pintar el vidrio del sistema en sus
     /// controles (`-apple-visual-effect`, ventana_macos.rs, ADR 0028).
     vidrio_controles: bool,
+    /// En Linux con GNOME, la ventana va sin la barra del sistema y Apolo pinta
+    /// la suya (ventana_linux.rs, ADR 0029).
+    barra_propia: bool,
+    /// En Linux, los botones de la ventana, como `gtk-decoration-layout`.
+    botones: String,
 }
 
 #[tauri::command]
@@ -80,6 +87,30 @@ fn plataforma() -> Plataforma {
             && std::env::current_exe()
                 .is_ok_and(|r| r.to_string_lossy().contains("/AppTranslocation/")),
         vidrio_controles: hay_vidrio_controles(),
+        barra_propia: barra_propia(),
+        botones: botones_ventana(),
+    }
+}
+
+fn barra_propia() -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        ventana_linux::barra_propia()
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        false
+    }
+}
+
+fn botones_ventana() -> String {
+    #[cfg(target_os = "linux")]
+    {
+        ventana_linux::botones()
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        String::new()
     }
 }
 
@@ -311,12 +342,15 @@ pub fn arrancar() {
         // «Mostrar en la carpeta» al acabar un lote.
         .plugin(tauri_plugin_opener::init())
         // En Windows, la ventana se crea aquí: sin marco y con Mica (ADR 0027).
-        // En macOS, se le pone el vidrio (ADR 0028).
+        // En macOS, se le pone el vidrio (ADR 0028). En Linux, se crea aquí,
+        // sin la barra del sistema en GNOME (ADR 0029).
         .setup(|_app| {
             #[cfg(windows)]
             ventana_windows::crear(_app)?;
             #[cfg(target_os = "macos")]
             ventana_macos::poner_vidrio(_app);
+            #[cfg(target_os = "linux")]
+            ventana_linux::crear(_app)?;
             Ok(())
         })
         .manage({

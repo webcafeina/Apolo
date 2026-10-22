@@ -4,6 +4,26 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-22 · Linux con Ubuntu 26.10 (v0.15.0)
+
+- El cliente preguntó por qué el interruptor de macOS no hacía la burbuja de vidrio (Tailscale sí)
+  y vio «webcafeina» como editor en Windows. Explicado (el botón era la imagen de fondo del
+  `<input>`; faltaba `publisher`) y apuntado; los dos van en la v0.15.0.
+- Planteado en modo plan: el diseño de Ubuntu 26.10, como con Windows y macOS. Tres agentes: cómo
+  está Linux en Apolo, el diseño de Ubuntu 26.10 (libadwaita 1.10 con Yaru, medidas del SCSS y
+  colores del binario) y la ventana en Tauri en Linux. Decidido: oro, iconos de Yaru, barra lateral
+  adaptativa, listas en tarjeta, la escala de Ubuntu; la parte de arriba, sobre capturas.
+- Hecho: paletas `linux_*` (ocho medidas), `sistema-linux.css` rehecho, `iconos-yaru.ts` (29, con
+  atribución; trampa de las «m» relativas), `esLinux`, `formularioNativo` con Linux,
+  `useLateralGnome`, `BotonesVentana`, el componente `Interruptor` (también para macOS, con la
+  burbuja), `publisher`, `linux.spec.ts`, `make capturas-linux` con las dos barras. Galería: el
+  cliente eligió la barra propia y dio el resto por bueno. `ventana_linux.rs` y
+  `tauri.linux.conf.json`.
+- Verificado: `make comprobar`, e2e (107). **No verificado**: la ventana de Linux (sin GTK aquí: CI)
+  y nada en un Ubuntu de verdad.
+
+---
+
 ## 2026-10-21 · macOS con Golden Gate (v0.14.0)
 
 - Tras publicar la v0.13.0, el cliente pidió lo mismo para Mac: las reglas de macOS 27 Golden Gate.

@@ -66,9 +66,11 @@ fn parejas(t: &Tema) -> Vec<(&'static str, Rgb, &'static str, Rgb, f64)> {
     // En Windows (ADR 0027) el borde inferior de un campo y el interruptor
     // apagado de Fluent son un trazo de `filete-fuerte` sobre el campo y sobre
     // la pista. En macOS (ADR 0028), el borde del campo y de la casilla, sobre
-    // los mismos fondos. En Linux el interruptor apagado va relleno de
-    // `filete-fuerte`, medido arriba contra los fondos.
-    if t.nombre.starts_with("windows") || t.nombre.starts_with("macos") {
+    // los mismos fondos. En Linux (ADR 0029), lo mismo que en macOS.
+    if t.nombre.starts_with("windows")
+        || t.nombre.starts_with("macos")
+        || t.nombre.starts_with("linux")
+    {
         for (nf, f) in [("campo", t.campo), ("elevada", t.elevada)] {
             v.push(("filete-fuerte", t.filete_fuerte, nf, f, AA_GRANDE));
         }

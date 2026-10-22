@@ -465,3 +465,12 @@ En WebKit un `<input>` no pinta `::before`, así que el botón del interruptor v
 `radial-gradient(ellipse …)` sale una elipse, no una píldora, y en Safari se veía enorme (v0.14.0 en
 el Mac del cliente). Un SVG de fondo con un `rect` de radio la mitad del alto da la píldora, con su
 sombra (`feDropShadow`). · 2026-10-21
+
+## Iconos de Yaru que salen descolocados al juntar sus trazados
+
+Los SVG simbólicos de Yaru traen a veces varios `<path>`, cada uno empezando por una «m»
+minúscula. En un trazado, la primera «m» cuenta como absoluta; al juntarlos en un solo `d`, las de
+después pasan a ser relativas y se descolocan (el icono del Estudio salía como un punto). Hay que
+cambiar a «M» el comienzo de cada uno al juntarlos. Además, algunos llevan una traslación en un
+`<g>` o una caja que no es de 16 (`viewBox="0 0 4.2333 4.2333"`): `iconos-yaru.ts` las guarda. ·
+2026-10-22

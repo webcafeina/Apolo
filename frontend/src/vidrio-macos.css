@@ -30,3 +30,11 @@
   background: transparent;
   box-shadow: none;
 }
+
+/* Y el botón del interruptor al pulsarlo (componente `Interruptor`: el botón
+   es un elemento propio, así que puede llevar el vidrio). */
+:root[data-sistema="macos"] .interruptor > input:active:not(:disabled) + .pomo {
+  -apple-visual-effect: -apple-system-glass-material;
+  background: transparent;
+  box-shadow: none;
+}

@@ -131,6 +131,12 @@ input[type="checkbox"][role="switch"] {
 }
 input[type="checkbox"][role="switch"]:checked { background-color: var(--relleno); background-position: calc(100% - 2px) 50%; }
 input[type="checkbox"][role="switch"]:disabled { opacity: 0.4; }
+/* El componente `Interruptor` pone el botón aparte, en un <span class="pomo">,
+   para que macOS y Linux lo dibujen como elemento propio (sistema-macos.css,
+   sistema-linux.css). Aquí, en la web y en Windows, se queda oculto y el botón
+   sigue siendo el fondo de la casilla. */
+.interruptor { position: relative; display: inline-flex; flex: none; }
+.interruptor > .pomo { display: none; }
 input[type="range"] { accent-color: var(--relleno); }
 
 /* El segmentado de Esfinge: un carril hundido y la opción elegida levantada. */

@@ -1,18 +1,493 @@
-/* Linux (GNOME): líneas de 1 px, filas de 36 y la cabecera con su borde (ADR
-   0015). Todo cuelga de :root[data-sistema="linux"]; en el navegador se pide
-   con ?sistema=linux. */
+/* Apolo en Linux, con el lenguaje de Ubuntu 26.10: libadwaita 1.10 con el tema
+   Yaru (ADR 0029).
 
-:root[data-sistema="linux"] { --linea: 1px; }
-:root[data-sistema="linux"] .lateral nav button { height: 36px; border-radius: 6px; }
-:root[data-sistema="linux"] .grupo { border-radius: 12px; }
-:root[data-sistema="linux"] .herramientas { border-bottom: 1px solid var(--filete); }
+   Las medidas son las de la hoja de estilos de libadwaita (Ubuntu no cambia
+   ninguna, solo los colores): letra Ubuntu Sans de 11 pt, botones de 34 con
+   radio 9 y en negrita, campos de 34, interruptor de 46 × 26 con su botón de
+   20, casilla de 20, deslizador con pista de 4, barra de cabecera de 46,
+   barra lateral con filas de 36 y la elegida en gris, y los ajustes en listas
+   en tarjeta (boxed list) con filas de 50 y radio 12, centradas y hasta 600 de
+   ancho. Los colores son los de Yaru (tokens.css, bloque
+   `data-sistema="linux"`, desde crates/tema). La marca es la misma: **el oro
+   rellena y la piedra escribe**.
 
-/* El interruptor de libadwaita (ADR 0027): 46 × 26, el botón blanco de 20. */
+   Todo cuelga de :root[data-sistema="linux"], que pone main.tsx según la orden
+   `plataforma`; en el navegador se pide con ?sistema=linux, y la parte de
+   arriba con &barra=propia (la barra de Apolo, sin la del sistema, en GNOME) o
+   &barra=sistema. Nada de aquí cambia lo que hace la ventana: solo cómo se
+   ve. */
+
+:root[data-sistema="linux"] {
+  --radio: 9px;
+  --radio-chico: 6px;
+  --radio-grande: 12px;
+  --alto-control: 34px;
+  --alto-campo: 34px;
+  --alto-fila: 36px;
+  --barra-lateral: 220px;
+  --alto-barra: 46px;
+  --texto-chico: 9pt;
+  --texto: 11pt;
+  --texto-grande: 11pt;
+  --titulo: 11pt;
+  --linea: 1px;
+  --fuente: "Ubuntu Sans", "Adwaita Sans", Cantarell, system-ui, sans-serif;
+  /* Lo que se ilumina sobre algo sin fondo, como en libadwaita: el texto al 7 %
+     al pasar y al 16 % al pulsar. */
+  --sutil-encima: color-mix(in srgb, var(--cuerpo) 7%, transparent);
+  --sutil-pulsado: color-mix(in srgb, var(--cuerpo) 16%, transparent);
+  /* La sombra de una tarjeta de libadwaita. */
+  --sombra-tarjeta: 0 0 0 1px rgb(0 0 6 / 0.03), 0 1px 3px 1px rgb(0 0 6 / 0.07), 0 2px 6px 2px rgb(0 0 6 / 0.03);
+  /* Dónde empieza lo de arriba: debajo de la barra del sistema dibujada en las
+     capturas, o arriba del todo. */
+  --arriba: 0px;
+}
+:root[data-sistema="linux"][data-simulado="si"][data-barra="sistema"] { --arriba: var(--alto-barra); }
+
+:root[data-sistema="linux"] body { line-height: 1.4; }
+:root[data-sistema="linux"] h1,
+:root[data-sistema="linux"] h2 { letter-spacing: 0; }
+
+/* ── La ventana ─────────────────────────────────────────────────────────── */
+
+/* Como AdwNavigationSplitView: la barra lateral de 220 con su cabecera, y el
+   contenido con la suya, las dos de 46 y a la misma altura. Ocultarla anima su
+   ancho. Arriba, la barra del sistema si la hay (en las capturas, dibujada). */
+:root[data-sistema="linux"] .ventana {
+  position: relative;
+  grid-template-columns: var(--barra-lateral) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  transition: grid-template-columns 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+:root[data-sistema="linux"] .ventana:not([data-lateral="visible"]) { grid-template-columns: 0 minmax(0, 1fr); }
+:root[data-sistema="linux"] .lateral { grid-row: 2; grid-column: 1; }
+:root[data-sistema="linux"] .zona { grid-row: 2; grid-column: 2; position: relative; }
+
+/* La barra del sistema (la de Ubuntu con Yaru), dibujada solo en las capturas
+   para compararla con la barra propia: el nombre en el centro, en negrita, y
+   los botones a la derecha. En la ventana la pone el sistema. */
+:root[data-sistema="linux"] .barra-sistema-simulada {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--alto-barra);
+  background: var(--barra);
+  box-shadow: inset 0 -1px var(--filete);
+  color: var(--tinta);
+  font-weight: 700;
+}
+:root[data-sistema="linux"] .barra-sistema-simulada .botones-gnome { position: absolute; right: 6px; top: 6px; }
+
+/* ── La barra lateral ───────────────────────────────────────────────────── */
+
+/* Su cabecera de 46 con el nombre en el centro (Heading), y las filas de 36 de
+   .navigation-sidebar: 6 a los lados y 2 entre ellas, radio 9, el icono
+   simbólico de 16 y el nombre a 12. La elegida en el gris del texto al 10 %,
+   como en GNOME; al pasar, al 7 %. */
+:root[data-sistema="linux"] .lateral {
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 0 6px;
+  background: var(--barra);
+  border-right: 0;
+  box-shadow: inset -1px 0 var(--filete);
+}
+:root[data-sistema="linux"] .cabeza-lateral {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  height: var(--alto-barra);
+  width: var(--barra-lateral);
+  color: var(--tinta);
+  font-weight: 700;
+}
+:root[data-sistema="linux"] .lateral nav { gap: 2px; padding: 0 6px; width: var(--barra-lateral); }
+:root[data-sistema="linux"] .lateral nav.abajo { padding-top: 6px; }
+:root[data-sistema="linux"] .lateral nav button {
+  height: var(--alto-fila);
+  padding: 0 10px;
+  gap: 12px;
+  border-radius: 9px;
+  font-size: 11pt;
+  font-weight: 400;
+  color: var(--tinta);
+  white-space: nowrap;
+}
+:root[data-sistema="linux"] .lateral nav button .icono { width: 16px; height: 16px; color: var(--cuerpo); }
+:root[data-sistema="linux"] .lateral nav button:hover:not([aria-current="page"]) { background: var(--sutil-encima); }
+:root[data-sistema="linux"] .lateral nav button:active:not(:disabled) { background: var(--sutil-pulsado); }
+:root[data-sistema="linux"] .lateral nav button[aria-current="page"],
+:root[data-sistema="linux"] .lateral nav button[aria-current="page"]:hover {
+  background: var(--barra-encima);
+  color: var(--tinta);
+  font-weight: 400;
+}
+:root[data-sistema="linux"] .lateral nav button[aria-current="page"] .icono { color: var(--tinta); }
+
+/* Con la ventana estrecha, la barra lateral sale encima del contenido, con la
+   sombra de un panel, hasta que se elige una sección. */
+:root[data-sistema="linux"] .ventana[data-lateral="encima"] .lateral {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--barra-lateral);
+  z-index: 30;
+  box-shadow: 0 0 0 1px rgb(0 0 6 / 0.07), 0 2px 14px 3px rgb(0 0 6 / 0.15);
+}
+
+/* El botón de la barra lateral (sidebar-show): plano, de 34, al final de su
+   cabecera; con ella oculta, al principio de la del contenido. */
+:root[data-sistema="linux"] .boton-lateral {
+  position: absolute;
+  top: calc(var(--arriba) + 6px);
+  left: calc(var(--barra-lateral) - 40px);
+  z-index: 35;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--tinta);
+}
+:root[data-sistema="linux"] .ventana[data-lateral="oculta"] .boton-lateral { left: calc(6px + var(--botones-izq, 0) * 34px); }
+:root[data-sistema="linux"] .boton-lateral:hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="linux"] .boton-lateral:active:not(:disabled) { background: var(--sutil-pulsado); }
+
+/* ── Los botones de la ventana (con la barra propia) ────────────────────── */
+
+/* Como los de libadwaita: un círculo de 24 del texto al 10 % (15 % al pasar,
+   30 % al pulsar) con el icono de 16, en una casilla de 34; en el lado que
+   diga el sistema. */
+:root[data-sistema="linux"] .lado-botones { position: absolute; top: calc(var(--arriba) + 6px); z-index: 36; }
+:root[data-sistema="linux"] .lado-botones.derecha { right: 6px; }
+:root[data-sistema="linux"] .lado-botones.izquierda { left: 6px; }
+:root[data-sistema="linux"] .botones-gnome { display: flex; }
+:root[data-sistema="linux"] .botones-gnome button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side, color-mix(in srgb, var(--cuerpo) 10%, transparent) 70%, transparent 71%);
+  color: var(--tinta);
+  box-shadow: none;
+}
+:root[data-sistema="linux"] .botones-gnome button:hover:not(:disabled) {
+  background: radial-gradient(circle closest-side, color-mix(in srgb, var(--cuerpo) 15%, transparent) 70%, transparent 71%);
+}
+:root[data-sistema="linux"] .botones-gnome button:active:not(:disabled) {
+  background: radial-gradient(circle closest-side, color-mix(in srgb, var(--cuerpo) 30%, transparent) 70%, transparent 71%);
+}
+
+/* ── La barra de cabecera del contenido ─────────────────────────────────── */
+
+/* La cabecera de cada sección es una AdwHeaderBar de 46: el título en el
+   centro, en negrita (y su subtítulo debajo, más pequeño y atenuado), y las
+   órdenes al final como botones planos. Deja sitio al botón de la barra
+   lateral y a los de la ventana. */
+:root[data-sistema="linux"] .herramientas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  height: var(--alto-barra);
+  min-height: var(--alto-barra);
+  padding: 0 calc(6px + var(--botones-der, 0) * 34px) 0 6px;
+  background: var(--lienzo);
+  box-shadow: inset 0 -1px var(--filete);
+  border-bottom: 0;
+}
+:root[data-sistema="linux"][data-barra="sistema"] .herramientas { padding-right: 6px; }
+:root[data-sistema="linux"] .ventana[data-lateral="oculta"] .herramientas { padding-left: calc(46px + var(--botones-izq, 0) * 34px); }
+:root[data-sistema="linux"] .titulos { grid-column: 2; align-items: center; text-align: center; gap: 0; }
+:root[data-sistema="linux"] .titulos h1 { font-size: 11pt; line-height: 1.3; font-weight: 700; }
+:root[data-sistema="linux"] .antetitulo {
+  order: 2;
+  font-size: 9pt;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+:root[data-sistema="linux"] .aparte { grid-column: 3; justify-self: end; gap: 6px; }
+:root[data-sistema="linux"] .herramientas .aparte > button { background: transparent; }
+:root[data-sistema="linux"] .herramientas .aparte > button:hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="linux"] .herramientas .aparte > button:active:not(:disabled) { background: var(--sutil-pulsado); }
+
+/* El Estudio: la barra va por encima del lienzo y del panel de opciones, a
+   todo el ancho, como en una aplicación de GNOME. La columna del lienzo se
+   deshace (display: contents) para que sus piezas caigan en la rejilla. */
+:root[data-sistema="linux"] .estudio {
+  container-type: inline-size;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-rows: var(--alto-barra) auto minmax(0, 1fr) auto;
+}
+:root[data-sistema="linux"] .lienzo-y-barra { display: contents; }
+:root[data-sistema="linux"] .estudio > .lienzo-y-barra > .herramientas { grid-column: 1 / -1; grid-row: 1; }
+:root[data-sistema="linux"] .estudio .aviso { grid-column: 1; grid-row: 2; margin-top: 12px; }
+:root[data-sistema="linux"] .estudio .comparador { grid-column: 1; grid-row: 3; border-top: 0; }
+:root[data-sistema="linux"] .estudio .barra-estado { grid-column: 1; grid-row: 4; background: var(--lienzo); }
+:root[data-sistema="linux"] .estudio > .panel {
+  grid-column: 2;
+  grid-row: 2 / -1;
+  background: var(--lienzo);
+  border-left: 0;
+  box-shadow: inset 1px 0 var(--filete);
+}
+/* Con el selector de modo y «Abrir otra…», el título centrado no cabe: en el
+   Estudio va al principio de la barra, con las órdenes al final. */
+:root[data-sistema="linux"] .estudio .herramientas { display: flex; justify-content: space-between; padding-left: 12px; }
+:root[data-sistema="linux"] .ventana[data-lateral="oculta"] .estudio .herramientas { padding-left: calc(46px + var(--botones-izq, 0) * 34px); }
+:root[data-sistema="linux"] .estudio .titulos { flex: 1; align-items: flex-start; text-align: left; min-width: 0; }
+@container (max-width: 760px) {
+  :root[data-sistema="linux"] .estudio .segmentado.con-iconos .etiqueta { display: none; }
+}
+
+/* ── Controles ──────────────────────────────────────────────────────────── */
+
+/* El botón de libadwaita: 34 de alto, 10 a los lados, radio 9, en negrita, con
+   el texto al 10 % de fondo (15 % al pasar, 30 % al pulsar); el principal
+   (suggested-action) en oro. */
+:root[data-sistema="linux"] button {
+  height: var(--alto-control);
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radio);
+  background: var(--boton);
+  box-shadow: none;
+  font-weight: 700;
+  transition: background 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+:root[data-sistema="linux"] button:hover:not(:disabled) { background: var(--boton-encima); }
+:root[data-sistema="linux"] button:active:not(:disabled) { background: color-mix(in srgb, var(--cuerpo) 30%, var(--lienzo)); }
+:root[data-sistema="linux"] button:disabled { opacity: 0.5; }
+:root[data-sistema="linux"] button.principal { background: var(--relleno); color: var(--sobre-acento); }
+:root[data-sistema="linux"] button.principal:hover:not(:disabled) { background: var(--relleno-vivo); }
+:root[data-sistema="linux"] button.principal:active:not(:disabled) { background: color-mix(in srgb, var(--relleno-vivo) 85%, var(--sobre-acento)); }
+:root[data-sistema="linux"] button.discreto,
+:root[data-sistema="linux"] button.discreto:hover:not(:disabled) { background: transparent; }
+:root[data-sistema="linux"] button.discreto:hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="linux"] button.peligro { border: 0; color: var(--error); }
+/* Las filas de la barra lateral y los segmentos no son botones con relleno. */
+:root[data-sistema="linux"] .lateral nav button,
+:root[data-sistema="linux"] .segmentado button { background: transparent; }
+
+/* Campo de texto: el gris de libadwaita, 34 de alto, 9 a los lados, radio 9,
+   sin borde. El desplegable, como un botón con la flecha a la derecha. */
+:root[data-sistema="linux"] input[type="number"],
+:root[data-sistema="linux"] input:not([type]),
+:root[data-sistema="linux"] input[type="text"] {
+  height: var(--alto-campo);
+  padding: 0 9px;
+  border: 0;
+  border-radius: var(--radio);
+  background: var(--campo);
+}
+:root[data-sistema="linux"] select {
+  height: var(--alto-campo);
+  padding: 0 32px 0 10px;
+  border: 0;
+  border-radius: var(--radio);
+  background: var(--boton) var(--flecha-select) no-repeat right 10px center / 12px 12px;
+}
+:root[data-sistema="linux"] select:hover:not(:disabled) { background-color: var(--boton-encima); }
+
+/* El foco, como en libadwaita: un contorno de 2 px, aquí en la tinta (el oro
+   tan fino no se vería), pegado por dentro en los campos y por fuera en el
+   resto. */
+:root[data-sistema="linux"] input[type="number"]:focus-visible,
+:root[data-sistema="linux"] input:not([type]):focus-visible,
+:root[data-sistema="linux"] input[type="text"]:focus-visible {
+  border: 0;
+  box-shadow: none;
+  outline: 2px solid color-mix(in srgb, var(--acento) 60%, transparent);
+  outline-offset: -2px;
+}
+:root[data-sistema="linux"] button:focus-visible,
+:root[data-sistema="linux"] select:focus-visible,
+:root[data-sistema="linux"] summary:focus-visible,
+:root[data-sistema="linux"] canvas:focus-visible,
+:root[data-sistema="linux"] input[type="checkbox"]:focus-visible,
+:root[data-sistema="linux"] input[type="range"]:focus-visible {
+  border-color: transparent;
+  box-shadow: none;
+  outline: 2px solid color-mix(in srgb, var(--acento) 60%, transparent);
+  outline-offset: 1px;
+}
+
+/* Casilla de 20 con radio 6: sin marcar, un trazo de 2 del texto al 15 % (aquí
+   `filete-fuerte`, para que se vea); marcada, en oro con la marca en piedra. */
+:root[data-sistema="linux"] input[type="checkbox"]:not([role="switch"]) {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: transparent no-repeat center / 14px 14px;
+  box-shadow: inset 0 0 0 2px var(--filete-fuerte);
+}
+:root[data-sistema="linux"] input[type="checkbox"]:not([role="switch"]):checked {
+  background-color: var(--relleno);
+  box-shadow: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 7.2 5.8 10 11 4.4' fill='none' stroke='%232b2b31' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* El interruptor de libadwaita: la pista de 46 × 26 con radio 13 (el texto al
+   15 % apagada, el oro encendida) y su botón de 20, el `.pomo` del componente
+   `Interruptor`, con 3 de margen y su sombra, que se desliza. */
 :root[data-sistema="linux"] input[type="checkbox"][role="switch"] {
-  --pomo-tam: 20px;
   width: 46px;
   height: 26px;
   border-radius: 13px;
-  background-position: 3px 50%;
+  background: var(--barra-encima);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--filete-fuerte) 60%, transparent);
+  transition: background-color 200ms;
 }
-:root[data-sistema="linux"] input[type="checkbox"][role="switch"]:checked { background-position: calc(100% - 3px) 50%; }
+:root[data-sistema="linux"] input[type="checkbox"][role="switch"]:checked { background-color: var(--relleno); box-shadow: none; }
+:root[data-sistema="linux"] .interruptor > .pomo {
+  display: block;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: color-mix(in srgb, #ffffff 80%, var(--lienzo));
+  box-shadow: 0 2px 4px rgb(0 0 6 / 0.2);
+  pointer-events: none;
+  transition: transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+:root[data-sistema="linux"] .interruptor > input:hover:not(:disabled) + .pomo { background: #ffffff; }
+:root[data-sistema="linux"] .interruptor > input:checked + .pomo { transform: translateX(20px); }
+:root[data-sistema="linux"] .interruptor > input:disabled + .pomo { opacity: 0.5; }
+
+/* El deslizador: la pista de 4 (lo recorrido en oro, el resto en el texto al
+   15 %) y el botón redondo de 20, blanco, con su filo y su sombra. */
+:root[data-sistema="linux"] input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 20px;
+  background: transparent;
+}
+:root[data-sistema="linux"] input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--relleno) var(--lleno, 0%), var(--barra-encima) var(--lleno, 0%));
+}
+:root[data-sistema="linux"] input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgb(0 0 6 / 0.1), 0 2px 4px rgb(0 0 6 / 0.2);
+}
+:root[data-sistema="linux"] input[type="range"]:disabled { opacity: 0.5; }
+
+/* El segmentado, como un AdwToggleGroup: la caja en el gris de los botones,
+   con el elegido levantado en blanco. */
+:root[data-sistema="linux"] .segmentado {
+  padding: 3px;
+  gap: 3px;
+  border-radius: var(--radio);
+  background: var(--boton);
+}
+:root[data-sistema="linux"] .segmentado button {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: var(--tinta);
+}
+:root[data-sistema="linux"] .segmentado button:not([aria-checked="true"]):hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="linux"] .segmentado button[aria-checked="true"] {
+  background: var(--tarjeta);
+  box-shadow: 0 0 0 1px rgb(0 0 6 / 0.03), 0 1px 3px 1px rgb(0 0 6 / 0.07);
+}
+:root[data-sistema="linux"] .pestanas-ajustes { display: flex; width: fit-content; margin: 0 auto 24px; }
+
+/* ── Páginas ────────────────────────────────────────────────────────────── */
+
+/* Como AdwPreferencesPage: 24 arriba y abajo, 12 a los lados, y el contenido
+   centrado y hasta 600 (AdwClamp), con 24 entre grupos. */
+:root[data-sistema="linux"] .contenido { padding: 24px 12px; }
+:root[data-sistema="linux"] .panel-ajustes,
+:root[data-sistema="linux"] .panel-ajustes.lotes { max-width: 600px; margin-inline: auto; width: 100%; gap: 24px; }
+
+/* Los ajustes, en listas en tarjeta (boxed list): el encabezado del grupo en
+   negrita, y filas de 50 con 12 a los lados, el título y su explicación (más
+   pequeña y atenuada) a la izquierda y el control a la derecha. Las filas
+   seguidas forman la tarjeta: radio 12, la sombra de libadwaita y un filete
+   entre una y otra. */
+:root[data-sistema="linux"] .grupo-ajustes { display: flex; flex-direction: column; gap: 0; }
+:root[data-sistema="linux"] .grupo-ajustes > h2 { font-size: 11pt; font-weight: 700; margin: 0 0 12px; }
+:root[data-sistema="linux"] .grupo-ajustes > h2:not(:first-child) { margin-top: 24px; }
+:root[data-sistema="linux"] .tarjeta-ajuste {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 8px 12px;
+  background: var(--tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+}
+:root[data-sistema="linux"] .tarjeta-ajuste:not(.tarjeta-ajuste + .tarjeta-ajuste) { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+:root[data-sistema="linux"] .tarjeta-ajuste:not(:has(+ .tarjeta-ajuste)) { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+:root[data-sistema="linux"] .tarjeta-ajuste + .tarjeta-ajuste { border-top: 1px solid var(--filete); }
+:root[data-sistema="linux"] .tarjeta-fila { display: flex; align-items: center; gap: 12px; min-width: 0; }
+/* Las filas de Ajustes de Ubuntu no llevan icono (salvo el de la aplicación
+   en «Acerca de»). */
+:root[data-sistema="linux"] .tarjeta-fila > .icono { display: none; }
+:root[data-sistema="linux"] .tarjeta-fila > img { flex: none; }
+:root[data-sistema="linux"] .tarjeta-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+:root[data-sistema="linux"] .tarjeta-titulo { color: var(--tinta); font-size: 11pt; }
+:root[data-sistema="linux"] .tarjeta-descripcion { color: var(--apagado); font-size: 9pt; }
+:root[data-sistema="linux"] .tarjeta-descripcion .apagado { color: inherit; }
+:root[data-sistema="linux"] .tarjeta-control { flex: none; display: flex; align-items: center; gap: 6px; }
+:root[data-sistema="linux"] .tarjeta-abajo { display: flex; flex-direction: column; gap: 8px; padding-bottom: 4px; }
+:root[data-sistema="linux"] .tarjeta-abajo .deslizador { max-width: 420px; }
+
+/* Lo que no es un ajuste (lo que entra en un lote, un preset, lo que hace el
+   conector): una tarjeta de libadwaita, radio 12 con su sombra. */
+:root[data-sistema="linux"] .grupo {
+  border: 0;
+  border-radius: var(--radio-grande);
+  padding: 12px;
+  background: var(--tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+}
+:root[data-sistema="linux"] .grupo h2 { font-size: 11pt; font-weight: 700; }
+:root[data-sistema="linux"] .zona-soltar { border-radius: var(--radio-grande); border-width: 2px; }
+:root[data-sistema="linux"] .bienvenida-cabecera h2 { font-size: 20pt; line-height: 1.2; font-weight: 800; }
+
+/* ── La versión nueva, como un AdwBanner ────────────────────────────────── */
+
+/* Debajo de la barra de cabecera, de lado a lado, en el gris de los avisos de
+   libadwaita (#7d7d83 al 30 % sobre la ventana), con el texto centrado. */
+:root[data-sistema="linux"] .novedad {
+  position: absolute;
+  top: var(--alto-barra);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  justify-content: center;
+  min-height: 0;
+  padding: 6px 12px;
+  border-bottom: 0;
+  background: color-mix(in srgb, #7d7d83 30%, var(--lienzo));
+}
+:root[data-sistema="linux"] .novedad .dice { flex: none; }
+
+/* Con «reducir el movimiento», nada se anima (estilos.css también). */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-sistema="linux"] .ventana,
+  :root[data-sistema="linux"] .interruptor > .pomo { transition: none; }
+}

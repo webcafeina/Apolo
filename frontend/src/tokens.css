@@ -284,3 +284,98 @@
   --relleno-tenue: rgb(255 200 61 / 22%);
   --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23ababab' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
+
+:root[data-sistema="linux"] {
+  color-scheme: light;
+  --lienzo: #fafafa;
+  --suave: #f0f0f0;
+  --tarjeta: #ffffff;
+  --elevada: #e7e7e7;
+  --filete: #e0e0e0;
+  --filete-fuerte: #797979;
+  --tinta: #303030;
+  --cuerpo: #3d3d3d;
+  --apagado: #5e5e5e;
+  --relleno: #ffc83d;
+  --relleno-vivo: #ebb838;
+  --sobre-acento: #2b2b31;
+  --acento: #2b2b31;
+  --oro-trazo: #947423;
+  --barra: #ebebeb;
+  --barra-encima: #d8d8d8;
+  --campo: #ebebeb;
+  --boton: #e7e7e7;
+  --boton-encima: #dedede;
+  --exito: #176d24;
+  --aviso: #7e5600;
+  --error: #b52233;
+  --damero-a: #ffffff;
+  --damero-b: #e6e6e6;
+  --anillo: rgb(255 200 61 / 50%);
+  --relleno-tenue: rgb(255 200 61 / 18%);
+  --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%235e5e5e' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-sistema="linux"]:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --lienzo: #2c2c2c;
+    --suave: #323232;
+    --tarjeta: #3a3a3a;
+    --elevada: #414141;
+    --filete: #474747;
+    --filete-fuerte: #9a9a9a;
+    --tinta: #f7f7f7;
+    --cuerpo: #e4e4e4;
+    --apagado: #bebebe;
+    --relleno: #ffc83d;
+    --relleno-vivo: #ebb838;
+    --sobre-acento: #2b2b31;
+    --acento: #ffffff;
+    --oro-trazo: #ffc83d;
+    --barra: #393939;
+    --barra-encima: #4a4a4a;
+    --campo: #3e3e3e;
+    --boton: #414141;
+    --boton-encima: #4d4d4d;
+    --exito: #97ca9f;
+    --aviso: #dfb95f;
+    --error: #ecb0b7;
+    --damero-a: #3a3a3a;
+    --damero-b: #474747;
+    --anillo: rgb(255 200 61 / 50%);
+    --relleno-tenue: rgb(255 200 61 / 22%);
+    --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23bebebe' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+}
+
+:root[data-sistema="linux"][data-tema="oscuro"] {
+  color-scheme: dark;
+  --lienzo: #2c2c2c;
+  --suave: #323232;
+  --tarjeta: #3a3a3a;
+  --elevada: #414141;
+  --filete: #474747;
+  --filete-fuerte: #9a9a9a;
+  --tinta: #f7f7f7;
+  --cuerpo: #e4e4e4;
+  --apagado: #bebebe;
+  --relleno: #ffc83d;
+  --relleno-vivo: #ebb838;
+  --sobre-acento: #2b2b31;
+  --acento: #ffffff;
+  --oro-trazo: #ffc83d;
+  --barra: #393939;
+  --barra-encima: #4a4a4a;
+  --campo: #3e3e3e;
+  --boton: #414141;
+  --boton-encima: #4d4d4d;
+  --exito: #97ca9f;
+  --aviso: #dfb95f;
+  --error: #ecb0b7;
+  --damero-a: #3a3a3a;
+  --damero-b: #474747;
+  --anillo: rgb(255 200 61 / 50%);
+  --relleno-tenue: rgb(255 200 61 / 22%);
+  --flecha-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23bebebe' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}

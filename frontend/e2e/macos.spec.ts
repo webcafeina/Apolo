@@ -113,13 +113,18 @@ test("en macOS: la selección del segmentado se desliza, y el control no se abom
   await page.mouse.up();
 });
 
-test("en macOS: el interruptor es una píldora de 44 × 20 y la barra lateral va en el tamaño grande", async ({ page }) => {
+test("en macOS: el interruptor es una pista de 44 × 20 con su píldora aparte, y la barra lateral va en el tamaño grande", async ({ page }) => {
   await page.goto("/?sistema=macos");
   await page.getByRole("button", { name: "Ajustes", exact: true }).click();
   const avisar = page.getByRole("switch", { name: "Avisarme cuando haya una versión nueva" });
   expect(await ancho(avisar)).toBe(44);
   expect(await alto(avisar)).toBe(20);
-  expect(await avisar.evaluate((i) => getComputedStyle(i).backgroundImage)).toContain("svg");
+  // El botón es un elemento propio (el `.pomo` de `Interruptor`), una píldora de 26 × 16, que
+  // se desliza al marcarlo.
+  const pomo = avisar.locator("xpath=following-sibling::span[@class='pomo']");
+  expect(await ancho(pomo)).toBe(26);
+  expect(await alto(pomo)).toBe(16);
+  expect(await pomo.evaluate((p) => getComputedStyle(p).transform)).toContain("14");
   const fila = page.getByRole("button", { name: "Lotes", exact: true });
   expect(await alto(fila)).toBe(36);
   expect(await fila.locator(".icono").evaluate((i) => i.getBoundingClientRect().width)).toBe(20);

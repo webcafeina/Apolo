@@ -31,6 +31,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       2026-10-21;
     - ~~**v0.14.0, macOS con Golden Gate** ([ADR 0028](adr/0028-macos-con-golden-gate.md))~~,
       pedida por el cliente: publicada el 2026-10-21. Falta la prueba en su Mac con macOS 27;
+    - **v0.15.0, Linux con Ubuntu 26.10** ([ADR 0029](adr/0029-linux-con-ubuntu.md)), y el
+      interruptor de macOS con su burbuja y «Webcafeína» como editor: hecha en el código y revisada en
+      capturas el 2026-10-22. Falta la prueba en la máquina virtual Ubuntu 26.10 y publicarla;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

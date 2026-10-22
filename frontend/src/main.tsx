@@ -21,6 +21,10 @@ void Promise.allSettled([
     document.documentElement.dataset.vidrio = p.vidrio ? "si" : "no";
     // En el navegador no hay vidrio de verdad: un degradado lo imita para las capturas.
     if (p.simulado && p.vidrio) document.documentElement.dataset.vidrioSimulado = "si";
+    // En las capturas de Linux con la barra del sistema, una dibujada ocupa su sitio arriba.
+    if (p.simulado) document.documentElement.dataset.simulado = "si";
+    // En Linux, si la parte de arriba es la barra de Apolo o la del sistema (ADR 0029).
+    if (p.sistema === "linux") document.documentElement.dataset.barra = p.barra_propia ? "propia" : "sistema";
     // En macOS, la selección de los segmentados se desliza (ADR 0028).
     if (p.sistema === "macos") seguirSegmentados();
     // El vidrio del sistema en los controles, si Rust ha podido encenderlo:

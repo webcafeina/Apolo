@@ -36,9 +36,11 @@ pub const EVENTO_ESQUINAS: &str = "ventana:esquinas";
 /// Si la interfaz redondea sus esquinas (hay marco y la ventana está suelta).
 static ESQUINAS: AtomicBool = AtomicBool::new(false);
 
-/// El marco de la ventana como el de libadwaita: radio 15 en las cuatro
-/// esquinas y su sombra; sin radio ni sombra maximizada o a pantalla completa,
-/// y en mosaico, solo el filo. La barra vacía de tao, sin estilo.
+/// El marco de la ventana como el de libadwaita (`widgets/_window.scss` de la
+/// 1.10, las mismas sombras): radio 15 en las cuatro esquinas, la sombra de la
+/// ventana activa y, en segundo plano, la suya, más tenue y del mismo tamaño
+/// para que la ventana no salte; sin radio ni sombra maximizada o a pantalla
+/// completa, y en mosaico, solo el filo. La barra vacía de tao, sin estilo.
 const MARCO: &[u8] = br#"
 window.csd { background-color: transparent; }
 window.csd decoration {
@@ -46,7 +48,8 @@ window.csd decoration {
   box-shadow: 0 0 14px 5px rgba(0, 0, 0, 0.15), 0 0 5px 2px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 window.csd:backdrop decoration {
-  box-shadow: 0 0 14px 5px rgba(0, 0, 0, 0.08), 0 0 5px 2px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 14px 5px transparent, 0 0 10px 5px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 200ms ease-out;
 }
 window.maximized decoration, window.fullscreen decoration { border-radius: 0; box-shadow: none; }
 window.tiled decoration, window.tiled-top decoration, window.tiled-right decoration,
@@ -117,22 +120,38 @@ pub fn crear(app: &tauri::App) -> tauri::Result<()> {
     // ver la sombra (la transparencia da guerra con algunas gráficas).
     let wayland = std::env::var_os("WAYLAND_DISPLAY").is_some()
         && std::env::var("GDK_BACKEND").map_or(true, |b| b.contains("wayland"));
+    // `APOLO_ESQUINAS_RECTAS=1` la deja sin marco, como la primera
+    // compilación de prueba que vio el cliente (el plan B): sin sombra y con
+    // las esquinas rectas, pero sin transparencia. Sin transparencia no hay
+    // marco posible: la sombra de GTK necesita una ventana con alfa.
+    let marco = propia && wayland && std::env::var_os("APOLO_ESQUINAS_RECTAS").is_none();
+    // Con la ventana transparente, WebKitGTK 2.52 pintando por GPU dejaba
+    // huecos al repintar: un rectángulo transparente en la esquina de arriba
+    // a la izquierda, del tamaño de lo repintado (lo vio el cliente; ADR
+    // 0029, trampas.md). Pintando la página por CPU (la composición sigue por
+    // GPU) no debería. Si quien lo arranca ya la ha puesto, se respeta.
+    if marco && std::env::var_os("WEBKIT_SKIA_ENABLE_CPU_RENDERING").is_none() {
+        // SAFETY: `setup` corre en el hilo principal antes de que exista el
+        // webview ni otro hilo que lea el entorno.
+        unsafe { std::env::set_var("WEBKIT_SKIA_ENABLE_CPU_RENDERING", "1") };
+    }
     let ventana = WebviewWindowBuilder::from_config(app.handle(), &config)?
         .decorations(!propia)
-        .transparent(propia && wayland)
+        .transparent(marco)
         .build()?;
     let _ = VENTANA.set(Ventana {
         barra_propia: propia,
         botones,
     });
-    if propia && wayland {
+    if marco {
         poner_marco(&ventana)?;
     }
     Ok(())
 }
 
 /// Vuelve a decorar la ventana para que GTK dibuje su marco (con la barra
-/// vacía que puso tao) y sigue si está maximizada o en mosaico.
+/// vacía que puso tao) y sigue si está maximizada o en mosaico, para que la
+/// interfaz cuadre sus esquinas.
 fn poner_marco(ventana: &tauri::WebviewWindow) -> tauri::Result<()> {
     let gw = ventana.gtk_window()?;
     if gw.titlebar().is_none() {

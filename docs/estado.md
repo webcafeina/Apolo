@@ -4,7 +4,25 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **v0.15.0, Linux con Ubuntu 26.10 (2026-10-22), en curso** (ADR 0029). Hecho y revisado con el
+> **PARADA AQUÍ (2026-10-22, ~12:40 UTC): la v0.15.0 está etiquetada y saliendo, sin revisar ni
+> publicar.** El cliente dijo «Publica la v0.15.0»: versión subida (`c142c8d`), notas en
+> `.github/notas/v0.15.0.md`, `make comprobar` y CI (`Comprobar` 39775422161) en verde, etiqueta
+> `v0.15.0` empujada; `publicar.yml` **39778214906** en marcha al parar (el cliente no quiso
+> esperar). **Al volver**: `gh run view 39778214906` (si falla el `.dmg` o googlesource da 503,
+> `gh run rerun 39778214906 --failed`); luego la revisión del borrador de siempre (descargar, sumas,
+> `verificar_firmas.py`, `latest.json` con 14 plataformas, CLI y `apolo-mcp` en 0.15.0, los cinco
+> `.mcpb`, manifiesto ARM64, `humo.sin_dll_de_vc`, AVIF 3/3), y en el `.deb` arm64 `dpkg -I`
+> (Maintainer «Webcafeína», descripción en español ASCII) y el `metainfo.xml`. Si todo bien,
+> `gh release edit v0.15.0 --draft=false` (el sí ya está dado) y comprobar `latest.json` público y
+> el tap. Después: el cliente actualiza desde el aviso en el Mac (el interruptor con su burbuja), en
+> Windows (el editor) y en Ubuntu; y la prueba guiada final y la 1.0.0.
+>
+> **Los huecos al repintar en la máquina virtual de Linux no son nuestros** (`7659847`): salen
+> también con la primera compilación de prueba (gris oscuro) y sin marco, y no los quitan ni CPU,
+> ni sin composición, ni sin DMA-BUF. El marco se queda; fuera el pintado por CPU; en trampas.md,
+> deuda.md y la ADR 0029. Falta verlo en un Linux de verdad.
+>
+> **v0.15.0, Linux con Ubuntu 26.10 (2026-10-22)** (ADR 0029). Hecho y revisado con el
 > cliente en capturas: libadwaita 1.10 con Yaru medidos en su código, barra lateral adaptativa,
 > listas en tarjeta, controles de 34 con Ubuntu Sans 11 pt, iconos de Yaru; eligió la **barra
 > propia como GNOME** (`ventana_linux.rs`: sin barra del sistema solo en GNOME, botones de la

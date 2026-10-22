@@ -510,7 +510,8 @@ marco ni de la transparencia, ni de nuestro código**: salen igual con `APOLO_ES
 la primera compilación de prueba, de antes del marco; la primera vez no se vieron porque en gris
 oscuro casi no se distinguen. Tampoco los quitan `WEBKIT_SKIA_ENABLE_CPU_RENDERING=1`,
 `WEBKIT_DISABLE_COMPOSITING_MODE=1` ni `WEBKIT_DISABLE_DMABUF_RENDERER=1`. Queda la gráfica virtual
-de la máquina con WebKitGTK; en un Linux de verdad, sin ver (deuda.md). Para ver dónde se pierde el
+de la máquina con WebKitGTK; en un Linux de verdad, sin ver (deuda.md). En la máquina virtual Fedora ARM del
+cliente, en el mismo programa, no salen. Para ver dónde se pierde el
 desplazamiento, `WEBKIT_SHOW_DAMAGE=1`. Y el código de la ventana de Linux solo lo revisa clippy en
 CI: en el VPS no hay GTK (con la v0.15.0, un `if` anidado que pedía juntarse). · 2026-10-22
 

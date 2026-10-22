@@ -3,8 +3,8 @@
 //! `tests/contraste.rs`.
 
 use crate::{
-    Rgb, Tema, claro, linux_claro, linux_oscuro, macos_claro, macos_oscuro, oscuro, windows_claro,
-    windows_oscuro,
+    Rgb, Tema, claro, kde_claro, kde_oscuro, linux_claro, linux_oscuro, macos_claro, macos_oscuro,
+    oscuro, windows_claro, windows_oscuro,
 };
 
 /// Ruta del fichero generado, relativa a la raíz del repositorio.
@@ -87,6 +87,11 @@ pub fn css() -> String {
         ),
         ("[data-sistema=\"macos\"]", macos_claro(), macos_oscuro()),
         ("[data-sistema=\"linux\"]", linux_claro(), linux_oscuro()),
+        (
+            "[data-sistema=\"linux\"][data-escritorio=\"kde\"]",
+            kde_claro(),
+            kde_oscuro(),
+        ),
     ] {
         if !sistema.is_empty() {
             s += "\n";

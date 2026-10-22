@@ -143,6 +143,9 @@ export interface Plataforma {
   /** En Linux, el gestor de paquetes que lleva Apolo, si no es el suyo («pacman», con el paquete
    *  del AUR): entonces no se actualiza sola (ADR 0030). En el navegador, `?gestor=pacman`. */
   gestor?: string | null;
+  /** En Linux, el escritorio: «gnome», «kde» u «otro», que se ve como GNOME (ADR 0031). En el
+   *  navegador, `?escritorio=kde`. */
+  escritorio?: string;
 }
 
 // En el navegador de desarrollo, el aspecto de otro sistema se puede pedir en la URL, como la
@@ -166,6 +169,7 @@ function simulada(): Plataforma {
     botones: q.get("botones") ?? ":minimize,maximize,close",
     esquinas: q.get("esquinas") === "si",
     gestor,
+    escritorio: q.get("escritorio") ?? "gnome",
   };
 }
 

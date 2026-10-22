@@ -10,6 +10,7 @@
 
 import type { CSSProperties, InputHTMLAttributes, ReactNode } from "react";
 import { ICONOS_FLUENT } from "./iconos-fluent";
+import { ICONOS_BREEZE } from "./iconos-breeze";
 import { ICONOS_YARU } from "./iconos-yaru";
 import icono from "./marca/icono.svg";
 import marca from "./marca/marca.svg?raw";
@@ -112,7 +113,17 @@ export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | st
   }
   // En Windows, los iconos de Fluent (ADR 0027), con los mismos nombres. Se mira
   // al dibujar, no al cargar el módulo: el sistema llega de Rust después.
-  // En Linux, los simbólicos de Yaru (ADR 0029), con los mismos nombres.
+  // En Linux, los simbólicos de Yaru (ADR 0029), con los mismos nombres; con
+  // KDE, los de Breeze (ADR 0031).
+  const breeze = esKde() ? ICONOS_BREEZE[nombre] : undefined;
+  if (breeze) {
+    return (
+      <svg className="icono" width={lado} height={lado} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        {breeze.o && <path d={breeze.o} opacity={0.5} />}
+        <path d={breeze.d} fillRule={breeze.e ? "evenodd" : undefined} />
+      </svg>
+    );
+  }
   const yaru = document.documentElement.dataset.sistema === "linux" ? ICONOS_YARU[nombre] : undefined;
   if (yaru) {
     return (
@@ -160,6 +171,8 @@ export const esMac = () => document.documentElement.dataset.sistema === "macos";
 
 /** Si la interfaz es la de Ubuntu 26.10 (ADR 0029). */
 export const esLinux = () => document.documentElement.dataset.sistema === "linux";
+/** Linux con KDE Plasma (ADR 0031): Breeze en vez de libadwaita. */
+export const esKde = () => esLinux() && document.documentElement.dataset.escritorio === "kde";
 
 /** Si los ajustes van como en el sistema: SettingsCards en Windows (ADR 0027) y
  *  filas agrupadas, como en Ajustes del Sistema, en macOS (ADR 0028), y listas

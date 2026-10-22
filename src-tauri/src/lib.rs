@@ -83,6 +83,9 @@ struct Plataforma {
     /// Entonces no se actualiza sola: el binario es el del .deb, y su
     /// actualizador haría `dpkg -i` en un Arch.
     gestor: Option<String>,
+    /// En Linux, el escritorio: `gnome`, `kde` u `otro` (ventana_linux.rs, ADR
+    /// 0031). La interfaz lo pone en `<html data-escritorio>`.
+    escritorio: &'static str,
 }
 
 #[tauri::command]
@@ -100,6 +103,18 @@ fn plataforma() -> Plataforma {
         botones: botones_ventana(),
         esquinas: esquinas(),
         gestor: gestor(),
+        escritorio: escritorio(),
+    }
+}
+
+fn escritorio() -> &'static str {
+    #[cfg(target_os = "linux")]
+    {
+        ventana_linux::escritorio()
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        ""
     }
 }
 

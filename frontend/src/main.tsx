@@ -6,6 +6,7 @@ import "./estilos.css";
 import "./sistema-windows.css";
 import "./sistema-macos.css";
 import "./sistema-linux.css";
+import "./sistema-kde.css";
 import { App } from "./App";
 import { alCambiarEsquinas, inicio, plataforma } from "./puente";
 import { seguirSegmentados } from "./segmentados";
@@ -25,6 +26,8 @@ void Promise.allSettled([
     if (p.simulado) document.documentElement.dataset.simulado = "si";
     // En Linux, si la parte de arriba es la barra de Apolo o la del sistema (ADR 0029).
     if (p.sistema === "linux") document.documentElement.dataset.barra = p.barra_propia ? "propia" : "sistema";
+    // Y el escritorio: KDE tiene su aspecto, Breeze, y los demás se ven como GNOME (ADR 0031).
+    if (p.sistema === "linux") document.documentElement.dataset.escritorio = p.escritorio || "gnome";
     // Y si la ventana tiene el marco de GTK con sus esquinas redondeadas: la interfaz redondea las
     // suyas, y las cuadra al maximizarla o ponerla en mosaico.
     if (p.sistema === "linux" && p.esquinas !== undefined) {

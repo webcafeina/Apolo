@@ -1,0 +1,412 @@
+/* Apolo en Linux con KDE Plasma 6: el lenguaje Breeze (ADR 0031).
+
+   Pisa a sistema-linux.css (libadwaita) solo en lo que cambia: todo cuelga de
+   :root[data-sistema="linux"][data-escritorio="kde"], más específico. Las
+   medidas son las del código de KDE (breeze/kstyle, qqc2-desktop-style,
+   Kirigami y Ajustes del sistema, octubre de 2026): letra Noto Sans de 10 pt,
+   radio 5, botones de 32 con su borde de 1 y una sombra de 1 abajo, campos de
+   30 en blanco, casilla de 16, interruptor con pista de 12 y botón de 18,
+   deslizador con pista de 6 y botón de 18, cabecera de 46 en el color Header
+   con su separador, barra lateral en blanco con filas de 30 cada 36, y los
+   ajustes como un Kirigami.FormLayout: la etiqueta a la derecha en una
+   columna y el control a la izquierda en la otra. Los bordes y separadores son
+   el texto al 20 % sobre el fondo, como los calcula Breeze. Los colores, en
+   tokens.css (bloque `data-escritorio="kde"`, desde crates/tema).
+
+   El acento de Breeze es el azul #3daee9; aquí, el oro, como en los otros tres
+   sistemas: lo que Breeze tiñe de azul (bordes al pasar, la fila elegida, lo
+   recorrido de un deslizador) va en oro, y **el oro rellena y la piedra
+   escribe**.
+
+   En el navegador se pide con ?sistema=linux&escritorio=kde (y &barra=). */
+
+:root[data-sistema="linux"][data-escritorio="kde"] {
+  --radio: 5px;
+  --radio-chico: 4px;
+  --radio-grande: 5px;
+  --alto-control: 32px;
+  --alto-campo: 30px;
+  --alto-fila: 30px;
+  --barra-lateral: 240px;
+  --alto-barra: 46px;
+  --alto-barra-kwin: 30px;
+  --texto-chico: 8pt;
+  --texto: 10pt;
+  --texto-grande: 10pt;
+  --titulo: 10pt;
+  --fuente: "Noto Sans", "Oxygen-Sans", system-ui, sans-serif;
+  /* El borde de los botones y de los controles: el texto al 20 % sobre el botón. */
+  --borde-boton: color-mix(in srgb, var(--cuerpo) 20%, var(--boton));
+  /* Lo que Breeze tiñe del acento: al pasar, al 30 %. */
+  --acento-tenue: color-mix(in srgb, var(--relleno) 30%, transparent);
+  --sutil-encima: var(--acento-tenue);
+  --sutil-pulsado: color-mix(in srgb, var(--relleno) 45%, transparent);
+  /* La sombra de 1 px de los botones de Breeze. */
+  --sombra-boton: 0 1px 0 rgb(0 0 0 / 0.125);
+  /* La de Kirigami.Card. */
+  --sombra-tarjeta: 0 2px 18px rgb(0 0 0 / 0.05);
+}
+:root[data-sistema="linux"][data-escritorio="kde"][data-simulado="si"][data-barra="sistema"] { --arriba: var(--alto-barra-kwin); }
+
+:root[data-sistema="linux"][data-escritorio="kde"] body { line-height: 1.35; }
+
+/* ── La ventana ─────────────────────────────────────────────────────────── */
+
+/* La barra de título de KWin con Breeze, dibujada solo en las capturas: 30 de
+   alto en el color de la cabecera, el título centrado en letra normal, y los
+   botones sin fondo, con su glifo fino; al pasar, un círculo. En la ventana la
+   pone KWin. */
+:root[data-sistema="linux"][data-escritorio="kde"] .barra-sistema-simulada {
+  height: var(--alto-barra-kwin);
+  background: var(--elevada);
+  box-shadow: none;
+  font-weight: 400;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .barra-sistema-simulada .botones-gnome { right: 4px; top: 5px; }
+
+/* ── La barra lateral ───────────────────────────────────────────────────── */
+
+/* Como la de Ajustes del sistema: el fondo de las vistas (blanco en claro),
+   separada del contenido por un filete; su cabecera, la parte izquierda de la
+   cabecera de la ventana. Filas de 30 cada 36, radio 5, el icono de 16 y el
+   nombre a 6. Al pasar, el acento al 30 % con su borde; la elegida, rellena
+   del acento con el texto en piedra. */
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral {
+  padding: 0 0 6px;
+  background: var(--barra);
+  box-shadow: inset -1px 0 var(--filete);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .cabeza-lateral {
+  justify-content: flex-start;
+  padding-left: 12px;
+  background: var(--elevada);
+  box-shadow: inset 0 -1px var(--filete), inset -1px 0 var(--filete);
+  font-weight: 400;
+  font-size: 12pt;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav { gap: 6px; padding: 6px 6px 0; }
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav.abajo { padding-top: 6px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav button {
+  height: var(--alto-fila);
+  padding: 0 10px;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radio);
+  font-size: 10pt;
+  box-shadow: none;
+  transition: none;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav button .icono { color: var(--cuerpo); }
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav button:hover:not([aria-current="page"]) {
+  background: var(--acento-tenue);
+  border-color: color-mix(in srgb, var(--relleno) 80%, transparent);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav button[aria-current="page"],
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav button[aria-current="page"]:hover {
+  background: var(--relleno);
+  border-color: var(--relleno);
+  color: var(--sobre-acento);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav button[aria-current="page"] .icono { color: var(--sobre-acento); }
+
+/* El botón de la barra lateral: un ToolButton plano de 34, sin nada hasta que
+   se pasa por encima. */
+:root[data-sistema="linux"][data-escritorio="kde"] .boton-lateral {
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radio);
+  box-shadow: none;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .boton-lateral:hover:not(:disabled) { background: transparent; border-color: var(--relleno); }
+:root[data-sistema="linux"][data-escritorio="kde"] .boton-lateral:active:not(:disabled) { background: var(--acento-tenue); }
+
+/* ── Los botones de la ventana ──────────────────────────────────────────── */
+
+/* Los de Breeze: sin fondo, solo el glifo; al pasar, un círculo de 18 del
+   color del texto con el glifo invertido, y el de cerrar en rojo. */
+:root[data-sistema="linux"][data-escritorio="kde"] .botones-gnome { gap: 4px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .botones-gnome button {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  color: var(--tinta);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .lado-botones { top: calc(var(--arriba) + 13px); }
+:root[data-sistema="linux"][data-escritorio="kde"] .lado-botones.derecha { right: 10px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .lado-botones.izquierda { left: 10px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .botones-gnome button:hover:not(:disabled) {
+  background: radial-gradient(circle closest-side, var(--tinta) 90%, transparent 95%);
+  color: var(--lienzo);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .botones-gnome button[data-prueba="boton-cerrar"]:hover:not(:disabled) {
+  background: radial-gradient(circle closest-side, #ff98a2 90%, transparent 95%);
+  color: #232629;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .botones-gnome button:active:not(:disabled) {
+  background: radial-gradient(circle closest-side, color-mix(in srgb, var(--tinta) 30%, var(--elevada)) 90%, transparent 95%);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .botones-gnome .icono { width: 16px; height: 16px; }
+
+/* ── La cabecera del contenido ──────────────────────────────────────────── */
+
+/* La barra de herramientas de Kirigami: 46 en el color Header, con un filete
+   abajo; el título de la página al principio, en el tamaño de Heading 2, y las
+   órdenes al final como ToolButtons planos. */
+:root[data-sistema="linux"][data-escritorio="kde"] .herramientas {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 12px;
+  background: var(--elevada);
+  box-shadow: inset 0 -1px var(--filete);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .ventana[data-lateral="oculta"] .herramientas { padding-left: calc(46px + var(--botones-izq, 0) * 28px); }
+:root[data-sistema="linux"][data-escritorio="kde"] .titulos { flex: 1; align-items: flex-start; text-align: left; min-width: 0; }
+:root[data-sistema="linux"][data-escritorio="kde"] .titulos h1 { font-size: 12pt; font-weight: 400; }
+:root[data-sistema="linux"][data-escritorio="kde"] .antetitulo { font-size: 8pt; }
+:root[data-sistema="linux"][data-escritorio="kde"] .herramientas .aparte > button {
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .herramientas .aparte > button:hover:not(:disabled) { background: transparent; border-color: var(--relleno); }
+:root[data-sistema="linux"][data-escritorio="kde"] .herramientas .aparte > button:active:not(:disabled) { background: var(--acento-tenue); }
+:root[data-sistema="linux"][data-escritorio="kde"] .herramientas .aparte > button.principal { background: var(--relleno); border-color: var(--relleno); }
+:root[data-sistema="linux"][data-escritorio="kde"] .estudio .barra-estado,
+:root[data-sistema="linux"][data-escritorio="kde"] .estudio > .panel { background: var(--lienzo); }
+
+/* ── Controles ──────────────────────────────────────────────────────────── */
+
+/* El botón de Breeze: 32 de alto, el fondo del botón con un borde de 1 (el
+   texto al 20 %), radio 5 y una sombra de 1 abajo; letra normal. Al pasar o
+   con el foco, el borde en el acento; al pulsar, el acento al 30 %. El
+   principal, relleno del acento. */
+:root[data-sistema="linux"][data-escritorio="kde"] button {
+  height: var(--alto-control);
+  padding: 0 8px;
+  border: 1px solid var(--borde-boton);
+  border-radius: var(--radio);
+  background: var(--boton);
+  box-shadow: var(--sombra-boton);
+  font-weight: 400;
+  transition: border-color 100ms, background 100ms;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] button:hover:not(:disabled) { background: var(--boton); border-color: var(--relleno); }
+:root[data-sistema="linux"][data-escritorio="kde"] button:active:not(:disabled) {
+  background: color-mix(in srgb, var(--relleno) 30%, var(--boton));
+  border-color: var(--relleno);
+  box-shadow: none;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] button:disabled { opacity: 0.6; box-shadow: none; }
+:root[data-sistema="linux"][data-escritorio="kde"] button.principal { background: var(--relleno); border-color: var(--relleno-vivo); color: var(--sobre-acento); }
+:root[data-sistema="linux"][data-escritorio="kde"] button.principal:hover:not(:disabled) { background: var(--relleno-vivo); border-color: var(--relleno-vivo); }
+:root[data-sistema="linux"][data-escritorio="kde"] button.discreto,
+:root[data-sistema="linux"][data-escritorio="kde"] button.discreto:hover:not(:disabled) { background: transparent; box-shadow: none; }
+:root[data-sistema="linux"][data-escritorio="kde"] button.discreto { border-color: transparent; }
+:root[data-sistema="linux"][data-escritorio="kde"] button.peligro { color: var(--error); }
+:root[data-sistema="linux"][data-escritorio="kde"] .lateral nav button,
+:root[data-sistema="linux"][data-escritorio="kde"] .segmentado button { background: transparent; }
+
+/* Campo de texto: 30 de alto, el fondo de las vistas con el borde de los
+   marcos, radio 5; al pasar o con el foco, el borde en el acento. El
+   desplegable, como un botón. */
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="number"],
+:root[data-sistema="linux"][data-escritorio="kde"] input:not([type]),
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="text"] {
+  height: var(--alto-campo);
+  padding: 0 6px;
+  border: 1px solid var(--filete);
+  border-radius: var(--radio);
+  background: var(--campo);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="number"]:hover:not(:disabled),
+:root[data-sistema="linux"][data-escritorio="kde"] input:not([type]):hover:not(:disabled),
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="text"]:hover:not(:disabled) { border-color: var(--relleno); }
+:root[data-sistema="linux"][data-escritorio="kde"] select {
+  height: var(--alto-control);
+  padding: 0 28px 0 8px;
+  border: 1px solid var(--borde-boton);
+  border-radius: var(--radio);
+  background: var(--boton) var(--flecha-select) no-repeat right 8px center / 10px 10px;
+  box-shadow: var(--sombra-boton);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] select:hover:not(:disabled) { background-color: var(--boton); border-color: var(--relleno); }
+
+/* El foco con el teclado: el borde del control en el acento y un anillo de 2
+   por fuera, el acento a media luz. */
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="number"]:focus-visible,
+:root[data-sistema="linux"][data-escritorio="kde"] input:not([type]):focus-visible,
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="text"]:focus-visible,
+:root[data-sistema="linux"][data-escritorio="kde"] button:focus-visible,
+:root[data-sistema="linux"][data-escritorio="kde"] select:focus-visible,
+:root[data-sistema="linux"][data-escritorio="kde"] summary:focus-visible,
+:root[data-sistema="linux"][data-escritorio="kde"] canvas:focus-visible,
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="checkbox"]:focus-visible,
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="range"]:focus-visible {
+  border-color: var(--relleno);
+  outline: 2px solid color-mix(in srgb, var(--relleno) 55%, transparent);
+  outline-offset: 0;
+}
+
+/* La casilla de Breeze: 16 con radio 4 y su borde de 1; marcada, el borde y
+   el relleno en el acento, con la marca en piedra. */
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="checkbox"]:not([role="switch"]) {
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border-radius: 4px;
+  background: var(--boton) no-repeat center / 14px 14px;
+  box-shadow: inset 0 0 0 1px var(--filete-fuerte);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="checkbox"]:not([role="switch"]):hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--relleno); }
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="checkbox"]:not([role="switch"]):checked {
+  background-color: var(--relleno);
+  box-shadow: inset 0 0 0 1px var(--relleno-vivo);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3.5 7 6 9.5 10.5 4.5' fill='none' stroke='%232b2b31' stroke-width='2' stroke-linejoin='miter'/%3E%3C/svg%3E");
+}
+
+/* El interruptor de Breeze: 36 de ancho, una pista de 12 con radio 6 (el texto
+   al 10 % sobre el botón, con su borde) y un botón redondo de 18 con el borde
+   de los botones, que se desliza; encendido, lo recorrido en el acento a media
+   luz y el borde de la pista en el acento. */
+:root[data-sistema="linux"][data-escritorio="kde"] .interruptor { width: 36px; height: 18px; align-items: center; }
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="checkbox"][role="switch"] {
+  width: 36px;
+  height: 12px;
+  margin: 3px 0;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--cuerpo) 10%, var(--boton));
+  box-shadow: inset 0 0 0 1px var(--filete-fuerte);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="checkbox"][role="switch"]:checked {
+  background: color-mix(in srgb, var(--relleno) 60%, var(--boton));
+  box-shadow: inset 0 0 0 1px var(--relleno-vivo);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .interruptor > .pomo {
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  background: var(--boton);
+  box-shadow: inset 0 0 0 1px var(--borde-boton), var(--sombra-boton);
+  transition: transform 100ms ease-out;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .interruptor > input:hover:not(:disabled) + .pomo,
+:root[data-sistema="linux"][data-escritorio="kde"] .interruptor > input:focus-visible + .pomo {
+  background: var(--boton);
+  box-shadow: inset 0 0 0 1px var(--relleno), var(--sombra-boton);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .interruptor > input:checked + .pomo { transform: translateX(18px); }
+
+/* El deslizador de Breeze: la pista de 6 con radio 3 (el texto al 14 %), lo
+   recorrido en el acento, y el botón redondo de 18 con el borde de los
+   botones y su sombra; al pasar, el borde en el acento. */
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="range"] { height: 20px; }
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--relleno) var(--lleno, 0%), color-mix(in srgb, var(--cuerpo) 14%, var(--lienzo)) var(--lleno, 0%));
+}
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="range"]::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  background: var(--boton);
+  box-shadow: inset 0 0 0 1px var(--borde-boton), 1px 1px 0 rgb(0 0 0 / 0.125);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] input[type="range"]:hover:not(:disabled)::-webkit-slider-thumb { box-shadow: inset 0 0 0 1px var(--relleno), 1px 1px 0 rgb(0 0 0 / 0.125); }
+
+/* El segmentado: KDE no tiene uno propio; se pinta como ToolButtons que se
+   marcan, juntos: el elegido con el texto al 12,5 % de fondo y su borde. */
+:root[data-sistema="linux"][data-escritorio="kde"] .segmentado {
+  padding: 0;
+  gap: 2px;
+  background: transparent;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .segmentado button {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radio);
+  box-shadow: none;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .segmentado button:not([aria-checked="true"]):hover:not(:disabled) { background: transparent; border-color: var(--relleno); }
+:root[data-sistema="linux"][data-escritorio="kde"] .segmentado button[aria-checked="true"] {
+  background: color-mix(in srgb, var(--cuerpo) 12.5%, var(--lienzo));
+  border-color: var(--borde-boton);
+  box-shadow: none;
+}
+
+/* ── Páginas ────────────────────────────────────────────────────────────── */
+
+/* Una página de Kirigami: 18 de margen; los ajustes, centrados y hasta 576. */
+:root[data-sistema="linux"][data-escritorio="kde"] .contenido { padding: 18px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .panel-ajustes,
+:root[data-sistema="linux"][data-escritorio="kde"] .panel-ajustes.lotes { max-width: 640px; gap: 18px; }
+
+/* Los ajustes, como un Kirigami.FormLayout (Ajustes del sistema): dos
+   columnas, la etiqueta alineada a la derecha en la primera y el control en
+   la segunda, con su explicación debajo, pequeña y atenuada; 8 entre
+   columnas y 4 entre filas. Sin tarjetas ni filetes. Los encabezados de
+   grupo, como las secciones del formulario: más grandes, en seminegrita, y
+   con aire delante. */
+:root[data-sistema="linux"][data-escritorio="kde"] .grupo-ajustes { gap: 10px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .grupo-ajustes > h2 {
+  margin: 0 0 4px;
+  padding-left: calc(50% + 4px);
+  font-size: 11.5pt;
+  font-weight: 600;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .grupo-ajustes > h2:not(:first-child) { margin-top: 16px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-ajuste {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 8px;
+  row-gap: 4px;
+  align-items: center;
+  min-height: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border: 0;
+  border-radius: 0;
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-ajuste + .tarjeta-ajuste { border-top: 0; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-fila,
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-texto { display: contents; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-titulo { grid-column: 1; grid-row: 1; justify-self: end; text-align: right; font-size: 10pt; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-titulo::after { content: ":"; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-control { grid-column: 2; grid-row: 1; justify-self: start; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-descripcion { grid-column: 2; font-size: 8pt; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-ajuste:not(:has(.tarjeta-control)) .tarjeta-descripcion { grid-row: 1; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-ajuste:not(:has(.tarjeta-control)) .tarjeta-titulo { align-self: start; }
+/* El icono de la aplicación en «Acerca de» no cabe en un formulario: la etiqueta ya dice «Apolo». */
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-fila > img { display: none; }
+:root[data-sistema="linux"][data-escritorio="kde"] .tarjeta-abajo { grid-column: 2; padding-bottom: 0; }
+
+/* Lo que no es un ajuste, como una Kirigami.Card: radio 5, el fondo de las
+   vistas, el borde de los marcos y su sombra suave. */
+:root[data-sistema="linux"][data-escritorio="kde"] .grupo {
+  border: 1px solid var(--filete);
+  border-radius: var(--radio-grande);
+  padding: 12px;
+  background: var(--tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+}
+:root[data-sistema="linux"][data-escritorio="kde"] .grupo h2 { font-size: 11.5pt; font-weight: 600; }
+:root[data-sistema="linux"][data-escritorio="kde"] .zona-soltar { border-radius: var(--radio); border-width: 1px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .bienvenida-cabecera h2 { font-size: 18pt; font-weight: 400; }
+
+/* ── La versión nueva, como un Kirigami.InlineMessage ───────────────────── */
+
+/* De lado a lado bajo la cabecera, como en la posición Header: el acento al
+   20 % sobre la ventana, con un borde de 1 en el acento. */
+:root[data-sistema="linux"][data-escritorio="kde"] .novedad {
+  justify-content: flex-start;
+  padding: 5px 12px;
+  background: color-mix(in srgb, var(--relleno) 20%, var(--lienzo));
+  border-bottom: 1px solid var(--relleno);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-sistema="linux"][data-escritorio="kde"] .interruptor > .pomo { transition: none; }
+}

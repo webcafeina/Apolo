@@ -522,3 +522,10 @@ Pages lo rechaza con «Tag "vX.Y.Z" is not allowed to deploy to github-pages due
 protection rules». Se añadió la regla de etiquetas `v*` (Ajustes › Entornos › github-pages, o
 `gh api -X POST repos/webcafeina/Apolo/environments/github-pages/deployment-branch-policies -f
 name='v*' -f type=tag`). · 2026-10-22
+
+## El AUR cerró el registro de cuentas nuevas
+
+El 2026-10-22, aur.archlinux.org/register daba «New account registration is temporarily closed» (HTTP
+503) por una ola de altas automáticas, sin cola ni fecha: se anuncia en aur-general y en las
+noticias de Arch. No reintentar con un guion. Mientras, `aur.yml` desactivado y el PKGBUILD en la web
+(ADR 0030). · 2026-10-22

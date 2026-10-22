@@ -255,8 +255,10 @@ sudo dnf install apolo
 sudo zypper addrepo https://apolo.webcafeina.com/rpm/apolo.repo
 sudo zypper install apolo
 
-<span class="comentario"># Arch, Manjaro, EndeavourOS, CachyOS (AUR)</span>
-yay -S apolo-bin</pre>
+<span class="comentario"># Arch, Manjaro, EndeavourOS, CachyOS (pronto en el AUR, como apolo-bin)</span>
+mkdir apolo &amp;&amp; cd apolo
+curl -fsSLO https://apolo.webcafeina.com/aur/PKGBUILD
+makepkg -si</pre>
         <p class="letra-chica"><a href="https://github.com/webcafeina/Apolo/releases/latest">Todas las versiones en GitHub</a>,
           con <code>SHA256SUMS.txt</code> para comprobar cada fichero.</p>
       </div>

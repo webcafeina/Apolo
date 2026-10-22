@@ -72,6 +72,12 @@ Investigado el 2026-10-22 con dos agentes:
 - **Los nombres de dependencias de openSUSE** con dependencias «ricas» (`(a or b)`): no está claro
   que el rpm de Tauri las escriba bien. Se queda con los de Fedora (deuda).
 
+**Matiz del mismo día: el AUR no admite cuentas nuevas.** El registro estaba cerrado («temporarily
+closed», por una ola de altas automáticas). `aur.yml` queda desactivado (`gh workflow disable`) y
+`web.yml` publica el PKGBUILD relleno en `apolo.webcafeina.com/aur/PKGBUILD`; en Arch, `makepkg -si`.
+Cuando el cliente tenga la cuenta: `gh workflow enable aur.yml`, lanzarlo a mano con la versión
+publicada, y volver a `yay -S apolo-bin` en la web y el README.
+
 ## Consecuencias
 
 - Cuatro formatos en Linux y tres maneras de actualizarse: la banda (deb, rpm, AppImage), `apt` o

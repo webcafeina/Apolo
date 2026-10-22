@@ -89,8 +89,16 @@ publicada, y volver a `yay -S apolo-bin` en la web y el README.
 
 ## Verificación
 
+- **Compilación de prueba 39816771619** (2026-10-22), toda en verde: el `.rpm` firmado (`rpm
+  --checksig`: «digests signatures OK»), que en Fedora 44 amd64 y arm64 instala con `dnf` sus
+  dependencias (`webkit2gtk4.1`, `gtk3`) sin ninguna librería sin resolver; el PKGBUILD construido
+  con `makepkg` e instalado con `pacman` en Arch (`apolo-bin 0.15.0-1`).
+- **El repositorio APT publicado** con los `.deb` de la 0.15.0: `InRelease` con firma válida contra
+  `apolo.asc` y los `Packages` de amd64 y arm64. El PKGBUILD, en `apolo.webcafeina.com/aur/PKGBUILD`.
+- **Fedora ARM del cliente** (2026-10-22): el `.rpm` de la compilación de prueba va «perfecto», y sin
+  los huecos al repintar de la máquina virtual de Ubuntu.
+
 - `make comprobar` y e2e (la banda con `?gestor=pacman`) en verde.
-- **No verificado** al escribir esto: el rpm firmado y su entrada en `latest.json`, el humo de
-  Fedora y Arch, los repositorios desplegados y el AUR (todo en CI, con la compilación de prueba y
-  la v0.16.0); la prueba guiada en las máquinas virtuales Fedora, Ubuntu (repositorio APT) y Arch
-  Linux ARM. openSUSE, sin máquina.
+- **No verificado**: las entradas `-rpm` de `latest.json` y la actualización del rpm desde la banda
+  (con la v0.16.0), el repositorio RPM (sale con la v0.16.0), el repositorio APT en una máquina,
+  Arch Linux ARM y el AUR (registro cerrado). openSUSE, sin máquina.

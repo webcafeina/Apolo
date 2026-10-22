@@ -139,14 +139,14 @@ fn poner_marco(ventana: &tauri::WebviewWindow) -> tauri::Result<()> {
         return Ok(());
     }
     let css = gtk::CssProvider::new();
-    if css.load_from_data(MARCO).is_ok() {
-        if let Some(pantalla) = GtkWindowExt::screen(&gw) {
-            gtk::StyleContext::add_provider_for_screen(
-                &pantalla,
-                &css,
-                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-            );
-        }
+    if css.load_from_data(MARCO).is_ok()
+        && let Some(pantalla) = GtkWindowExt::screen(&gw)
+    {
+        gtk::StyleContext::add_provider_for_screen(
+            &pantalla,
+            &css,
+            gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+        );
     }
     // Se puede con la ventana ya creada: GTK recalcula la sombra y el borde
     // de redimensionado sin rehacerla (con `set_titlebar`, sí la rehace).

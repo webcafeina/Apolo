@@ -29,8 +29,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   salen, en gris oscuro): son de la gráfica virtual (trampas.md, deuda.md). Fuera el pintado por
   CPU (`7659847`).
 - El cliente pidió publicar: versión 0.15.0 (`c142c8d`), notas bilingües, `make comprobar` y CI en
-  verde, etiqueta `v0.15.0`. Se paró con `publicar.yml` 39778214906 en marcha: **queda revisar el
-  borrador y publicarlo** (estado.md).
+  verde, etiqueta `v0.15.0`. Se paró con `publicar.yml` 39778214906 en marcha y se siguió por la
+  tarde: en verde a la primera; borrador revisado como siempre (bajado a `~/.cache`: en `/tmp` no
+  cabe por la cuota) y **v0.15.0 publicada a las 14:59 UTC**, con el tap de Homebrew al día.
 
 ---
 

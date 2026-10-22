@@ -4,18 +4,16 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-22, ~12:40 UTC): la v0.15.0 está etiquetada y saliendo, sin revisar ni
-> publicar.** El cliente dijo «Publica la v0.15.0»: versión subida (`c142c8d`), notas en
-> `.github/notas/v0.15.0.md`, `make comprobar` y CI (`Comprobar` 39775422161) en verde, etiqueta
-> `v0.15.0` empujada; `publicar.yml` **39778214906** en marcha al parar (el cliente no quiso
-> esperar). **Al volver**: `gh run view 39778214906` (si falla el `.dmg` o googlesource da 503,
-> `gh run rerun 39778214906 --failed`); luego la revisión del borrador de siempre (descargar, sumas,
-> `verificar_firmas.py`, `latest.json` con 14 plataformas, CLI y `apolo-mcp` en 0.15.0, los cinco
-> `.mcpb`, manifiesto ARM64, `humo.sin_dll_de_vc`, AVIF 3/3), y en el `.deb` arm64 `dpkg -I`
-> (Maintainer «Webcafeína», descripción en español ASCII) y el `metainfo.xml`. Si todo bien,
-> `gh release edit v0.15.0 --draft=false` (el sí ya está dado) y comprobar `latest.json` público y
-> el tap. Después: el cliente actualiza desde el aviso en el Mac (el interruptor con su burbuja), en
-> Windows (el editor) y en Ubuntu; y la prueba guiada final y la 1.0.0.
+> **v0.15.0 publicada (2026-10-22, 14:59 UTC)**, Linux con Ubuntu 26.10 (ADR 0029), con el
+> interruptor de macOS con su burbuja y «Webcafeína» como editor. `publicar.yml` 39778214906 en
+> verde a la primera (humo incluido). Borrador revisado como siempre: 27 ficheros, 26 sumas, 7
+> firmas, `latest.json` con 14 plataformas, CLI y `apolo-mcp` en 0.15.0, los cinco `.mcpb` en
+> 0.15.0, manifiesto de `apolo-app.exe` ARM64 válido, en ASCII y con UTF-8, sin DLL de Visual C++,
+> AVIF 3/3; «Webcafeína» en los dos `apolo-app.exe`; el `.deb` arm64 con Maintainer «Webcafeína»,
+> la descripción en español ASCII, el lanzador y el `metainfo.xml`. `latest.json` público en 0.15.0
+> y el tap de Homebrew actualizado (fórmula y cask). **Lo siguiente**: que el cliente actualice desde
+> el aviso en el Mac (el interruptor con su burbuja), en Windows (el editor) y en Ubuntu; luego la
+> prueba guiada final y la 1.0.0.
 >
 > **Los huecos al repintar en la máquina virtual de Linux no son nuestros** (`7659847`): salen
 > también con la primera compilación de prueba (gris oscuro) y sin marco, y no los quitan ni CPU,

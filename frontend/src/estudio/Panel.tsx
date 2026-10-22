@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Icono, lleno } from "../componentes";
+import { Icono, Interruptor, lleno } from "../componentes";
 import * as puente from "../puente";
 import {
   CONTROLES_PROCESO,
@@ -334,10 +334,8 @@ function Fila({ control: c, ajuste: a, contexto, cambiar, nivelSinPerdida }: Pro
     <div className={`fila-control${activo ? "" : " apagado"}`} data-prueba={`control-${c.clave}`}>
       <div className="cabecera-control">
         {c.tipo === "interruptor" && (
-          <input
+          <Interruptor
             id={id}
-            type="checkbox"
-            role="switch"
             checked={obj[c.campo] as boolean}
             disabled={!activo}
             onChange={(e) => poner(c.campo, e.target.checked)}
@@ -393,10 +391,8 @@ function Especial({
       const r = o.redimension;
       return (
         <div className="pareja">
-          <input
+          <Interruptor
             id={id}
-            type="checkbox"
-            role="switch"
             checked={r !== null}
             onChange={(e) =>
               poner("redimension", e.target.checked ? { ancho: Math.round(contexto.ancho / 2), alto: 0 } : null)
@@ -417,10 +413,8 @@ function Especial({
       const r = o.recorte;
       return (
         <div className="pareja cuadruple">
-          <input
+          <Interruptor
             id={id}
-            type="checkbox"
-            role="switch"
             checked={r !== null}
             onChange={(e) => poner("recorte", e.target.checked ? { x: 0, y: 0, ancho: contexto.ancho, alto: contexto.alto } : null)}
             aria-label={t("opcion.recorteCwebp")}
@@ -445,7 +439,7 @@ function Especial({
       const hex = `#${(m ?? 0xffffff).toString(16).padStart(6, "0")}`;
       return (
         <div className="pareja">
-          <input id={id} type="checkbox" role="switch" checked={m !== null} disabled={!activo} onChange={(e) => poner("mezclar_alfa", e.target.checked ? 0xffffff : null)} aria-label={t("opcion.mezclarAlfa")} />
+          <Interruptor id={id} checked={m !== null} disabled={!activo} onChange={(e) => poner("mezclar_alfa", e.target.checked ? 0xffffff : null)} aria-label={t("opcion.mezclarAlfa")} />
           {m !== null && <input type="color" value={hex} disabled={!activo} aria-label={t("panel.colorFondo")} onChange={(e) => poner("mezclar_alfa", parseInt(e.target.value.slice(1), 16))} />}
         </div>
       );
@@ -462,7 +456,7 @@ function Especial({
         </div>
       );
     case "hilos":
-      return <input id={id} type="checkbox" role="switch" checked={o.hilos > 0} onChange={(e) => poner("hilos", e.target.checked ? 1 : 0)} />;
+      return <Interruptor id={id} checked={o.hilos > 0} onChange={(e) => poner("hilos", e.target.checked ? 1 : 0)} />;
     case "calidadJpeg": {
       const q = a.jpeg.calidad[0] ?? 75;
       return (
@@ -486,10 +480,8 @@ function Especial({
       return (
         <div className="proceso-control">
           <div className="pareja">
-            <input
+            <Interruptor
               id={id}
-              type="checkbox"
-              role="switch"
               checked={r !== null}
               onChange={(e) =>
                 proceso({
@@ -549,10 +541,8 @@ function Especial({
       return (
         <div className="proceso-control">
           <div className="pareja cuadruple">
-            <input
+            <Interruptor
               id={id}
-              type="checkbox"
-              role="switch"
               checked={r !== null}
               onChange={(e) => proceso({ recorte: e.target.checked ? { x: 0, y: 0, ancho: w, alto: h } : null })}
               aria-label={t("opcion.procesoRecorte")}
@@ -592,10 +582,8 @@ function Especial({
       const nota = a.objetivo;
       return (
         <div className="proceso-control">
-          <input
+          <Interruptor
             id={id}
-            type="checkbox"
-            role="switch"
             checked={nota !== null}
             disabled={!activo}
             onChange={(e) => cambiar({ ...a, objetivo: e.target.checked ? 80 : null })}
@@ -628,10 +616,8 @@ function Especial({
       const pal = a.proceso.paleta;
       return (
         <div className="proceso-control">
-          <input
+          <Interruptor
             id={id}
-            type="checkbox"
-            role="switch"
             checked={pal !== null}
             onChange={(e) => proceso({ paleta: e.target.checked ? { colores: 256, tramado: 1 } : null })}
             aria-label={t("opcion.procesoPaleta")}

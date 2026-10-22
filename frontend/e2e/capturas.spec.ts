@@ -23,14 +23,17 @@ const CALIDAD = process.env.CAPTURAS_FOTO ? "50" : "10";
 // Van a capturas/<sistema>[-vidrio]/ (y en/ dentro, en inglés).
 const SISTEMA = process.env.CAPTURAS_SISTEMA ?? "";
 const VIDRIO = process.env.CAPTURAS_VIDRIO === "si";
+// En Linux, la parte de arriba (ADR 0029): `CAPTURAS_BARRA=propia` o `sistema`.
+const BARRA = process.env.CAPTURAS_BARRA ?? "";
 const BASE = SISTEMA
-  ? `capturas/${SISTEMA}${VIDRIO ? "-vidrio" : ""}`
+  ? `capturas/${SISTEMA}${VIDRIO ? "-vidrio" : ""}${BARRA ? `-${BARRA}` : ""}`
   : "capturas";
 const CARPETA = INGLES ? `${BASE}/en` : BASE;
 function raiz(extra = ""): string {
   const q = new URLSearchParams(extra);
   if (SISTEMA) q.set("sistema", SISTEMA);
   if (VIDRIO) q.set("vidrio", "si");
+  if (BARRA) q.set("barra", BARRA);
   const s = q.toString();
   return s ? `/?${s}` : "/";
 }
@@ -356,9 +359,9 @@ test("panel de navegación", async ({ page }, info) => {
   });
 });
 
-// Solo en macOS: la barra lateral oculta con su botón (ADR 0028).
+// Solo en macOS y Linux: la barra lateral oculta con su botón (ADR 0028 y 0029).
 test("barra lateral oculta", async ({ page }, info) => {
-  test.skip(SISTEMA !== "macos", "solo en macOS");
+  test.skip(SISTEMA !== "macos" && SISTEMA !== "linux", "solo en macOS y Linux");
   await page.goto(raiz());
   const elegir = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
@@ -440,4 +443,15 @@ test.describe("de cerca", () => {
     });
     await page.mouse.up();
   });
+});
+
+// Solo en Linux: con la ventana estrecha, la barra lateral encima del contenido (ADR 0029).
+test("barra lateral encima", async ({ page }, info) => {
+  test.skip(SISTEMA !== "linux", "solo en Linux");
+  await page.setViewportSize({ width: 820, height: 700 });
+  await page.goto(raiz());
+  await page.getByTestId("boton-lateral").click();
+  await page.getByRole("button", { name: n("Lotes") }).hover();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${CARPETA}/lateral-encima-${info.project.name}.png` });
 });

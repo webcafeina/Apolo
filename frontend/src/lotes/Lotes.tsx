@@ -12,10 +12,10 @@
 // La sección no se desmonta al cambiar de sección (como el Estudio), para que
 // un lote largo siga contando aunque se mire otra cosa.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ChangeEvent } from "react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
-import { Cabecera, formularioNativo, Icono, lleno, TarjetaAjuste } from "../componentes";
+import { Cabecera, formularioNativo, Icono, Interruptor, lleno, TarjetaAjuste } from "../componentes";
 import { EVENTO_PRESETS, formatoBytes } from "../estudio/Estudio";
 import { FORMATOS, type Ajuste, type FormatoSalida, type Preset } from "../estudio/opciones";
 import { banda, nombreFormato } from "../estudio/Panel";
@@ -264,26 +264,21 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
     </section>
   );
 
-  // Lo mismo en todos los sistemas; en Windows va en tarjetas y las casillas
-  // son interruptores (ADR 0027).
-  const casillaMedir = (windows: boolean) => (
-    <input
-      type="checkbox"
-      role={windows ? "switch" : undefined}
-      aria-label={windows ? t("lotes.medir") : undefined}
-      checked={medir}
-      onChange={(e) => setMedir(e.target.checked)}
-    />
-  );
-  const casillaObjetivo = (windows: boolean) => (
-    <input
-      type="checkbox"
-      role={windows ? "switch" : undefined}
-      aria-label={windows ? t("lotes.objetivo") : undefined}
-      checked={objetivo !== null}
-      onChange={(e) => setObjetivo(e.target.checked ? 80 : null)}
-    />
-  );
+  // Lo mismo en todos los sistemas; con el formulario del sistema (Windows,
+  // macOS y Linux) va en tarjetas y las casillas son interruptores.
+  const casillaMedir = (nativo: boolean) =>
+    nativo ? (
+      <Interruptor aria-label={t("lotes.medir")} checked={medir} onChange={(e) => setMedir(e.target.checked)} />
+    ) : (
+      <input type="checkbox" checked={medir} onChange={(e) => setMedir(e.target.checked)} />
+    );
+  const alObjetivo = (e: ChangeEvent<HTMLInputElement>) => setObjetivo(e.target.checked ? 80 : null);
+  const casillaObjetivo = (nativo: boolean) =>
+    nativo ? (
+      <Interruptor aria-label={t("lotes.objetivo")} checked={objetivo !== null} onChange={alObjetivo} />
+    ) : (
+      <input type="checkbox" checked={objetivo !== null} onChange={alObjetivo} />
+    );
   const deslizadorObjetivo = objetivo !== null && (
     <div className="deslizador objetivo-lote">
       <input

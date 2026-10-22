@@ -117,3 +117,12 @@ las filas de 36); el minificado conserva la propiedad y solo en la hoja inyectad
 `ventana_macos.rs` para Apple silicon. **No verificado**: que el material se vea en las cápsulas y en
 el botón del deslizador en el Mac (solo existe allí); el botón del interruptor no puede llevarlo (es
 el fondo del `<input>`).
+
+## Matiz del 2026-10-22: el interruptor, con su burbuja de vidrio
+
+El cliente pidió que el interruptor se volviera burbuja de vidrio al pulsarlo, como en las
+aplicaciones nativas (el de Tailscale), y que no diera el saltito. Su botón era la imagen de fondo
+del `<input>`, y el vidrio del sistema solo va en elementos enteros. Ahora el componente
+`Interruptor` lo pone aparte (`<span class="pomo">`, ADR 0029): en macOS es la píldora de 26 × 16
+que, al pulsar, se hincha por encima de la pista (`scale(1.4, 1.6)`) y lleva
+`-apple-visual-effect` con `vidrio_controles`. Sin cambiar de imagen, no hay saltito.

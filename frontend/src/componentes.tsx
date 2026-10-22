@@ -8,8 +8,9 @@
 // (componentes.tsx de Esfinge): caja de 18, trazo de 1,4, puntas redondeadas y
 // el color del texto que acompañan.
 
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, InputHTMLAttributes, ReactNode } from "react";
 import { ICONOS_FLUENT } from "./iconos-fluent";
+import { ICONOS_YARU } from "./iconos-yaru";
 import icono from "./marca/icono.svg";
 import marca from "./marca/marca.svg?raw";
 
@@ -111,6 +112,18 @@ export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | st
   }
   // En Windows, los iconos de Fluent (ADR 0027), con los mismos nombres. Se mira
   // al dibujar, no al cargar el módulo: el sistema llega de Rust después.
+  // En Linux, los simbólicos de Yaru (ADR 0029), con los mismos nombres.
+  const yaru = document.documentElement.dataset.sistema === "linux" ? ICONOS_YARU[nombre] : undefined;
+  if (yaru) {
+    return (
+      <svg className="icono" width={lado} height={lado} viewBox={yaru.v ?? "0 0 16 16"} fill="currentColor" aria-hidden="true">
+        <g transform={yaru.t}>
+          {yaru.o && <path d={yaru.o} opacity={0.5} />}
+          <path d={yaru.d} />
+        </g>
+      </svg>
+    );
+  }
   const fluent = document.documentElement.dataset.sistema === "windows" ? ICONOS_FLUENT[nombre] : undefined;
   if (fluent) {
     const caja = lado < 18 ? 16 : 20;
@@ -145,13 +158,18 @@ export const esWindows = () => document.documentElement.dataset.sistema === "win
 /** Si la interfaz es la de macOS 27 (ADR 0028). */
 export const esMac = () => document.documentElement.dataset.sistema === "macos";
 
-/** Si los ajustes van como en el sistema: SettingsCards en Windows (ADR 0027) y
- *  filas agrupadas, como en Ajustes del Sistema, en macOS (ADR 0028). El mismo
- *  marcado; cambia el CSS. En Linux y en la web, las tarjetas de siempre. */
-export const formularioNativo = () => esWindows() || esMac();
+/** Si la interfaz es la de Ubuntu 26.10 (ADR 0029). */
+export const esLinux = () => document.documentElement.dataset.sistema === "linux";
 
-/** Una SettingsCard de WinUI en Windows (ADR 0027), y una fila de formulario
- *  agrupado en macOS (ADR 0028): el icono, el título, la descripción y el
+/** Si los ajustes van como en el sistema: SettingsCards en Windows (ADR 0027) y
+ *  filas agrupadas, como en Ajustes del Sistema, en macOS (ADR 0028), y listas
+ *  en tarjeta (*boxed list*) como en Ajustes de Ubuntu, en Linux (ADR 0029).
+ *  El mismo marcado; cambia el CSS. En la web, las tarjetas de siempre. */
+export const formularioNativo = () => esWindows() || esMac() || esLinux();
+
+/** Una SettingsCard de WinUI en Windows (ADR 0027), una fila de formulario
+ *  agrupado en macOS (ADR 0028) y una fila de lista en tarjeta en Linux
+ *  (ADR 0029): el icono, el título, la descripción y el
  *  control a la derecha; lo de dentro va debajo, a todo el ancho. El control
  *  lleva su propio `aria-label`. */
 export function TarjetaAjuste({
@@ -182,6 +200,22 @@ export function TarjetaAjuste({
       </div>
       {children && <div className="tarjeta-abajo">{children}</div>}
     </div>
+  );
+}
+
+/** Un interruptor: la casilla con el papel de `switch` (la que se marca, la
+ *  que leen el lector de pantalla y las pruebas) y, a su lado, su botón como
+ *  elemento propio, decorativo. Hace falta porque WebKit no deja meter nada
+ *  dentro de un `<input>`: con el botón aparte, en macOS lleva el vidrio del
+ *  sistema al pulsarlo (ADR 0028) y en Linux es el de libadwaita (ADR 0029).
+ *  En Windows y en la web se queda oculto y el botón sigue siendo el fondo de
+ *  la casilla, como siempre. */
+export function Interruptor(props: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <span className="interruptor">
+      <input {...props} type="checkbox" role="switch" />
+      <span className="pomo" aria-hidden="true" />
+    </span>
   );
 }
 

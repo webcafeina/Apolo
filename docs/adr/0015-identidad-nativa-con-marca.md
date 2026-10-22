@@ -77,3 +77,10 @@ En macOS, la anatomía de Esfinge deja paso a la de macOS 27 Golden Gate: barra 
 borde, barra de herramientas unificada, controles y filas agrupadas del kit de Apple. El oro sigue
 siendo el acento; los iconos de la barra lateral van en un oro oscurecido a 3:1, el único sitio donde
 el oro es línea. Ver la [ADR 0028](0028-macos-con-golden-gate.md).
+
+## Matiz del 2026-10-22: Linux con Ubuntu 26.10
+
+En Linux, la base de Esfinge deja paso a libadwaita con el tema Yaru de Ubuntu 26.10: su escala,
+sus controles, sus iconos y su estructura (barra lateral adaptativa, barra de cabecera propia en
+GNOME, listas en tarjeta). El oro sigue siendo el acento. Con esto, cada sistema tiene la suya; la
+base de `estilos.css` queda para la web. Ver la [ADR 0029](0029-linux-con-ubuntu.md).

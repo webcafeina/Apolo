@@ -52,3 +52,8 @@ window-vibrancy = "0.8"
 # Para encender el vidrio de los controles (una preferencia de WKPreferences,
 # ventana_macos.rs). Ya lo trae Tauri; MIT.
 objc2 = "0.6"
+
+# La ventana de Linux (ADR 0029): leer de GTK en qué lado van los botones de la
+# ventana. La misma versión que trae Tauri; MIT.
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = "0.18"

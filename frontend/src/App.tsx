@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import * as actualizar from "./actualizar";
 import { Agentes } from "./ajustes/Agentes";
 import { BarraTitulo } from "./BarraTitulo";
-import { Cabecera, esMac, esWindows, formularioNativo, Icono, IconoApp, Marca, TarjetaAjuste } from "./componentes";
+import { BotonesVentana, ladosBotones } from "./BotonesVentana";
+import { Cabecera, esLinux, esMac, esWindows, formularioNativo, Icono, IconoApp, Interruptor, Marca, TarjetaAjuste } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
 import i18n, { lengua } from "./i18n";
 import { Lotes } from "./lotes/Lotes";
@@ -29,10 +30,14 @@ export function App() {
   const [novedad, setNovedad] = useState<actualizar.Novedad | null>(null);
   const [traslocada, setTraslocada] = useState(false);
   const [simulado, setSimulado] = useState(false);
+  const [disposicion, setDisposicion] = useState(":minimize,maximize,close");
   const windows = esWindows();
   const mac = esMac();
+  const linux = esLinux();
+  const barraPropia = linux && document.documentElement.dataset.barra === "propia";
   const { panel, alMenu, setEncima } = usePanel();
   const { visible: lateralVisible, alternar: alternarLateral } = useLateral();
+  const gnome = useLateralGnome();
 
   useEffect(() => {
     puente.inicio().then(setInicio, (e: puente.Fallo) => setFallo(e.mensaje));
@@ -40,6 +45,7 @@ export function App() {
       (p) => {
         setTraslocada(p.traslocada);
         setSimulado(!!p.simulado);
+        if (p.botones) setDisposicion(p.botones);
       },
       () => {},
     );
@@ -69,6 +75,9 @@ export function App() {
     return () => clearInterval(reloj);
   }, []);
 
+  const botones = ladosBotones(disposicion);
+  const lateralAbierta = mac ? lateralVisible : gnome.estado !== "oculta";
+
   const fila = (s: Seccion) => (
     <button
       key={s}
@@ -79,9 +88,10 @@ export function App() {
       onClick={() => {
         setSeccion(s);
         setEncima(false);
+        gnome.cerrarEncima();
       }}
     >
-      <Icono nombre={s} lado={mac ? 20 : windows ? 16 : 18} />
+      <Icono nombre={s} lado={mac ? 20 : windows || linux ? 16 : 18} />
       <span className="etiqueta">{t(`nav.${s}`)}</span>
     </button>
   );
@@ -90,7 +100,8 @@ export function App() {
     <div
       className="ventana"
       data-panel={windows ? panel : undefined}
-      data-lateral={mac ? (lateralVisible ? "visible" : "oculta") : undefined}
+      data-lateral={mac ? (lateralVisible ? "visible" : "oculta") : linux ? gnome.estado : undefined}
+      style={linux ? ({ "--botones-izq": botones.izquierda.length, "--botones-der": botones.derecha.length } as CSSProperties) : undefined}
     >
       {windows && <BarraTitulo panelAbierto={panel !== "compacto"} alMenu={alMenu} />}
       {/* En el navegador no hay semáforos: unos dibujados ocupan su sitio en
@@ -102,24 +113,48 @@ export function App() {
           <i />
         </div>
       )}
-      {mac && (
+      {/* En Linux con la barra del sistema, en el navegador se dibuja una que
+          ocupa su sitio, para compararla en las capturas (ADR 0029). */}
+      {linux && simulado && !barraPropia && (
+        <div className="barra-sistema-simulada" aria-hidden="true">
+          <span>{t("app.nombre")}</span>
+          <BotonesVentana botones={["minimize", "maximize", "close"]} />
+        </div>
+      )}
+      {barraPropia && botones.izquierda.length > 0 && (
+        <div className="lado-botones izquierda">
+          <BotonesVentana botones={botones.izquierda} />
+        </div>
+      )}
+      {barraPropia && botones.derecha.length > 0 && (
+        <div className="lado-botones derecha">
+          <BotonesVentana botones={botones.derecha} />
+        </div>
+      )}
+      {(mac || linux) && (
         <button
           className="boton-lateral"
-          aria-label={t(lateralVisible ? "ventana.ocultarLateral" : "ventana.mostrarLateral")}
-          title={t(lateralVisible ? "ventana.ocultarLateral" : "ventana.mostrarLateral")}
-          aria-expanded={lateralVisible}
-          onClick={alternarLateral}
+          aria-label={t(lateralAbierta ? "ventana.ocultarLateral" : "ventana.mostrarLateral")}
+          title={t(lateralAbierta ? "ventana.ocultarLateral" : "ventana.mostrarLateral")}
+          aria-expanded={lateralAbierta}
+          onClick={mac ? alternarLateral : gnome.alternar}
           data-prueba="boton-lateral"
         >
           <Icono nombre="lateral" lado={16} />
         </button>
       )}
-      <aside className="lateral" data-tauri-drag-region inert={mac && !lateralVisible ? true : undefined}>
+      <aside className="lateral" data-tauri-drag-region inert={!lateralAbierta && (mac || linux) ? true : undefined}>
         {mac && <div className="cabeza-lateral" data-tauri-drag-region />}
+        {/* En Linux, la cabecera de la barra lateral, como la de AdwNavigationSplitView. */}
+        {linux && (
+          <div className="cabeza-lateral" data-tauri-drag-region>
+            <span className="titulo-lateral">{t("app.nombre")}</span>
+          </div>
+        )}
         {/* En Windows y en macOS, el nombre y el icono los pone la ventana, y la
             versión está en Ajustes › Acerca de: el panel solo navega (ADR 0027
             y 0028). */}
-        {!windows && !mac && (
+        {!windows && !mac && !linux && (
           <>
             <div className="semaforos" data-tauri-drag-region />
             <div className="sello" data-tauri-drag-region>
@@ -133,7 +168,7 @@ export function App() {
           {fila("mcp")}
           {fila("ajustes")}
         </nav>
-        {inicio && !windows && !mac && (
+        {inicio && !windows && !mac && !linux && (
           <p className="firma" data-prueba="firma">
             {t("app.casa")}
             <span className="firma-barra" aria-hidden="true">▍</span>
@@ -189,6 +224,51 @@ function useLateral() {
       return !v;
     });
   return { visible, alternar };
+}
+
+const ESTRECHA_GNOME = "(max-width: 859px)";
+const CLAVE_LATERAL_GNOME = "apolo.lateral-gnome";
+
+/**
+ * La barra lateral de Linux (ADR 0029), como AdwNavigationSplitView: con la
+ * ventana ancha, su botón la oculta o la muestra, y se recuerda; con la ventana
+ * estrecha va oculta y el botón la saca encima del contenido hasta que se elige
+ * una sección. Abre visible.
+ */
+function useLateralGnome() {
+  const [estrecha, setEstrecha] = useState(() => window.matchMedia(ESTRECHA_GNOME).matches);
+  const [oculta, setOculta] = useState(() => {
+    try {
+      return localStorage.getItem(CLAVE_LATERAL_GNOME) === "oculta";
+    } catch {
+      return false;
+    }
+  });
+  const [encima, setEncima] = useState(false);
+
+  useEffect(() => {
+    const m = window.matchMedia(ESTRECHA_GNOME);
+    const cambiar = () => {
+      setEstrecha(m.matches);
+      setEncima(false);
+    };
+    m.addEventListener("change", cambiar);
+    return () => m.removeEventListener("change", cambiar);
+  }, []);
+
+  const estado: "visible" | "oculta" | "encima" = estrecha ? (encima ? "encima" : "oculta") : oculta ? "oculta" : "visible";
+  const alternar = () => {
+    if (estrecha) return setEncima((e) => !e);
+    setOculta((o) => {
+      try {
+        localStorage.setItem(CLAVE_LATERAL_GNOME, o ? "visible" : "oculta");
+      } catch {
+        // Sin almacenamiento, se oculta igual; no se recordará.
+      }
+      return !o;
+    });
+  };
+  return { estado, alternar, cerrarEncima: () => setEncima(false) };
 }
 
 const ANCHA = "(min-width: 1008px)";
@@ -411,20 +491,18 @@ function Actualizaciones({ alEncontrar }: { alEncontrar: (n: actualizar.Novedad)
 
   // Hasta que llegan los ajustes, la casilla no se toca: el clic no tendría de
   // dónde partir y volvería sola a como estaba (Esfinge).
-  const casilla = (windows: boolean) => (
-    <input
-      type="checkbox"
-      role={windows ? "switch" : undefined}
-      aria-label={windows ? t("ajustes.avisarme") : undefined}
-      checked={ajustes?.buscar_actualizaciones ?? true}
-      disabled={ajustes === null}
-      onChange={(e) => {
+  const casilla = (nativo: boolean) => {
+    const comun = {
+      checked: ajustes?.buscar_actualizaciones ?? true,
+      disabled: ajustes === null,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => {
         // Se marca ya, sin esperar a Rust, que la guarda detrás.
         setAjustes({ ...ajustes!, buscar_actualizaciones: e.target.checked });
         puente.buscarActualizaciones(e.target.checked).then(setAjustes, () => {});
-      }}
-    />
-  );
+      },
+    };
+    return nativo ? <Interruptor aria-label={t("ajustes.avisarme")} {...comun} /> : <input type="checkbox" {...comun} />;
+  };
   const ultimaVez = ajustes?.ultima_comprobacion != null && (
     <span className="apagado" data-prueba="ultima-vez">
       {t("ajustes.ultimaVez", { fecha: fecha(ajustes.ultima_comprobacion) })}

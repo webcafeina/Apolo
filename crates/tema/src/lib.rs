@@ -346,9 +346,97 @@ pub fn macos_oscuro() -> Tema {
     }
 }
 
-/// Todas las paletas: las dos de siempre, las dos de Windows y las dos de
-/// macOS. La prueba de contraste las mide todas.
-pub fn temas() -> [Tema; 6] {
+// Los colores de estado de Yaru (la paleta de Ubuntu).
+const VERDE_YARU: Rgb = Rgb::hex(0x219e34);
+const AMBAR_YARU: Rgb = Rgb::hex(0xc88800);
+const ROJO_YARU: Rgb = Rgb::hex(0xd3273b);
+
+/// El modo claro en Linux (ADR 0029): los neutros de Yaru en Ubuntu 26.10,
+/// sacados de su hoja compilada para libadwaita (ventana `#FAFAFA`, texto
+/// `#3d3d3d`, barra lateral `#ebebeb`, tarjetas blancas). Los botones y los
+/// campos de libadwaita van rellenos del texto al 10 %, aplanado aquí sobre la
+/// ventana. El oro, la piedra y el acento, los de siempre.
+pub fn linux_claro() -> Tema {
+    let lienzo = Rgb::hex(0xfafafa);
+    // La fila elegida de la barra lateral es la superficie más oscura.
+    let peor = Rgb::hex(0xd8d8d8);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
+
+    Tema {
+        nombre: "linux-claro",
+        oscuro: false,
+        lienzo,
+        suave: Rgb::hex(0xf0f0f0),
+        tarjeta: Rgb::hex(0xffffff),
+        elevada: Rgb::hex(0xe7e7e7),
+        filete: Rgb::hex(0xe0e0e0),
+        filete_fuerte: contraste::acento_legible(Rgb::hex(0x8a8a8a), peor, AA_GRANDE),
+        tinta: Rgb::hex(0x303030),
+        cuerpo: Rgb::hex(0x3d3d3d),
+        apagado: contraste::acento_legible(Rgb::hex(0x737373), peor, AA_NORMAL),
+        relleno,
+        relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        sobre_acento: PIEDRA,
+        acento: PIEDRA,
+        anillo: (ORO, 50),
+        relleno_tenue: (ORO, 18),
+        barra: Rgb::hex(0xebebeb),
+        barra_encima: peor,
+        campo: Rgb::hex(0xebebeb),
+        boton: Rgb::hex(0xe7e7e7),
+        boton_encima: Rgb::hex(0xdedede),
+        exito: contraste::acento_legible(VERDE_YARU, peor, AA_NORMAL),
+        aviso: contraste::acento_legible(AMBAR_YARU, peor, AA_NORMAL),
+        error: contraste::acento_legible(ROJO_YARU, peor, AA_NORMAL),
+        damero_a: Rgb::hex(0xffffff),
+        damero_b: Rgb::hex(0xe6e6e6),
+    }
+}
+
+/// El modo oscuro en Linux (ADR 0029), con los neutros de Yaru: ventana
+/// `#2c2c2c`, texto `#f7f7f7`, barra lateral `#393939`, tarjetas del blanco al
+/// 8 %.
+pub fn linux_oscuro() -> Tema {
+    // Los botones con el puntero encima son la superficie más clara.
+    let peor = Rgb::hex(0x4d4d4d);
+    let relleno = contraste::relleno_legible(ORO, PIEDRA, AA_NORMAL);
+
+    Tema {
+        nombre: "linux-oscuro",
+        oscuro: true,
+        lienzo: Rgb::hex(0x2c2c2c),
+        suave: Rgb::hex(0x323232),
+        tarjeta: Rgb::hex(0x3a3a3a),
+        elevada: Rgb::hex(0x414141),
+        filete: Rgb::hex(0x474747),
+        filete_fuerte: contraste::acento_legible(Rgb::hex(0x8f8f8f), peor, AA_GRANDE),
+        tinta: Rgb::hex(0xf7f7f7),
+        cuerpo: Rgb::hex(0xe4e4e4),
+        apagado: contraste::acento_legible(Rgb::hex(0xa6a6a6), peor, AA_NORMAL),
+        relleno,
+        relleno_vivo: relleno.oscurecer(0.92),
+        oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        sobre_acento: PIEDRA,
+        acento: BLANCO,
+        anillo: (ORO, 50),
+        relleno_tenue: (ORO, 22),
+        barra: Rgb::hex(0x393939),
+        barra_encima: Rgb::hex(0x4a4a4a),
+        campo: Rgb::hex(0x3e3e3e),
+        boton: Rgb::hex(0x414141),
+        boton_encima: peor,
+        exito: contraste::acento_legible(Rgb::hex(0x0e8420), peor, AA_NORMAL),
+        aviso: contraste::acento_legible(Rgb::hex(0xcd9309), peor, AA_NORMAL),
+        error: contraste::acento_legible(Rgb::hex(0xc7162b), peor, AA_NORMAL),
+        damero_a: Rgb::hex(0x3a3a3a),
+        damero_b: Rgb::hex(0x474747),
+    }
+}
+
+/// Todas las paletas: las dos de siempre y las dos de cada sistema (Windows,
+/// macOS y Linux). La prueba de contraste las mide todas.
+pub fn temas() -> [Tema; 8] {
     [
         claro(),
         oscuro(),
@@ -356,5 +444,7 @@ pub fn temas() -> [Tema; 6] {
         windows_oscuro(),
         macos_claro(),
         macos_oscuro(),
+        linux_claro(),
+        linux_oscuro(),
     ]
 }

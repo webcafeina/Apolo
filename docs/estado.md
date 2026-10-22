@@ -1,9 +1,22 @@
 # Estado
 
-Última actualización: **2026-10-21**
+Última actualización: **2026-10-22**
 
 ## Dónde se paró, y por dónde se sigue
 
+> **v0.15.0, Linux con Ubuntu 26.10 (2026-10-22), en curso** (ADR 0029). Hecho y revisado con el
+> cliente en capturas: libadwaita 1.10 con Yaru medidos en su código, barra lateral adaptativa,
+> listas en tarjeta, controles de 34 con Ubuntu Sans 11 pt, iconos de Yaru; eligió la **barra
+> propia como GNOME** (`ventana_linux.rs`: sin barra del sistema solo en GNOME, botones de la
+> ventana en el lado de `gtk-decoration-layout`). Van también dos arreglos: el interruptor de
+> macOS con su botón propio y la burbuja de vidrio, y «Webcafeína» como editor (`publisher`).
+> `make comprobar` y e2e (107) en verde; **`ventana_linux.rs` lo compila CI** (aquí no hay GTK).
+> **Lo siguiente**: CI y una compilación de prueba (`publicar.yml` a mano) para la **prueba guiada en
+> la máquina virtual Ubuntu 26.10 ARM64**: la ventana sin barra del sistema, los botones, arrastrar,
+> doble clic, redimensionar, la barra lateral, todas las pantallas, claro y oscuro, el editor en
+> `dpkg -I`. Después, la v0.15.0 con su sí (en el Mac, el interruptor con su burbuja); luego la
+> prueba guiada final y la 1.0.0.
+>
 > **macOS con Golden Gate: v0.14.0 y v0.14.1 publicadas el 2026-10-21 y vistas bien en el Mac del
 > cliente** (ADR 0028). Hecho y revisado con el
 > cliente en capturas («está perfecto como está ahora»; iconos de la barra lateral en oro): el

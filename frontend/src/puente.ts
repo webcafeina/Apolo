@@ -132,6 +132,11 @@ export interface Plataforma {
   simulado?: boolean;
   /** En macOS 26+, si la interfaz puede pintar el vidrio del sistema en sus controles (ADR 0028). */
   vidrio_controles?: boolean;
+  /** En Linux con GNOME, si la ventana va sin la barra del sistema y Apolo pinta la suya (ADR 0029). */
+  barra_propia?: boolean;
+  /** En Linux, la disposición de los botones de la ventana, como `gtk-decoration-layout`
+   *  («appmenu:minimize,maximize,close»: a la izquierda de los dos puntos, a la derecha después). */
+  botones?: string;
 }
 
 // En el navegador de desarrollo, el aspecto de otro sistema se puede pedir en la URL, como la
@@ -143,7 +148,16 @@ function simulada(): Plataforma {
   if (!sistema || !["windows", "macos", "linux"].includes(sistema)) {
     return { sistema: "web", vidrio: false, traslocada: false };
   }
-  return { sistema, vidrio: q.get("vidrio") === "si", traslocada: false, simulado: true };
+  return {
+    sistema,
+    vidrio: q.get("vidrio") === "si",
+    traslocada: false,
+    simulado: true,
+    // En Linux, las dos partes de arriba que se comparan (ADR 0029): `?barra=propia` o `sistema`,
+    // y `?botones=` para ponerlos a la izquierda (`close,minimize,maximize:`).
+    barra_propia: q.get("barra") === "propia",
+    botones: q.get("botones") ?? ":minimize,maximize,close",
+  };
 }
 
 export const plataforma = (): Promise<Plataforma> =>

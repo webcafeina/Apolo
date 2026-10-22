@@ -64,6 +64,10 @@
 }
 :root[data-sistema="linux"][data-escritorio="kde"] .barra-sistema-simulada .botones-gnome { right: 4px; top: 5px; }
 
+/* Con la barra propia en Wayland, el marco de GTK es el de Breeze: radio 5
+   (ventana_linux.rs, `MARCO_KDE`); la interfaz recorta las suyas igual. */
+:root[data-sistema="linux"][data-escritorio="kde"][data-esquinas="redondas"] .ventana { border-radius: 5px; }
+
 /* ── La barra lateral ───────────────────────────────────────────────────── */
 
 /* Como la de Ajustes del sistema: el fondo de las vistas (blanco en claro),

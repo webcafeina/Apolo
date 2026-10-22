@@ -122,3 +122,9 @@ del marco no recorta el webview: la ventana es transparente y la interfaz redond
 máquina virtual: la sombra y las esquinas, bien. Los huecos al repintar que salieron no son del
 marco: salen igual sin él y con la primera compilación de prueba (trampas.md, deuda.md), así que el
 marco se queda. `APOLO_ESQUINAS_RECTAS=1` sigue como plan B, sin marco ni transparencia.
+
+## Matiz del 2026-10-22: KDE tiene su propio aspecto
+
+Desde la v0.17.0 ([ADR 0031](0031-kde-con-breeze.md)), con KDE Plasma Apolo se ve con Breeze y no con
+libadwaita, y también lleva la barra de Apolo (con el marco de Breeze). Lo de esta ADR sigue para
+GNOME y para los demás escritorios.

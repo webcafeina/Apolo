@@ -1,6 +1,7 @@
 //! La ventana en Linux (ADR 0029): en GNOME, sin la barra del sistema, con la
-//! barra de Apolo como la de una aplicación de libadwaita; en los demás
-//! escritorios (KDE, Xfce…), con la barra del sistema, que allí encaja mejor.
+//! barra de Apolo como la de una aplicación de libadwaita; en KDE, igual, con
+//! la de Breeze (ADR 0031, elegida sobre capturas); en los demás escritorios
+//! (Xfce, Cinnamon…), con la barra del sistema, que allí encaja mejor.
 //!
 //! La ventana se crea aquí y no desde `tauri.conf.json` (`tauri.linux.conf.json`
 //! la deja en `"create": false`) porque las decoraciones se deciden al crearla y
@@ -17,7 +18,8 @@
 //! dibuja su marco alrededor de esa barra de 0 px, y la de Apolo queda en su
 //! sitio. El radio del marco no recorta el webview, así que la ventana es
 //! transparente y la interfaz redondea sus propias esquinas, y las cuadra si la
-//! ventana está maximizada o en mosaico (el evento `ventana:esquinas`).
+//! ventana está maximizada o en mosaico (el evento `ventana:esquinas`). En KDE,
+//! el marco es el de Breeze: radio 5 y su sombra (`MARCO_KDE`).
 //!
 //! Lo que una ventana sin barra del sistema pierde en Linux: el menú del clic
 //! derecho sobre la barra (Tauri no lo da) (deuda.md, trampas.md).
@@ -56,6 +58,28 @@ window.tiled decoration, window.tiled-top decoration, window.tiled-right decorat
 window.tiled-bottom decoration, window.tiled-left decoration {
   border-radius: 0;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+window.csd > .titlebar:not(headerbar) { min-height: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+"#;
+
+/// El marco en KDE, como el de las ventanas de Breeze (`breeze/kdecoration`):
+/// radio 5, su sombra grande hacia abajo con un contorno de 1, y en segundo
+/// plano la mitad de intensa; lo demás, como en `MARCO`.
+const MARCO_KDE: &[u8] = br#"
+window.csd { background-color: transparent; }
+window.csd decoration {
+  border-radius: 5px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+window.csd:backdrop decoration {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.11), 0 2px 6px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 200ms ease-out;
+}
+window.maximized decoration, window.fullscreen decoration { border-radius: 0; box-shadow: none; }
+window.tiled decoration, window.tiled-top decoration, window.tiled-right decoration,
+window.tiled-bottom decoration, window.tiled-left decoration {
+  border-radius: 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
 }
 window.csd > .titlebar:not(headerbar) { min-height: 0; padding: 0; border: 0; background: none; box-shadow: none; }
 "#;
@@ -105,8 +129,9 @@ pub fn escritorio() -> &'static str {
     }
 }
 
-fn es_gnome() -> bool {
-    escritorio() == "gnome"
+/// GNOME y KDE llevan la barra de Apolo; los demás, la del sistema.
+fn barra_de_apolo() -> bool {
+    matches!(escritorio(), "gnome" | "kde")
 }
 
 /// Crea la ventana principal con la configuración de `tauri.linux.conf.json`.
@@ -119,7 +144,7 @@ pub fn crear(app: &tauri::App) -> tauri::Result<()> {
         .find(|v| v.label == "principal")
         .expect("la ventana principal está en tauri.linux.conf.json")
         .clone();
-    let propia = es_gnome();
+    let propia = barra_de_apolo();
     // La lee GTK, que ya está en marcha: `setup` corre en su hilo. Sin
     // `gio::Settings`, que aborta el programa si falta el esquema de GNOME.
     let botones = gtk::Settings::default()
@@ -164,7 +189,12 @@ fn poner_marco(ventana: &tauri::WebviewWindow) -> tauri::Result<()> {
         return Ok(());
     }
     let css = gtk::CssProvider::new();
-    if css.load_from_data(MARCO).is_ok()
+    let marco = if escritorio() == "kde" {
+        MARCO_KDE
+    } else {
+        MARCO
+    };
+    if css.load_from_data(marco).is_ok()
         && let Some(pantalla) = GtkWindowExt::screen(&gw)
     {
         gtk::StyleContext::add_provider_for_screen(

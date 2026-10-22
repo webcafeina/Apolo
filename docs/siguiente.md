@@ -40,8 +40,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       `.rpm`, repositorios APT y RPM, PKGBUILD para Arch. Publicada el 2026-10-22. Falta la cuenta del
       AUR (registro cerrado) y ver el rpm actualizarse desde la banda;
     - **v0.17.0, KDE con Breeze** (ADR 0031, plan en `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`,
-      fase B): medidas y colores de Breeze, paletas `kde_*`, `sistema-kde.css`, iconos de Breeze, la
-      barra sobre capturas; prueba en Kubuntu y Fedora KDE;
+      fase B): hecha en el código el 2026-10-22 (barra de Apolo y oro relleno, elegidos por el
+      cliente); compilación de prueba 39847459084 en verde. Falta verla en Kubuntu y Fedora KDE y
+      publicarla;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

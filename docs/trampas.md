@@ -474,3 +474,17 @@ después pasan a ser relativas y se descolocan (el icono del Estudio salía como
 cambiar a «M» el comienzo de cada uno al juntarlos. Además, algunos llevan una traslación en un
 `<g>` o una caja que no es de 16 (`viewBox="0 0 4.2333 4.2333"`): `iconos-yaru.ts` las guarda. ·
 2026-10-22
+
+## Ubuntu: el Centro de aplicaciones enseña un .deb suelto sin icono, sin editor y con «?» en las tildes
+
+Al abrir el `.deb` con doble clic, el Centro de aplicaciones de Ubuntu (26.10) dice «Editor
+desconocido», licencia «unknown», pone un icono genérico y cambia las tildes por «?»
+(«im?genes»). No es el paquete: para un `.deb` suelto solo pide a PackageKit `GetDetailsLocal`
+(nombre del paquete, resumen, descripción, web, tamaño), deja fijos el editor y el icono, y
+PackageKit pone la licencia a «unknown» y lee la descripción sin UTF-8 (apt la pasa a ASCII con
+`UTF8ToCodeset`, que cambia lo que no sabe por «?»). Código de `ubuntu/app-center`
+(`local_deb_model.dart`, `app_title.dart`) e issues #120 y #1679. Lo único que se arregla desde el
+paquete son las tildes: la descripción del `control` en inglés, que es ASCII
+(`tauri.linux.conf.json`); el lanzador conserva el español con `Comment[es]` en su plantilla
+(`empaquetado/linux/apolo.desktop`). El icono, el editor y la licencia solo saldrían desde un
+repositorio con catálogo AppStream (PPA o snap). · 2026-10-22

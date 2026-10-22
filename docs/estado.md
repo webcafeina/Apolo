@@ -4,6 +4,25 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-10-22, noche): v0.17.0, KDE con Breeze (ADR 0031), hecha en el código y
+> pendiente de verla en Kubuntu.** El cliente eligió sobre la galería
+> (https://claude.ai/artifact/AGwN7QZdye1UBGJa8bKkDR) la **barra de Apolo también en KDE** (sin la de
+> KWin, con el marco de Breeze: `MARCO_KDE`, radio 5) y el **botón principal relleno de oro**.
+> Hecho (`70066a4`, `72d5d14`, subidos; `make comprobar`, e2e 121 y `Comprobar` de CI en verde):
+> `escritorio()` en `ventana_linux.rs` (`gnome`/`kde`/`otro`) → `data-escritorio`; paletas
+> `kde_claro`/`kde_oscuro` (10 en total); `sistema-kde.css`; `iconos-breeze.ts` (LGPL-3.0,
+> generados con `~/.cache/apolo-revision/breeze.py` desde `~/.cache/kde-ref/`); `kde.spec.ts`;
+> `make capturas-kde`. **Compilación de prueba 39847459084 en verde** (humo incluido). **Lo
+> siguiente**: el cliente la prueba mañana en **Kubuntu ARM** (`kubuntu-desktop` sobre un clon de su
+> Ubuntu 26.10, sesión Plasma; `apolo-linux-arm64` → `sudo apt install ./Apolo_0.16.0_arm64.deb`):
+> la ventana sin barra con sombra y radio 5, arrastrar, doble clic, redimensionar, los botones de
+> Breeze en su lado, todas las pantallas en claro y oscuro, Ajustes en formulario, Noto Sans, y si
+> salen los huecos al repintar. Después Fedora KDE (rpm), arreglos, y la v0.17.0 (versión, notas
+> bilingües, CI, etiqueta, revisión del borrador de siempre, publicar con su sí). Luego la prueba
+> guiada final y la 1.0.0. **El AUR sigue con el registro cerrado** (`aur.yml` desactivado). **Para
+> revisar borradores**: bajarlos a `~/.cache/apolo-revision/` y el `7zz` está en
+> `~/.cache/apolo-revision/tool/7zz` (el scratchpad de `/tmp` se llena: cuota).
+>
 > **v0.16.0 publicada (2026-10-22, 19:03 UTC), Linux más allá de Debian** (ADR 0030): `.rpm`
 > firmado con GPG (Fedora, openSUSE) que se actualiza desde la banda, repositorios APT y RPM firmados
 > en apolo.webcafeina.com (`/apt`, `/rpm`, solo la última versión, montados por `web.yml` al

@@ -18,7 +18,15 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   desactivado y el PKGBUILD en la web.
 - Verificado: compilación de prueba 39816771619 en verde; el cliente, en su Fedora ARM (GNOME), «va
   perfecto» y sin los huecos de la VM de Ubuntu. v0.16.0 revisada y publicada (19:03 UTC).
-- Abierto: el rpm actualizándose desde la banda, la cuenta del AUR, openSUSE; la fase B (KDE).
+- El cliente vio el rpm actualizarse desde la banda en su Fedora (0.15.0 de prueba → 0.16.0).
+- Fase B, KDE con Breeze (ADR 0031): un agente leyó las medidas en el código de KDE clonado en
+  `~/.cache/kde-ref/` (breeze, kirigami, qqc2-desktop-style, systemsettings, breeze-icons). Hecho:
+  `escritorio()` y `data-escritorio`, paletas `kde_*`, `sistema-kde.css`, iconos de Breeze (LGPL-3.0),
+  `make capturas-kde` y galería (https://claude.ai/artifact/AGwN7QZdye1UBGJa8bKkDR). El cliente
+  eligió la barra de Apolo (sin la de KWin) y el oro relleno; `MARCO_KDE` y `kde.spec.ts`.
+- Verificado: `make comprobar`, e2e 121, compilación de prueba 39847459084 en verde. Kubuntu: no hay
+  ISO ARM64; `kubuntu-desktop` sobre un clon de su Ubuntu 26.10.
+- Abierto: verlo en Kubuntu (mañana) y Fedora KDE, la v0.17.0; la cuenta del AUR; openSUSE.
 
 ---
 

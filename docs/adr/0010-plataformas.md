@@ -36,3 +36,9 @@ Elegida con el cliente el 2026-10-06.
   objetivos: el de macOS es universal). El NSIS de Windows ocupa ~1 MB en x64 y en ARM64, el DMG ~4 MB, y el
   artefacto de Linux ~78 MB, porque la AppImage lleva webkit dentro. El `.deb` no lo lleva.
 - **No verificado**: que alguno **arranque**. Ningún paquete se ha abierto todavía en su sistema.
+
+## Matiz del 2026-10-22: Linux más allá de Debian
+
+Desde la v0.16.0 ([ADR 0030](0030-linux-mas-alla-de-debian.md)), Linux también es un `.rpm` (Fedora y
+openSUSE), `apolo-bin` en el AUR (Arch y derivadas) y repositorios APT y RPM propios en
+apolo.webcafeina.com. Siguen compilándose en Ubuntu 22.04 (glibc 2.35).

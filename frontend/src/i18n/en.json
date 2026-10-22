@@ -630,6 +630,7 @@
     "instalar": "Install and restart",
     "instalando": "Installing Apolo {{version}}. The window will close and reopen…",
     "traslocada": "To update itself, Apolo has to be in Applications: drag it there and open it from that folder",
+    "gestor": "Apolo is updated by your package manager ({{gestor}})",
     "errorDescarga": "Couldn't download the new version: {{detalle}}",
     "errorInstalar": "Couldn't install the new version: {{detalle}}"
   },

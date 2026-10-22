@@ -134,6 +134,10 @@ jobs:
           # ella no salen los .sig y la aplicación no acepta la versión nueva.
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # La firma GPG del .rpm (ADR 0030), con la misma clave que los
+          # repositorios APT y RPM de apolo.webcafeina.com (web.yml).
+          TAURI_SIGNING_RPM_KEY: ${{ secrets.PAQUETES_GPG_CLAVE }}
+          TAURI_SIGNING_RPM_KEY_PASSPHRASE: ${{ secrets.PAQUETES_GPG_FRASE }}
           # Firma de sistema (ADR 0009): desactivada mientras no existan las cuentas.
           # Para activarla, crear estos secretos y quitar el comentario:
           # APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
@@ -211,6 +215,7 @@ jobs:
             target/${{ matrix.objetivo }}/release/bundle/dmg/*.dmg
             target/${{ matrix.objetivo }}/release/bundle/nsis/*.exe
             target/${{ matrix.objetivo }}/release/bundle/deb/*.deb
+            target/${{ matrix.objetivo }}/release/bundle/rpm/*.rpm
             target/${{ matrix.objetivo }}/release/bundle/appimage/*.AppImage
             target/${{ matrix.objetivo }}/release/bundle/macos/*.app.tar.gz
             target/${{ matrix.objetivo }}/release/bundle/*/*.sig
@@ -361,7 +366,7 @@ jobs:
               if p["url"].rsplit("/", 1)[-1] not in nombres or not p["signature"].strip():
                   sys.exit(f"{clave}: sin fichero o sin firma ({p['url']})")
           hacen_falta = [f"{s}-{a}" for s in ("darwin", "windows", "linux") for a in ("x86_64", "aarch64")]
-          hacen_falta += [f"linux-{a}-{b}" for a in ("x86_64", "aarch64") for b in ("deb", "appimage")]
+          hacen_falta += [f"linux-{a}-{b}" for a in ("x86_64", "aarch64") for b in ("deb", "rpm", "appimage")]
           hacen_falta += [f"windows-{a}-nsis" for a in ("x86_64", "aarch64")]
           faltan = [c for c in hacen_falta if c not in j["platforms"]]
           if faltan:

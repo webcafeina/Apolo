@@ -513,3 +513,12 @@ oscuro casi no se distinguen. Tampoco los quitan `WEBKIT_SKIA_ENABLE_CPU_RENDERI
 de la máquina con WebKitGTK; en un Linux de verdad, sin ver (deuda.md). Para ver dónde se pierde el
 desplazamiento, `WEBKIT_SHOW_DAMAGE=1`. Y el código de la ventana de Linux solo lo revisa clippy en
 CI: en el VPS no hay GTK (con la v0.15.0, un `if` anidado que pedía juntarse). · 2026-10-22
+
+## Pages solo despliega desde `main`: con `release` hay que permitir las etiquetas
+
+El entorno `github-pages` tenía la regla de despliegue «solo la rama `main`». `web.yml` se lanza
+también al publicar una versión (ADR 0030), y entonces corre sobre la etiqueta (`refs/tags/vX.Y.Z`):
+Pages lo rechaza con «Tag "vX.Y.Z" is not allowed to deploy to github-pages due to environment
+protection rules». Se añadió la regla de etiquetas `v*` (Ajustes › Entornos › github-pages, o
+`gh api -X POST repos/webcafeina/Apolo/environments/github-pages/deployment-branch-policies -f
+name='v*' -f type=tag`). · 2026-10-22

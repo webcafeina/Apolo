@@ -1,0 +1,30 @@
+# Plantilla del paquete apolo-bin del AUR (ADR 0030). La rellena rellenar.py con la versión y las
+# sumas de los .deb, y aur.yml la sube al AUR al publicar una versión. Lo de antes de la primera
+# línea en blanco no llega al AUR.
+#
+# Es el .deb de Debian tal cual: las librerías de Apolo van dentro del binario, y lo único del
+# sistema es WebKitGTK 4.1 y GTK3. Deja `pacman` en /usr/share/apolo/gestor para que Apolo no se
+# actualice sola: su binario es el del .deb, y haría `dpkg -i`.
+
+# Maintainer: Webcafeína <info@webcafeina.com>
+pkgname=apolo-bin
+pkgver={{VERSION}}
+pkgrel=1
+pkgdesc="Image optimizer with the Squoosh engines: WebP, AVIF, JPEG XL, MozJPEG and PNG, byte for byte"
+arch=('x86_64' 'aarch64')
+url="https://apolo.webcafeina.com"
+license=('GPL-3.0-or-later')
+depends=('webkit2gtk-4.1' 'gtk3' 'hicolor-icon-theme')
+provides=('apolo')
+conflicts=('apolo')
+options=('!strip' '!debug')
+source_x86_64=("https://github.com/webcafeina/Apolo/releases/download/v${pkgver}/Apolo_${pkgver}_amd64.deb")
+source_aarch64=("https://github.com/webcafeina/Apolo/releases/download/v${pkgver}/Apolo_${pkgver}_arm64.deb")
+sha256sums_x86_64=('{{SHA_DEB_AMD64}}')
+sha256sums_aarch64=('{{SHA_DEB_ARM64}}')
+
+package() {
+  bsdtar -xf data.tar.* -C "$pkgdir"
+  install -d "$pkgdir/usr/share/apolo"
+  printf 'pacman\n' > "$pkgdir/usr/share/apolo/gestor"
+}

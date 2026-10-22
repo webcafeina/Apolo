@@ -148,3 +148,10 @@ Esfinge es Go + Wails y lo hace todo a mano. Apolo es Tauri, que trae `tauri-plu
   `tauri.conf.json` responde 0.3.3;
 - ~~una actualización de verdad~~: hecha en macOS. Faltan Windows y Linux;
 - el caso traslocado en un Mac.
+
+## Matiz del 2026-10-22: el .rpm y el AUR
+
+Con la v0.16.0 ([ADR 0030](0030-linux-mas-alla-de-debian.md)), el `.rpm` se actualiza desde la banda
+como el `.deb` (`rpm -U` con `pkexec`): `latest.json` lleva sus entradas `linux-*-rpm` (16 en total) y
+`adjuntar` las exige. Con el paquete del AUR, que es el `.deb` desempaquetado, Apolo no se actualiza
+sola (haría `dpkg -i`): la banda dice que se actualiza con el gestor de paquetes.

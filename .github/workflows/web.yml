@@ -5,12 +5,19 @@
 # Pages está activado con «GitHub Actions» como origen y el dominio apolo.webcafeina.com en los
 # ajustes del repositorio (2026-10-21); el registro DNS (CNAME a webcafeina.github.io) es del
 # cliente, en Cloudflare.
+#
+# Con la web van los repositorios APT y RPM de Linux (ADR 0030): /apt y /rpm, con los .deb y .rpm
+# de la última versión publicada, firmados con la clave de los paquetes (PAQUETES_GPG_CLAVE, la
+# misma que firma el .rpm). Los paquetes no se guardan en git: se bajan de la Release al desplegar,
+# y por eso se despliega también al publicar una versión.
 name: Web
 
 on:
   push:
     branches: [main]
     paths: ["web/**", ".github/workflows/web.yml"]
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -30,6 +37,77 @@ jobs:
       url: ${{ steps.despliegue.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Los paquetes de la última versión
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ETIQUETA: ${{ github.event.release.tag_name }}
+        run: |
+          etiqueta="${ETIQUETA:-$(gh release view --json tagName -q .tagName)}"
+          echo "Paquetes de la $etiqueta"
+          mkdir -p web/apt/pool/main web/rpm
+          gh release download "$etiqueta" -p '*.deb' -D web/apt/pool/main
+          # Las versiones de antes de la 0.16.0 no tienen .rpm.
+          gh release download "$etiqueta" -p '*.rpm' -D web/rpm || true
+          ls -la web/apt/pool/main web/rpm
+      - name: La clave de los paquetes
+        env:
+          CLAVE: ${{ secrets.PAQUETES_GPG_CLAVE }}
+          FRASE: ${{ secrets.PAQUETES_GPG_FRASE }}
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gpg"
+          install -m 700 -d "$GNUPGHOME"
+          printf '%s\n' "$CLAVE" | gpg --batch --import 2> /dev/null
+          printf '%s' "$FRASE" > "$RUNNER_TEMP/frase"
+          echo "GNUPGHOME=$GNUPGHOME" >> "$GITHUB_ENV"
+      - name: El repositorio APT
+        run: |
+          sudo apt-get update > /dev/null
+          sudo apt-get install -y apt-utils createrepo-c > /dev/null
+          firmar() { gpg --batch --yes --pinentry-mode loopback --passphrase-file "$RUNNER_TEMP/frase" "$@"; }
+          cd web/apt
+          for a in amd64 arm64; do
+            mkdir -p "dists/stable/main/binary-$a"
+            apt-ftparchive --arch "$a" packages pool > "dists/stable/main/binary-$a/Packages"
+            gzip -k9n "dists/stable/main/binary-$a/Packages"
+          done
+          apt-ftparchive \
+            -o APT::FTPArchive::Release::Origin=Apolo \
+            -o APT::FTPArchive::Release::Label=Apolo \
+            -o APT::FTPArchive::Release::Suite=stable \
+            -o APT::FTPArchive::Release::Codename=stable \
+            -o "APT::FTPArchive::Release::Architectures=amd64 arm64" \
+            -o APT::FTPArchive::Release::Components=main \
+            -o "APT::FTPArchive::Release::Description=Apolo, de Webcafeína" \
+            release dists/stable > dists/stable/Release
+          firmar --clearsign -o dists/stable/InRelease dists/stable/Release
+          firmar --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
+          printf '%s\n' \
+            "Types: deb" \
+            "URIs: https://apolo.webcafeina.com/apt" \
+            "Suites: stable" \
+            "Components: main" \
+            "Architectures: amd64 arm64" \
+            "Signed-By: /etc/apt/keyrings/apolo.asc" > apolo.sources
+          cat dists/stable/main/binary-amd64/Packages
+      - name: El repositorio RPM
+        run: |
+          cd web/rpm
+          if ! ls *.rpm > /dev/null 2>&1; then echo "Sin .rpm en esta versión"; exit 0; fi
+          createrepo_c --quiet .
+          gpg --batch --yes --pinentry-mode loopback --passphrase-file "$RUNNER_TEMP/frase" \
+            --armor --detach-sign -o repodata/repomd.xml.asc repodata/repomd.xml
+          printf '%s\n' \
+            "[apolo]" \
+            "name=Apolo" \
+            "baseurl=https://apolo.webcafeina.com/rpm" \
+            "enabled=1" \
+            "gpgcheck=1" \
+            "repo_gpgcheck=1" \
+            "gpgkey=https://apolo.webcafeina.com/apolo.asc" > apolo.repo
+          ls -la . repodata
+      - name: Fuera la clave
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/gpg" "$RUNNER_TEMP/frase"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

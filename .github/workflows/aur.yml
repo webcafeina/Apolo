@@ -1,0 +1,50 @@
+# El paquete apolo-bin del AUR (ADR 0030): cuando se publica una versión, rellena el PKGBUILD con
+# su número y las sumas de los .deb (empaquetado/aur/rellenar.py) y lo sube al AUR, después de
+# comprobar que se construye (makepkg en un contenedor de Arch).
+#
+# Al publicar y no al etiquetar, como homebrew.yml: hasta entonces los .deb no se pueden bajar.
+# Sube con la clave SSH de la cuenta del AUR (el secreto AUR_CLAVE), que nunca se escribe en
+# ningún sitio más.
+name: AUR
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión publicada, sin la v (p. ej. 0.16.0)"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aur
+  cancel-in-progress: false
+
+jobs:
+  aur:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: La versión, sus sumas y el PKGBUILD
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ETIQUETA: ${{ github.event.release.tag_name }}
+          A_MANO: ${{ inputs.version }}
+        run: |
+          version="${A_MANO:-${ETIQUETA#v}}"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          gh release download "v$version" --pattern SHA256SUMS.txt --dir "$RUNNER_TEMP"
+          python3 -I empaquetado/aur/rellenar.py "$version" "$RUNNER_TEMP/SHA256SUMS.txt" aur/PKGBUILD
+      # v4.2.0, fijada por su commit.
+      - uses: KSXGitHub/github-actions-deploy-aur@084b0d9b15415bf9cdb65d44dad1efe37a354050
+        with:
+          pkgname: apolo-bin
+          pkgbuild: aur/PKGBUILD
+          test: true
+          commit_username: Webcafeína
+          commit_email: info@webcafeina.com
+          ssh_private_key: ${{ secrets.AUR_CLAVE }}
+          commit_message: "Apolo ${{ env.VERSION }}"

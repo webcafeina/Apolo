@@ -139,3 +139,69 @@ jobs:
       - name: Humo
         run: python3 pruebas/humo/humo.py --cli cli/x --mcp /usr/bin/apolo-mcp --cwebp "$(find ref -name cwebp -type f | head -1)"
 
+
+  # Fedora (ADR 0030): el .rpm firmado se instala con dnf, con sus dependencias, y al binario no
+  # le falta ninguna librería. La ventana no se abre (no hay pantalla).
+  humo-fedora:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - maquina: ubuntu-22.04
+            paquete: apolo-linux-amd64
+          - maquina: ubuntu-22.04-arm
+            paquete: apolo-linux-arm64
+    runs-on: ${{ matrix.maquina }}
+    container: fedora:latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.ejecucion }}
+          github-token: ${{ github.token }}
+          name: ${{ matrix.paquete }}
+          path: paquete
+      - name: Instalar el .rpm
+        run: |
+          rpm=$(find "$PWD/paquete" -name '*.rpm' | head -1)
+          rpm --import empaquetado/linux/apolo.asc
+          rpm --checksig "$rpm"
+          rpm -qpR "$rpm"
+          dnf install -y "$rpm"
+          /usr/bin/apolo-mcp --version
+          test -x /usr/bin/apolo-app
+          if ldd /usr/bin/apolo-app | grep "not found"; then exit 1; fi
+          test -f /usr/share/metainfo/com.webcafeina.apolo.metainfo.xml
+
+  # Arch (ADR 0030): el PKGBUILD del AUR, rellenado con el .deb de esta ejecución, se construye con
+  # makepkg y se instala con pacman. La imagen de Arch solo existe para x86_64.
+  humo-arch:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Herramientas
+        run: pacman -Syu --noconfirm --needed base-devel python webkit2gtk-4.1 gtk3 hicolor-icon-theme > /dev/null
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.ejecucion }}
+          github-token: ${{ github.token }}
+          name: apolo-linux-amd64
+          path: paquete
+      - name: El PKGBUILD, con el .deb de aquí
+        run: |
+          deb=$(find "$PWD/paquete" -name '*_amd64.deb' | head -1)
+          version=$(basename "$deb" | sed 's/^Apolo_\(.*\)_amd64\.deb$/\1/')
+          mkdir aur && cp "$deb" aur/
+          (cd aur && sha256sum "$(basename "$deb")" > sumas.txt && echo "0  Apolo_${version}_arm64.deb" >> sumas.txt)
+          python3 -I empaquetado/aur/rellenar.py "$version" aur/sumas.txt aur/PKGBUILD
+          sed -i 's|https://github.com/webcafeina/Apolo/releases/download/v${pkgver}/||' aur/PKGBUILD
+          useradd -m constructor && chown -R constructor aur
+      - name: makepkg y pacman
+        run: |
+          su constructor -c "cd aur && makepkg --noconfirm"
+          pacman -U --noconfirm aur/apolo-bin-*.pkg.tar.zst
+          pacman -Qi apolo-bin
+          test "$(cat /usr/share/apolo/gestor)" = pacman
+          /usr/bin/apolo-mcp --version
+          if ldd /usr/bin/apolo-app | grep "not found"; then exit 1; fi

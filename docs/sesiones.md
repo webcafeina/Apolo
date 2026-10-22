@@ -21,6 +21,16 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   `tauri.linux.conf.json`.
 - Verificado: `make comprobar`, e2e (107). **No verificado**: la ventana de Linux (sin GTK aquí: CI)
   y nada en un Ubuntu de verdad.
+- Segunda parte, con tres compilaciones de prueba en la máquina virtual del cliente: el paquete
+  `.deb` (descripción en español ASCII, `apolo.desktop`, `metainfo.xml`), la ventana con el marco
+  de GTK (sombra y esquinas de libadwaita, transparente; `APOLO_ESQUINAS_RECTAS=1` de plan B). El
+  cliente vio bien la sombra y las esquinas, pero con **huecos al repintar**. Descartados uno a
+  uno: pintado por CPU, sin composición, sin DMA-BUF, sin marco y la primera compilación (también
+  salen, en gris oscuro): son de la gráfica virtual (trampas.md, deuda.md). Fuera el pintado por
+  CPU (`7659847`).
+- El cliente pidió publicar: versión 0.15.0 (`c142c8d`), notas bilingües, `make comprobar` y CI en
+  verde, etiqueta `v0.15.0`. Se paró con `publicar.yml` 39778214906 en marcha: **queda revisar el
+  borrador y publicarlo** (estado.md).
 
 ---
 

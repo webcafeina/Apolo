@@ -4,6 +4,24 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **v0.16.0 publicada (2026-10-22, 19:03 UTC), Linux más allá de Debian** (ADR 0030): `.rpm`
+> firmado con GPG (Fedora, openSUSE) que se actualiza desde la banda, repositorios APT y RPM firmados
+> en apolo.webcafeina.com (`/apt`, `/rpm`, solo la última versión, montados por `web.yml` al
+> publicar) y el PKGBUILD de `apolo-bin` en `/aur/PKGBUILD` (**el AUR tiene cerrado el registro**:
+> `aur.yml` desactivado hasta que el cliente tenga cuenta; deuda.md). Clave GPG nueva en
+> `~/.config/apolo/claves/` (`paquetes.*`, `gpg/`) y la SSH del AUR (`aur.key`); secretos
+> `PAQUETES_GPG_CLAVE`, `PAQUETES_GPG_FRASE`, `AUR_CLAVE`. **No se borran ni se escriben en el chat.**
+> Compilación de prueba 39816771619 vista «perfecto» en la Fedora ARM (GNOME) del cliente, sin los
+> huecos de la VM de Ubuntu. Borrador revisado: 31 ficheros, 30 sumas, 9 firmas, `latest.json` con
+> **16** plataformas (las `-rpm`), versiones y `.mcpb` en 0.16.0, manifiesto ARM64, sin DLL, AVIF
+> 3/3, los dos `.rpm` con firma, humo de Fedora (amd64 y arm64) y Arch en verde. Publicada; web
+> (repositorio RPM con `repomd.xml.asc` válido, APT y PKGBUILD en 0.16.0) y tap de Homebrew al día.
+> **Lo siguiente**: que el cliente vea en su Fedora la actualización del rpm desde la banda (con la
+> siguiente versión, o reinstalando la 0.15.0 de prueba) y el repositorio dnf; luego la **fase B,
+> KDE con Breeze (v0.17.0)** del plan aprobado (`~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`):
+> el cliente probará primero en **Kubuntu** (`kubuntu-desktop` sobre su Ubuntu ARM) y después en
+> **Fedora KDE**; la barra en KDE se decide sobre capturas. Después, la prueba guiada final y la 1.0.0.
+>
 > **v0.15.0 publicada (2026-10-22, 14:59 UTC)**, Linux con Ubuntu 26.10 (ADR 0029), con el
 > interruptor de macOS con su burbuja y «Webcafeína» como editor. `publicar.yml` 39778214906 en
 > verde a la primera (humo incluido). Borrador revisado como siempre: 27 ficheros, 26 sumas, 7

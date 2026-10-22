@@ -118,6 +118,7 @@ esa barra de 0 px, con un `CssProvider` como el de libadwaita (radio 15 en las c
 sombra; sin radio ni sombra maximizada o a pantalla completa, y en mosaico solo el filo). El radio
 del marco no recorta el webview: la ventana es transparente y la interfaz redondea las suyas
 (`data-esquinas`), cuadrándolas cuando GTK avisa de que está maximizada o en mosaico
-(`ventana:esquinas`). En X11 no se hace (volvería la barra del servidor). **Sin verificar**: todo,
-hasta verlo en la máquina virtual (la transparencia con su gráfica, el borde de redimensionado, el
-mosaico).
+(`ventana:esquinas`). En X11 no se hace (volvería la barra del servidor). **Verificado** en la
+máquina virtual: la sombra y las esquinas, bien. Los huecos al repintar que salieron no son del
+marco: salen igual sin él y con la primera compilación de prueba (trampas.md, deuda.md), así que el
+marco se queda. `APOLO_ESQUINAS_RECTAS=1` sigue como plan B, sin marco ni transparencia.

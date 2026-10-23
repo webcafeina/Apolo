@@ -129,3 +129,25 @@ for (const escritorio of ["gnome", "kde"]) {
     expect(await titulo.evaluate((h) => h.scrollWidth > h.clientWidth)).toBe(true);
   });
 }
+
+// ADR 0032: Recortar y Redimensionar, en una barra con el aspecto del sistema.
+test("en Linux: la barra de encima de la imagen es una barra de GNOME, y la ventanita un GtkPopover", async ({ page }) => {
+  await page.goto("/?sistema=linux&barra=propia");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/corpus/foto.webp"));
+  const barra = page.getByTestId("barra-imagen");
+  await expect(barra).toBeVisible();
+  expect(await barra.evaluate((b) => b.getBoundingClientRect().height)).toBe(46);
+  // Debajo de la cabecera, encima del lienzo.
+  const [cabecera, lienzo, caja] = await Promise.all([
+    page.locator(".estudio .herramientas").boundingBox(),
+    page.getByTestId("lienzo").boundingBox(),
+    barra.boundingBox(),
+  ]);
+  expect(caja!.y).toBeGreaterThanOrEqual(cabecera!.y + cabecera!.height - 1);
+  expect(lienzo!.y).toBeGreaterThanOrEqual(caja!.y + caja!.height - 1);
+  await page.getByTestId("redimensionar").click();
+  const ventana = page.getByRole("dialog", { name: "Redimensionar" });
+  expect(await ventana.evaluate((v) => getComputedStyle(v).borderRadius)).toBe("12px");
+});

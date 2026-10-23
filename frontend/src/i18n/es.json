@@ -56,8 +56,50 @@
       "diferencia": "Píxeles que cambian",
       "estructura": "Detalle que se pierde"
     },
-    "recorteRotulo": "Recorte · {{ancho}} × {{alto}} px · arrastra el marco o sus esquinas",
-    "recorteListo": "Listo"
+    "recorteRotulo": "Recorte · {{ancho}} × {{alto}} px · arrastra el marco o sus esquinas"
+  },
+  "barraImagen": {
+    "etiqueta": "Recortar y redimensionar",
+    "recortar": "Recortar",
+    "recortada": "Recortada · {{ancho}} × {{alto}}",
+    "quitarRecorte": "Quitar el recorte",
+    "listo": "Listo",
+    "proporcion": "Proporción",
+    "proporciones": {
+      "libre": "Libre",
+      "original": "La del original"
+    },
+    "ancho": "Ancho",
+    "alto": "Alto",
+    "x": "Izquierda",
+    "y": "Arriba"
+  },
+  "tamano": {
+    "boton": "Redimensionar",
+    "titulo": "Redimensionar",
+    "modo": "Cómo se da el tamaño",
+    "modos": {
+      "lado_mayor": "Lado mayor",
+      "porcentaje": "Porcentaje",
+      "medidas": "Ancho × alto"
+    },
+    "atajos": "Tamaños habituales",
+    "ladoMayor": "Lado mayor",
+    "porcentaje": "Porcentaje",
+    "ancho": "Ancho",
+    "alto": "Alto",
+    "candado": "Mantener la proporción",
+    "quedara": "Quedará en {{ancho}} × {{alto}} px.",
+    "noAgranda": "Ya es más pequeña: se queda en {{ancho}} × {{alto}} px.",
+    "permitirAgrandar": "Permitir agrandar",
+    "mas": "Más",
+    "quitar": "Quitar",
+    "listo": "Listo",
+    "texto": {
+      "ladoMayor": "{{lado}} px de lado mayor",
+      "porcentaje": "Al {{porcentaje}} %",
+      "medidas": "{{ancho}} × {{alto}} px"
+    }
   },
   "orden": {
     "copiar": "Copiar",
@@ -107,19 +149,11 @@
     "compararFormato": "Comparar con otro formato",
     "volverOriginal": "Volver al original",
     "sinOpciones": "{{formato}} no tiene opciones: hay una sola forma de codificarlo, sin pérdida.",
-    "auto": "auto",
     "filtro": "Filtro",
     "lineal": "Mezclar en RGB lineal",
     "colores": "Colores",
     "tramado": "Tramado",
-    "nota": "Nota",
-    "recortarEnImagen": "Recortar en la imagen",
-    "recorteListo": "Listo",
-    "proporcion": "Proporción",
-    "proporciones": {
-      "libre": "Libre",
-      "original": "La del original"
-    }
+    "nota": "Nota"
   },
   "formato": {
     "avif": "AVIF",
@@ -221,13 +255,9 @@
     "pocaMemoria": "Poca memoria",
     "pocaMemoriaAyuda": "Para imágenes enormes: usa menos memoria y tarda más.",
     "redimensionCwebp": "Redimensionar como cwebp",
-    "redimensionCwebpAyuda": "El -resize de cwebp, con su propio método. Para repetir una orden de cwebp; lo normal es el Redimensionar del proceso, que vale para todos los formatos.",
+    "redimensionCwebpAyuda": "El -resize de cwebp, con su propio método. Para repetir una orden de cwebp; lo normal es Redimensionar, encima de la imagen, que vale para todos los formatos.",
     "recorteCwebp": "Recortar como cwebp",
-    "recorteCwebpAyuda": "El -crop de cwebp. Para repetir una orden de cwebp; lo normal es el Recortar del proceso.",
-    "procesoRedimension": "Redimensionar",
-    "procesoRedimensionAyuda": "Cambia el tamaño antes de comprimir, en cualquier formato. Deja un lado vacío para mantener la proporción.",
-    "procesoRecorte": "Recortar",
-    "procesoRecorteAyuda": "Se queda con un rectángulo de la imagen, antes de redimensionar.",
+    "recorteCwebpAyuda": "El -crop de cwebp. Para repetir una orden de cwebp; lo normal es Recortar, encima de la imagen.",
     "procesoPaleta": "Reducir paleta",
     "procesoPaletaAyuda": "Deja la imagen en pocos colores con libimagequant, como Squoosh. Pesa mucho menos en PNG; el tramado disimula los saltos de color.",
     "calidadJpeg": "Calidad",
@@ -556,7 +586,10 @@
     "peoresNotas": "Las de peor nota",
     "peoresNotasDetalle": "Las que más se alejan de su original.",
     "calidadHallada": "calidad {{calidad}}",
-    "nota": "nota {{nota}}"
+    "nota": "nota {{nota}}",
+    "tamano": "Tamaño",
+    "tamanoDetalle": "Para todas las imágenes, encima del preset. Nunca agranda, salvo que lo permitas.",
+    "tamanoDelPreset": "El de cada preset"
   },
   "ajustes": {
     "borrar": "Borrar",
@@ -606,7 +639,6 @@
     "sinPerdida": "Sin pérdida",
     "casiSinPerdida": "Casi sin pérdida {{valor}}",
     "metodo": "Método {{valor}}",
-    "redimension": "Redimensiona a {{ancho}} × {{alto}}",
     "endereza": "Endereza según EXIF",
     "equivale": "Equivale a:",
     "usar": "Usar en el Estudio",

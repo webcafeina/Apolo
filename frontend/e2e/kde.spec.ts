@@ -4,6 +4,7 @@
 // (&barra=propia, elegida por el cliente), con el marco de Breeze.
 
 import { expect, test } from "@playwright/test";
+import { join } from "node:path";
 import { ICONOS_BREEZE } from "../src/iconos-breeze";
 
 test.use({ testIdAttribute: "data-prueba" });
@@ -101,4 +102,26 @@ test("en KDE: Agentes de IA en tarjetas, no en el formulario de los ajustes", as
   const orden = await page.getByTestId("orden-claude-code").boundingBox();
   const tarjeta = await page.getByTestId("orden-claude-code").locator("xpath=..").boundingBox();
   expect(orden!.width).toBeGreaterThan(tarjeta!.width - 30);
+});
+
+// ADR 0032: Recortar y Redimensionar, en una barra con el aspecto del sistema.
+test("en KDE: la barra de encima de la imagen es de Kirigami, y la ventanita de Breeze", async ({ page }) => {
+  await page.goto("/?sistema=linux&escritorio=kde&barra=propia");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/corpus/foto.webp"));
+  const barra = page.getByTestId("barra-imagen");
+  await expect(barra).toBeVisible();
+  expect(await barra.evaluate((b) => b.getBoundingClientRect().height)).toBe(40);
+  // Debajo de la cabecera, encima del lienzo.
+  const [cabecera, lienzo, caja] = await Promise.all([
+    page.locator(".estudio .herramientas").boundingBox(),
+    page.getByTestId("lienzo").boundingBox(),
+    barra.boundingBox(),
+  ]);
+  expect(caja!.y).toBeGreaterThanOrEqual(cabecera!.y + cabecera!.height - 1);
+  expect(lienzo!.y).toBeGreaterThanOrEqual(caja!.y + caja!.height - 1);
+  await page.getByTestId("redimensionar").click();
+  const ventana = page.getByRole("dialog", { name: "Redimensionar" });
+  expect(await ventana.evaluate((v) => getComputedStyle(v).borderRadius)).toBe("5px");
 });

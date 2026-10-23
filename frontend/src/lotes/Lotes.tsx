@@ -17,8 +17,9 @@ import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Cabecera, formularioNativo, Icono, Interruptor, lleno, TarjetaAjuste } from "../componentes";
 import { EVENTO_PRESETS, formatoBytes } from "../estudio/Estudio";
-import { FORMATOS, type Ajuste, type FormatoSalida, type Preset } from "../estudio/opciones";
+import { FORMATOS, type Ajuste, type FormatoSalida, type Preset, type Tamano } from "../estudio/opciones";
 import { banda, nombreFormato } from "../estudio/Panel";
+import { SelectorTamano } from "../estudio/VentanaTamano";
 import { lengua } from "../i18n";
 import * as puente from "../puente";
 
@@ -72,6 +73,8 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
   // Medir la calidad y buscar una nota (ADR 0022): apagados, que alargan el lote.
   const [medir, setMedir] = useState(false);
   const [objetivo, setObjetivo] = useState<number | null>(null);
+  // El tamaño de todas, encima del preset (ADR 0032); sin él, el de cada preset.
+  const [tamano, setTamano] = useState<Tamano | null>(null);
   const [guardados, setGuardados] = useState<puente.PresetGuardado[]>([]);
   const [momento, setMomento] = useState<Momento>({ es: "preparando" });
   const [error, setError] = useState<string | null>(null);
@@ -193,9 +196,14 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
   async function convertir() {
     setError(null);
     try {
-      // La nota objetivo vale para todas las salidas, encima de su preset.
-      const conObjetivo = objetivo === null ? ajustes : ajustes.map((a) => ({ ...a, objetivo }));
-      const lote = await puente.empezarLote(entradas, conObjetivo, soloMasLigero && ajustes.length > 1, medir, salida);
+      // La nota objetivo y el tamaño valen para todas las salidas, encima de
+      // su preset. Un lote no recorta: lo quita el núcleo.
+      const finales = ajustes.map((a) => ({
+        ...a,
+        objetivo: objetivo ?? a.objetivo,
+        proceso: { ...a.proceso, redimension: tamano ?? a.proceso.redimension },
+      }));
+      const lote = await puente.empezarLote(entradas, finales, soloMasLigero && ajustes.length > 1, medir, salida);
       setMomento({ es: "convirtiendo", lote, estado: null, filas: [] });
     } catch (e) {
       setError((e as puente.Fallo).mensaje);
@@ -296,6 +304,7 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
       <span className="apagado">{t(`nota.${banda(objetivo)}`)}</span>
     </div>
   );
+  const selectorTamano = <SelectorTamano valor={tamano} cambiar={setTamano} vacio={t("lotes.tamanoDelPreset")} prueba="tamano" />;
   const carpetaSalida = (
     <div className="pareja">
       <input
@@ -403,6 +412,14 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
                 // En Windows (SettingsCards) y en macOS (filas agrupadas), con el
                 // interruptor a la derecha (ADR 0027 y 0028).
                 <section className="grupo-ajustes">
+                  <h2>{t("lotes.tamano")}</h2>
+                  <TarjetaAjuste
+                    icono="redimensionar"
+                    titulo={t("tamano.boton")}
+                    descripcion={t("lotes.tamanoDetalle")}
+                    control={selectorTamano}
+                    prueba="tamano-lote"
+                  />
                   <h2>{t("lotes.calidad")}</h2>
                   <TarjetaAjuste
                     icono="calidad"
@@ -427,6 +444,12 @@ export function Lotes({ inicio, activo }: { inicio: puente.Inicio; activo: boole
                 </section>
               ) : (
                 <>
+                  <section className="grupo" data-prueba="tamano-lote">
+                    <h2>{t("lotes.tamano")}</h2>
+                    <div className="pareja">{selectorTamano}</div>
+                    <p className="apagado">{t("lotes.tamanoDetalle")}</p>
+                  </section>
+
                   <section className="grupo">
                     <h2>{t("lotes.calidad")}</h2>
                     <label className="casilla" data-prueba="medir-lote">

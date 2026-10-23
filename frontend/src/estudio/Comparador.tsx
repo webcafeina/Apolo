@@ -25,7 +25,6 @@ export interface EdicionRecorte {
   alCambiar: (r: Recorte) => void;
   /** Al soltar el marco: entonces se aplica y se recalcula la vista previa. */
   alSoltar: () => void;
-  alAcabar: () => void;
 }
 
 interface Props {
@@ -385,11 +384,8 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
       ) : (
         extra && <div className="rotulo izquierda con-control">{extra}</div>
       )}
-      {recorte ? (
-        <button className="principal recorte-listo" onClick={recorte.alAcabar} data-prueba="recorte-listo">
-          {t("comparador.recorteListo")}
-        </button>
-      ) : (
+      {/* Listo y Quitar van en la barra de encima (ADR 0032). */}
+      {!recorte && (
         <span className="rotulo derecha" data-prueba="rotulo-derecha">
           {rotulos[1]}
           {ocupados[1] && <span className="girando" aria-label={t("comparador.codificando")} />}

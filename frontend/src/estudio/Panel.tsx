@@ -1,6 +1,7 @@
 // El panel de ajustes del lado que se edita: el lado, el formato, el preset de
-// partida, los presets guardados, el proceso (para todos los formatos) y los
-// controles del formato en tres niveles plegables. Los controles se pintan a
+// partida, los presets guardados, el proceso (enderezar y la paleta, para todos
+// los formatos; recortar y redimensionar van en la barra de encima de la
+// imagen, ADR 0032) y los controles del formato en tres niveles plegables. Los controles se pintan a
 // partir de los esquemas de opciones.ts; aquí solo está cómo se ve cada tipo.
 
 import { useEffect, useState } from "react";
@@ -19,7 +20,6 @@ import {
   type Preset,
   type Proceso,
 } from "./opciones";
-import { PROPORCIONES, type Proporcion } from "./recorte";
 
 export type Lado = 0 | 1;
 
@@ -29,6 +29,8 @@ interface Props {
   presetsCwebp: Preset[];
   guardados: puente.PresetGuardado[];
   cambiar: (a: Ajuste) => void;
+  /** Un preset guardado: su tamaño pasa a ser el de la imagen. */
+  aplicarGuardado: (a: Ajuste) => void;
   aplicarPreset: (p: Preset) => void;
   nivelSinPerdida: (n: number) => void;
   guardar: (nombre: string) => void;
@@ -94,7 +96,7 @@ export function Panel(p: Props) {
       const g = p.guardados.find((x) => x.nombre === v.slice(6));
       if (g) {
         const { nombre: _, ...ajuste } = g;
-        p.cambiar(ajuste);
+        p.aplicarGuardado(ajuste);
       }
     }
   };
@@ -472,107 +474,6 @@ function Especial({
             onChange={(e) => cambiar({ ...a, jpeg: { ...a.jpeg, calidad: [Number(e.target.value)] } })}
           />
           <output htmlFor={id}>{q}</output>
-        </div>
-      );
-    }
-    case "procesoRedimension": {
-      const r = a.proceso.redimension;
-      return (
-        <div className="proceso-control">
-          <div className="pareja">
-            <Interruptor
-              id={id}
-              checked={r !== null}
-              onChange={(e) =>
-                proceso({
-                  redimension: e.target.checked
-                    ? { ancho: Math.max(1, Math.round(contexto.ancho / 2)), alto: null, filtro: "lanczos3", lineal: true }
-                    : null,
-                })
-              }
-              aria-label={t("opcion.procesoRedimension")}
-            />
-            {r && (
-              <>
-                <input
-                  type="number"
-                  min={1}
-                  value={r.ancho ?? ""}
-                  placeholder={t("panel.auto")}
-                  aria-label={t("panel.ancho")}
-                  onChange={(e) => proceso({ redimension: { ...r, ancho: e.target.value === "" ? null : Math.max(1, num(e.target.value)) } })}
-                />
-                <span>×</span>
-                <input
-                  type="number"
-                  min={1}
-                  value={r.alto ?? ""}
-                  placeholder={t("panel.auto")}
-                  aria-label={t("panel.alto")}
-                  onChange={(e) => proceso({ redimension: { ...r, alto: e.target.value === "" ? null : Math.max(1, num(e.target.value)) } })}
-                />
-              </>
-            )}
-          </div>
-          {r && (
-            <div className="pareja">
-              <select value={r.filtro} aria-label={t("panel.filtro")} onChange={(e) => proceso({ redimension: { ...r, filtro: e.target.value as never } })}>
-                {(["lanczos3", "mitchell", "catmull_rom", "bilineal", "vecino"] as const).map((f) => (
-                  <option key={f} value={f}>
-                    {t(`valor.filtro.${f}`)}
-                  </option>
-                ))}
-              </select>
-              <label className="casilla">
-                <input type="checkbox" checked={r.lineal} onChange={(e) => proceso({ redimension: { ...r, lineal: e.target.checked } })} />
-                {t("panel.lineal")}
-              </label>
-            </div>
-          )}
-        </div>
-      );
-    }
-    case "procesoRecorte": {
-      const r = a.proceso.recorte;
-      const rc = contexto.recortar;
-      // Las medidas de la imagen ya enderezada, que son las del recorte.
-      const w = rc?.ancho ?? contexto.ancho;
-      const h = rc?.alto ?? contexto.alto;
-      return (
-        <div className="proceso-control">
-          <div className="pareja cuadruple">
-            <Interruptor
-              id={id}
-              checked={r !== null}
-              onChange={(e) => proceso({ recorte: e.target.checked ? { x: 0, y: 0, ancho: w, alto: h } : null })}
-              aria-label={t("opcion.procesoRecorte")}
-            />
-            {r &&
-              (["x", "y", "ancho", "alto"] as const).map((k) => (
-                <input key={k} type="number" min={0} value={r[k]} aria-label={t(`panel.${k}`)} title={t(`panel.${k}`)} onChange={(e) => proceso({ recorte: { ...r, [k]: num(e.target.value) } })} />
-              ))}
-          </div>
-          {/* Recortar con el ratón, con una proporción fija si se quiere. */}
-          {rc && (
-            <div className="pareja">
-              <button onClick={rc.editar} aria-pressed={rc.editando} data-prueba="recortar-en-imagen">
-                {rc.editando ? t("panel.recorteListo") : t("panel.recortarEnImagen")}
-              </button>
-              <select
-                value={rc.proporcion}
-                onChange={(e) => rc.elegirProporcion(e.target.value as Proporcion)}
-                aria-label={t("panel.proporcion")}
-                title={t("panel.proporcion")}
-                data-prueba="proporcion"
-              >
-                {PROPORCIONES.map((p) => (
-                  <option key={p} value={p}>
-                    {p === "libre" || p === "original" ? t(`panel.proporciones.${p}`) : p}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
         </div>
       );
     }

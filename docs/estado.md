@@ -1,10 +1,26 @@
 # Estado
 
-Última actualización: **2026-10-22**
+Última actualización: **2026-10-23**
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-22, noche): v0.17.0, KDE con Breeze (ADR 0031), hecha en el código y
+> **PARADA AQUÍ (2026-10-23): v0.17.0 publicada (11:26 UTC), KDE con Breeze** (ADR 0031). El
+> cliente la vio «perfecto» en **Kubuntu ARM** (compilación de prueba 39919081725, tras arreglar el
+> icono de la barra lateral, Diferencias y el grupo de modos) y en **Fedora KDE ARM** (el rpm de la
+> misma). De Fedora salieron dos cosas, arregladas en `9dbc508`: Agentes de IA en KDE va en
+> tarjetas (no en el formulario de Ajustes) y, en todo Linux, un nombre de archivo largo se corta
+> en la cabecera del Estudio (trampas.md). También arregla tres iconos de Yaru rotos desde la
+> v0.15.0. `Publicar` 39941359700 en verde a la primera, humo incluido. Borrador revisado: 31
+> ficheros, 30 sumas, 9 firmas, `latest.json` con 16 plataformas, CLI, `apolo-mcp` y los cinco
+> `.mcpb` en 0.17.0, manifiesto ARM64 (ASCII, XML, UTF-8), sin DLL de Visual C++, AVIF 3/3, `.deb`
+> con Maintainer «Webcafeína», los `.rpm` con `digests signatures OK` en el humo de Fedora. Publicada;
+> `latest.json` público, Homebrew, APT, RPM y PKGBUILD en 0.17.0. **Lo siguiente**: la **prueba
+> guiada final** (todas las pantallas en los cuatro sistemas, actualizando desde el aviso) y la
+> **1.0.0**, con el sí del cliente. **El AUR sigue con el registro cerrado**: cuando abra, el
+> cliente crea la cuenta, `gh workflow enable aur.yml` y se lanza con la versión publicada; la web y
+> el README vuelven a `yay -S apolo-bin`.
+>
+> **(2026-10-22, noche): v0.17.0, KDE con Breeze (ADR 0031), hecha en el código y
 > pendiente de verla en Kubuntu.** El cliente eligió sobre la galería
 > (https://claude.ai/artifact/AGwN7QZdye1UBGJa8bKkDR) la **barra de Apolo también en KDE** (sin la de
 > KWin, con el marco de Breeze: `MARCO_KDE`, radio 5) y el **botón principal relleno de oro**.

@@ -1,6 +1,6 @@
 # Lo siguiente
 
-Última actualización: **2026-10-21**
+Última actualización: **2026-10-23**
 
 El plan entero salió de la sesión del 2026-10-06, decidido con el cliente en cuatro rondas de
 preguntas (ver [decisiones.md](decisiones.md)). Va **por entregas**; cada una se cierra con sus
@@ -38,11 +38,10 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       actualizada en el Mac (el interruptor) y en Windows (el editor);
     - ~~**v0.16.0, Linux más allá de Debian** ([ADR 0030](adr/0030-linux-mas-alla-de-debian.md))~~:
       `.rpm`, repositorios APT y RPM, PKGBUILD para Arch. Publicada el 2026-10-22. Falta la cuenta del
-      AUR (registro cerrado) y ver el rpm actualizarse desde la banda;
-    - **v0.17.0, KDE con Breeze** (ADR 0031, plan en `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`,
-      fase B): hecha en el código el 2026-10-22 (barra de Apolo y oro relleno, elegidos por el
-      cliente); compilación de prueba 39847459084 en verde. Falta verla en Kubuntu y Fedora KDE y
-      publicarla;
+      AUR (registro cerrado); el rpm ya se vio actualizarse desde la banda en Fedora;
+    - ~~**v0.17.0, KDE con Breeze** (ADR 0031, plan en `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`,
+      fase B)~~: hecha en el código el 2026-10-22 (barra de Apolo y oro relleno, elegidos por el
+      cliente), vista «perfecto» en Kubuntu y Fedora KDE y **publicada el 2026-10-23**;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

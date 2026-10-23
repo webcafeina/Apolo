@@ -4,6 +4,24 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-23 · KDE con Breeze, vista y publicada (v0.17.0)
+
+- Kubuntu ARM (compilación de prueba 39847459084): «todo correcto» salvo tres cosas. El icono de la
+  barra lateral (`sidebar-collapse-left`/`expand-left`, con la transformación `t`), Diferencias
+  (`path-difference`) y el grupo de modos en una bandeja. El icono roto venía del paso de «m» a «M»
+  al juntar trazados, que rompía también tres iconos de Yaru desde la v0.15.0 (trampas.md);
+  regenerados. Con la 39919081725, «perfecto».
+- Fedora KDE ARM con el rpm de la 39919081725: «todo perfecto», con dos apuntes arreglados en
+  `9dbc508`: Agentes de IA en tarjetas en KDE y el nombre de archivo largo que no se cortaba en la
+  cabecera del Estudio en Linux (`max-width` en `.titulos`; trampas.md). Pruebas nuevas en
+  `linux.spec.ts` y `kde.spec.ts`.
+- Verificado: `make comprobar`, e2e 129, `Comprobar` y `Publicar` 39941359700 en verde (humo de
+  Linux, Windows, Fedora y Arch). Borrador revisado como siempre y publicado a las 11:26 UTC; web,
+  repositorios y Homebrew en 0.17.0.
+- Abierto: la prueba guiada final y la 1.0.0; la cuenta del AUR (registro cerrado); openSUSE.
+
+---
+
 ## 2026-10-22 (tarde) · Linux más allá de Debian (v0.16.0)
 
 - v0.15.0 revisada y publicada (borrador bajado a `~/.cache/apolo-revision/`: en `/tmp` no cabe).

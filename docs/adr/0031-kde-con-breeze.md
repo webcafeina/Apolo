@@ -97,3 +97,5 @@ plegada, como en Breeze (los iconos de Breeze admiten la transformación `t`). *
 de `vcs-diff` (diferencias entre versiones de código) a `path-difference`. Y **el grupo de modos del
 Estudio** (Deslizador, Lado a lado, Diferencias) se confundía con «Abrir otra…»: ahora va en una
 bandeja (el texto al 7 %, radio 6) con el elegido levantado como un botón de Breeze.
+
+Con la compilación de prueba 39919081725 el cliente lo vio «perfecto» en Kubuntu ARM (2026-10-23).

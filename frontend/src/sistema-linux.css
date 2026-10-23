@@ -217,6 +217,10 @@
 :root[data-sistema="linux"][data-barra="sistema"] .herramientas { padding-right: 6px; }
 :root[data-sistema="linux"] .ventana[data-lateral="oculta"] .herramientas { padding-left: calc(46px + var(--botones-izq, 0) * 34px); }
 :root[data-sistema="linux"] .titulos { grid-column: 2; align-items: center; text-align: center; gap: 0; }
+/* Alineados al centro (o al principio, en el Estudio y en KDE), el título y
+   el subtítulo miden lo que su texto: sin el tope, un nombre de archivo largo
+   no se corta con «…» y se mete debajo de las órdenes. */
+:root[data-sistema="linux"] .titulos > * { max-width: 100%; }
 :root[data-sistema="linux"] .titulos h1 { font-size: 11pt; line-height: 1.3; font-weight: 700; }
 :root[data-sistema="linux"] .antetitulo {
   order: 2;

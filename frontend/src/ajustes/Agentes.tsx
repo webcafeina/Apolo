@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { formularioNativo, Icono, TarjetaAjuste } from "../componentes";
+import { esKde, formularioNativo, Icono, TarjetaAjuste } from "../componentes";
 import * as puente from "../puente";
 
 /** Un texto para copiar, con su botón. */
@@ -62,7 +62,10 @@ export function Agentes() {
     no_encontrado: t("agentes.avisoNoEncontrado"),
   };
 
-  const nativo = formularioNativo();
+  // En KDE los ajustes son un formulario (ADR 0031) y esto no son ajustes: la
+  // orden larga quedaría apretada en la columna de los controles. Van en
+  // tarjetas, como lo de arriba y lo de abajo.
+  const nativo = formularioNativo() && !esKde();
   const botones = (
     <>
       <button className="principal" onClick={crear} disabled={creando}>

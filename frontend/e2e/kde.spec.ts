@@ -89,3 +89,16 @@ test("en KDE: el botón de la barra lateral dice qué hará, plegar o desplegar"
   await expect(icono).toHaveAttribute("d", ICONOS_BREEZE.lateral.d);
   await boton.click();
 });
+
+test("en KDE: Agentes de IA en tarjetas, no en el formulario de los ajustes", async ({ page }) => {
+  await page.goto(KDE);
+  await page.getByRole("button", { name: "Ajustes", exact: true }).click();
+  await page.getByRole("radio", { name: "Agentes de IA" }).click();
+  const desktop = page.getByTestId("desktop");
+  await expect(desktop).toHaveClass(/grupo/);
+  await expect(page.getByTestId("agentes").locator(".tarjeta-ajuste")).toHaveCount(0);
+  // La orden de Claude Code, a todo el ancho de su tarjeta.
+  const orden = await page.getByTestId("orden-claude-code").boundingBox();
+  const tarjeta = await page.getByTestId("orden-claude-code").locator("xpath=..").boundingBox();
+  expect(orden!.width).toBeGreaterThan(tarjeta!.width - 30);
+});

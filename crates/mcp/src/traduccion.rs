@@ -146,6 +146,14 @@ static TABLA: &[(&str, &str)] = &[
         "Lossless (WebP, AVIF, JPEG XL). PNG and QOI always are.",
     ),
     (
+        "Lado mayor máximo, en píxeles: el ancho si es apaisada, el alto si es vertical; nunca agranda. No a la vez que ancho, alto o porcentaje.",
+        "Maximum longest side, in pixels: the width if landscape, the height if portrait; never enlarges. Not together with ancho, alto or porcentaje.",
+    ),
+    (
+        "Reducir al tanto por ciento (50 = la mitad de ancho y de alto). De más de 0 a 100. No a la vez que ancho, alto o lado_mayor.",
+        "Reduce to this percentage (50 = half the width and height). From above 0 to 100. Not together with ancho, alto or lado_mayor.",
+    ),
+    (
         "Ancho máximo, en píxeles: reduce si es mayor y nunca agranda (con alto solo, proporcional).",
         "Maximum width, in pixels: scales down if larger and never enlarges (with alto alone, proportional).",
     ),

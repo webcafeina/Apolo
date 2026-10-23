@@ -152,6 +152,8 @@ fn comparar_sin_guardar_no_escribe_nada() {
         salida: None,
         ancho: None,
         alto: None,
+        lado_mayor: None,
+        porcentaje: None,
         enderezar: None,
         recorte: None,
         paleta: None,
@@ -174,6 +176,8 @@ fn comparar_guarda_el_mejor() {
         salida: None,
         ancho: None,
         alto: None,
+        lado_mayor: None,
+        porcentaje: None,
         enderezar: None,
         recorte: None,
         paleta: None,
@@ -368,8 +372,9 @@ fn un_lote_de_principio_a_fin() {
             sin_perdida: false,
             ancho: None,
             alto: None,
+            lado_mayor: None,
+            porcentaje: None,
             enderezar: None,
-            recorte: None,
             paleta: None,
             mas_ligero: false,
             medir: false,
@@ -449,6 +454,99 @@ fn el_ancho_es_un_maximo_y_no_agranda() {
         (r.datos["ancho"].as_u64(), r.datos["alto"].as_u64()),
         (Some(128), Some(128))
     );
+    // Y como no ha hecho nada, la orden sigue siendo equivalente (ADR 0032).
+    assert!(r.datos["orden_equivalente"].is_string(), "{}", r.texto);
+}
+
+#[test]
+fn lado_mayor_y_porcentaje() {
+    let (dir, cx) = preparar();
+    let pedir = |e: EntradaFormato| {
+        optimizar_imagen(
+            &cx,
+            optimizar(&dir.join("fotos/foto.webp"), e),
+            &Seguimiento::nada(),
+        )
+    };
+    // foto.webp mide 128 × 128.
+    let r = pedir(EntradaFormato {
+        formato: Some(FormatoMcp::Png),
+        porcentaje: Some(50.0),
+        ..Default::default()
+    })
+    .unwrap();
+    assert_eq!(
+        (r.datos["ancho"].as_u64(), r.datos["alto"].as_u64()),
+        (Some(64), Some(64))
+    );
+    assert!(r.texto.contains("al 50 %"), "{}", r.texto);
+    let r = pedir(EntradaFormato {
+        formato: Some(FormatoMcp::Png),
+        lado_mayor: Some(100),
+        ..Default::default()
+    })
+    .unwrap();
+    assert_eq!(r.datos["ancho"].as_u64(), Some(100));
+    // De dos maneras a la vez, o un porcentaje que agrandaría: errores con pista.
+    for (e, error) in [
+        (
+            EntradaFormato {
+                ancho: Some(100),
+                lado_mayor: Some(100),
+                ..Default::default()
+            },
+            "tamano_doble",
+        ),
+        (
+            EntradaFormato {
+                porcentaje: Some(150.0),
+                ..Default::default()
+            },
+            "porcentaje_fuera",
+        ),
+    ] {
+        let x = pedir(e).unwrap_err();
+        assert_eq!(x.error, error);
+        assert!(x.pista.is_some());
+    }
+}
+
+#[test]
+fn un_preset_no_guarda_el_recorte() {
+    use apolo_mcp::entrada::RecorteMcp;
+    let (_dir, cx) = preparar();
+    let x = guardar_preset(
+        &cx,
+        EntradaGuardarPreset {
+            nombre: "Con recorte".into(),
+            formato: EntradaFormato {
+                recorte: Some(RecorteMcp {
+                    x: 0,
+                    y: 0,
+                    ancho: 10,
+                    alto: 10,
+                }),
+                ..Default::default()
+            },
+        },
+    )
+    .unwrap_err();
+    assert_eq!(x.error, "recorte_en_preset");
+    // Con un porcentaje, sí, y se lee como tal.
+    guardar_preset(
+        &cx,
+        EntradaGuardarPreset {
+            nombre: "Mitad".into(),
+            formato: EntradaFormato {
+                formato: Some(FormatoMcp::Png),
+                porcentaje: Some(50.0),
+                ..Default::default()
+            },
+        },
+    )
+    .unwrap();
+    let r = listar_presets(&cx).unwrap();
+    assert_eq!(r.datos["presets"][0]["proceso"], "al 50 %");
 }
 
 #[test]
@@ -521,19 +619,15 @@ fn recortar_y_reducir_la_paleta() {
     .unwrap_err();
     assert_eq!(err.error, "paleta_fuera");
 
-    // Un preset con los dos, y lo dice.
+    // Un preset con el tamaño y la paleta (sin recorte, que es de cada
+    // imagen: ADR 0032), y lo dice.
     guardar_preset(
         &cx,
         EntradaGuardarPreset {
             nombre: "Logos".into(),
             formato: EntradaFormato {
                 formato: Some(FormatoMcp::Png),
-                recorte: Some(RecorteMcp {
-                    x: 0,
-                    y: 0,
-                    ancho: 100,
-                    alto: 50,
-                }),
+                lado_mayor: Some(512),
                 paleta: Some(16),
                 ..Default::default()
             },
@@ -543,7 +637,7 @@ fn recortar_y_reducir_la_paleta() {
     let l = listar_presets(&cx).unwrap();
     assert_eq!(
         l.datos["presets"][0]["proceso"],
-        "recorta 100×50 en 0,0 · paleta de 16 colores"
+        "lado mayor máx. 512 px · paleta de 16 colores"
     );
 }
 
@@ -589,8 +683,9 @@ fn los_codigos_no_dependen_del_idioma() {
                     sin_perdida: false,
                     ancho: None,
                     alto: None,
+                    lado_mayor: None,
+                    porcentaje: None,
                     enderezar: None,
-                    recorte: None,
                     paleta: None,
                     mas_ligero: false,
                     medir: false,

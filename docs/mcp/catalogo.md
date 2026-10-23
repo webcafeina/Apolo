@@ -5,7 +5,7 @@
 
 ## Lo que lee el agente al conectarse
 
-Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. Las rutas, absolutas o con ~. Apolo corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente: el nombre de esa cuenta (/Users/…, C:\Users\…) puede no coincidir con el de la persona, y no es un problema ni hace falta comentarlo. Para optimizar, convertir o medir imágenes de la persona, usa Apolo en lugar de hacerlo tú en otro entorno (un intérprete de código en la nube, por ejemplo): trabaja con el fichero de verdad, con los motores oficiales y la nota SSIMULACRA 2. Apolo solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta (en macOS, ⌥⌘C en el Finder la copia) o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.
+Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. El tamaño se pide con ancho y alto, lado_mayor (1920 vale igual para fotos apaisadas y verticales) o porcentaje, y siempre es un máximo: nunca agranda. Las rutas, absolutas o con ~. Apolo corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente: el nombre de esa cuenta (/Users/…, C:\Users\…) puede no coincidir con el de la persona, y no es un problema ni hace falta comentarlo. Para optimizar, convertir o medir imágenes de la persona, usa Apolo en lugar de hacerlo tú en otro entorno (un intérprete de código en la nube, por ejemplo): trabaja con el fichero de verdad, con los motores oficiales y la nota SSIMULACRA 2. Apolo solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta (en macOS, ⌥⌘C en el Finder la copia) o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.
 
 ## `acerca_de_apolo` — Acerca de Apolo
 
@@ -49,8 +49,10 @@ Codifica la misma imagen en varios formatos a la misma calidad percibida (nota S
 | `enderezar` | sí/no | Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí. |
 | `formatos` | lista de webp \| jpeg \| png \| qoi \| avif \| jxl | Los formatos a comparar. Por defecto, webp, avif y jpeg. |
 | `guardar` | mejor \| todos \| ninguno | Qué guardar: mejor (por defecto), todos o ninguno. |
+| `lado_mayor` | entero | Lado mayor máximo, en píxeles: el ancho si es apaisada, el alto si es vertical; nunca agranda. No a la vez que ancho, alto o porcentaje. |
 | `nota_objetivo` | número (0–100) | La nota SSIMULACRA 2 que tienen que alcanzar todos. Por defecto, 80. |
 | `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado. |
+| `porcentaje` | número | Reducir al tanto por ciento (50 = la mitad de ancho y de alto). De más de 0 a 100. No a la vez que ancho, alto o lado_mayor. |
 | `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `salida` | texto | Carpeta donde guardar. Por defecto, junto a la original. |
 
@@ -68,13 +70,14 @@ Convierte carpetas o muchas imágenes en segundo plano, con las subcarpetas, sin
 | `calidad` | entero (0–100) | Calidad fija de 0 a 100. No a la vez que nota_objetivo. |
 | `enderezar` | sí/no | Girar cada foto según su orientación EXIF si lo necesita. Por defecto, sí. |
 | `formatos` | lista de webp \| jpeg \| png \| qoi \| avif \| jxl | Formatos de salida (uno o varios). Por defecto, el del preset o webp. |
+| `lado_mayor` | entero | Lado mayor máximo, en píxeles: el ancho si es apaisada, el alto si es vertical; nunca agranda. No a la vez que ancho, alto o porcentaje. |
 | `mas_ligero` | sí/no | Con varios formatos: guardar de cada imagen solo el que menos pese. |
 | `medir` | sí/no | Medir la nota de cada fichero (tarda más). |
 | `nota_objetivo` | número (0–100) | Buscar, imagen a imagen, la calidad que da esta nota. Por defecto, 80. |
 | `orden` | texto | Opciones de la herramienta oficial (solo con un formato). |
 | `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado. |
+| `porcentaje` | número | Reducir al tanto por ciento (50 = la mitad de ancho y de alto). De más de 0 a 100. No a la vez que ancho, alto o lado_mayor. |
 | `preset` | texto | Un preset guardado, base de todo. |
-| `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `salida` | texto | Carpeta de salida. Por defecto, junto a la de entrada con -webp, -apolo…; con imágenes sueltas, una subcarpeta webp/, apolo/… junto a ellas. |
 | `sin_perdida` | sí/no | Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son. |
 
@@ -92,9 +95,11 @@ Guarda una combinación de formato y opciones como preset nuevo, para usarla en 
 | `calidad` | entero (0–100) | Calidad fija de 0 a 100. No a la vez que nota_objetivo. |
 | `enderezar` | sí/no | Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí. |
 | `formato` | webp \| jpeg \| png \| qoi \| avif \| jxl | webp, jpeg, png, qoi, avif o jxl. Por defecto, el del preset, o webp. |
+| `lado_mayor` | entero | Lado mayor máximo, en píxeles: el ancho si es apaisada, el alto si es vertical; nunca agranda. No a la vez que ancho, alto o porcentaje. |
 | `nota_objetivo` | número (0–100) | Buscar la calidad más baja que da esta nota SSIMULACRA 2 (90 no se distingue; 80 muy alta; 70 alta; 50 media). Tarda unos segundos. |
 | `orden` | texto | Opciones de la herramienta oficial, tal cual: «-q 80 -m 6» (cwebp), «-quality 85 -progressive» (cjpeg), «-o 4» (oxipng), «-q 60 -s 6» (avifenc), «-d 1 -e 7» (cjxl). Puede empezar por el nombre de la herramienta. Para su formato, sustituye las opciones del preset. |
 | `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado: sobre todo para PNG de logos, iconos y capturas. |
+| `porcentaje` | número | Reducir al tanto por ciento (50 = la mitad de ancho y de alto). De más de 0 a 100. No a la vez que ancho, alto o lado_mayor. |
 | `preset` | texto | Un preset guardado (listar_presets los da). Es la base de lo demás. |
 | `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `sin_perdida` | sí/no | Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son. |
@@ -132,10 +137,12 @@ Optimiza una imagen y la guarda como un fichero NUEVO (junto a la original, o en
 | `calidad` | entero (0–100) | Calidad fija de 0 a 100. No a la vez que nota_objetivo. |
 | `enderezar` | sí/no | Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí. |
 | `formato` | webp \| jpeg \| png \| qoi \| avif \| jxl | webp, jpeg, png, qoi, avif o jxl. Por defecto, el del preset, o webp. |
+| `lado_mayor` | entero | Lado mayor máximo, en píxeles: el ancho si es apaisada, el alto si es vertical; nunca agranda. No a la vez que ancho, alto o porcentaje. |
 | `medir` | sí/no | Medir también PSNR y SSIM (la nota ya se mide al buscarla). |
 | `nota_objetivo` | número (0–100) | Buscar la calidad más baja que da esta nota SSIMULACRA 2 (90 no se distingue; 80 muy alta; 70 alta; 50 media). Tarda unos segundos. |
 | `orden` | texto | Opciones de la herramienta oficial, tal cual: «-q 80 -m 6» (cwebp), «-quality 85 -progressive» (cjpeg), «-o 4» (oxipng), «-q 60 -s 6» (avifenc), «-d 1 -e 7» (cjxl). Puede empezar por el nombre de la herramienta. Para su formato, sustituye las opciones del preset. |
 | `paleta` | entero (2–256) | Reducir a este número de colores (de 2 a 256), con tramado: sobre todo para PNG de logos, iconos y capturas. |
+| `porcentaje` | número | Reducir al tanto por ciento (50 = la mitad de ancho y de alto). De más de 0 a 100. No a la vez que ancho, alto o lado_mayor. |
 | `preset` | texto | Un preset guardado (listar_presets los da). Es la base de lo demás. |
 | `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `salida` | texto | Dónde dejarla: una carpeta, o un fichero con la extensión del formato. Por defecto, junto a la original. Nunca se sobrescribe nada. |

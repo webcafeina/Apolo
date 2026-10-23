@@ -362,6 +362,17 @@ pub fn ejecutar(
     cancelado: &AtomicBool,
     avisar: &(dyn Fn(Hecho) + Sync),
 ) {
+    // Un lote no recorta nunca (ADR 0032): el recorte es de una imagen, y un
+    // preset de antes de la v0.18 lo puede traer.
+    let ajustes: Vec<Ajuste> = ajustes
+        .iter()
+        .map(|a| {
+            let mut a = a.clone();
+            a.proceso.recorte = None;
+            a
+        })
+        .collect();
+    let ajustes = &ajustes[..];
     let siguiente = AtomicUsize::new(0);
     std::thread::scope(|s| {
         for _ in 0..hilos.clamp(1, elementos.len().max(1)) {
@@ -685,6 +696,46 @@ mod pruebas {
             h.resultado.as_ref().unwrap()[0].ruta,
             salida.join("a-2.webp")
         );
+    }
+
+    // ADR 0032: el recorte de un preset de antes no se aplica en un lote; la
+    // redimensión, sí.
+    #[test]
+    fn el_lote_no_recorta_y_si_redimensiona() {
+        let d = carpeta("sin-recorte");
+        std::fs::copy(corpus("foto.webp"), d.join("a.webp")).unwrap();
+        let salida = d.join("salida");
+        let elementos = recoger(std::slice::from_ref(&d), Some(&salida));
+        let mut a = Ajuste {
+            formato: FormatoSalida::Png,
+            ..Default::default()
+        };
+        a.proceso.recorte = Some(crate::proceso::Recorte {
+            x: 0,
+            y: 0,
+            ancho: 10,
+            alto: 10,
+        });
+        a.proceso.redimension = Some(crate::proceso::Redimension {
+            medida: crate::proceso::Medida::Porcentaje(50.0),
+            ..Default::default()
+        });
+        let hechos = Mutex::new(Vec::new());
+        ejecutar(
+            &elementos,
+            &salida,
+            &[a],
+            false,
+            false,
+            1,
+            &AtomicBool::new(false),
+            &|h| hechos.lock().unwrap().push(h),
+        );
+        let hechos = hechos.into_inner().unwrap();
+        let ruta = &hechos[0].resultado.as_ref().unwrap()[0].ruta;
+        let img = entrada::leer(&std::fs::read(ruta).unwrap(), Lectura::default()).unwrap();
+        // foto.webp mide 128 × 128: sin recortar, a la mitad.
+        assert_eq!((img.ancho, img.alto), (64, 64));
     }
 
     #[test]

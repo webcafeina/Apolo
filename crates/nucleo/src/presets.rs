@@ -145,4 +145,36 @@ mod pruebas {
         let p: PresetGuardado = serde_json::from_str(r#"{"nombre":"Sin formato"}"#).unwrap();
         assert_eq!(p.ajuste.formato, crate::salida::FormatoSalida::Webp);
     }
+
+    // Un preset de la v0.17, con su proceso: la redimensión sin `modo` ni
+    // `solo_reducir` sigue siendo ancho × alto y agrandando (ADR 0032).
+    #[test]
+    fn un_preset_de_la_v0_17_con_proceso_se_lee_igual() {
+        use crate::proceso::{Medida, Recorte};
+        let p: PresetGuardado = serde_json::from_str(
+            r#"{"nombre":"Web","formato":"png","proceso":{"enderezar":true,
+            "recorte":{"x":0,"y":16,"ancho":128,"alto":96},
+            "redimension":{"ancho":800,"alto":null,"filtro":"lanczos3","lineal":true},
+            "paleta":null}}"#,
+        )
+        .unwrap();
+        let r = p.ajuste.proceso.redimension.unwrap();
+        assert_eq!(
+            r.medida,
+            Medida::Medidas {
+                ancho: Some(800),
+                alto: None
+            }
+        );
+        assert!(!r.solo_reducir);
+        assert_eq!(
+            p.ajuste.proceso.recorte,
+            Some(Recorte {
+                x: 0,
+                y: 16,
+                ancho: 128,
+                alto: 96
+            })
+        );
+    }
 }

@@ -133,3 +133,48 @@ fn el_resumen_del_lote_en_ingles() {
     assert!(texto.contains(" KB") && !texto.contains(','), "{texto}");
     assert!(texto.contains("%)") && !texto.contains(" %"), "{texto}");
 }
+
+/// El ancho y el alto de un PNG, de su cabecera IHDR.
+fn medidas_png(ruta: &Path) -> (u32, u32) {
+    let d = std::fs::read(ruta).unwrap();
+    let n = |i: usize| u32::from_be_bytes(d[i..i + 4].try_into().unwrap());
+    (n(16), n(20))
+}
+
+// ADR 0032: el tamaño de todas, encima del preset, como en la ventana.
+#[test]
+fn el_lado_mayor_y_el_porcentaje_de_todas() {
+    let d = carpeta("tamano");
+    let r = apolo()
+        .args(["lote", "-q", "--formato", "png", "--lado-mayor", "32"])
+        .arg(d.join("fotos"))
+        .output()
+        .unwrap();
+    assert!(r.status.success(), "{}", String::from_utf8_lossy(&r.stderr));
+    // foto.webp mide 128 × 128.
+    assert_eq!(medidas_png(&d.join("fotos-png/foto.png")), (32, 32));
+    let r = apolo()
+        .args([
+            "lote",
+            "-q",
+            "--formato",
+            "png",
+            "--porcentaje",
+            "50",
+            "--salida",
+        ])
+        .arg(d.join("mitad"))
+        .arg(d.join("fotos"))
+        .output()
+        .unwrap();
+    assert!(r.status.success(), "{}", String::from_utf8_lossy(&r.stderr));
+    assert_eq!(medidas_png(&d.join("mitad/foto.png")), (64, 64));
+    // Agrandar, no.
+    let r = apolo()
+        .args(["lote", "--porcentaje", "150"])
+        .arg(d.join("fotos"))
+        .output()
+        .unwrap();
+    assert!(!r.status.success());
+    assert!(String::from_utf8_lossy(&r.stderr).contains("nunca agranda"));
+}

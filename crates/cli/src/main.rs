@@ -200,6 +200,25 @@ Examples:
         )]
         objetivo: Option<f32>,
         #[arg(
+            long,
+            value_name = "PX",
+            conflicts_with = "porcentaje",
+            help = trs!(
+                "Reducir cada imagen a este lado mayor, en píxeles (nunca agranda), encima del preset",
+                "Shrink each image to this longest side, in pixels (never enlarges), over the preset"
+            )
+        )]
+        lado_mayor: Option<u32>,
+        #[arg(
+            long,
+            value_name = "%",
+            help = trs!(
+                "Reducir cada imagen a este tanto por ciento (de más de 0 a 100), encima del preset",
+                "Shrink each image to this percentage (above 0 to 100), over the preset"
+            )
+        )]
+        porcentaje: Option<f64>,
+        #[arg(
             short = 'j',
             long,
             value_name = trs!("HILOS", "THREADS"),
@@ -429,6 +448,8 @@ fn main() -> ExitCode {
             mas_ligero,
             medir,
             objetivo,
+            lado_mayor,
+            porcentaje,
             hilos,
             quiet,
             herramienta,
@@ -440,6 +461,8 @@ fn main() -> ExitCode {
             mas_ligero,
             medir,
             objetivo,
+            lado_mayor,
+            porcentaje,
             hilos,
             herramienta,
             silencio: quiet,

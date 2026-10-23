@@ -6,7 +6,9 @@
 //! Un ajuste por cada `--preset` y cada formato de `--formato` (WebP si no hay
 //! ninguno). Con uno solo, las opciones de su herramienta (cwebp, cjpeg u
 //! oxipng) van detrás de `--`, encima del preset. Con `--mas-ligero`, de cada
-//! imagen se guarda solo el formato que menos pese (ADR 0020). El progreso va
+//! imagen se guarda solo el formato que menos pese (ADR 0020). Con
+//! `--lado-mayor` o `--porcentaje`, el tamaño de todas, encima del preset
+//! (ADR 0032). Un lote no recorta nunca. El progreso va
 //! a la salida de errores; el resumen, a la normal.
 
 use std::path::PathBuf;
@@ -17,6 +19,7 @@ use std::time::Instant;
 
 use apolo_nucleo::formatos::png;
 use apolo_nucleo::lote::{self, Resumen};
+use apolo_nucleo::proceso::{Medida, Redimension};
 use apolo_nucleo::salida::{Ajuste, FormatoSalida};
 use apolo_nucleo::{cwebp, jpeg, presets, tr, trs};
 
@@ -36,6 +39,10 @@ pub struct Peticion {
     pub medir: bool,
     /// Buscar, imagen a imagen, la calidad que da esta nota.
     pub objetivo: Option<f32>,
+    /// Reducir cada imagen a este lado mayor, encima del preset (ADR 0032).
+    pub lado_mayor: Option<u32>,
+    /// O a este tanto por ciento.
+    pub porcentaje: Option<f64>,
     /// Las opciones de la herramienta, detrás de `--`: solo con un formato.
     pub herramienta: Vec<String>,
     pub silencio: bool,
@@ -159,6 +166,37 @@ fn ajustes(p: &Peticion) -> Result<Vec<Ajuste>, String> {
     if let Some(nota) = p.objetivo {
         for a in &mut v {
             a.objetivo = Some(nota);
+        }
+    }
+    // El tamaño, encima del preset, como en la ventana: un máximo que nunca
+    // agranda.
+    let medida = match (p.lado_mayor, p.porcentaje) {
+        (Some(0), _) => {
+            return Err(trs!(
+                "--lado-mayor tiene que ser de 1 px o más",
+                "--lado-mayor must be 1 px or more"
+            )
+            .into());
+        }
+        (Some(l), _) => Some(Medida::LadoMayor(l)),
+        (_, Some(pc)) if !(pc.is_finite() && pc > 0.0 && pc <= 100.0) => {
+            return Err(trs!(
+                "--porcentaje va de más de 0 a 100: nunca agranda",
+                "--porcentaje goes from above 0 to 100: it never enlarges"
+            )
+            .into());
+        }
+        (_, Some(pc)) => Some(Medida::Porcentaje(pc)),
+        (None, None) => None,
+    };
+    if let Some(medida) = medida {
+        for a in &mut v {
+            let antes = a.proceso.redimension.unwrap_or_default();
+            a.proceso.redimension = Some(Redimension {
+                medida,
+                solo_reducir: true,
+                ..antes
+            });
         }
     }
     if v.iter().any(|a| !a.webp.validar()) {

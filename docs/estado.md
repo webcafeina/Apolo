@@ -4,7 +4,34 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-23): v0.17.0 publicada (11:26 UTC), KDE con Breeze** (ADR 0031). El
+> **PARADA AQUÍ (2026-10-23, tarde): v0.18.0, Recortar y Redimensionar sobre la imagen, hecha en
+> el código hasta la fase 4 de 5; falta la galería.** Plan aprobado por el cliente en
+> `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (léelo: tiene todas sus decisiones). Hecho
+> y con `make comprobar` y el e2e entero (147) en verde, en dos commits **sin subir todavía**
+> (`f5cb51c` núcleo, MCP y CLI; `d14b49a` interfaz):
+> - núcleo: `Medida` (medidas, `LadoMayor`, `Porcentaje`) en `Redimension`, guardada plana con
+>   `modo` (los presets de antes se leen igual); `Proceso::efectivo` y `salida::efectivo` (una
+>   redimensión o un recorte que no cambian nada ya no cuestan la orden equivalente); `lote::ejecutar`
+>   nunca recorta;
+> - MCP: `lado_mayor` y `porcentaje` (errores `tamano_doble`, `porcentaje_fuera`), `guardar_preset`
+>   rechaza `recorte`, `empezar_lote` ya no lo tiene; catálogo regenerado; dos escenarios de
+>   evaluación (`o-lado-mayor`, `o-porcentaje`), **sin correr** `make evaluar-mcp` (gasta: pedir el sí);
+> - CLI: `apolo lote --lado-mayor/--porcentaje`;
+> - interfaz: `BarraImagen.tsx` bajo la cabecera del Estudio (Recortar; Redimensionar con la
+>   ventanita de `VentanaTamano.tsx` sobre `Emergente.tsx`), `tamano.ts` (+ test), recorte y tamaño
+>   comunes a los dos lados (`comun` en Estudio.tsx), presets con tamaño y sin recorte, «Tamaño» en
+>   Lotes; fuera del panel; el aspecto de cada sistema (CSS e iconos Fluent, Yaru y Breeze).
+>
+> **Lo siguiente**: (1) fase 5 de la galería: capturas nuevas de `capturas.spec.ts` («redimensionar»,
+> «recorte», «lotes con tamaño») en los cinco aspectos con `CAPTURAS=1 … pnpm -C frontend exec
+> playwright test capturas -g "redimensionar|recorte|lotes con tama"` (las variables de cada sistema,
+> en el Makefile: `capturas-windows`, `-macos`, `-linux`, `-kde`), y un artefacto de galería para el
+> cliente; (2) escribir la **ADR 0032** «Recortar y redimensionar, sobre la imagen y comunes a la
+> imagen», su línea en decisiones.md, los matices de las ADR 0020 y 0023, y la trampa de WKWebView
+> sin `popover`; (3) `make comprobar`, subir y CI; compilación de prueba (`publicar.yml` a mano) para
+> sus máquinas; (4) v0.18.0 solo con su sí; luego la prueba guiada final y la 1.0.0.
+>
+> **(2026-10-23): v0.17.0 publicada (11:26 UTC), KDE con Breeze** (ADR 0031). El
 > cliente la vio «perfecto» en **Kubuntu ARM** (compilación de prueba 39919081725, tras arreglar el
 > icono de la barra lateral, Diferencias y el grupo de modos) y en **Fedora KDE ARM** (el rpm de la
 > misma). De Fedora salieron dos cosas, arregladas en `9dbc508`: Agentes de IA en KDE va en

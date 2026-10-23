@@ -20,7 +20,7 @@ use apolo_nucleo::jpeg;
 use apolo_nucleo::lote::{self, escribir_sin_pisar, salida_sugerida, sufijo};
 use apolo_nucleo::medir::{self, Medidas, TipoMapa};
 use apolo_nucleo::presets::{self, PresetGuardado};
-use apolo_nucleo::proceso::{Proceso, Redimension};
+use apolo_nucleo::proceso::{Medida, Proceso, Redimension};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida, Hallada, Motivo};
 use apolo_nucleo::{orientacion, vista};
 use apolo_nucleo::{tr, trs};
@@ -466,9 +466,10 @@ pub fn optimizar_imagen(cx: &Contexto, e: EntradaOptimizar, s: &Seguimiento) -> 
         None
     };
     let escrita = escribir_sin_pisar(&destino, &bytes)?;
+    let real = cx.servicio.ajuste_efectivo(id, &ajuste)?;
     let efectivo = match v.hallada {
-        Some(h) => salida::con_calidad(&ajuste, h.calidad),
-        None => ajuste.clone(),
+        Some(h) => salida::con_calidad(&real, h.calidad),
+        None => real,
     };
     let orden = v.motivo.is_none().then(|| {
         salida::orden(
@@ -624,6 +625,14 @@ pub struct EntradaComparar {
     /// Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional).
     #[serde(default)]
     pub alto: Option<u32>,
+    /// Lado mayor máximo, en píxeles: el ancho si es apaisada, el alto si es
+    /// vertical; nunca agranda. No a la vez que ancho, alto o porcentaje.
+    #[serde(default)]
+    pub lado_mayor: Option<u32>,
+    /// Reducir al tanto por ciento (50 = la mitad de ancho y de alto). De más
+    /// de 0 a 100. No a la vez que ancho, alto o lado_mayor.
+    #[serde(default)]
+    pub porcentaje: Option<f64>,
     /// Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí.
     #[serde(default)]
     pub enderezar: Option<bool>,
@@ -688,6 +697,8 @@ pub fn comparar_formatos(cx: &Contexto, e: EntradaComparar, s: &Seguimiento) -> 
             formato: Some(*f),
             ancho: e.ancho,
             alto: e.alto,
+            lado_mayor: e.lado_mayor,
+            porcentaje: e.porcentaje,
             enderezar: e.enderezar,
             recorte: e.recorte,
             paleta: e.paleta,
@@ -956,18 +967,9 @@ pub fn ver_imagen(cx: &Contexto, e: EntradaVer) -> Hecho<Respuesta> {
     let mut sin_png = false;
     loop {
         let (vw, vh, v) = if w.max(h) > lado {
-            let r = if w >= h {
-                Redimension {
-                    ancho: Some(lado),
-                    alto: None,
-                    ..Default::default()
-                }
-            } else {
-                Redimension {
-                    ancho: None,
-                    alto: Some(lado),
-                    ..Default::default()
-                }
+            let r = Redimension {
+                medida: Medida::LadoMayor(lado),
+                ..Default::default()
             };
             apolo_nucleo::proceso::aplicar(
                 &Proceso {
@@ -1092,14 +1094,17 @@ pub struct EntradaLote {
     /// Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional).
     #[serde(default)]
     pub alto: Option<u32>,
+    /// Lado mayor máximo, en píxeles: el ancho si es apaisada, el alto si es
+    /// vertical; nunca agranda. No a la vez que ancho, alto o porcentaje.
+    #[serde(default)]
+    pub lado_mayor: Option<u32>,
+    /// Reducir al tanto por ciento (50 = la mitad de ancho y de alto). De más
+    /// de 0 a 100. No a la vez que ancho, alto o lado_mayor.
+    #[serde(default)]
+    pub porcentaje: Option<f64>,
     /// Girar cada foto según su orientación EXIF si lo necesita. Por defecto, sí.
     #[serde(default)]
     pub enderezar: Option<bool>,
-    /// Quedarse con este rectángulo, antes de redimensionar (en píxeles de la
-    /// imagen ya enderezada; lo que se salga del borde se ajusta).
-    #[serde(default, deserialize_with = "crate::entrada::objeto_o_texto")]
-    #[schemars(schema_with = "crate::entrada::esquema_rectangulo")]
-    pub recorte: Option<RecorteMcp>,
     /// Reducir a este número de colores (de 2 a 256), con tramado.
     #[serde(default)]
     #[schemars(range(min = 2, max = 256))]
@@ -1194,8 +1199,11 @@ pub fn empezar_lote(cx: &Contexto, e: EntradaLote) -> Hecho<Respuesta> {
             sin_perdida: e.sin_perdida,
             ancho: e.ancho,
             alto: e.alto,
+            lado_mayor: e.lado_mayor,
+            porcentaje: e.porcentaje,
             enderezar: e.enderezar,
-            recorte: e.recorte,
+            // Un lote no recorta (ADR 0032): el recorte es de cada imagen.
+            recorte: None,
             paleta: e.paleta,
         };
         let mut a = ef.ajuste(&presets, None, 1)?;
@@ -1456,13 +1464,23 @@ fn texto_proceso(p: &Proceso) -> Option<String> {
         ));
     }
     if let Some(r) = &p.redimension {
-        v.push(match (r.ancho, r.alto) {
-            (Some(a), Some(h)) => tr!("redimensiona a {a}×{h} px", "resizes to {a}×{h} px"),
-            (Some(a), None) if r.solo_reducir => tr!("ancho máx. {a} px", "max. width {a} px"),
-            (None, Some(h)) if r.solo_reducir => tr!("alto máx. {h} px", "max. height {h} px"),
-            (Some(a), None) => tr!("ancho {a} px", "width {a} px"),
-            (None, Some(h)) => tr!("alto {h} px", "height {h} px"),
-            (None, None) => trs!("redimensiona", "resizes").into(),
+        v.push(match r.medida {
+            Medida::LadoMayor(l) if r.solo_reducir => {
+                tr!("lado mayor máx. {l} px", "max. longest side {l} px")
+            }
+            Medida::LadoMayor(l) => tr!("lado mayor {l} px", "longest side {l} px"),
+            Medida::Porcentaje(pc) => {
+                let pc = coma(pc, if pc.fract() == 0.0 { 0 } else { 1 });
+                tr!("al {pc} %", "at {pc} %")
+            }
+            Medida::Medidas { ancho, alto } => match (ancho, alto) {
+                (Some(a), Some(h)) => tr!("redimensiona a {a}×{h} px", "resizes to {a}×{h} px"),
+                (Some(a), None) if r.solo_reducir => tr!("ancho máx. {a} px", "max. width {a} px"),
+                (None, Some(h)) if r.solo_reducir => tr!("alto máx. {h} px", "max. height {h} px"),
+                (Some(a), None) => tr!("ancho {a} px", "width {a} px"),
+                (None, Some(h)) => tr!("alto {h} px", "height {h} px"),
+                (None, None) => trs!("redimensiona", "resizes").into(),
+            },
         });
     }
     if let Some(pa) = &p.paleta {
@@ -1567,8 +1585,23 @@ pub fn guardar_preset(cx: &Contexto, e: EntradaGuardarPreset) -> Hecho<Respuesta
             "Choose another name; to change or delete it, in Apolo › Presets."
         )));
     }
+    if e.formato.recorte.is_some() {
+        return Err(ErrorMcp::nuevo(
+            "recorte_en_preset",
+            trs!(
+                "Un preset no guarda un recorte.",
+                "A preset doesn't store a crop."
+            ),
+        )
+        .con_pista(trs!(
+            "El recorte es de cada imagen: pásalo en optimizar_imagen.",
+            "The crop belongs to each image: pass it in optimizar_imagen."
+        )));
+    }
     let mut ajuste = e.formato.ajuste(&presets, None, 1)?;
     ajuste.proceso.enderezar = e.formato.enderezar.unwrap_or(true);
+    // Tampoco el de un preset de antes que sirva de base (ADR 0032).
+    ajuste.proceso.recorte = None;
     let p = PresetGuardado { nombre, ajuste };
     cx.servicio.guardar_preset(&p)?;
     let d = datos_preset(&p);

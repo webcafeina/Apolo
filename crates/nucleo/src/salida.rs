@@ -241,9 +241,29 @@ pub fn con_calidad(a: &Ajuste, q: u8) -> Ajuste {
     b
 }
 
+/// El ajuste sin el proceso que no cambia nada en esta imagen (ADR 0032):
+/// el recorte que la coge entera y la redimensión que la deja igual. Lo que
+/// se codifica, y de lo que salen el motivo y la orden.
+pub fn efectivo(img: &Imagen, a: &Ajuste) -> Ajuste {
+    if a.proceso.vacio() {
+        return a.clone();
+    }
+    let o = orientacion::leer(img.metadatos.exif.as_deref());
+    // De la 5 a la 8, enderezar cambia el ancho por el alto.
+    let (w, h) = if a.enderezar() && (5..=8).contains(&o) {
+        (img.alto, img.ancho)
+    } else {
+        (img.ancho, img.alto)
+    };
+    let mut b = a.clone();
+    b.proceso = a.proceso.efectivo(w, h);
+    b
+}
+
 /// La imagen que recibe el codificador, en RGBA: enderezada y procesada si
 /// hace falta. Es la referencia de las medidas (ADR 0022).
 pub fn referencia(img: &Imagen, a: &Ajuste) -> Resultado<(u32, u32, Vec<u8>)> {
+    let a = &efectivo(img, a);
     let enderezar = a.enderezar() && orientacion::leer(img.metadatos.exif.as_deref()) != 1;
     let girada = if enderezar {
         orientacion::enderezar(img)?
@@ -267,6 +287,7 @@ pub fn codificar(
     a: &Ajuste,
     progreso: Option<Progreso>,
 ) -> Resultado<Codificado> {
+    let a = &efectivo(img, a);
     match a.objetivo {
         Some(nota) if admite_objetivo(a, img.formato) => {
             buscar_nota(datos, img, a, nota as f64, progreso)
@@ -632,10 +653,7 @@ mod pruebas {
             formato: FormatoSalida::Qoi,
             ..Default::default()
         };
-        a.proceso.redimension = Some(proceso::Redimension {
-            ancho: Some(64),
-            ..Default::default()
-        });
+        a.proceso.redimension = Some(proceso::Redimension::medidas(Some(64), None));
         let r = codificar(&datos, &img, &a, None).unwrap();
         assert_eq!(r.ancho, 64);
         assert_eq!(motivo(Formato::Png, &a), Some(Motivo::Procesada));
@@ -648,6 +666,34 @@ mod pruebas {
                 }
             ),
             Some(Motivo::FormatoSinHerramienta)
+        );
+    }
+
+    // ADR 0032: pedir 1920 de lado mayor sin agrandar en una foto de 128 no
+    // hace nada, y no tiene que costar la orden equivalente ni los bytes.
+    #[test]
+    fn una_redimension_que_no_cambia_nada_no_cuenta() {
+        let datos = foto_png();
+        let img = entrada::leer(&datos, Lectura::default()).unwrap();
+        let sin = Ajuste {
+            formato: FormatoSalida::Webp,
+            ..Default::default()
+        };
+        let mut con = sin.clone();
+        con.proceso.redimension = Some(proceso::Redimension {
+            medida: proceso::Medida::LadoMayor(1920),
+            solo_reducir: true,
+            ..Default::default()
+        });
+        assert!(efectivo(&img, &con).proceso.vacio());
+        assert_eq!(motivo(Formato::Png, &efectivo(&img, &con)), None);
+        assert_eq!(
+            codificar(&datos, &img, &con, None).unwrap().datos,
+            codificar(&datos, &img, &sin, None).unwrap().datos
+        );
+        assert_eq!(
+            referencia(&img, &con).unwrap(),
+            referencia(&img, &sin).unwrap()
         );
     }
 }

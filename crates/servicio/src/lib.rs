@@ -447,12 +447,15 @@ impl Servicio {
         let rgba = vista::decodificar(&r.datos)?;
 
         let nombre = nombre_salida(&a.nombre, ajuste.formato);
-        let motivo = salida::motivo(a.imagen.formato, ajuste);
+        // Sin el proceso que no cambia nada en esta imagen (ADR 0032), como
+        // lo ha codificado el núcleo.
+        let real = salida::efectivo(&a.imagen, ajuste);
+        let motivo = salida::motivo(a.imagen.formato, &real);
         // Con una nota objetivo, la orden lleva la calidad encontrada: da el
         // mismo fichero que la vista previa.
         let efectivo = match r.hallada {
-            Some(h) => salida::con_calidad(ajuste, h.calidad),
-            None => ajuste.clone(),
+            Some(h) => salida::con_calidad(&real, h.calidad),
+            None => real,
         };
         let ajuste_orden = &efectivo;
         let v = Vista {
@@ -487,6 +490,12 @@ impl Servicio {
             referencia: None,
         };
         Ok(v)
+    }
+
+    /// El ajuste sin el proceso que no cambia nada en esta imagen (ADR 0032):
+    /// del que sale la orden.
+    pub fn ajuste_efectivo(&self, id: u64, ajuste: &Ajuste) -> R<Ajuste> {
+        Ok(salida::efectivo(&self.abierta(id)?.imagen, ajuste))
     }
 
     /// Los bytes del fichero final: el de la última vista previa de ese lado

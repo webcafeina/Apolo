@@ -119,6 +119,29 @@ export const ESCENARIOS = [
     },
   },
   {
+    id: 'o-lado-mayor', categoria: 'optimizar',
+    // ADR 0032: el lado mayor, sea apaisada o vertical.
+    peticion: 'Haz una versión de playa-1.jpg en WebP con 300 px en su lado más largo',
+    async comprobar(c) {
+      const f = unico(c, 'webp');
+      if (!f.endsWith('.webp')) return f;
+      const [o, m] = [await medidas(c, 'playa-1.jpg'), await medidas(c, f)];
+      const mayor = Math.max(o.ancho, o.alto);
+      const esperado = [Math.round((300 * o.ancho) / mayor), Math.round((300 * o.alto) / mayor)];
+      return (Math.abs(m.ancho - esperado[0]) <= 1 && Math.abs(m.alto - esperado[1]) <= 1) || `mide ${m.ancho}×${m.alto}, esperaba ${esperado.join('×')}`;
+    },
+  },
+  {
+    id: 'o-porcentaje', categoria: 'optimizar',
+    peticion: 'Reduce playa-1.jpg a la mitad de tamaño, en JPEG',
+    async comprobar(c) {
+      const f = unico(c, 'jpg');
+      if (!f.endsWith('.jpg')) return f;
+      const [o, m] = [await medidas(c, 'playa-1.jpg'), await medidas(c, f)];
+      return (Math.abs(m.ancho - o.ancho / 2) <= 1 && Math.abs(m.alto - o.alto / 2) <= 1) || `mide ${m.ancho}×${m.alto}, esperaba la mitad de ${o.ancho}×${o.alto}`;
+    },
+  },
+  {
     id: 'o-salida', categoria: 'optimizar',
     peticion: 'Optimiza playa-1.jpg y deja el resultado en una carpeta web',
     comprobar: (c) => (c.nuevos().some((f) => f.startsWith('web/')) && c.nuevos().every((f) => f.startsWith('web/'))) || `nuevos: ${c.nuevos().join(', ')}`,

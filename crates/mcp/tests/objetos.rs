@@ -51,7 +51,7 @@ fn el_recorte_vale_como_objeto_y_como_texto() {
     for (herramienta, campo) in [
         ("optimizar_imagen", "recorte"),
         ("ver_imagen", "zona"),
-        ("empezar_lote", "recorte"),
+        ("comparar_formatos", "recorte"),
     ] {
         let h = lista["tools"]
             .as_array()

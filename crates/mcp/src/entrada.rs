@@ -7,7 +7,7 @@
 
 use apolo_nucleo::entrada::Formato;
 use apolo_nucleo::presets::PresetGuardado;
-use apolo_nucleo::proceso::{Paleta, Recorte, Redimension};
+use apolo_nucleo::proceso::{Medida, Paleta, Recorte, Redimension};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida};
 use apolo_nucleo::{tr, trs};
 use schemars::JsonSchema;
@@ -125,6 +125,14 @@ pub struct EntradaFormato {
     /// Alto máximo, en píxeles: reduce si es mayor y nunca agranda (con ancho solo, proporcional).
     #[serde(default)]
     pub alto: Option<u32>,
+    /// Lado mayor máximo, en píxeles: el ancho si es apaisada, el alto si es
+    /// vertical; nunca agranda. No a la vez que ancho, alto o porcentaje.
+    #[serde(default)]
+    pub lado_mayor: Option<u32>,
+    /// Reducir al tanto por ciento (50 = la mitad de ancho y de alto). De más
+    /// de 0 a 100. No a la vez que ancho, alto o lado_mayor.
+    #[serde(default)]
+    pub porcentaje: Option<f64>,
     /// Girar según la orientación EXIF si la foto lo necesita. Por defecto, sí.
     #[serde(default)]
     pub enderezar: Option<bool>,
@@ -138,6 +146,73 @@ pub struct EntradaFormato {
     #[serde(default)]
     #[schemars(range(min = 2, max = 256))]
     pub paleta: Option<u32>,
+}
+
+/// La redimensión que pide un agente: ancho y alto, lado mayor o porcentaje,
+/// una sola de las tres. Siempre es un máximo y nunca agranda (ADR 0023): los
+/// agentes lo entienden así.
+pub fn redimension_pedida(
+    ancho: Option<u32>,
+    alto: Option<u32>,
+    lado_mayor: Option<u32>,
+    porcentaje: Option<f64>,
+) -> Hecho<Option<Redimension>> {
+    let medidas = ancho.is_some() || alto.is_some();
+    if [medidas, lado_mayor.is_some(), porcentaje.is_some()]
+        .iter()
+        .filter(|&&x| x)
+        .count()
+        > 1
+    {
+        return Err(ErrorMcp::nuevo(
+            "tamano_doble",
+            trs!(
+                "Se ha pedido el tamaño de dos maneras a la vez.",
+                "The size was asked for in two ways at the same time."
+            ),
+        )
+        .con_pista(trs!(
+            "Usa ancho y alto, o lado_mayor, o porcentaje: solo una.",
+            "Use ancho and alto, or lado_mayor, or porcentaje: only one."
+        )));
+    }
+    let medida = match (lado_mayor, porcentaje) {
+        (Some(0), _) => {
+            return Err(ErrorMcp::nuevo(
+                "lado_mayor_cero",
+                trs!(
+                    "Un lado mayor de 0 px no vale.",
+                    "A longest side of 0 px isn't valid."
+                ),
+            )
+            .con_pista(trs!(
+                "lado_mayor es en píxeles, como 1920.",
+                "lado_mayor is in pixels, like 1920."
+            )));
+        }
+        (Some(l), _) => Medida::LadoMayor(l),
+        (_, Some(p)) if !(p.is_finite() && p > 0.0 && p <= 100.0) => {
+            return Err(ErrorMcp::nuevo(
+                "porcentaje_fuera",
+                tr!(
+                    "Un porcentaje de {p} no vale.",
+                    "A percentage of {p} isn't valid."
+                ),
+            )
+            .con_pista(trs!(
+                "porcentaje va de más de 0 a 100: Apolo nunca agranda.",
+                "porcentaje goes from above 0 to 100: Apolo never enlarges."
+            )));
+        }
+        (_, Some(p)) => Medida::Porcentaje(p),
+        (None, None) if medidas => Medida::Medidas { ancho, alto },
+        (None, None) => return Ok(None),
+    };
+    Ok(Some(Redimension {
+        medida,
+        solo_reducir: true,
+        ..Default::default()
+    }))
 }
 
 impl EntradaFormato {
@@ -265,14 +340,10 @@ impl EntradaFormato {
                 a.objetivo = None;
             }
         }
-        if self.ancho.is_some() || self.alto.is_some() {
-            // Un máximo: nunca agranda (ADR 0023). Los agentes lo entienden así.
-            a.proceso.redimension = Some(Redimension {
-                ancho: self.ancho,
-                alto: self.alto,
-                solo_reducir: true,
-                ..Default::default()
-            });
+        if let Some(r) =
+            redimension_pedida(self.ancho, self.alto, self.lado_mayor, self.porcentaje)?
+        {
+            a.proceso.redimension = Some(r);
         }
         if let Some(r) = self.recorte {
             if r.ancho == 0 || r.alto == 0 {

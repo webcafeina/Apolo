@@ -128,3 +128,10 @@ marco se queda. `APOLO_ESQUINAS_RECTAS=1` sigue como plan B, sin marco ni transp
 Desde la v0.17.0 ([ADR 0031](0031-kde-con-breeze.md)), con KDE Plasma Apolo se ve con Breeze y no con
 libadwaita, y también lleva la barra de Apolo (con el marco de Breeze). Lo de esta ADR sigue para
 GNOME y para los demás escritorios.
+
+## Matiz del 2026-10-23: tres iconos de Yaru, mal dibujados desde la v0.15.0
+
+Al juntar los trazados, la «m» inicial pasaba a «M» sin poner una «l» delante de las parejas que la
+siguen, que entonces eran absolutas (trampas.md). En Ubuntu faltaban la montaña del icono del
+Estudio, el pie del monitor de «Escritorio» y los meridianos del globo de «Idioma». Corregido en la
+v0.17.0, regenerando `iconos-yaru.ts` (Yaru en el commit `7f18973`): solo cambian esos tres.

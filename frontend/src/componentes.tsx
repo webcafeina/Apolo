@@ -119,8 +119,10 @@ export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | st
   if (breeze) {
     return (
       <svg className="icono" width={lado} height={lado} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-        {breeze.o && <path d={breeze.o} opacity={0.5} />}
-        <path d={breeze.d} fillRule={breeze.e ? "evenodd" : undefined} />
+        <g transform={breeze.t}>
+          {breeze.o && <path d={breeze.o} opacity={0.5} />}
+          <path d={breeze.d} fillRule={breeze.e ? "evenodd" : undefined} />
+        </g>
       </svg>
     );
   }

@@ -475,6 +475,15 @@ cambiar a «M» el comienzo de cada uno al juntarlos. Además, algunos llevan un
 `<g>` o una caja que no es de 16 (`viewBox="0 0 4.2333 4.2333"`): `iconos-yaru.ts` las guarda. ·
 2026-10-22
 
+**Y cambiar la «m» por «M» no basta.** Las parejas de números que siguen a una «m» son líneas
+*relativas*; detrás de una «M» pasan a ser *absolutas*. `m318 165.5-3 5.5` se convertía en
+`M318 165.5-3 5.5`, una línea al punto (-3, 5.5) fuera del icono. Así, desde la v0.15.0, en Ubuntu
+faltaba la montaña del icono del Estudio, el pie del monitor de «Escritorio» y los meridianos del
+globo de «Idioma» (visto el 2026-10-23 al hacer los de Breeze, que tienen el mismo caso). La función
+`absoluto()` de los generadores pone una «l» tras los dos números de la «M» si siguen más. Los
+generadores están en `~/.cache/apolo-revision/{yaru,breeze}.py` y las fuentes, en `~/.cache/kde-ref/`
+(Yaru en el commit `7f18973`). · 2026-10-23
+
 ## Ubuntu: el Centro de aplicaciones enseña un .deb suelto sin icono, sin editor y con «?» en las tildes
 
 Al abrir el `.deb` con doble clic, el Centro de aplicaciones de Ubuntu (26.10) dice «Editor

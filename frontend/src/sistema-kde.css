@@ -319,25 +319,28 @@
 }
 :root[data-sistema="linux"][data-escritorio="kde"] input[type="range"]:hover:not(:disabled)::-webkit-slider-thumb { box-shadow: inset 0 0 0 1px var(--relleno), 1px 1px 0 rgb(0 0 0 / 0.125); }
 
-/* El segmentado: KDE no tiene uno propio; se pinta como ToolButtons que se
-   marcan, juntos: el elegido con el texto al 12,5 % de fondo y su borde. */
+/* El segmentado: KDE no tiene uno propio. Se pinta como ToolButtons que se
+   marcan, en una bandeja: el texto al 7 % con radio 6, y el elegido levantado
+   como un botón de Breeze (su fondo, su borde y su sombra), para que el grupo
+   se distinga de las órdenes de al lado. */
 :root[data-sistema="linux"][data-escritorio="kde"] .segmentado {
-  padding: 0;
+  padding: 2px;
   gap: 2px;
-  background: transparent;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--cuerpo) 7%, transparent);
 }
 :root[data-sistema="linux"][data-escritorio="kde"] .segmentado button {
-  height: 30px;
+  height: 28px;
   padding: 0 8px;
   border: 1px solid transparent;
-  border-radius: var(--radio);
+  border-radius: var(--radio-chico);
   box-shadow: none;
 }
 :root[data-sistema="linux"][data-escritorio="kde"] .segmentado button:not([aria-checked="true"]):hover:not(:disabled) { background: transparent; border-color: var(--relleno); }
 :root[data-sistema="linux"][data-escritorio="kde"] .segmentado button[aria-checked="true"] {
-  background: color-mix(in srgb, var(--cuerpo) 12.5%, var(--lienzo));
+  background: var(--boton);
   border-color: var(--borde-boton);
-  box-shadow: none;
+  box-shadow: var(--sombra-boton);
 }
 
 /* ── Páginas ────────────────────────────────────────────────────────────── */

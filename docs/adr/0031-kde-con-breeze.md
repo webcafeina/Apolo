@@ -86,3 +86,14 @@ interfaz lo pone en `<html data-escritorio>`. Todo lo de KDE cuelga de
   GTK con la ventana transparente bajo KWin (la sombra, el redimensionado), la disposición de los
   botones que KDE pasa a GTK y la letra Noto Sans, con una compilación de prueba en Kubuntu ARM
   (`kubuntu-desktop` sobre Ubuntu 26.10) y después en Fedora KDE.
+
+## Matiz del 2026-10-23: lo que salió de verlo en Kubuntu
+
+El cliente lo vio en Kubuntu ARM (compilación de prueba 39847459084): «todo correcto», con tres
+cosas. **El icono de la barra lateral** salía con la flecha fuera de sitio (el fallo de la «m» de
+trampas.md, que también rompía tres iconos de Yaru en Ubuntu desde la v0.15.0) y no cambiaba al
+plegarla: ahora es `sidebar-collapse-left` con la barra abierta y `sidebar-expand-left` con ella
+plegada, como en Breeze (los iconos de Breeze admiten la transformación `t`). **Diferencias** pasa
+de `vcs-diff` (diferencias entre versiones de código) a `path-difference`. Y **el grupo de modos del
+Estudio** (Deslizador, Lado a lado, Diferencias) se confundía con «Abrir otra…»: ahora va en una
+bandeja (el texto al 7 %, radio 6) con el elegido levantado como un botón de Breeze.

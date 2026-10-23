@@ -25,7 +25,7 @@ test("en KDE: la escala de Breeze, sus iconos y la barra lateral", async ({ page
   const fila = page.getByRole("button", { name: "Lotes", exact: true });
   expect(await alto(fila)).toBe(30);
   // Los iconos de Breeze, no los de Yaru.
-  await expect(fila.locator(".icono path")).toHaveAttribute("d", ICONOS_BREEZE.lotes.d);
+  await expect(fila.locator(".icono path").last()).toHaveAttribute("d", ICONOS_BREEZE.lotes.d);
   expect(await alto(page.locator(".herramientas").first())).toBe(46);
   // La fila elegida, rellena del acento.
   const elegida = page.getByRole("button", { name: "Estudio", exact: true });
@@ -45,7 +45,7 @@ test("en KDE: los botones de la ventana son los de Breeze, en el lado que diga e
   const derecha = page.locator(".lado-botones.derecha");
   await expect(derecha.getByRole("button")).toHaveCount(3);
   expect(await ancho(derecha.getByRole("button", { name: "Cerrar", exact: true }))).toBe(20);
-  await expect(derecha.getByRole("button", { name: "Minimizar", exact: true }).locator("path")).toHaveAttribute(
+  await expect(derecha.getByRole("button", { name: "Minimizar", exact: true }).locator("path").last()).toHaveAttribute(
     "d",
     ICONOS_BREEZE.minimizar.d,
   );
@@ -77,4 +77,15 @@ test("en GNOME y los demás escritorios, nada de Breeze", async ({ page }) => {
   await page.goto("/?sistema=linux&escritorio=otro&barra=propia");
   expect(await page.evaluate(() => getComputedStyle(document.body).fontSize)).toBe("14.6667px");
   expect(await ancho(page.locator(".lateral"))).toBe(220);
+});
+
+test("en KDE: el botón de la barra lateral dice qué hará, plegar o desplegar", async ({ page }) => {
+  await page.goto(KDE);
+  const boton = page.getByTestId("boton-lateral");
+  const icono = boton.locator(".icono path").last();
+  await expect(icono).toHaveAttribute("d", ICONOS_BREEZE.lateralOcultar.d);
+  await expect(boton.locator(".icono g")).toHaveAttribute("transform", ICONOS_BREEZE.lateralOcultar.t!);
+  await boton.click();
+  await expect(icono).toHaveAttribute("d", ICONOS_BREEZE.lateral.d);
+  await boton.click();
 });

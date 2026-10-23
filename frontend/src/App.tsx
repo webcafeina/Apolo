@@ -4,7 +4,7 @@ import * as actualizar from "./actualizar";
 import { Agentes } from "./ajustes/Agentes";
 import { BarraTitulo } from "./BarraTitulo";
 import { BotonesVentana, ladosBotones } from "./BotonesVentana";
-import { Cabecera, esLinux, esMac, esWindows, formularioNativo, Icono, IconoApp, Interruptor, Marca, TarjetaAjuste } from "./componentes";
+import { Cabecera, esKde, esLinux, esMac, esWindows, formularioNativo, Icono, IconoApp, Interruptor, Marca, TarjetaAjuste } from "./componentes";
 import { Estudio } from "./estudio/Estudio";
 import i18n, { lengua } from "./i18n";
 import { Lotes } from "./lotes/Lotes";
@@ -142,7 +142,8 @@ export function App() {
           onClick={mac ? alternarLateral : gnome.alternar}
           data-prueba="boton-lateral"
         >
-          <Icono nombre="lateral" lado={16} />
+          {/* En KDE la flecha dice qué hará: plegar (‹) o desplegar (›), como en Breeze. */}
+          <Icono nombre={esKde() && lateralAbierta ? "lateralOcultar" : "lateral"} lado={16} />
         </button>
       )}
       <aside className="lateral" data-tauri-drag-region inert={!lateralAbierta && (mac || linux) ? true : undefined}>

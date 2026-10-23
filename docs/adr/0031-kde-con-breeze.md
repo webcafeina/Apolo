@@ -99,3 +99,13 @@ Estudio** (Deslizador, Lado a lado, Diferencias) se confundía con «Abrir otra�
 bandeja (el texto al 7 %, radio 6) con el elegido levantado como un botón de Breeze.
 
 Con la compilación de prueba 39919081725 el cliente lo vio «perfecto» en Kubuntu ARM (2026-10-23).
+
+## Matiz del 2026-10-23: lo que salió de verlo en Fedora KDE
+
+Con la misma compilación, en Fedora KDE ARM (Plasma 6, sesión Plasma), el cliente lo vio «todo
+perfecto»: el marco, la ventana y las pantallas. Apuntó dos cosas. **Agentes de IA** seguía el
+formulario de Ajustes: la etiqueta a la izquierda y el botón de la extensión y la orden de Claude
+Code apretados en la columna derecha, entre dos tarjetas a todo el ancho. Eso no son ajustes, así
+que en KDE va en tarjetas (Kirigami.Card), como lo de arriba y lo de abajo. Y **un nombre de archivo
+largo** en el Estudio se metía debajo de los modos del comparador. Era de todo Linux, no solo de KDE
+(trampas.md), y se arregla en `sistema-linux.css`.

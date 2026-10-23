@@ -4,6 +4,8 @@
 // &barra=propia (la de Apolo, en GNOME) o &barra=sistema.
 
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 test.use({ testIdAttribute: "data-prueba" });
 // La barra lateral se anima al ocultarse: las medidas, sin animaciones.
@@ -106,3 +108,24 @@ test("en Linux con el marco de GTK: la interfaz redondea sus esquinas como libad
   await page.goto("/?sistema=linux&barra=sistema");
   expect(await page.locator(".ventana").evaluate((v) => getComputedStyle(v).borderRadius)).toBe("0px");
 });
+
+// Visto en Fedora KDE (2026-10-23): con el título alineado, el h1 medía lo que
+// su texto y un nombre largo se metía debajo de los modos del comparador.
+for (const escritorio of ["gnome", "kde"]) {
+  test(`en Linux (${escritorio}): un nombre de archivo largo se corta antes de las órdenes del Estudio`, async ({ page }) => {
+    await page.goto(`/?sistema=linux&escritorio=${escritorio}&barra=propia`);
+    const elegir = page.waitForEvent("filechooser");
+    await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+    await (await elegir).setFiles({
+      name: "vacaciones-en-la-costa-de-asturias-agosto-2026-fotografia-del-atardecer-desde-el-faro.webp",
+      mimeType: "image/webp",
+      buffer: readFileSync(join(import.meta.dirname, "../../pruebas/corpus/foto.webp")),
+    });
+    const titulo = page.locator(".estudio .titulos h1");
+    await expect(titulo).toHaveText(/^vacaciones-en-la-costa/);
+    const fin = await titulo.evaluate((h) => h.getBoundingClientRect().right);
+    const ordenes = await page.locator(".estudio .herramientas .aparte").evaluate((a) => a.getBoundingClientRect().left);
+    expect(fin).toBeLessThanOrEqual(ordenes);
+    expect(await titulo.evaluate((h) => h.scrollWidth > h.clientWidth)).toBe(true);
+  });
+}

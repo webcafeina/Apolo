@@ -539,3 +539,13 @@ El 2026-10-22, aur.archlinux.org/register daba «New account registration is tem
 503) por una ola de altas automáticas, sin cola ni fecha: se anuncia en aur-general y en las
 noticias de Arch. No reintentar con un guion. Mientras, `aur.yml` desactivado y el PKGBUILD en la web
 (ADR 0030). · 2026-10-22
+
+## Un título con «…» que no se corta: `align-items` le quita el ancho
+
+`white-space: nowrap; overflow: hidden; text-overflow: ellipsis` solo corta si la caja tiene un
+ancho limitado. En una columna flex con `align-items: center` o `flex-start` (la cabecera de Linux,
+centrada en GNOME y al principio en el Estudio y en KDE), los hijos no se estiran: miden lo que su
+texto, y la columna, aunque tenga `min-width: 0`, no los frena. El `h1` con un nombre de archivo
+largo se salía por encima de los modos del comparador, sin «…». Lo vio el cliente en Fedora KDE, y
+pasaba igual en GNOME desde la v0.15.0. Arreglo: `max-width: 100%` en los hijos de `.titulos`. Lo
+vigila `linux.spec.ts` con un nombre largo en GNOME y en KDE. · 2026-10-23

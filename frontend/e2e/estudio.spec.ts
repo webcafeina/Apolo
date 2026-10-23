@@ -298,28 +298,103 @@ test("se comparan dos formatos, uno a cada lado", async ({ page }) => {
   await expect(page.getByTestId("rotulo-izquierda")).toHaveText("Original");
 });
 
-test("el proceso redimensiona, en cualquier formato, y la orden lo dice", async ({ page }) => {
+// ADR 0032: Recortar y Redimensionar, en la barra de encima de la imagen y
+// comunes a los dos lados.
+test("redimensionar desde la barra: el lado mayor no agranda y no cuesta la orden; el porcentaje, en cualquier formato", async ({ page }) => {
   await abrir(page, "foto.webp");
-  await page.getByTestId("formato").selectOption("png");
-  await page.getByRole("switch", { name: "Redimensionar" }).first().check();
-  // La foto mide 128: a la mitad por defecto.
-  await expect(page.getByTestId("barra-estado")).toContainText("64 × 64", { timeout: 30_000 });
+  await page.getByTestId("redimensionar").click();
+  // Lado mayor por defecto; 1920 en una foto de 128 sin agrandar no hace nada.
+  await page.getByRole("button", { name: "1920", exact: true }).click();
+  await expect(page.getByTestId("resumen-tamano")).toHaveText("Ya es más pequeña: se queda en 128 × 128 px.");
+  await expect(page.getByTestId("redimensionar")).toContainText("1920 px de lado mayor");
+  await expect(page.getByTestId("barra-estado")).toContainText("128 × 128");
+  await expect(page.getByTestId("no-equivalente")).toHaveCount(0);
+  // Permitiéndolo, sí.
+  await page.getByTestId("agrandar").check();
+  await expect(page.getByTestId("barra-estado")).toContainText("1920 × 1920", { timeout: 30_000 });
   await expect(page.getByTestId("no-equivalente")).toContainText("Procesada por Apolo");
+  // El porcentaje.
+  await page.getByTestId("modo-porcentaje").click();
+  await page.getByRole("button", { name: "50 %", exact: true }).click();
+  await expect(page.getByTestId("resumen-tamano")).toHaveText("Quedará en 64 × 64 px.");
+  await expect(page.getByTestId("barra-estado")).toContainText("64 × 64", { timeout: 30_000 });
+  await page.getByTestId("listo-tamano").click();
+  await expect(page.getByTestId("redimensionar")).toContainText("Al 50 %");
+  // Es de la imagen: cambiar de formato no lo toca.
+  await page.getByTestId("formato").selectOption("png");
+  await expect(page.getByTestId("orden")).toContainText("oxipng");
+  await expect(page.getByTestId("barra-estado")).toContainText("64 × 64", { timeout: 30_000 });
+  // Quitarlo vuelve al tamaño de la foto.
+  await page.getByTestId("redimensionar").click();
+  await page.getByTestId("quitar-tamano").click();
+  await expect(page.getByTestId("redimensionar")).toContainText("Redimensionar");
+  await expect(page.getByTestId("barra-estado")).toContainText("128 × 128", { timeout: 30_000 });
 });
 
-test("recortar con el ratón, con proporción, y comparar con el deslizador", async ({ page }) => {
+test("la ventanita de Redimensionar, con el teclado: Escape la cierra y el foco vuelve; un clic fuera también", async ({ page }) => {
   await abrir(page, "foto.webp");
-  await page.getByRole("switch", { name: "Recortar", exact: true }).check();
+  const boton = page.getByTestId("redimensionar");
+  await boton.focus();
+  await page.keyboard.press("Enter");
+  const ventana = page.getByRole("dialog", { name: "Redimensionar" });
+  await expect(ventana).toBeVisible();
+  await expect(boton).toHaveAttribute("aria-expanded", "true");
+  // El foco entra, en el modo elegido.
+  await expect(ventana.getByRole("radio", { name: "Lado mayor" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(ventana).toHaveCount(0);
+  await expect(boton).toBeFocused();
+  await boton.click();
+  await expect(ventana).toBeVisible();
+  await page.getByTestId("barra-estado").click();
+  await expect(ventana).toHaveCount(0);
+});
+
+test("ancho y alto, con el candado: un lado y el otro en proporción; sin él, los dos", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await page.getByTestId("redimensionar").click();
+  await page.getByTestId("modo-medidas").click();
+  await page.getByTestId("ancho").fill("100");
+  await page.getByTestId("ancho").press("Enter");
+  await expect(page.getByTestId("resumen-tamano")).toHaveText("Quedará en 100 × 100 px.");
+  await expect(page.getByTestId("candado")).toHaveAttribute("aria-pressed", "true");
+  await page.getByTestId("candado").click();
+  await expect(page.getByTestId("candado")).toHaveAttribute("aria-pressed", "false");
+  await page.getByTestId("alto").fill("50");
+  await page.getByTestId("alto").press("Enter");
+  await expect(page.getByTestId("resumen-tamano")).toHaveText("Quedará en 100 × 50 px.");
+  await expect(page.getByTestId("barra-estado")).toContainText("100 × 50", { timeout: 30_000 });
+});
+
+test("el tamaño es de la imagen: los dos lados salen igual", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await page.getByTestId("lados").getByRole("radio", { name: /Izquierda/ }).click();
+  await page.getByTestId("comparar-formato").click();
+  await expect(page.getByTestId("rotulo-izquierda")).toContainText("JPEG ·");
+  await page.getByTestId("redimensionar").click();
+  await page.getByTestId("modo-porcentaje").click();
+  await page.getByRole("button", { name: "50 %", exact: true }).click();
+  await page.getByTestId("listo-tamano").click();
+  // El izquierdo (el que se edita) y el derecho.
+  await expect(page.getByTestId("barra-estado")).toContainText("64 × 64", { timeout: 30_000 });
+  await page.getByTestId("lados").getByRole("radio", { name: /Derecha/ }).click();
+  await expect(page.getByTestId("barra-estado")).toContainText("64 × 64", { timeout: 30_000 });
+});
+
+test("recortar sobre la imagen, con proporción, y comparar con el deslizador", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await page.getByTestId("recortar").click();
+  await expect(page.getByTestId("rotulo-recorte")).toContainText("128 × 128");
   // 16:9 en una foto de 128 × 128: el marco más grande que cabe, centrado.
   await page.getByTestId("proporcion").selectOption("16:9");
-  const arriba = page.getByRole("spinbutton", { name: "Arriba" });
-  await expect(page.getByRole("spinbutton", { name: "Ancho", exact: true })).toHaveValue("128");
-  await expect(page.getByRole("spinbutton", { name: "Alto", exact: true })).toHaveValue("72");
+  const barra = page.getByTestId("barra-imagen");
+  const arriba = barra.getByRole("spinbutton", { name: "Arriba" });
+  await expect(barra.getByRole("spinbutton", { name: "Ancho", exact: true })).toHaveValue("128");
+  await expect(barra.getByRole("spinbutton", { name: "Alto", exact: true })).toHaveValue("72");
   await expect(arriba).toHaveValue("28");
-
-  // En la imagen: se arrastra el marco hacia abajo, y el panel lo sigue.
-  await page.getByTestId("recortar-en-imagen").click();
   await expect(page.getByTestId("rotulo-recorte")).toContainText("128 × 72");
+
+  // En la imagen: se arrastra el marco hacia abajo, y la barra lo sigue.
   const caja = (await page.getByTestId("lienzo").boundingBox())!;
   const [cx, cy] = [caja.x + caja.width / 2, caja.y + caja.height / 2];
   await page.mouse.move(cx, cy);
@@ -333,6 +408,46 @@ test("recortar con el ratón, con proporción, y comparar con el deslizador", as
   // lado a lado (el original se recorta igual).
   await page.getByTestId("recorte-listo").click();
   await expect(page.getByTestId("rotulo-recorte")).toHaveCount(0);
+  await expect(page.getByTestId("recortar")).toContainText("Recortada · 128 × 72");
   await expect(page.getByTestId("barra-estado")).toContainText("128 × 72", { timeout: 30_000 });
   await expect(page.getByText("El resultado tiene otra proporción")).toHaveCount(0);
+
+  // Escape también acaba; y la × lo quita.
+  await page.getByTestId("recortar").click();
+  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("rotulo-recorte")).toHaveCount(0);
+  await page.getByTestId("quitar-recorte").click();
+  await expect(page.getByTestId("recortar")).toHaveText("Recortar");
+  await expect(page.getByTestId("barra-estado")).toContainText("128 × 128", { timeout: 30_000 });
+});
+
+test("un preset guarda el tamaño y no el recorte; al aplicarlo, el recorte se queda", async ({ page }) => {
+  await abrir(page, "foto.webp");
+  await page.getByTestId("recortar").click();
+  await page.getByTestId("proporcion").selectOption("16:9");
+  await page.getByTestId("recorte-listo").click();
+  await page.getByTestId("redimensionar").click();
+  await page.getByTestId("modo-porcentaje").click();
+  await page.getByRole("button", { name: "50 %", exact: true }).click();
+  await page.getByTestId("listo-tamano").click();
+  await page.getByTestId("nombre-preset").fill("Mitad");
+  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await expect(page.getByText("Preset «Mitad» guardado.")).toBeVisible();
+
+  // Sin tamaño, y se aplica el preset: vuelve el tamaño, y el recorte sigue.
+  await page.getByTestId("redimensionar").click();
+  await page.getByTestId("quitar-tamano").click();
+  await page.getByTestId("partida").selectOption("apolo:Mitad");
+  await expect(page.getByTestId("redimensionar")).toContainText("Al 50 %");
+  await expect(page.getByTestId("recortar")).toContainText("Recortada · 128 × 72");
+  await expect(page.getByTestId("barra-estado")).toContainText("64 × 36", { timeout: 30_000 });
+
+  // En su ficha, el tamaño y nada de recorte; y se borra.
+  await page.getByRole("button", { name: "Presets" }).click();
+  const ficha = page.getByTestId("preset").filter({ hasText: "Mitad" });
+  await expect(ficha).toContainText("Al 50 %");
+  await expect(ficha).not.toContainText("ecort");
+  await ficha.getByRole("button", { name: "Borrar" }).click();
+  await ficha.getByRole("button", { name: "¿Borrarlo?" }).click();
+  await expect(ficha).toHaveCount(0);
 });

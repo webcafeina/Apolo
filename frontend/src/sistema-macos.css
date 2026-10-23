@@ -244,13 +244,14 @@
    rejilla del Estudio. */
 :root[data-sistema="macos"] .estudio {
   grid-template-columns: minmax(0, 1fr) 320px;
-  grid-template-rows: var(--alto-barra) auto minmax(0, 1fr) auto;
+  grid-template-rows: var(--alto-barra) auto auto minmax(0, 1fr) auto;
 }
 :root[data-sistema="macos"] .lienzo-y-barra { display: contents; }
 :root[data-sistema="macos"] .estudio > .lienzo-y-barra > .herramientas { grid-column: 1 / -1; grid-row: 1; }
-:root[data-sistema="macos"] .estudio .aviso { grid-column: 1; grid-row: 2; margin-top: 12px; }
-:root[data-sistema="macos"] .estudio .comparador { grid-column: 1; grid-row: 3; border-top: 0; }
-:root[data-sistema="macos"] .estudio .barra-estado { grid-column: 1; grid-row: 4; }
+:root[data-sistema="macos"] .estudio .barra-imagen { grid-column: 1; grid-row: 2; }
+:root[data-sistema="macos"] .estudio .aviso { grid-column: 1; grid-row: 3; margin-top: 12px; }
+:root[data-sistema="macos"] .estudio .comparador { grid-column: 1; grid-row: 4; border-top: 0; }
+:root[data-sistema="macos"] .estudio .barra-estado { grid-column: 1; grid-row: 5; }
 :root[data-sistema="macos"] .estudio > .panel { grid-column: 2; grid-row: 2 / -1; background: var(--lienzo); }
 @container (max-width: 700px) {
   :root[data-sistema="macos"] .estudio .segmentado.con-iconos .etiqueta { display: none; }
@@ -542,4 +543,20 @@
   :root[data-sistema="macos"] .herramientas,
   :root[data-sistema="macos"] .segmentado::before,
   :root[data-sistema="macos"] .interruptor > .pomo { transition: none; }
+}
+
+/* ── La barra de encima de la imagen (ADR 0032) ─────────────────────────── */
+
+/* Una barra secundaria de 38 bajo la de la ventana, como la de Fotos al
+   editar: botones sin borde con su relleno gris, y la ventanita como un
+   NSPopover de vidrio, con su radio y su sombra. */
+:root[data-sistema="macos"] .barra-imagen { min-height: 38px; padding: 4px 12px; border-bottom: 0.5px solid var(--filete); gap: 6px; }
+:root[data-sistema="macos"] .barra-imagen button.solo-icono { width: 24px; }
+:root[data-sistema="macos"] .campo-recorte input { width: 58px; }
+:root[data-sistema="macos"] .emergente-panel {
+  border: 0.5px solid var(--capsula-filo);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--lienzo) 82%, transparent);
+  backdrop-filter: blur(30px) saturate(1.8);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.2), 0 0 0 0.5px rgb(0 0 0 / 0.05);
 }

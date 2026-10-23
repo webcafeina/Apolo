@@ -36,10 +36,10 @@ test("en Windows: los interruptores siguen siendo interruptores, y la barra de p
   await page.getByRole("button", { name: "Abrir una imagen…" }).click();
   await (await elegir).setFiles(join(corpus, "foto.webp"));
   await expect(page.getByTestId("peso-resultado")).not.toHaveText("…");
-  const recortar = page.getByRole("switch", { name: "Recortar", exact: true });
-  await expect(recortar).not.toBeChecked();
-  await recortar.check();
-  await expect(recortar).toBeChecked();
+  const paleta = page.getByRole("switch", { name: "Reducir paleta", exact: true });
+  await expect(paleta).not.toBeChecked();
+  await paleta.check();
+  await expect(paleta).toBeChecked();
   // La barra de la versión nueva: su ancho es el del porcentaje (actualizar.spec.ts), así que sin
   // transición también en Windows.
   const duracion = await page.evaluate(() => {
@@ -146,4 +146,26 @@ test("en Windows: el panel se pliega y se despliega con su animación", async ({
   await expect(ventana).toHaveCSS("transition-property", "grid-template-columns");
   await page.getByTestId("boton-menu").click();
   await expect.poll(() => page.locator(".lateral").evaluate((l) => l.getBoundingClientRect().width)).toBe(320);
+});
+
+// ADR 0032: Recortar y Redimensionar, en una barra con el aspecto del sistema.
+test("en Windows: la barra de encima de la imagen es una CommandBar, y la ventanita un Flyout", async ({ page }) => {
+  await page.goto("/?sistema=windows");
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Abrir una imagen…" }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/corpus/foto.webp"));
+  const barra = page.getByTestId("barra-imagen");
+  await expect(barra).toBeVisible();
+  expect(await barra.evaluate((b) => b.getBoundingClientRect().height)).toBe(44);
+  // Debajo de la cabecera, encima del lienzo.
+  const [cabecera, lienzo, caja] = await Promise.all([
+    page.locator(".estudio .herramientas").boundingBox(),
+    page.getByTestId("lienzo").boundingBox(),
+    barra.boundingBox(),
+  ]);
+  expect(caja!.y).toBeGreaterThanOrEqual(cabecera!.y + cabecera!.height - 1);
+  expect(lienzo!.y).toBeGreaterThanOrEqual(caja!.y + caja!.height - 1);
+  await page.getByTestId("redimensionar").click();
+  const ventana = page.getByRole("dialog", { name: "Redimensionar" });
+  expect(await ventana.evaluate((v) => getComputedStyle(v).borderRadius)).toBe("8px");
 });

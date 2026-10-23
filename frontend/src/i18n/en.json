@@ -56,8 +56,50 @@
       "diferencia": "Pixels that change",
       "estructura": "Detail that's lost"
     },
-    "recorteRotulo": "Crop · {{ancho}} × {{alto}} px · drag the frame or its corners",
-    "recorteListo": "Done"
+    "recorteRotulo": "Crop · {{ancho}} × {{alto}} px · drag the frame or its corners"
+  },
+  "barraImagen": {
+    "etiqueta": "Crop and resize",
+    "recortar": "Crop",
+    "recortada": "Cropped · {{ancho}} × {{alto}}",
+    "quitarRecorte": "Remove the crop",
+    "listo": "Done",
+    "proporcion": "Aspect ratio",
+    "proporciones": {
+      "libre": "Free",
+      "original": "The original's"
+    },
+    "ancho": "Width",
+    "alto": "Height",
+    "x": "Left",
+    "y": "Top"
+  },
+  "tamano": {
+    "boton": "Resize",
+    "titulo": "Resize",
+    "modo": "How the size is given",
+    "modos": {
+      "lado_mayor": "Longest side",
+      "porcentaje": "Percentage",
+      "medidas": "Width × height"
+    },
+    "atajos": "Common sizes",
+    "ladoMayor": "Longest side",
+    "porcentaje": "Percentage",
+    "ancho": "Width",
+    "alto": "Height",
+    "candado": "Keep the aspect ratio",
+    "quedara": "It will be {{ancho}} × {{alto}} px.",
+    "noAgranda": "It's already smaller: it stays at {{ancho}} × {{alto}} px.",
+    "permitirAgrandar": "Allow enlarging",
+    "mas": "More",
+    "quitar": "Remove",
+    "listo": "Done",
+    "texto": {
+      "ladoMayor": "{{lado}} px longest side",
+      "porcentaje": "At {{porcentaje}} %",
+      "medidas": "{{ancho}} × {{alto}} px"
+    }
   },
   "orden": {
     "copiar": "Copy",
@@ -107,19 +149,11 @@
     "compararFormato": "Compare with another format",
     "volverOriginal": "Back to the original",
     "sinOpciones": "{{formato}} has no options: there's only one way to encode it, lossless.",
-    "auto": "auto",
     "filtro": "Filter",
     "lineal": "Blend in linear RGB",
     "colores": "Colors",
     "tramado": "Dithering",
-    "nota": "Score",
-    "recortarEnImagen": "Crop on the image",
-    "recorteListo": "Done",
-    "proporcion": "Aspect ratio",
-    "proporciones": {
-      "libre": "Free",
-      "original": "The original's"
-    }
+    "nota": "Score"
   },
   "formato": {
     "avif": "AVIF",
@@ -221,13 +255,9 @@
     "pocaMemoria": "Low memory",
     "pocaMemoriaAyuda": "For huge images: uses less memory and takes longer.",
     "redimensionCwebp": "Resize like cwebp",
-    "redimensionCwebpAyuda": "cwebp's -resize, with its own method. To repeat a cwebp command; normally you'd use Resize under Processing, which works for every format.",
+    "redimensionCwebpAyuda": "cwebp's -resize, with its own method. To repeat a cwebp command; normally you'd use Resize, above the image, which works for every format.",
     "recorteCwebp": "Crop like cwebp",
-    "recorteCwebpAyuda": "cwebp's -crop. To repeat a cwebp command; normally you'd use Crop under Processing.",
-    "procesoRedimension": "Resize",
-    "procesoRedimensionAyuda": "Changes the size before compressing, in any format. Leave one side empty to keep the aspect ratio.",
-    "procesoRecorte": "Crop",
-    "procesoRecorteAyuda": "Keeps a rectangle of the image, before resizing.",
+    "recorteCwebpAyuda": "cwebp's -crop. To repeat a cwebp command; normally you'd use Crop, above the image.",
     "procesoPaleta": "Reduce the palette",
     "procesoPaletaAyuda": "Leaves the image with few colors using libimagequant, like Squoosh. Much smaller as PNG; dithering hides the color steps.",
     "calidadJpeg": "Quality",
@@ -556,7 +586,10 @@
     "peoresNotas": "The ones with the worst score",
     "peoresNotasDetalle": "The ones that stray furthest from their original.",
     "calidadHallada": "quality {{calidad}}",
-    "nota": "score {{nota}}"
+    "nota": "score {{nota}}",
+    "tamano": "Size",
+    "tamanoDetalle": "For every image, over the preset. It never enlarges, unless you allow it.",
+    "tamanoDelPreset": "Each preset's own"
   },
   "ajustes": {
     "borrar": "Delete",
@@ -606,7 +639,6 @@
     "sinPerdida": "Lossless",
     "casiSinPerdida": "Near-lossless {{valor}}",
     "metodo": "Method {{valor}}",
-    "redimension": "Resizes to {{ancho}} × {{alto}}",
     "endereza": "Auto-rotates from EXIF",
     "equivale": "Equivalent to:",
     "usar": "Use in the Studio",

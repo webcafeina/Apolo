@@ -243,13 +243,14 @@
 :root[data-sistema="linux"] .estudio {
   container-type: inline-size;
   grid-template-columns: minmax(0, 1fr) 320px;
-  grid-template-rows: var(--alto-barra) auto minmax(0, 1fr) auto;
+  grid-template-rows: var(--alto-barra) auto auto minmax(0, 1fr) auto;
 }
 :root[data-sistema="linux"] .lienzo-y-barra { display: contents; }
 :root[data-sistema="linux"] .estudio > .lienzo-y-barra > .herramientas { grid-column: 1 / -1; grid-row: 1; }
-:root[data-sistema="linux"] .estudio .aviso { grid-column: 1; grid-row: 2; margin-top: 12px; }
-:root[data-sistema="linux"] .estudio .comparador { grid-column: 1; grid-row: 3; border-top: 0; }
-:root[data-sistema="linux"] .estudio .barra-estado { grid-column: 1; grid-row: 4; background: var(--lienzo); }
+:root[data-sistema="linux"] .estudio .barra-imagen { grid-column: 1; grid-row: 2; }
+:root[data-sistema="linux"] .estudio .aviso { grid-column: 1; grid-row: 3; margin-top: 12px; }
+:root[data-sistema="linux"] .estudio .comparador { grid-column: 1; grid-row: 4; border-top: 0; }
+:root[data-sistema="linux"] .estudio .barra-estado { grid-column: 1; grid-row: 5; background: var(--lienzo); }
 :root[data-sistema="linux"] .estudio > .panel {
   grid-column: 2;
   grid-row: 2 / -1;
@@ -506,4 +507,21 @@
 @media (prefers-reduced-motion: reduce) {
   :root[data-sistema="linux"] .ventana,
   :root[data-sistema="linux"] .interruptor > .pomo { transition: none; }
+}
+
+/* ── La barra de encima de la imagen (ADR 0032) ─────────────────────────── */
+
+/* Como una barra de herramientas de GNOME (.toolbar): botones planos, que se
+   ven al pasar por encima, y Redimensionar como un MenuButton. La ventanita,
+   un GtkPopover: radio 12 y la sombra de libadwaita, sin borde. */
+:root[data-sistema="linux"] .barra-imagen { min-height: 46px; padding: 6px 12px; gap: 6px; background: var(--lienzo); border-bottom: 0; box-shadow: inset 0 -1px var(--filete); }
+:root[data-sistema="linux"] .barra-imagen button:not(.principal) { background: transparent; }
+:root[data-sistema="linux"] .barra-imagen button:not(.principal):hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="linux"] .barra-imagen button:not(.principal):active:not(:disabled) { background: var(--sutil-pulsado); }
+:root[data-sistema="linux"] .barra-imagen button.solo-icono { width: 34px; }
+:root[data-sistema="linux"] .emergente-panel {
+  border: 0;
+  border-radius: 12px;
+  background: var(--lienzo);
+  box-shadow: 0 1px 5px 1px rgb(0 0 0 / 0.09), 0 2px 14px 3px rgb(0 0 0 / 0.05), 0 0 0 1px var(--filete);
 }

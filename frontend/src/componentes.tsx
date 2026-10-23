@@ -99,6 +99,29 @@ const DIBUJOS: Record<string, ReactNode> = {
       <path d="M7 3.5v11M3.9 6.3h1.4M3.9 8.3h1.4" />
     </>
   ),
+  // La barra de encima de la imagen (ADR 0032): las escuadras de recortar, y
+  // un cuadro que crece en diagonal.
+  recortar: <path d="M5 1.5v11a.5.5 0 0 0 .5.5h11M1.5 5h11a.5.5 0 0 1 .5.5v11" />,
+  redimensionar: (
+    <>
+      <rect x="2.5" y="9" width="6.5" height="6.5" rx="1" />
+      <path d="M10.5 2.5h5v5M15.5 2.5 10 8" />
+    </>
+  ),
+  candado: (
+    <>
+      <rect x="4" y="8" width="10" height="7.5" rx="1.5" />
+      <path d="M6 8V5.5a3 3 0 0 1 6 0V8" />
+    </>
+  ),
+  candadoAbierto: (
+    <>
+      <rect x="4" y="8" width="10" height="7.5" rx="1.5" />
+      <path d="M6 8V5.5a3 3 0 0 1 5.8-1.1" />
+    </>
+  ),
+  desplegar: <path d="m5 7 4 4 4-4" />,
+  quitar: <path d="m5 5 8 8M13 5l-8 8" />,
 };
 
 export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | string; lado?: number }) {

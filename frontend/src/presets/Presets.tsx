@@ -11,6 +11,8 @@ import { Cabecera, Icono } from "../componentes";
 import { EVENTO_APLICAR, EVENTO_PRESETS } from "../estudio/Estudio";
 import type { Ajuste } from "../estudio/opciones";
 import { nombreFormato } from "../estudio/Panel";
+import { textoTamano } from "../estudio/tamano";
+import { lengua } from "../i18n";
 import * as puente from "../puente";
 
 export function Presets({ carpeta, irAlEstudio }: { carpeta: string | null; irAlEstudio: () => void }) {
@@ -128,9 +130,7 @@ function Ficha({
   const rasgos = [
     nombreFormato(ajuste.formato),
     ...delFormato,
-    ...(pr.redimension
-      ? [t("presets.redimension", { ancho: pr.redimension.ancho ?? "auto", alto: pr.redimension.alto ?? "auto" })]
-      : []),
+    ...(pr.redimension ? [t(...textoTamano(pr.redimension, lengua()))] : []),
     ...(pr.paleta ? [t("presets.paleta", { colores: pr.paleta.colores })] : []),
     ...(ajuste.objetivo !== null && ajuste.objetivo !== undefined ? [t("presets.objetivo", { nota: ajuste.objetivo })] : []),
     ...(pr.enderezar || w.enderezar ? [t("presets.endereza")] : []),

@@ -2,7 +2,7 @@
 // lo que se suelta, así que en desarrollo se escriben (el campo `ruta-dev`).
 
 import { expect, test } from "@playwright/test";
-import { copyFileSync, existsSync, mkdtempSync, readdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -137,4 +137,35 @@ test("medir la calidad y buscar una nota en un lote", async ({ page }) => {
   await expect(page.getByTestId("nota-fila")).toHaveCount(2);
   await expect(page.getByTestId("filas")).toContainText("calidad ");
   await expect(page.getByTestId("nota-media")).toContainText("Nota media");
+});
+
+/** El ancho y el alto de un PNG, de su cabecera IHDR. */
+function medidasPng(ruta: string): [number, number] {
+  const d = readFileSync(ruta);
+  return [d.readUInt32BE(16), d.readUInt32BE(20)];
+}
+
+// ADR 0032: el tamaño de todas las salidas, encima de su preset.
+test("el tamaño de todo el lote, al 50 %", async ({ page }) => {
+  const salida = join(mkdtempSync(join(tmpdir(), "apolo-e2e-tamano-")), "salida");
+  await page.goto("/");
+  await page.getByRole("button", { name: "Lotes" }).click();
+  await page.getByTestId("ruta-dev").fill(corpus);
+  await page.getByRole("button", { name: "Añadir", exact: true }).click();
+  await expect(page.getByTestId("recogida")).toContainText("2 imágenes");
+  await page.getByTestId("formato-lote").selectOption("png");
+  await expect(page.getByTestId("tamano")).toContainText("El de cada preset");
+  await page.getByTestId("tamano").click();
+  await page.getByTestId("modo-porcentaje").click();
+  await page.getByRole("button", { name: "50 %", exact: true }).click();
+  // En un lote no se sabe cómo quedará cada una.
+  await expect(page.getByTestId("resumen-tamano")).toHaveCount(0);
+  await page.getByTestId("listo-tamano").click();
+  await expect(page.getByTestId("tamano")).toContainText("Al 50 %");
+  await page.getByTestId("salida").fill(salida);
+  await page.getByRole("button", { name: "Convertir 2 imágenes" }).click();
+  await expect(page.getByTestId("resumen")).toContainText("2 imágenes convertidas", { timeout: 30_000 });
+  // foto.webp mide 128 × 128, y orientacion-6.png, 64 × 32.
+  expect(medidasPng(join(salida, "foto.png"))).toEqual([64, 64]);
+  expect(medidasPng(join(salida, "orientacion-6.png"))).toEqual([32, 16]);
 });

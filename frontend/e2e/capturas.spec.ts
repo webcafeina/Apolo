@@ -300,9 +300,8 @@ test("recorte", async ({ page }, info) => {
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
   await (await elegir).setFiles(FOTO);
   await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
-  await page.getByRole("switch", { name: n("Recortar"), exact: true }).check();
+  await page.getByTestId("recortar").click();
   await page.getByTestId("proporcion").selectOption("4:3");
-  await page.getByTestId("recortar-en-imagen").click();
   await page.waitForTimeout(500);
   await page.screenshot({
     path: `${CARPETA}/recorte-${info.project.name}.png`,
@@ -314,6 +313,44 @@ test("recorte", async ({ page }, info) => {
   });
 });
 
+// La barra de encima de la imagen (ADR 0032): con un tamaño puesto, y la
+// ventanita de Redimensionar en cada modo.
+test("redimensionar", async ({ page }, info) => {
+  await page.goto(raiz());
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
+  await (await elegir).setFiles(FOTO);
+  await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
+  await page.getByTestId("redimensionar").click();
+  await page.getByRole("button", { name: "1920", exact: true }).click();
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${CARPETA}/redimensionar-lado-${info.project.name}.png` });
+  await page.getByTestId("modo-porcentaje").click();
+  await page.getByRole("button", { name: /^50 %$/ }).click();
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${CARPETA}/redimensionar-porcentaje-${info.project.name}.png` });
+  await page.getByTestId("modo-medidas").click();
+  await page.locator("details.mas-tamano summary").click();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `${CARPETA}/redimensionar-medidas-${info.project.name}.png` });
+  await page.getByTestId("modo-porcentaje").click();
+  await page.getByTestId("listo-tamano").click();
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${CARPETA}/redimensionar-barra-${info.project.name}.png` });
+});
+
+test("lotes con tamaño", async ({ page }, info) => {
+  await page.goto(raiz());
+  await page.getByRole("button", { name: n("Lotes") }).click();
+  await page.getByTestId("ruta-dev").fill(LOTE);
+  await page.getByRole("button", { name: n("Añadir"), exact: true }).click();
+  await page.getByTestId("recogida").waitFor();
+  await page.getByTestId("tamano").click();
+  await page.getByRole("button", { name: "1920", exact: true }).click();
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: `${CARPETA}/lotes-tamano-${info.project.name}.png` });
+});
+
 // Los interruptores y el foco con el teclado (ADR 0027): el panel con uno encendido y los demás
 // apagados, y el contorno del foco al recorrer el panel con Tab.
 test("interruptores y foco", async ({ page }, info) => {
@@ -322,7 +359,7 @@ test("interruptores y foco", async ({ page }, info) => {
   await page.getByRole("button", { name: n("Abrir una imagen…") }).click();
   await (await elegir).setFiles(FOTO);
   await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
-  await page.getByRole("switch", { name: n("Recortar"), exact: true }).check();
+  await page.getByRole("switch", { name: n("Reducir paleta"), exact: true }).check();
   await page.waitForTimeout(500);
   await page
     .locator(".panel")
@@ -422,7 +459,7 @@ test.describe("de cerca", () => {
     await page.mouse.up();
     // Un interruptor pulsado.
     const interruptor = page.getByRole("switch", {
-      name: n("Recortar"),
+      name: n("Reducir paleta"),
       exact: true,
     });
     const s = (await interruptor.boundingBox())!;

@@ -313,7 +313,7 @@ input[type="range"] { accent-color: var(--relleno); }
 /* Estudio */
 
 .estudio { display: grid; grid-template-columns: 1fr 320px; height: 100%; min-height: 0; }
-.lienzo-y-barra { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.lienzo-y-barra { display: flex; flex-direction: column; min-width: 0; min-height: 0; container-type: inline-size; }
 
 .aviso {
   display: flex;
@@ -560,7 +560,6 @@ html, body, #raiz { overscroll-behavior: none; }
    Abajo, sobre el zoom: arriba pisaba el selector y el rótulo del modo
    Diferencias (v0.7.0). «Otra proporción», que usa el mismo sitio, nunca sale
    a la vez: esa solo con otra proporción, y esta solo con la misma. */
-.recorte-listo { position: absolute; top: var(--espacio-3); right: var(--espacio-3); }
 .nota-reducida {
   position: absolute;
   bottom: 56px;
@@ -712,3 +711,75 @@ button.discreto:hover:not(:disabled) { background: var(--elevada); color: var(--
 .por-formato li { display: flex; align-items: baseline; gap: var(--espacio-2); }
 .por-formato strong { color: var(--tinta); }
 .por-formato .cifra { margin-left: auto; color: var(--tinta); font-variant-numeric: tabular-nums; }
+
+/* ── La barra de encima de la imagen (ADR 0032) ─────────────────────────── */
+
+/* Recortar y Redimensionar, a la vista: una fila bajo la cabecera, con un
+   filete abajo, como la barra de herramientas de un editor de fotos. Sin
+   overflow: la ventanita de Redimensionar sale por debajo. */
+.barra-imagen {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: 40px;
+  padding: 4px var(--espacio-5);
+  border-bottom: var(--linea) solid var(--filete);
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 3;
+}
+.barra-imagen button { height: 28px; padding: 0 var(--espacio-3); }
+.barra-imagen button.solo-icono { width: 28px; padding: 0; }
+.grupo-barra { display: inline-flex; align-items: center; gap: 2px; }
+.barra-imagen select { height: 28px; }
+.campos-recorte { display: inline-flex; align-items: center; gap: var(--espacio-3); margin-left: var(--espacio-2); }
+.campo-recorte { display: inline-flex; align-items: center; gap: 4px; color: var(--apagado); font-size: 12px; }
+.campo-recorte input { width: 68px; height: 28px; padding-inline: 6px; }
+@container (max-width: 600px) {
+  .campos-recorte { display: none; }
+}
+
+/* La ventanita: sale de su botón, encima de todo. */
+.emergente { position: relative; display: inline-flex; }
+.emergente-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  min-width: 300px;
+  padding: var(--espacio-4);
+  border: var(--linea) solid var(--filete);
+  border-radius: 12px;
+  background: var(--lienzo);
+  color: var(--tinta);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.18), 0 1px 3px rgb(0 0 0 / 0.1);
+  animation: emergente-entra 0.14s ease-out;
+}
+.emergente-panel[data-arriba] { top: auto; bottom: calc(100% + 6px); }
+.emergente-panel[data-izquierda] { left: auto; right: 0; }
+@keyframes emergente-entra {
+  from { opacity: 0; transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .emergente-panel { animation: none; }
+}
+
+.ventana-tamano { display: flex; flex-direction: column; gap: var(--espacio-3); }
+.ventana-tamano .segmentado { display: flex; }
+.ventana-tamano .segmentado button { flex: 1; }
+.atajos { display: flex; flex-wrap: wrap; gap: 4px; }
+.atajos button { height: 26px; padding: 0 var(--espacio-3); font-variant-numeric: tabular-nums; }
+.atajos button[aria-pressed="true"] { background: var(--relleno-tenue); border-color: var(--relleno); }
+.numero-tamano { display: flex; flex-direction: column; gap: 4px; color: var(--cuerpo); font-size: 12px; }
+.con-sufijo { display: flex; align-items: center; gap: 6px; }
+.con-sufijo input { width: 96px; }
+.sufijo { color: var(--apagado); }
+.medidas-tamano { display: flex; align-items: flex-end; gap: var(--espacio-2); }
+.medidas-tamano .con-sufijo input { width: 84px; }
+button.candado { width: 32px; padding: 0; }
+button.candado[aria-pressed="true"] { color: var(--oro-trazo); }
+.resumen-tamano { margin: 0; font-size: 12px; }
+.mas-tamano summary { cursor: pointer; color: var(--cuerpo); }
+.mas-tamano .pareja { margin-top: var(--espacio-2); }
+.pie-tamano { display: flex; justify-content: space-between; gap: var(--espacio-2); padding-top: var(--espacio-2); border-top: var(--linea) solid var(--filete); }
+.selector-tamano > button .etiqueta { max-width: 220px; overflow: hidden; text-overflow: ellipsis; }

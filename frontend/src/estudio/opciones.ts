@@ -7,8 +7,6 @@
 // la explicación salen de i18n con la clave `opcion.<clave>` y
 // `opcion.<clave>Ayuda`.
 
-import type { Proporcion } from "./recorte";
-
 export type Preset = "default" | "photo" | "picture" | "drawing" | "icon" | "text";
 export type Pista = "ninguna" | "picture" | "photo" | "graph";
 export type FiltradoAlfa = "none" | "fast" | "best";
@@ -174,11 +172,33 @@ export interface OpcionesJxl {
 
 export type Filtro = "lanczos3" | "mitchell" | "catmull_rom" | "bilineal" | "vecino";
 
-/** El proceso antes de codificar (Proceso en crates/nucleo/src/proceso.rs). */
+/** Cómo se da el tamaño (ADR 0032): ancho y alto, el lado mayor o un porcentaje. */
+export type ModoTamano = "medidas" | "lado_mayor" | "porcentaje";
+
+/** La redimensión tal como la escribe el núcleo (Redimension en proceso.rs):
+ *  plana, con su modo; de los tamaños, solo cuenta el del modo. No es la de
+ *  `-resize` de cwebp (Redimension, más arriba). */
+export interface Tamano {
+  modo: ModoTamano;
+  /** Con modo «medidas»: si falta uno, se calcula en proporción. */
+  ancho: number | null;
+  alto: number | null;
+  lado_mayor: number | null;
+  porcentaje: number | null;
+  filtro: Filtro;
+  /** Mezclar en RGB lineal (más correcto; lo de Squoosh). */
+  lineal: boolean;
+  /** Un máximo: lo que ya cabe se queda como está, nunca se agranda. */
+  solo_reducir: boolean;
+}
+
+/** El proceso antes de codificar (Proceso en crates/nucleo/src/proceso.rs).
+ *  En el Estudio, el recorte y la redimensión son de la imagen, comunes a los
+ *  dos lados (ADR 0032): los pone la barra de encima del lienzo. */
 export interface Proceso {
   enderezar: boolean;
   recorte: Recorte | null;
-  redimension: { ancho: number | null; alto: number | null; filtro: Filtro; lineal: boolean } | null;
+  redimension: Tamano | null;
   paleta: { colores: number; tramado: number } | null;
 }
 
@@ -207,16 +227,6 @@ export interface Contexto {
   alto: number;
   /** La entrada es un JPEG (cjxl lo recomprime sin pérdida). */
   jpeg: boolean;
-  /** Recortar con el ratón (Estudio.tsx): solo en el Estudio, no en Lotes. */
-  recortar?: {
-    editando: boolean;
-    editar: () => void;
-    proporcion: Proporcion;
-    elegirProporcion: (p: Proporcion) => void;
-    /** Las medidas de la imagen ya enderezada, que son las del recorte. */
-    ancho: number;
-    alto: number;
-  };
 }
 
 type Cuando = (a: Ajuste, c: Contexto) => boolean;
@@ -257,8 +267,6 @@ export type Control =
         | "metadatos"
         | "hilos"
         | "calidadJpeg"
-        | "procesoRecorte"
-        | "procesoRedimension"
         | "procesoPaleta"
         | "notaObjetivo";
     });
@@ -563,8 +571,6 @@ export const CONTROLES_JXL: Control[] = [
 /** El proceso: para todos los formatos, y de Apolo (sin opción de la herramienta). */
 export const CONTROLES_PROCESO: Control[] = [
   { clave: "enderezar", de: "proceso", marca: "", tipo: "interruptor", campo: "enderezar" },
-  { clave: "procesoRedimension", de: "proceso", marca: "", tipo: "especial", especial: "procesoRedimension" },
-  { clave: "procesoRecorte", de: "proceso", marca: "", tipo: "especial", especial: "procesoRecorte" },
   { clave: "procesoPaleta", de: "proceso", marca: "", tipo: "especial", especial: "procesoPaleta" },
 ];
 

@@ -11,7 +11,8 @@ import { Cabecera, Icono, IconoApp, Marca } from "../componentes";
 import { lengua } from "../i18n";
 import * as puente from "../puente";
 import { Comparador, type Modo } from "./Comparador";
-import { admiteObjetivo, type Ajuste, type Contexto, type Preset, type Recorte } from "./opciones";
+import { BarraImagen } from "./BarraImagen";
+import { admiteObjetivo, type Ajuste, type Contexto, type Preset, type Recorte, type Tamano } from "./opciones";
 import { conProporcion, dentro, type Proporcion, razon, recortar } from "./recorte";
 import { banda, nombreFormato, Panel, type Lado } from "./Panel";
 
@@ -41,6 +42,17 @@ interface EstadoLado {
 
 const ladoVacio = (ajuste: Ajuste | null): EstadoLado => ({ ajuste, vista: null, pixeles: null, ocupado: false, medidas: null });
 
+/** Lo que es de la imagen y no del formato (ADR 0032): el recorte y el
+ *  tamaño, comunes a los dos lados. Los ajustes de cada lado se guardan sin
+ *  ellos, y se les ponen al codificar. */
+interface Comun {
+  recorte: Recorte | null;
+  redimension: Tamano | null;
+}
+
+const sinComun = (a: Ajuste): Ajuste => ({ ...a, proceso: { ...a.proceso, recorte: null, redimension: null } });
+const componer = (a: Ajuste, c: Comun): Ajuste => ({ ...a, proceso: { ...a.proceso, recorte: c.recorte, redimension: c.redimension } });
+
 /** Un número con `d` decimales, con la coma o el punto del idioma. */
 const cifra = (n: number, d: number) => n.toLocaleString(lengua(), { minimumFractionDigits: d, maximumFractionDigits: d });
 
@@ -48,7 +60,8 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   const { t } = useTranslation();
   const [info, setInfo] = useState<puente.InfoImagen | null>(null);
   // El izquierdo empieza siendo el original; el derecho, WebP.
-  const [lados, setLados] = useState<[EstadoLado, EstadoLado]>([ladoVacio(null), ladoVacio(inicio.ajuste)]);
+  const [lados, setLados] = useState<[EstadoLado, EstadoLado]>([ladoVacio(null), ladoVacio(sinComun(inicio.ajuste))]);
+  const [comun, setComun] = useState<Comun>({ recorte: null, redimension: inicio.ajuste.proceso.redimension });
   const [editando, setEditando] = useState<Lado>(1);
   const [original, setOriginal] = useState<ImageData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -60,8 +73,12 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   const [sobre, setSobre] = useState(false);
   const generaciones = useRef<[number, number]>([0, 0]);
 
-  const ajusteDe = (l: Lado) => lados[l].ajuste;
-  const editado = lados[editando].ajuste ?? lados[1].ajuste!;
+  // Memorizados: son lo que mira el efecto de la vista previa, y cambiar de
+  // objeto en cada dibujo codificaría sin parar.
+  const ajusteIzq = useMemo(() => lados[0].ajuste && componer(lados[0].ajuste, comun), [lados[0].ajuste, comun]);
+  const ajusteDer = useMemo(() => componer(lados[1].ajuste!, comun), [lados[1].ajuste, comun]);
+  const ajusteDe = (l: Lado) => (l === 0 ? ajusteIzq : ajusteDer);
+  const editado = (editando === 0 && ajusteIzq) || ajusteDer;
   const cambiarLado = useCallback((l: Lado, cambio: Partial<EstadoLado>) => {
     setLados((x) => {
       const n: [EstadoLado, EstadoLado] = [x[0], x[1]];
@@ -69,12 +86,22 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
       return n;
     });
   }, []);
-  const ponerAjuste = useCallback((a: Ajuste) => cambiarLado(editando, { ajuste: a }), [cambiarLado, editando]);
+  const ponerAjuste = useCallback((a: Ajuste) => cambiarLado(editando, { ajuste: sinComun(a) }), [cambiarLado, editando]);
+  // Un preset guardado: su tamaño, si lo trae, pasa a ser el de la imagen; si
+  // no, se queda el que había. El recorte no va en los presets.
+  const aplicarGuardado = useCallback(
+    (a: Ajuste) => {
+      const r = a.proceso.redimension;
+      if (r) setComun((c) => ({ ...c, redimension: r }));
+      ponerAjuste(a);
+    },
+    [ponerAjuste],
+  );
 
   // La sección Presets avisa por eventos de ventana: cuando se aplica uno al
   // Estudio (al lado que se edita) y cuando cambia la lista.
-  const ponerRef = useRef(ponerAjuste);
-  ponerRef.current = ponerAjuste;
+  const ponerRef = useRef(aplicarGuardado);
+  ponerRef.current = aplicarGuardado;
   useEffect(() => {
     const recargar = () => puente.presets().then(setGuardados, () => {});
     const aplicar = (e: Event) => ponerRef.current((e as CustomEvent<Ajuste>).detail);
@@ -93,6 +120,9 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
       try {
         const nueva = typeof fuente === "string" ? await puente.abrirRuta(fuente) : await puente.abrirFichero(fuente);
         if (info) void puente.cerrar(info.id);
+        // El recorte es de la imagen que se cierra; el tamaño vale para la nueva.
+        setComun((c) => ({ ...c, recorte: null }));
+        setRecortando(false);
         setLados((x) => [
           { ...x[0], vista: null, pixeles: null, medidas: null },
           { ...x[1], vista: null, pixeles: null, medidas: null },
@@ -164,8 +194,6 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
     }, RETARDO_MS);
     return () => window.clearTimeout(reloj);
   };
-  const ajusteIzq = ajusteDe(0);
-  const ajusteDer = ajusteDe(1);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => previsualizar(0, ajusteIzq), [info, ajusteIzq]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -176,7 +204,8 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
     ponerAjuste({ ...editado, webp: await puente.nivelSinPerdida(editado.webp, n) });
   const guardar = async (nombre: string) => {
     try {
-      setGuardados(await puente.guardarPreset({ nombre, ...editado }));
+      // Con el tamaño de la imagen, pero sin el recorte: es de esta imagen.
+      setGuardados(await puente.guardarPreset({ nombre, ...editado, proceso: { ...editado.proceso, recorte: null } }));
       window.dispatchEvent(new Event(EVENTO_PRESETS));
       setAviso(t("estudio.presetGuardado", { nombre }));
     } catch (e) {
@@ -191,22 +220,34 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   const [recortando, setRecortando] = useState(false);
   const [proporcion, setProporcion] = useState<Proporcion>("libre");
   const [marcoVivo, setMarcoVivo] = useState<Recorte | null>(null);
-  const marco = marcoVivo ?? editado.proceso.recorte;
-  const ponerRecorte = useCallback(
-    (r: Recorte | null) => ponerAjuste({ ...editado, proceso: { ...editado.proceso, recorte: r } }),
-    [editado, ponerAjuste],
-  );
-  // Para comparar: si el original va a la izquierda y el derecho recorta, el
-  // original también, por el mismo marco. Así tienen la misma proporción y el
-  // deslizador funciona (antes pasaba a lado a lado con escala aproximada).
-  const recorteDerecho = lados[1].ajuste!.proceso.recorte;
-  // Apagar el recorte en el panel también acaba la edición.
+  const marco = marcoVivo ?? comun.recorte;
+  const ponerRecorte = useCallback((r: Recorte | null) => setComun((c) => ({ ...c, recorte: r })), []);
+  const acabarRecorte = useCallback(() => {
+    if (marcoVivo) ponerRecorte(marcoVivo);
+    setMarcoVivo(null);
+    setRecortando(false);
+  }, [marcoVivo, ponerRecorte]);
+  const quitarRecorte = useCallback(() => {
+    ponerRecorte(null);
+    setMarcoVivo(null);
+    setRecortando(false);
+  }, [ponerRecorte]);
+  // Mientras se recorta, Intro o Escape es «Listo» (Escape en una ventanita
+  // solo la cierra: no llega aquí).
   useEffect(() => {
-    if (recortando && !editado.proceso.recorte) setRecortando(false);
-  }, [recortando, editado.proceso.recorte]);
+    if (!recortando) return;
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || (e.key === "Enter" && !(e.target instanceof HTMLButtonElement))) acabarRecorte();
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [recortando, acabarRecorte]);
+  // Para comparar: si el original va a la izquierda, se recorta por el mismo
+  // marco. Así tienen la misma proporción y el deslizador funciona (antes
+  // pasaba a lado a lado con escala aproximada).
   const originalComparable = useMemo(
-    () => (original && recorteDerecho && !recortando ? recortar(original, recorteDerecho) : original),
-    [original, recorteDerecho, recortando],
+    () => (original && comun.recorte && !recortando ? recortar(original, comun.recorte) : original),
+    [original, comun.recorte, recortando],
   );
   const vista = lados[ladoActivo].vista;
 
@@ -229,7 +270,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   const exportar = async () => {
     if (!info) return;
     try {
-      const r = await puente.exportar(info.id, lados[ladoActivo].ajuste!, ladoActivo);
+      const r = await puente.exportar(info.id, ajusteDe(ladoActivo)!, ladoActivo);
       if (r) setAviso(t("estudio.exportado", { nombre: r }));
     } catch (e) {
       setError((e as puente.Fallo).mensaje);
@@ -292,27 +333,21 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
     ancho: info.ancho,
     alto: info.alto,
     jpeg: info.formato === "JPEG",
-    recortar: {
-      editando: recortando,
-      editar: () => {
-        if (!recortando && !editado.proceso.recorte) ponerRecorte(conProporcion({ x: 0, y: 0, ancho: W, alto: H }, razon(proporcion, W, H)));
-        setMarcoVivo(null);
-        setRecortando((v) => !v);
-      },
-      proporcion,
-      elegirProporcion: (p) => {
-        setProporcion(p);
-        const actual = editado.proceso.recorte ? dentro(editado.proceso.recorte, W, H) : null;
-        ponerRecorte(conProporcion(actual ?? { x: 0, y: 0, ancho: W, alto: H }, razon(p, W, H)));
-      },
-      ancho: W,
-      alto: H,
-    },
+  };
+  const empezarRecorte = () => {
+    if (!comun.recorte) ponerRecorte(conProporcion({ x: 0, y: 0, ancho: W, alto: H }, razon(proporcion, W, H)));
+    setMarcoVivo(null);
+    setRecortando(true);
+  };
+  const elegirProporcion = (p: Proporcion) => {
+    setProporcion(p);
+    const actual = comun.recorte ? dentro(comun.recorte, W, H) : null;
+    ponerRecorte(conProporcion(actual ?? { x: 0, y: 0, ancho: W, alto: H }, razon(p, W, H)));
   };
   const medidas = lados[ladoActivo].medidas;
   // Con nota objetivo, la vista previa es la búsqueda: varias pruebas que
   // pueden tardar segundos. Se dice, para que no parezca parado (v0.7.0).
-  const ajusteActivo = lados[ladoActivo].ajuste!;
+  const ajusteActivo = ajusteDe(ladoActivo)!;
   const buscando =
     lados[ladoActivo].ocupado && ajusteActivo.objetivo !== null && admiteObjetivo(ajusteActivo, contexto) ? ajusteActivo.objetivo : null;
   const rotulo = (l: Lado) => {
@@ -343,6 +378,21 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
             {t("estudio.abrirOtra")}
           </button>
         </Cabecera>
+
+        <BarraImagen
+          recorte={marco}
+          editando={recortando}
+          proporcion={proporcion}
+          ancho={W}
+          alto={H}
+          empezar={empezarRecorte}
+          acabar={acabarRecorte}
+          quitar={quitarRecorte}
+          elegirProporcion={elegirProporcion}
+          ponerRecorte={ponerRecorte}
+          redimension={comun.redimension}
+          cambiarRedimension={(r) => setComun((c) => ({ ...c, redimension: r }))}
+        />
 
         {info.orientacion !== 1 && !enderezado && (
           <div className="aviso" role="status" data-prueba="aviso-orientacion">
@@ -381,11 +431,6 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
                     if (marcoVivo) ponerRecorte(marcoVivo);
                     setMarcoVivo(null);
                   },
-                  alAcabar: () => {
-                    if (marcoVivo) ponerRecorte(marcoVivo);
-                    setMarcoVivo(null);
-                    setRecortando(false);
-                  },
                 }
               : null
           }
@@ -413,7 +458,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
               </button>
             </div>
           </div>
-          <OrdenHerramienta vista={vista} formato={info.formato} ajuste={lados[ladoActivo].ajuste!} cambiar={ponerAjuste} />
+          <OrdenHerramienta vista={vista} formato={info.formato} ajuste={ajusteActivo} cambiar={ponerAjuste} />
           {vista?.motivo && (
             <p className="motivo apagado" data-prueba="motivo">
               {t(`orden.motivo.${vista.motivo}`, { herramienta: vista.herramienta, formato: info.formato })}
@@ -428,11 +473,12 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
       </div>
 
       <Panel
-        ajuste={marcoVivo ? { ...editado, proceso: { ...editado.proceso, recorte: marcoVivo } } : editado}
+        ajuste={editado}
         contexto={contexto}
         presetsCwebp={inicio.presets_cwebp}
         guardados={guardados}
         cambiar={ponerAjuste}
+        aplicarGuardado={aplicarGuardado}
         aplicarPreset={aplicarPreset}
         nivelSinPerdida={nivelSinPerdida}
         guardar={guardar}

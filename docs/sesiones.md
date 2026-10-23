@@ -4,6 +4,23 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-23 (tarde) · Recortar y Redimensionar sobre la imagen (v0.18.0, en curso)
+
+- El cliente pidió, antes de la prueba guiada final, sacar Recortar y Redimensionar del desplegable
+  «Proceso». Planteado en modo plan con tres rondas de preguntas y un agente de diseño (plan en
+  `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`). Decidido: una barra sobre la imagen; común a
+  los dos lados; Redimensionar con ventanita (lado mayor, porcentaje, ancho × alto con candado,
+  tamaños habituales); nunca agranda por defecto; el lado mayor y el porcentaje se guardan como tales;
+  un preset no guarda el recorte y, sin tamaño, conserva el de la barra; los lotes nunca recortan;
+  «Tamaño» en Lotes; `apolo lote --lado-mayor/--porcentaje`; galería de capturas antes de compilar.
+- Hecho en `f5cb51c` (núcleo, MCP, CLI; con el arreglo de la redimensión que no hace nada, que
+  marcaba como procesada y quitaba la orden equivalente) y `d14b49a` (la barra, la ventanita, Lotes y
+  el aspecto de los cinco sistemas, con iconos de Fluent, Yaru y Breeze).
+- Verificado: `make comprobar` y e2e entero (147) en verde. Sin subir.
+- Abierto: la galería, la ADR 0032, subir, la compilación de prueba y la v0.18.0 (estado.md).
+
+---
+
 ## 2026-10-23 · KDE con Breeze, vista y publicada (v0.17.0)
 
 - Kubuntu ARM (compilación de prueba 39847459084): «todo correcto» salvo tres cosas. El icono de la

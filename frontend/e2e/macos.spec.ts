@@ -128,6 +128,10 @@ test("en macOS: el interruptor es una pista de 44 × 20 con su píldora aparte, 
   const fila = page.getByRole("button", { name: "Lotes", exact: true });
   expect(await alto(fila)).toBe(36);
   expect(await fila.locator(".icono").evaluate((i) => i.getBoundingClientRect().width)).toBe(20);
+  // Los iconos, en oro: en claro, el intermedio que eligió el cliente (el de 3:1 se veía oliva);
+  // en oscuro, el de la marca.
+  const oro = test.info().project.name === "oscuro" ? "rgb(255, 200, 61)" : "rgb(217, 154, 0)";
+  await expect(fila.locator(".icono")).toHaveCSS("color", oro);
 });
 
 // ADR 0032: Recortar y Redimensionar, en una barra con el aspecto del sistema.

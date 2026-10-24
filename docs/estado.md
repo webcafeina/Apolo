@@ -4,7 +4,15 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-24, tarde): la v0.18.0, probada por el cliente actualizando** en el Mac,
+> **PARADA AQUÍ (2026-10-24, 16:44 UTC): v0.18.1 publicada**, con los tres arreglos de la prueba de
+> la v0.18.0. `Publicar` 40110006183 en verde a la primera, humo incluido (Arch también). Borrador
+> revisado: 31 ficheros, 30 sumas, 9 firmas, `latest.json` con 16 plataformas, CLI, `apolo-mcp` y
+> los cinco `.mcpb` en 0.18.1, sin DLL de Visual C++, manifiesto ARM64 con UTF-8, AVIF 3/3, `.deb`
+> con «Webcafeína», `.rpm` con `digests signatures OK`. Todos los sistemas probados por el cliente,
+> Arch incluido. **Lo siguiente**: la prueba guiada final y la 1.0.0. Cuando el AUR reabra, el
+> cliente crea la cuenta y `gh workflow enable aur.yml`.
+>
+> **(2026-10-24, tarde): la v0.18.0, probada por el cliente actualizando** en el Mac,
 > Windows ARM, Ubuntu, Kubuntu y Fedora KDE: «todo perfecto», salvo tres cosas ya arregladas en
 > `main`, **sin versión**: «Partir de» dice el preset guardado aplicado; el panel de Windows, de 320
 > a 240; Lotes, Presets y Ajustes centrados en Windows. **Lo siguiente**: que el cliente diga si se

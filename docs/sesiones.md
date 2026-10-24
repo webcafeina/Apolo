@@ -23,7 +23,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   KDE (el `.tar.gz` de archlinuxarm.org extraído en `/dev/vda`, `systemd-boot` en una ESP de 1 GB,
   `plasma-meta` y `sddm`). Tras instalar KDE hubo que pasar la red a NetworkManager (el sistema base
   trae `systemd-networkd`). La v0.18.0 con `makepkg -si` del PKGBUILD: «todo parece correcto».
-- **Abierto**: publicar estos arreglos, cuando lo diga el cliente.
+- **v0.18.1 publicada** a las 16:44 UTC, con su sí: `Publicar` 40110006183 en verde a la primera y
+  el borrador revisado entero (sumas, firmas, `latest.json`, versiones, DLL, manifiesto, AVIF 3/3,
+  `.deb` y `.rpm`).
 
 ---
 

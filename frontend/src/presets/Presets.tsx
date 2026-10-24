@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Cabecera, Icono } from "../componentes";
 import { EVENTO_APLICAR, EVENTO_PRESETS } from "../estudio/Estudio";
-import type { Ajuste } from "../estudio/opciones";
 import { nombreFormato } from "../estudio/Panel";
 import { textoTamano } from "../estudio/tamano";
 import { lengua } from "../i18n";
@@ -52,8 +51,7 @@ export function Presets({ carpeta, irAlEstudio }: { carpeta: string | null; irAl
               key={p.nombre}
               preset={p}
               usar={() => {
-                const { nombre: _, ...ajuste } = p;
-                window.dispatchEvent(new CustomEvent<Ajuste>(EVENTO_APLICAR, { detail: ajuste }));
+                window.dispatchEvent(new CustomEvent<puente.PresetGuardado>(EVENTO_APLICAR, { detail: p }));
                 irAlEstudio();
               }}
               renombrar={async (nuevo) => {

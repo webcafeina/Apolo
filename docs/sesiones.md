@@ -4,6 +4,26 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-24 (tarde) · La v0.18.0 probada: tres arreglos
+
+- El cliente actualizó a la v0.18.0 en todos sus sistemas menos Arch: «todo perfecto», salvo tres
+  cosas, ya arregladas sin versión todavía:
+  - **«Partir de» no decía el preset guardado** que se había aplicado (los de cwebp sí, porque van
+    en `webp.preset`). Cada lado guarda ahora `partida`: se pone al aplicar un preset guardado
+    (desde el Estudio o desde Presets), al guardar uno, y se quita con uno de cwebp. Se enseña
+    mientras el preset exista y el lado siga en su formato.
+  - **El panel de Windows medía 320** (el de WinUI, el 25 % de la ventana de 1280): ahora 240, como
+    la barra lateral de macOS. La animación sigue en 200 ms con la curva de Fluent.
+  - **Lotes, Presets y Ajustes iban a la izquierda en Windows** (como la Configuración de Windows
+    11): ahora centrados, con el título en la misma columna de 1000 (`padding-inline` en la cabecera
+    y el contenido de las secciones con `.panel-ajustes`). ADR 0027 matizada.
+- Verificado: e2e de presets y de Windows (con una prueba nueva del centrado), `make comprobar` y el
+  e2e entero (149) en verde; capturas a mano de Lotes y Ajustes en Windows.
+- **Abierto**: el cliente no ha probado Arch; se le propuso una máquina virtual de Arch Linux ARM
+  en UTM, en el Mac. Publicar estos arreglos, cuando lo diga.
+
+---
+
 ## 2026-10-24 · La galería de la v0.18.0, aprobada
 
 - Capturas nuevas («redimensionar», «recorte», «lotes con tamaño») en los cinco aspectos y galería

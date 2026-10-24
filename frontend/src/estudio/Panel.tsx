@@ -28,9 +28,11 @@ interface Props {
   contexto: Contexto;
   presetsCwebp: Preset[];
   guardados: puente.PresetGuardado[];
+  /** El preset guardado del que se partió, si se partió de uno. */
+  partida: string | null;
   cambiar: (a: Ajuste) => void;
   /** Un preset guardado: su tamaño pasa a ser el de la imagen. */
-  aplicarGuardado: (a: Ajuste) => void;
+  aplicarGuardado: (g: puente.PresetGuardado) => void;
   aplicarPreset: (p: Preset) => void;
   nivelSinPerdida: (n: number) => void;
   guardar: (nombre: string) => void;
@@ -94,12 +96,17 @@ export function Panel(p: Props) {
     if (v.startsWith("cwebp:")) p.aplicarPreset(v.slice(6) as Preset);
     else if (v.startsWith("apolo:")) {
       const g = p.guardados.find((x) => x.nombre === v.slice(6));
-      if (g) {
-        const { nombre: _, ...ajuste } = g;
-        p.aplicarGuardado(ajuste);
-      }
+      if (g) p.aplicarGuardado(g);
     }
   };
+  // Lo que dice «Partir de»: el preset guardado del que se partió, mientras
+  // exista y siga en su formato, o el de cwebp, como los de la lista.
+  const guardado = p.guardados.find((g) => g.nombre === p.partida && g.formato === a.formato);
+  const partida = guardado
+    ? guardado.nombre
+    : a.formato === "webp" && a.webp.preset
+      ? t(`presetCwebp.${a.webp.preset}`)
+      : t("panel.elegir");
 
   const plegable = (clave: string, titulo: string, contenido: React.ReactNode) => (
     <details
@@ -178,7 +185,7 @@ export function Panel(p: Props) {
           <span>{t("panel.partida")}</span>
           <select value="" onChange={(e) => elegirPartida(e.target.value)} data-prueba="partida">
             <option value="" disabled>
-              {a.formato === "webp" && a.webp.preset ? t(`presetCwebp.${a.webp.preset}`) : t("panel.elegir")}
+              {partida}
             </option>
             {a.formato === "webp" && (
               <optgroup label={t("panel.presetsCwebp")}>

@@ -96,10 +96,10 @@ test("en Windows: el panel abre plegado, ☰ lo despliega, y se recuerda", async
   await lotes.click();
   await expect(page.getByRole("heading", { name: "Lotes" })).toBeVisible();
   await menu.click();
-  expect(await lateral.evaluate((l) => l.getBoundingClientRect().width)).toBe(320);
+  expect(await lateral.evaluate((l) => l.getBoundingClientRect().width)).toBe(240);
   await expect(menu).toHaveAttribute("aria-expanded", "true");
   await page.reload();
-  expect(await page.locator(".lateral").evaluate((l) => l.getBoundingClientRect().width)).toBe(320);
+  expect(await page.locator(".lateral").evaluate((l) => l.getBoundingClientRect().width)).toBe(240);
   await page.getByTestId("boton-menu").click();
   await page.reload();
   expect(await page.locator(".lateral").evaluate((l) => l.getBoundingClientRect().width)).toBe(48);
@@ -113,7 +113,7 @@ test("en Windows con la ventana estrecha: el panel va plegado y ☰ lo abre enci
   const antes = await zona.evaluate((z) => z.getBoundingClientRect().left);
   expect(await lateral.evaluate((l) => l.getBoundingClientRect().width)).toBe(48);
   await page.getByTestId("boton-menu").click();
-  expect(await lateral.evaluate((l) => l.getBoundingClientRect().width)).toBe(320);
+  expect(await lateral.evaluate((l) => l.getBoundingClientRect().width)).toBe(240);
   // Encima: el contenido no se mueve, y el panel empieza debajo de la barra de título.
   expect(await zona.evaluate((z) => z.getBoundingClientRect().left)).toBe(antes);
   expect(await lateral.evaluate((l) => l.getBoundingClientRect().top)).toBe(48);
@@ -138,6 +138,20 @@ test("en Windows: Ajustes con tarjetas, y los interruptores siguen guardando", a
   await page.getByRole("switch", { name: "Avisarme cuando haya una versión nueva" }).check();
 });
 
+test("en Windows: Lotes y Presets van centrados, con el título en su columna", async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto("/?sistema=windows");
+  for (const seccion of ["Lotes", "Presets"]) {
+    await page.getByRole("button", { name: seccion, exact: true }).click();
+    const zona = await page.locator(".zona").boundingBox();
+    const columna = await page.locator(".panel-ajustes:visible").first().boundingBox();
+    const titulo = await page.getByRole("heading", { name: seccion }).boundingBox();
+    expect(columna!.width).toBe(1000);
+    expect(Math.abs(columna!.x - zona!.x - (zona!.x + zona!.width - columna!.x - columna!.width))).toBeLessThanOrEqual(2);
+    expect(Math.abs(titulo!.x - columna!.x)).toBeLessThanOrEqual(1);
+  }
+});
+
 test("en Windows: el panel se pliega y se despliega con su animación", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/?sistema=windows");
@@ -145,7 +159,7 @@ test("en Windows: el panel se pliega y se despliega con su animación", async ({
   await expect(ventana).toHaveCSS("transition-duration", "0.2s");
   await expect(ventana).toHaveCSS("transition-property", "grid-template-columns");
   await page.getByTestId("boton-menu").click();
-  await expect.poll(() => page.locator(".lateral").evaluate((l) => l.getBoundingClientRect().width)).toBe(320);
+  await expect.poll(() => page.locator(".lateral").evaluate((l) => l.getBoundingClientRect().width)).toBe(240);
 });
 
 // ADR 0032: Recortar y Redimensionar, en una barra con el aspecto del sistema.

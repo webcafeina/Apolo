@@ -1,5 +1,6 @@
-//! La ventana en macOS (ADR 0028): Liquid Glass en macOS 26 y 27, y el
-//! material de barra lateral de siempre en los anteriores.
+//! La ventana en macOS (ADR 0028): el material de barra lateral del sistema
+//! detrás de la ventana, y el vidrio de Liquid Glass en los controles desde
+//! macOS 26.
 //!
 //! La ventana sale de `tauri.macos.conf.json`, ya transparente y con la barra
 //! de título superpuesta, con los semáforos colocados para la barra de
@@ -8,10 +9,12 @@
 //! pudo: `window_vibrancy` devuelve el error, Tauri se lo traga. Si no hay
 //! vidrio, la interfaz pinta el fondo opaco (`data-vidrio="no"`).
 //!
-//! El vidrio es el `NSGlassEffectView` de Apple con el estilo `Regular`, el
-//! público (los demás estilos del crate son API privada). Va detrás de toda la
-//! ventana; la interfaz solo lo deja ver en la barra lateral: el contenido
-//! lleva su fondo (sistema-macos.css).
+//! El material es `NSVisualEffectMaterial::Sidebar`, el que Apple da a las
+//! barras laterales. Va detrás de toda la ventana; la interfaz solo lo deja ver
+//! en la barra lateral: el contenido lleva su fondo (sistema-macos.css). Hasta
+//! la v0.18.1, en macOS 26 y 27 iba el `NSGlassEffectView` (estilo `Regular`),
+//! que es el de los controles flotantes: dejaba pasar mucho más de las ventanas
+//! de detrás que la barra lateral de Finder (el cliente lo comparó en su Mac).
 
 //!
 //! **El vidrio de los controles.** WebKit tiene una propiedad CSS propia de
@@ -27,13 +30,10 @@
 use std::sync::OnceLock;
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use objc2::runtime::AnyObject;
+use objc2::runtime::{AnyClass, AnyObject};
 use objc2::{msg_send, sel};
 use tauri::Manager;
-use window_vibrancy::{
-    LiquidGlassOptions, NSGlassEffectViewStyle, NSVisualEffectMaterial, NSVisualEffectState,
-    apply_liquid_glass, apply_vibrancy,
-};
+use window_vibrancy::{NSVisualEffectMaterial, NSVisualEffectState, apply_vibrancy};
 
 static VIDRIO: OnceLock<bool> = OnceLock::new();
 static VIDRIO_WEB: AtomicBool = AtomicBool::new(false);
@@ -80,23 +80,17 @@ pub fn poner_vidrio(app: &tauri::App) {
     let Some(ventana) = app.get_webview_window("principal") else {
         return;
     };
-    // macOS 26 y posteriores: Liquid Glass. Antes, `apply_liquid_glass` dice
-    // que no y se pone el material de barra lateral, el de la ADR 0016.
-    let cristal = apply_liquid_glass(
+    // El material de barra lateral, en todas las versiones (ADR 0016 y 0028).
+    let vidrio = apply_vibrancy(
         &ventana,
-        LiquidGlassOptions::new(NSGlassEffectViewStyle::Regular),
+        NSVisualEffectMaterial::Sidebar,
+        Some(NSVisualEffectState::FollowsWindowActiveState),
+        None,
     )
     .is_ok();
-    if cristal {
+    // Liquid Glass (macOS 26+), donde existe su vista: el vidrio de los controles.
+    if AnyClass::get(c"NSGlassEffectView").is_some() {
         encender_vidrio_web(&ventana);
     }
-    let vidrio = cristal
-        || apply_vibrancy(
-            &ventana,
-            NSVisualEffectMaterial::Sidebar,
-            Some(NSVisualEffectState::FollowsWindowActiveState),
-            None,
-        )
-        .is_ok();
     let _ = VIDRIO.set(vidrio);
 }

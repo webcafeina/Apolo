@@ -424,14 +424,14 @@
    relieve hasta pasar por encima, y entonces el borde en el acento), y la
    ventanita como un emergente de Breeze: radio 5, borde y su sombra. */
 :root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen { min-height: 40px; padding: 4px 12px; gap: 4px; background: var(--lienzo); }
-:root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen button:not(.principal) {
+:root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen > button:not(.principal), :root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen > * > button:not(.principal) {
   background: transparent;
   border: 1px solid transparent;
   box-shadow: none;
 }
-:root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen button:not(.principal):hover:not(:disabled) { background: transparent; border-color: var(--relleno); }
-:root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen button:not(.principal):active:not(:disabled) { background: var(--acento-tenue); }
-:root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen button.solo-icono { width: 32px; }
+:root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen > button:not(.principal):hover:not(:disabled), :root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen > * > button:not(.principal):hover:not(:disabled) { background: transparent; border-color: var(--relleno); }
+:root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen > button:not(.principal):active:not(:disabled), :root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen > * > button:not(.principal):active:not(:disabled) { background: var(--acento-tenue); }
+:root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen > button.solo-icono, :root[data-sistema="linux"][data-escritorio="kde"] .barra-imagen > * > button.solo-icono { width: 32px; }
 :root[data-sistema="linux"][data-escritorio="kde"] .emergente-panel {
   border: 1px solid var(--filete);
   border-radius: var(--radio);

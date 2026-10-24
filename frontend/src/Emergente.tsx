@@ -39,11 +39,28 @@ export function Emergente({
     const b = caja.current.getBoundingClientRect();
     const p = panel.current.getBoundingClientRect();
     const { clientWidth: ancho, clientHeight: alto } = document.documentElement;
+    // Hacia arriba solo si abajo no cabe en la ventana y arriba sí cabe en lo
+    // que la recorta: en Lotes, el contenido que se desplaza la cortaba.
+    let techo = 0;
+    for (let e = caja.current.parentElement; e; e = e.parentElement) {
+      if (/(auto|scroll|hidden)/.test(getComputedStyle(e).overflowY)) {
+        techo = Math.max(0, e.getBoundingClientRect().top);
+        break;
+      }
+    }
     setHacia({
-      arriba: b.bottom + p.height + 12 > alto && b.top - p.height - 12 > 0,
+      arriba: b.bottom + p.height + 12 > alto && b.top - p.height - 12 > techo,
       izquierda: b.left + p.width + 8 > ancho,
     });
-    panel.current.querySelector<HTMLElement>("[aria-checked='true'], button, input, select")?.focus();
+    // El foco, cuando ya está en su sitio: antes, el navegador desplazaba el
+    // contenido para enseñar dónde estaba la ventanita antes de darse la vuelta.
+    const marco = requestAnimationFrame(() => {
+      const p = panel.current;
+      if (!p) return;
+      p.scrollIntoView({ block: "nearest" });
+      p.querySelector<HTMLElement>("[aria-checked='true'], button, input, select")?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(marco);
   }, [abierta]);
 
   // Un clic o el foco fuera la cierran, sin quitarle el foco a lo que se tocó.

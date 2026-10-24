@@ -564,9 +564,9 @@
    el icono y la etiqueta, y la ventanita como un Flyout de WinUI (radio 8,
    borde de 1 y la sombra de su elevación). */
 :root[data-sistema="windows"] .barra-imagen { min-height: 44px; padding: 4px 12px 4px 16px; gap: 4px; }
-:root[data-sistema="windows"] .barra-imagen button:not(.principal) { border-color: transparent; background: transparent; box-shadow: none; }
-:root[data-sistema="windows"] .barra-imagen button:not(.principal):hover:not(:disabled) { background: var(--sutil-encima); }
-:root[data-sistema="windows"] .barra-imagen button:not(.principal):active:not(:disabled) { background: var(--sutil-pulsado); }
+:root[data-sistema="windows"] .barra-imagen > button:not(.principal), :root[data-sistema="windows"] .barra-imagen > * > button:not(.principal) { border-color: transparent; background: transparent; box-shadow: none; }
+:root[data-sistema="windows"] .barra-imagen > button:not(.principal):hover:not(:disabled), :root[data-sistema="windows"] .barra-imagen > * > button:not(.principal):hover:not(:disabled) { background: var(--sutil-encima); }
+:root[data-sistema="windows"] .barra-imagen > button:not(.principal):active:not(:disabled), :root[data-sistema="windows"] .barra-imagen > * > button:not(.principal):active:not(:disabled) { background: var(--sutil-pulsado); }
 :root[data-sistema="windows"] .emergente-panel {
   border: 1px solid var(--filete);
   border-radius: 8px;

@@ -728,8 +728,8 @@ button.discreto:hover:not(:disabled) { background: var(--elevada); color: var(--
   position: relative;
   z-index: 3;
 }
-.barra-imagen button { height: 28px; padding: 0 var(--espacio-3); }
-.barra-imagen button.solo-icono { width: 28px; padding: 0; }
+.barra-imagen > button, .barra-imagen > * > button { height: 28px; padding: 0 var(--espacio-3); }
+.barra-imagen > button.solo-icono, .barra-imagen > * > button.solo-icono { width: 28px; padding: 0; }
 .grupo-barra { display: inline-flex; align-items: center; gap: 2px; }
 .barra-imagen select { height: 28px; }
 .campos-recorte { display: inline-flex; align-items: center; gap: var(--espacio-3); margin-left: var(--espacio-2); }

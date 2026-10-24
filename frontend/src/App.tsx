@@ -280,7 +280,7 @@ const CLAVE_PANEL = "apolo.panel";
 /**
  * El panel de navegación de Windows, como el NavigationView de WinUI en modo
  * automático: con la ventana ancha, ☰ lo pliega a solo iconos (48 px) o lo
- * despliega (320), y se recuerda; con la ventana estrecha va plegado, y ☰ lo
+ * despliega (240), y se recuerda; con la ventana estrecha va plegado, y ☰ lo
  * abre encima del contenido hasta que se elige una sección. La primera vez
  * abre plegado, para dejarle sitio a la imagen (lo eligió el cliente).
  */

@@ -62,6 +62,13 @@ test("un preset guardado aparece en su sección, se aplica al Estudio, se renomb
   // Desde el Estudio, «Partir de».
   await page.getByTestId("partida").selectOption("apolo:Para la web");
   await expect(page.getByTestId("orden")).toContainText("-q 63");
+  // Y lo dice, como los de cwebp, aunque luego se toque algo; otro de cwebp lo cambia.
+  const partida = page.getByTestId("partida").locator("option").first();
+  await expect(partida).toHaveText("Para la web");
+  await page.locator("#control-calidad").fill("70");
+  await expect(partida).toHaveText("Para la web");
+  await page.getByTestId("partida").selectOption("cwebp:photo");
+  await expect(partida).toHaveText("Foto");
   // La sección Presets.
   await page.locator("#control-calidad").fill("90");
   await page.getByRole("button", { name: "Presets" }).click();
@@ -72,6 +79,7 @@ test("un preset guardado aparece en su sección, se aplica al Estudio, se renomb
   await expect(ficha).toContainText("-q 63");
   await ficha.getByRole("button", { name: "Usar en el Estudio" }).click();
   await expect(page.getByTestId("orden")).toContainText("-q 63");
+  await expect(partida).toHaveText("Para la web");
   await page.getByRole("button", { name: "Presets" }).click();
   await ficha.getByRole("button", { name: "Renombrar" }).click();
   await ficha.getByRole("textbox").fill("Web ligera");

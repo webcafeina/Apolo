@@ -38,9 +38,18 @@ interface EstadoLado {
   /** Las medidas de esa vista: se piden después, sin retrasarla (ADR 0022).
    *  Un texto, si no se pudo medir (por qué). */
   medidas: puente.Medidas | "midiendo" | { fallo: string } | null;
+  /** El preset guardado del que se partió, para que «Partir de» lo diga. */
+  partida: string | null;
 }
 
-const ladoVacio = (ajuste: Ajuste | null): EstadoLado => ({ ajuste, vista: null, pixeles: null, ocupado: false, medidas: null });
+const ladoVacio = (ajuste: Ajuste | null): EstadoLado => ({
+  ajuste,
+  vista: null,
+  pixeles: null,
+  ocupado: false,
+  medidas: null,
+  partida: null,
+});
 
 /** Lo que es de la imagen y no del formato (ADR 0032): el recorte y el
  *  tamaño, comunes a los dos lados. Los ajustes de cada lado se guardan sin
@@ -90,12 +99,12 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   // Un preset guardado: su tamaño, si lo trae, pasa a ser el de la imagen; si
   // no, se queda el que había. El recorte no va en los presets.
   const aplicarGuardado = useCallback(
-    (a: Ajuste) => {
+    ({ nombre, ...a }: puente.PresetGuardado) => {
       const r = a.proceso.redimension;
       if (r) setComun((c) => ({ ...c, redimension: r }));
-      ponerAjuste(a);
+      cambiarLado(editando, { ajuste: sinComun(a), partida: nombre });
     },
-    [ponerAjuste],
+    [cambiarLado, editando],
   );
 
   // La sección Presets avisa por eventos de ventana: cuando se aplica uno al
@@ -104,7 +113,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   ponerRef.current = aplicarGuardado;
   useEffect(() => {
     const recargar = () => puente.presets().then(setGuardados, () => {});
-    const aplicar = (e: Event) => ponerRef.current((e as CustomEvent<Ajuste>).detail);
+    const aplicar = (e: Event) => ponerRef.current((e as CustomEvent<puente.PresetGuardado>).detail);
     recargar();
     window.addEventListener(EVENTO_PRESETS, recargar);
     window.addEventListener(EVENTO_APLICAR, aplicar);
@@ -199,13 +208,18 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => previsualizar(1, ajusteDer), [info, ajusteDer]);
 
-  const aplicarPreset = async (p: Preset) => ponerAjuste({ ...editado, webp: await puente.aplicarPreset(editado.webp, p) });
+  const aplicarPreset = async (p: Preset) =>
+    cambiarLado(editando, {
+      ajuste: sinComun({ ...editado, webp: await puente.aplicarPreset(editado.webp, p) }),
+      partida: null,
+    });
   const nivelSinPerdida = async (n: number) =>
     ponerAjuste({ ...editado, webp: await puente.nivelSinPerdida(editado.webp, n) });
   const guardar = async (nombre: string) => {
     try {
       // Con el tamaño de la imagen, pero sin el recorte: es de esta imagen.
       setGuardados(await puente.guardarPreset({ nombre, ...editado, proceso: { ...editado.proceso, recorte: null } }));
+      cambiarLado(editando, { partida: nombre });
       window.dispatchEvent(new Event(EVENTO_PRESETS));
       setAviso(t("estudio.presetGuardado", { nombre }));
     } catch (e) {
@@ -477,6 +491,7 @@ export function Estudio({ inicio, activo }: { inicio: puente.Inicio; activo: boo
         contexto={contexto}
         presetsCwebp={inicio.presets_cwebp}
         guardados={guardados}
+        partida={lados[ladoActivo].partida}
         cambiar={ponerAjuste}
         aplicarGuardado={aplicarGuardado}
         aplicarPreset={aplicarPreset}

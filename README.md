@@ -98,7 +98,9 @@ pesa y dónde se pierde calidad, y ajustas hasta que te convence.
   - **la calidad por nota**: Apolo busca la más baja que no se distingue del original.
 - **Estudio y lotes.** Afinas una imagen, guardas el ajuste como preset y lo aplicas a carpetas
   enteras, con subcarpetas y sin sobrescribir nada.
-- **Redimensionar, recortar con el ratón y reducir la paleta**, como en Squoosh.
+- **Recortar y redimensionar, encima de la imagen**: por el lado mayor, un porcentaje o ancho y
+  alto, sin agrandar nunca salvo que lo pidas, también para un lote entero. Y reducir la paleta, como
+  en Squoosh.
 - **Abre las fotos del iPhone** (HEIC), además de PNG, JPEG, WebP, AVIF, JPEG XL, TIFF, GIF, BMP,
   QOI y PNM.
 - **Línea de órdenes `apolo`**, con los mismos presets, para scripts.

@@ -12,8 +12,14 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   en Lotes, la ventanita se abría hacia arriba y quedaba cortada (el foco desplazaba el contenido;
   trampas.md).
 - ADR 0032, matices en la 0020 y la 0023, su línea en decisiones.md.
-- Verificado: `make comprobar` y e2e (147). Subido; compilación de prueba lanzada.
-- Abierto: la prueba del cliente, la web y el README al publicar, la v0.18.0.
+- Verificado: `make comprobar` y e2e (147). Compilación de prueba 40086447019 en verde.
+- El cliente pidió publicar ya y probarla actualizando. v0.18.0 (notas bilingües y README),
+  `Publicar` 40090110022 en verde, borrador revisado como siempre, publicada a las 12:01 UTC; después,
+  la web. Repositorios y Homebrew al día.
+- Un tropiezo: `make comprobar` falló por el disco lleno y el push salió igual, por encadenar con
+  `;`. Se repitió en verde antes de etiquetar (se borró `target/debug/incremental`, 14 GB); apuntado
+  en la memoria. El repositorio RPM sale ahora en zstd (trampas.md).
+- Abierto: que el cliente la pruebe actualizando; la prueba guiada final y la 1.0.0.
 - Disco del VPS al 99 %: se borraron las copias de los borradores ya publicados (v0.16.0, v0.17.0).
 
 ---

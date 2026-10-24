@@ -322,6 +322,7 @@ test("redimensionar", async ({ page }, info) => {
   await (await elegir).setFiles(FOTO);
   await page.getByText(NOMBRE_FOTO, { exact: true }).waitFor();
   await page.getByTestId("redimensionar").click();
+  await page.waitForTimeout(300);
   await page.getByRole("button", { name: "1920", exact: true }).click();
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${CARPETA}/redimensionar-lado-${info.project.name}.png` });
@@ -346,6 +347,9 @@ test("lotes con tamaño", async ({ page }, info) => {
   await page.getByRole("button", { name: n("Añadir"), exact: true }).click();
   await page.getByTestId("recogida").waitFor();
   await page.getByTestId("tamano").click();
+  // Lo que tarda en entrar la ventanita: sin esperar, Playwright desplaza el
+  // contenido para pulsar mientras se mueve.
+  await page.waitForTimeout(300);
   await page.getByRole("button", { name: "1920", exact: true }).click();
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${CARPETA}/lotes-tamano-${info.project.name}.png` });

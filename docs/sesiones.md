@@ -8,7 +8,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 - **macOS claro: los iconos de la barra lateral, apagados.** `--oro-trazo` es el oro oscurecido
   hasta 3:1 y se volvía verde oliva (`#967624`). Cuatro capturas
-  (https://claude.ai/artifact/QjBkDSXwEALBbJdC9tSFjd); el cliente eligió el oro intermedio
+  (un artefacto con cuatro capturas, borrado a petición suya el 2026-10-24); el cliente eligió el oro intermedio
   `#d99a00` (1,7:1), sabiendo que baja de 3:1. Va en `--oro-lateral` (sistema-macos.css), solo
   para esos iconos; `--oro-trazo` sigue a 3:1 para el candado. En oscuro, el de la marca. ADR 0028
   matizada; prueba en macos.spec.ts.

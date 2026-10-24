@@ -4,6 +4,20 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-24 · La galería de la v0.18.0, aprobada
+
+- Capturas nuevas («redimensionar», «recorte», «lotes con tamaño») en los cinco aspectos y galería
+  (https://claude.ai/artifact/74j6quMT3n3XCiUHpM3VrC): el cliente, «todo perfecto».
+- Arreglado al revisarlas (`63b1741`): los botones de la ventanita, planos por las reglas de la barra;
+  en Lotes, la ventanita se abría hacia arriba y quedaba cortada (el foco desplazaba el contenido;
+  trampas.md).
+- ADR 0032, matices en la 0020 y la 0023, su línea en decisiones.md.
+- Verificado: `make comprobar` y e2e (147). Subido; compilación de prueba lanzada.
+- Abierto: la prueba del cliente, la web y el README al publicar, la v0.18.0.
+- Disco del VPS al 99 %: se borraron las copias de los borradores ya publicados (v0.16.0, v0.17.0).
+
+---
+
 ## 2026-10-23 (tarde) · Recortar y Redimensionar sobre la imagen (v0.18.0, en curso)
 
 - El cliente pidió, antes de la prueba guiada final, sacar Recortar y Redimensionar del desplegable

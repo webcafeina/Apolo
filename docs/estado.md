@@ -1,11 +1,22 @@
 # Estado
 
-Última actualización: **2026-10-23**
+Última actualización: **2026-10-24**
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-23, tarde): v0.18.0, Recortar y Redimensionar sobre la imagen, hecha en
-> el código hasta la fase 4 de 5; falta la galería.** Plan aprobado por el cliente en
+> **PARADA AQUÍ (2026-10-24): v0.18.0, Recortar y Redimensionar sobre la imagen (ADR 0032), hecha
+> y con la galería aprobada; en la compilación de prueba.** El cliente vio la galería
+> (https://claude.ai/artifact/74j6quMT3n3XCiUHpM3VrC): «todo perfecto». Al sacarla se arreglaron
+> dos cosas (`63b1741`): los botones de la ventanita salían planos (las reglas de la barra los
+> alcanzaban) y en Lotes se abría cortada (trampas.md). ADR 0032, matices en la 0020 y la 0023.
+> Todo subido, `make comprobar` y e2e (147) en verde. **Lo siguiente**: que el cliente pruebe la
+> compilación de prueba en sus máquinas (Mac, Windows ARM, Ubuntu, Kubuntu o Fedora KDE): la barra,
+> la ventanita con ratón, teclado y trackpad, el recorte, Lotes con tamaño. Después, con su sí, la
+> v0.18.0: versión, notas bilingües, **la web y el README** (las tarjetas de «Recortar,
+> redimensionar…» y el ejemplo de `apolo lote --lado-mayor 1920`; no antes, que `web/` se despliega
+> solo), CI, etiqueta, revisión del borrador y publicar. Luego la prueba guiada final y la 1.0.0.
+>
+> **(2026-10-23, tarde): v0.18.0 hecha en el código hasta la fase 4 de 5.** Plan aprobado por el cliente en
 > `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (léelo: tiene todas sus decisiones). Hecho
 > y con `make comprobar` y el e2e entero (147) en verde, en dos commits **sin subir todavía**
 > (`f5cb51c` núcleo, MCP y CLI; `d14b49a` interfaz):

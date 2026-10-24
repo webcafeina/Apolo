@@ -549,3 +549,21 @@ texto, y la columna, aunque tenga `min-width: 0`, no los frena. El `h1` con un n
 largo se salía por encima de los modos del comparador, sin «…». Lo vio el cliente en Fedora KDE, y
 pasaba igual en GNOME desde la v0.15.0. Arreglo: `max-width: 100%` en los hijos de `.titulos`. Lo
 vigila `linux.spec.ts` con un nombre largo en GNOME y en KDE. · 2026-10-23
+
+## macOS 11: sin `popover` ni `<dialog>` en el WKWebView
+
+Apolo promete macOS 11 (ADR 0010), y su WKWebView es el Safari de entonces: no tiene el atributo
+`popover` (Safari 17) y `<dialog>` llegó en la 15.4. La ventanita de Redimensionar (`Emergente.tsx`,
+ADR 0032) es propia: un `div` con `position: absolute` junto a su botón, con `role="dialog"`, y
+Escape, el clic fuera y el foco fuera hechos a mano. Tampoco `:has()` en lo que tenga que funcionar
+allí. · 2026-10-23
+
+## Una ventanita dentro de algo que se desplaza: el foco la descoloca
+
+Al abrir la ventanita, el foco entraba en su primer control antes de que se diera la vuelta hacia
+arriba: el navegador desplazaba el contenido de Lotes para enseñar dónde estaba un momento antes, y
+quedaba cortada por arriba. El foco va en el `requestAnimationFrame` siguiente, con
+`preventScroll`, y después `scrollIntoView({ block: "nearest" })`. Y para decidir hacia dónde se
+abre hay que mirar lo que la recorta (el primer antepasado con `overflow`), no solo la ventana. En
+las pruebas, pulsar dentro mientras hace su animación de entrada hace que Playwright desplace el
+contenido: se espera a que entre. · 2026-10-24

@@ -178,3 +178,12 @@ recorte el comparador pasaba a lado a lado con una escala aproximada (deuda).
 **Sin comprobar:** en la ventana de verdad (WebKit en macOS, WebView2 en Windows), sobre todo con el
 trackpad; con fotos de muchos megapíxeles, el coste de recortar el original en el navegador.
 
+
+## Matiz del 2026-10-23: Recortar y Redimensionar salen del panel
+
+Desde la v0.18.0 ([ADR 0032](0032-recortar-y-redimensionar-sobre-la-imagen.md)), Recortar y
+Redimensionar van en una barra encima de la imagen y son comunes a los dos lados: el «formato por
+lado» sigue siendo eso, el formato, sobre la misma imagen recortada y redimensionada. El original se
+recorta con el recorte común. En «Proceso» quedan Enderezar y Reducir paleta. Y un proceso que no
+cambia nada en la imagen (el recorte entero, la redimensión que no agranda) ya no cuenta: la orden
+sigue siendo equivalente.

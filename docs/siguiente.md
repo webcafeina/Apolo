@@ -42,9 +42,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     - ~~**v0.17.0, KDE con Breeze** (ADR 0031, plan en `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`,
       fase B)~~: hecha en el código el 2026-10-22 (barra de Apolo y oro relleno, elegidos por el
       cliente), vista «perfecto» en Kubuntu y Fedora KDE y **publicada el 2026-10-23**;
-    - **v0.18.0, Recortar y Redimensionar sobre la imagen** (ADR 0032, por escribir), pedida por el
-      cliente el 2026-10-23: hecha en el código hasta la fase 4 (`f5cb51c`, `d14b49a`, sin subir).
-      Falta la galería de capturas, la ADR, la compilación de prueba y publicarla con su sí;
+    - **v0.18.0, Recortar y Redimensionar sobre la imagen** ([ADR 0032](adr/0032-recortar-y-redimensionar-sobre-la-imagen.md)), pedida por el
+      cliente el 2026-10-23: hecha, con la galería aprobada el 2026-10-24.
+      Falta que el cliente la pruebe con la compilación de prueba y publicarla con su sí;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

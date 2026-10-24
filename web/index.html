@@ -79,7 +79,8 @@
           </article>
           <article class="tarjeta">
             <h3>Recortar, redimensionar y reducir la paleta</h3>
-            <p>Como en Squoosh, y en cualquier formato: el recorte, con el ratón y con proporciones.</p>
+            <p>A la vista, encima de la imagen y en cualquier formato: el recorte, con el ratón y con proporciones;
+              el tamaño, por el lado mayor o un porcentaje, sin agrandar nunca. También para un lote entero.</p>
           </article>
           <article class="tarjeta">
             <h3>Abre las fotos del iPhone</h3>
@@ -172,7 +173,7 @@ brew install webcafeina/apolo/apolo
 
 apolo webp -q 80 foto.jpg -o foto.webp
 apolo avif -q 60 foto.png foto.avif
-apolo lote fotos/ --formato webp,avif --mas-ligero
+apolo lote fotos/ --formato webp,avif --mas-ligero --lado-mayor 1920
 apolo medir foto.png foto.webp</pre>
         <p class="letra-chica">También en las descargas, sin Homebrew. En inglés con <code>--idioma en</code>.</p>
       </div>

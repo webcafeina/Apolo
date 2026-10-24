@@ -79,7 +79,8 @@
           </article>
           <article class="tarjeta">
             <h3>Crop, resize and reduce the palette</h3>
-            <p>Like in Squoosh, and in any format: cropping with the mouse, with aspect ratios.</p>
+            <p>In plain sight, above the image and in any format: cropping with the mouse, with aspect ratios;
+              the size, by the longest side or a percentage, never enlarging. For a whole batch too.</p>
           </article>
           <article class="tarjeta">
             <h3>Opens iPhone photos</h3>
@@ -172,7 +173,7 @@ brew install webcafeina/apolo/apolo
 
 apolo webp -q 80 photo.jpg -o photo.webp
 apolo avif -q 60 photo.png photo.avif
-apolo lote photos/ --formato webp,avif --mas-ligero
+apolo lote photos/ --formato webp,avif --mas-ligero --lado-mayor 1920
 apolo medir photo.png photo.webp</pre>
         <p class="letra-chica">Also in the downloads, without Homebrew. It speaks your system's language; force English
           with <code>--idioma en</code>.</p>

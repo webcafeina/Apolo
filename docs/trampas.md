@@ -567,3 +567,10 @@ quedaba cortada por arriba. El foco va en el `requestAnimationFrame` siguiente, 
 abre hay que mirar lo que la recorta (el primer antepasado con `overflow`), no solo la ventana. En
 las pruebas, pulsar dentro mientras hace su animación de entrada hace que Playwright desplace el
 contenido: se espera a que entre. · 2026-10-24
+
+## El repositorio RPM, ahora en zstd
+
+Desde la v0.18.0, el `createrepo_c` del runner de `web.yml` escribe los metadatos en zstd
+(`primary.xml.zst`), no en gzip. dnf (Fedora, RHEL 9) y zypper los leen; para mirarlos a mano hay
+que buscar `.zst` en `repomd.xml` y descomprimir con `zstd -dc`, o la comprobación da un 404 que no
+es del repositorio. · 2026-10-24

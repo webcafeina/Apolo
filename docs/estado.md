@@ -4,8 +4,19 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-24): v0.18.0, Recortar y Redimensionar sobre la imagen (ADR 0032), hecha
-> y con la galería aprobada; en la compilación de prueba.** El cliente vio la galería
+> **PARADA AQUÍ (2026-10-24, 12:01 UTC): v0.18.0 publicada, Recortar y Redimensionar sobre la
+> imagen** (ADR 0032). El cliente prefirió probarla actualizando desde el aviso en vez de con la
+> compilación de prueba (40086447019, en verde). `Publicar` 40090110022 en verde a la primera, humo
+> incluido. Borrador revisado: 31 ficheros, 30 sumas, 9 firmas, `latest.json` con 16 plataformas,
+> CLI, `apolo-mcp` y los cinco `.mcpb` en 0.18.0, sin DLL de Visual C++, manifiesto ARM64 bien,
+> AVIF 3/3, `.deb` con «Webcafeína», `.rpm` con `digests signatures OK`. Web (tarjeta y `apolo lote
+> --lado-mayor 1920`), APT, RPM, PKGBUILD y Homebrew en 0.18.0. **Lo siguiente**: que el cliente la
+> pruebe actualizando (Mac, Windows ARM, Ubuntu, Kubuntu o Fedora KDE): la barra, la ventanita con
+> ratón, teclado y trackpad, el recorte, los dos lados, los presets y Lotes con tamaño; arreglar lo
+> que salga. Luego la prueba guiada final y la 1.0.0. El disco del VPS se llenó compilando:
+> `rm -rf target/debug/incremental` libera 14 GB.
+>
+> **(2026-10-24): v0.18.0 hecha y con la galería aprobada.** El cliente vio la galería
 > (https://claude.ai/artifact/74j6quMT3n3XCiUHpM3VrC): «todo perfecto». Al sacarla se arreglaron
 > dos cosas (`63b1741`): los botones de la ventanita salían planos (las reglas de la barra los
 > alcanzaban) y en Lotes se abría cortada (trampas.md). ADR 0032, matices en la 0020 y la 0023.

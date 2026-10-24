@@ -4,12 +4,30 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-24, noche): v0.18.2 en marcha**, pedida por el cliente: en macOS, la
-> ventana con el material de barra lateral (`NSVisualEffectMaterial::Sidebar`) en vez de
-> `NSGlassEffectView`, que dejaba pasar mucho más que Finder; los iconos de la barra lateral en
-> `#d99a00` en claro; en Windows, la bienvenida del Estudio centrada. **Lo siguiente**: que la vea
-> en su Mac junto a Finder; si sigue más transparente, un velo claro encima de la barra lateral.
-> Luego, la prueba guiada final y la 1.0.0.
+> **PARADA AQUÍ (2026-10-24, noche, hasta el lunes): v0.18.2 etiquetada, SIN publicar.** El
+> cliente la pidió como versión, para verla actualizando. Etiqueta `v0.18.2` en `bac46b0`
+> (Comprobar en verde); `Publicar` **40118422741** lanzado y sin esperar: al cerrar iban bien Linux,
+> Windows x64, las CLI y la CLI de macOS, y seguían compilando `macos-universal` y `windows-arm64`.
+> **Es la primera compilación de macOS con el cambio de `ventana_macos.rs`**: Comprobar solo compila
+> en Linux, así que si `macos-universal` falló, el fallo está ahí (`AnyClass::get(c"NSGlassEffectView")`,
+> imports de `window_vibrancy`); arreglarlo, borrar el borrador y la etiqueta
+> (`gh release delete v0.18.2 --yes && git push --delete origin v0.18.2 && git tag -d v0.18.2`) y
+> volver a etiquetar. Qué lleva la 0.18.2:
+> - macOS: la ventana con `NSVisualEffectMaterial::Sidebar` en todas las versiones, en vez de
+>   `NSGlassEffectView` en macOS 26+ (dejaba pasar mucho más que Finder: `#8c8fa0` frente a
+>   `#e7e7ea` sobre una terminal oscura, medido en la captura del cliente
+>   `capturas/cliente/Captura de pantalla 2026-10-24 a las 19.09.10.png`); el vidrio de los
+>   controles sigue desde macOS 26;
+> - macOS claro: los iconos de la barra lateral en `--oro-lateral` `#d99a00`, elegido por el cliente;
+> - Windows: la bienvenida del Estudio, centrada como Lotes, Presets y Ajustes.
+>
+> **Lo siguiente, el lunes**:
+> 1. Ver cómo acabó `Publicar` 40118422741 (`gh run view 40118422741`).
+> 2. Si está en verde, revisar el borrador como siempre (sumas, firmas, `latest.json`, versiones,
+>    DLL, manifiesto, AVIF, `.deb`, `.rpm`) y publicarlo: **el cliente ya pidió publicarla**.
+> 3. Que la vea en su Mac junto a Finder. Si la barra lateral sigue más transparente, el plan B es
+>    un velo claro encima de la barra lateral (sistema-macos.css), ajustado hasta quedar como Finder.
+> 4. Después, la prueba guiada final y la 1.0.0.
 >
 > **(2026-10-24, 16:44 UTC): v0.18.1 publicada**, con los tres arreglos de la prueba de
 > la v0.18.0. `Publicar` 40110006183 en verde a la primera, humo incluido (Arch también). Borrador

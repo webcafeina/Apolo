@@ -19,8 +19,11 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
     y el contenido de las secciones con `.panel-ajustes`). ADR 0027 matizada.
 - Verificado: e2e de presets y de Windows (con una prueba nueva del centrado), `make comprobar` y el
   e2e entero (149) en verde; capturas a mano de Lotes y Ajustes en Windows.
-- **Abierto**: el cliente no ha probado Arch; se le propuso una máquina virtual de Arch Linux ARM
-  en UTM, en el Mac. Publicar estos arreglos, cuando lo diga.
+- **Arch, probado**: máquina virtual de Arch Linux ARM en VMPal, montada desde un live de Fedora
+  KDE (el `.tar.gz` de archlinuxarm.org extraído en `/dev/vda`, `systemd-boot` en una ESP de 1 GB,
+  `plasma-meta` y `sddm`). Tras instalar KDE hubo que pasar la red a NetworkManager (el sistema base
+  trae `systemd-networkd`). La v0.18.0 con `makepkg -si` del PKGBUILD: «todo parece correcto».
+- **Abierto**: publicar estos arreglos, cuando lo diga el cliente.
 
 ---
 

@@ -26,8 +26,7 @@ mod ventana_macos;
 #[cfg(windows)]
 mod ventana_windows;
 
-/// Si la ventana tiene vidrio detrás: Liquid Glass o el material de barra
-/// lateral en macOS (ventana_macos.rs), Mica en Windows 11 (ventana_windows.rs).
+/// Si la ventana tiene vidrio detrás: el material de barra lateral en macOS (ventana_macos.rs), Mica en Windows 11 (ventana_windows.rs).
 fn hay_vidrio() -> bool {
     #[cfg(target_os = "macos")]
     {
@@ -92,7 +91,7 @@ struct Plataforma {
 fn plataforma() -> Plataforma {
     Plataforma {
         sistema: std::env::consts::OS,
-        // macOS con Liquid Glass o el material de barra lateral, y Windows 11
+        // macOS con el material de barra lateral, y Windows 11
         // con Mica, si se pudieron poner. Linux, opaca.
         vidrio: hay_vidrio(),
         traslocada: cfg!(target_os = "macos")

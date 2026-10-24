@@ -4,7 +4,14 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-24, 16:44 UTC): v0.18.1 publicada**, con los tres arreglos de la prueba de
+> **PARADA AQUÍ (2026-10-24, noche): v0.18.2 en marcha**, pedida por el cliente: en macOS, la
+> ventana con el material de barra lateral (`NSVisualEffectMaterial::Sidebar`) en vez de
+> `NSGlassEffectView`, que dejaba pasar mucho más que Finder; los iconos de la barra lateral en
+> `#d99a00` en claro; en Windows, la bienvenida del Estudio centrada. **Lo siguiente**: que la vea
+> en su Mac junto a Finder; si sigue más transparente, un velo claro encima de la barra lateral.
+> Luego, la prueba guiada final y la 1.0.0.
+>
+> **(2026-10-24, 16:44 UTC): v0.18.1 publicada**, con los tres arreglos de la prueba de
 > la v0.18.0. `Publicar` 40110006183 en verde a la primera, humo incluido (Arch también). Borrador
 > revisado: 31 ficheros, 30 sumas, 9 firmas, `latest.json` con 16 plataformas, CLI, `apolo-mcp` y
 > los cinco `.mcpb` en 0.18.1, sin DLL de Visual C++, manifiesto ARM64 con UTF-8, AVIF 3/3, `.deb`

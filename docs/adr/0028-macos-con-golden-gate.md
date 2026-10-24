@@ -34,7 +34,7 @@ lo ven.
 | Vidrio en los controles | Las cápsulas de la barra con brillo en el filo, sombra interior y desenfoque, y un leve abombado al pulsar. Al pulsar, el botón del deslizador se hincha en una burbuja de vidrio que desborda la pista; el del interruptor se estira y se aclara (no puede salirse: es el fondo del control) |
 | Páginas | Ajustes, Lotes (Calidad y Dónde) y MCP en **filas agrupadas** como Ajustes del Sistema: el mismo marcado que las SettingsCards de Windows (`TarjetaAjuste`), con filas de 42, 10 de relleno, el control a 16, grupos de radio 10 con filetes sangrados. Pestañas de Ajustes, centradas |
 | Versión nueva | Un aviso que flota bajo la barra, en vidrio |
-| Vidrio de la ventana | **Liquid Glass** (`NSGlassEffectView`, estilo `Regular`, el público) en macOS 26 y 27; en 11–15, el material de barra lateral de siempre |
+| Vidrio de la ventana | ~~**Liquid Glass** (`NSGlassEffectView`, estilo `Regular`, el público) en macOS 26 y 27; en 11–15, el material de barra lateral de siempre~~ **Desde la v0.18.2, el material de barra lateral (`NSVisualEffectMaterial::Sidebar`) en todas las versiones**: el cliente comparó en su Mac la barra lateral con la de Finder y la de Apolo dejaba pasar mucho más de las ventanas de detrás (`#8c8fa0` frente a `#e7e7ea` sobre una terminal oscura). `NSGlassEffectView` es el vidrio de los controles flotantes, no el de las barras laterales. El vidrio de los controles (`-apple-visual-effect`) sigue en macOS 26+, detectado por la clase `NSGlassEffectView` |
 | Paleta | `macos_claro` y `macos_oscuro` en `crates/tema`, con los neutros del kit (fondo de ventana, `Fills - Vibrant`, `Labels`) y el contraste medido |
 
 **La ventana** (`src-tauri/src/ventana_macos.rs`). Sale de `tauri.macos.conf.json`, transparente y

@@ -16,7 +16,15 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   que en Lotes, Presets y Ajustes: ahora en la misma columna centrada de 1000.
 - El cliente preguntó si la transparencia de la barra lateral de macOS es la nativa: sí, es el
   `NSGlassEffectView` de Apple (Liquid Glass) detrás de la ventana, o el material `Sidebar` antes
-  de macOS 26; la barra lateral es transparente y lo deja ver.
+  de macOS 26; la barra lateral es transparente y lo deja ver. Luego comparó en su Mac Apolo con
+  Finder sobre una terminal oscura: la de Apolo, `#8c8fa0`; la de Finder, `#e7e7ea`.
+  `NSGlassEffectView` es el vidrio de los controles flotantes; la barra lateral de Finder es la de
+  un `NSSplitViewController`, que la página web no puede usar. Se pasa la ventana al material de
+  barra lateral (`NSVisualEffectMaterial::Sidebar`) en todas las versiones; el vidrio de los
+  controles sigue en macOS 26+ (detectado por la clase `NSGlassEffectView`). ADR 0028 matizada.
+- **v0.18.2**, pedida por el cliente para verlo actualizando: los iconos, la bienvenida de Windows y
+  el material. **No verificado** hasta que lo vea en su Mac: si el material de barra lateral queda
+  como Finder en macOS 26/27; si no, un velo claro encima.
 
 ---
 

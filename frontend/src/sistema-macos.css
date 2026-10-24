@@ -8,8 +8,7 @@
    como en Ajustes del Sistema. Los colores son los neutros de macOS 27
    (tokens.css, bloque `data-sistema="macos"`, desde crates/tema). La marca es
    la misma: **el oro rellena y la piedra escribe**; los iconos de la barra
-   lateral van en el oro hecho línea (`--oro-trazo`, a 3:1), como el acento de
-   macOS 27 en los suyos.
+   lateral van en oro, como el acento de macOS 27 en los suyos (`--oro-lateral`).
 
    Todo cuelga de :root[data-sistema="macos"], que pone main.tsx según la orden
    `plataforma`; en el navegador se pide con ?sistema=macos (y &vidrio=si). La
@@ -54,6 +53,12 @@
   /* Dónde empieza la barra de herramientas del contenido: después de la
      barra lateral, o de los semáforos y su botón si está oculta. */
   --hueco-barra: 18px;
+  /* Los iconos de la barra lateral, en claro: el oro a toda saturación, algo
+     más oscuro (1,7:1 sobre la fila elegida). El de 3:1 (`--oro-trazo`) se
+     volvía verde oliva y el cliente lo veía apagado; eligió este sobre
+     capturas (v0.18.2). Cada icono lleva su nombre al lado. En oscuro, el oro
+     de la marca. */
+  --oro-lateral: #d99a00;
 }
 
 :root[data-sistema="macos"] body { line-height: 16px; }
@@ -68,6 +73,7 @@
       0 1px 2px rgb(0 0 0 / 0.3),
       0 3px 10px rgb(0 0 0 / 0.25);
     --burbuja: rgb(255 255 255 / 0.3);
+    --oro-lateral: var(--oro-trazo);
   }
 }
 :root[data-sistema="macos"][data-tema="oscuro"] {
@@ -78,6 +84,7 @@
     0 1px 2px rgb(0 0 0 / 0.3),
     0 3px 10px rgb(0 0 0 / 0.25);
   --burbuja: rgb(255 255 255 / 0.3);
+  --oro-lateral: var(--oro-trazo);
 }
 
 /* ── La ventana ─────────────────────────────────────────────────────────── */
@@ -163,14 +170,14 @@
   color: var(--tinta);
   white-space: nowrap;
 }
-:root[data-sistema="macos"] .lateral nav button .icono { width: 20px; height: 20px; color: var(--oro-trazo); }
+:root[data-sistema="macos"] .lateral nav button .icono { width: 20px; height: 20px; color: var(--oro-lateral); }
 :root[data-sistema="macos"] .lateral nav button:hover:not([aria-current="page"]) { background: transparent; }
 :root[data-sistema="macos"] .lateral nav button[aria-current="page"] {
   background: var(--barra-encima);
   color: var(--tinta);
   font-weight: 400;
 }
-:root[data-sistema="macos"] .lateral nav button[aria-current="page"] .icono { color: var(--oro-trazo); }
+:root[data-sistema="macos"] .lateral nav button[aria-current="page"] .icono { color: var(--oro-lateral); }
 
 /* ── La barra de herramientas unificada ─────────────────────────────────── */
 

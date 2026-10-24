@@ -4,6 +4,22 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-24 (noche) · Antes de la prueba guiada final: macOS y Windows
+
+- **macOS claro: los iconos de la barra lateral, apagados.** `--oro-trazo` es el oro oscurecido
+  hasta 3:1 y se volvía verde oliva (`#967624`). Cuatro capturas
+  (https://claude.ai/artifact/QjBkDSXwEALBbJdC9tSFjd); el cliente eligió el oro intermedio
+  `#d99a00` (1,7:1), sabiendo que baja de 3:1. Va en `--oro-lateral` (sistema-macos.css), solo
+  para esos iconos; `--oro-trazo` sigue a 3:1 para el candado. En oscuro, el de la marca. ADR 0028
+  matizada; prueba en macos.spec.ts.
+- **Windows: la bienvenida del Estudio** seguía a todo el ancho, con el título más a la izquierda
+  que en Lotes, Presets y Ajustes: ahora en la misma columna centrada de 1000.
+- El cliente preguntó si la transparencia de la barra lateral de macOS es la nativa: sí, es el
+  `NSGlassEffectView` de Apple (Liquid Glass) detrás de la ventana, o el material `Sidebar` antes
+  de macOS 26; la barra lateral es transparente y lo deja ver.
+
+---
+
 ## 2026-10-24 (tarde) · La v0.18.0 probada: tres arreglos
 
 - El cliente actualizó a la v0.18.0 en todos sus sistemas menos Arch: «todo perfecto», salvo tres

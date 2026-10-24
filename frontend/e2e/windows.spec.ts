@@ -138,13 +138,13 @@ test("en Windows: Ajustes con tarjetas, y los interruptores siguen guardando", a
   await page.getByRole("switch", { name: "Avisarme cuando haya una versión nueva" }).check();
 });
 
-test("en Windows: Lotes y Presets van centrados, con el título en su columna", async ({ page }) => {
+test("en Windows: el Estudio sin imagen, Lotes y Presets van centrados, con el título en su columna", async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto("/?sistema=windows");
-  for (const seccion of ["Lotes", "Presets"]) {
+  for (const seccion of ["Estudio", "Lotes", "Presets"]) {
     await page.getByRole("button", { name: seccion, exact: true }).click();
     const zona = await page.locator(".zona").boundingBox();
-    const columna = await page.locator(".panel-ajustes:visible").first().boundingBox();
+    const columna = await page.locator(".panel-ajustes:visible, .bienvenida .zona-soltar:visible").first().boundingBox();
     const titulo = await page.getByRole("heading", { name: seccion }).boundingBox();
     expect(columna!.width).toBe(1000);
     expect(Math.abs(columna!.x - zona!.x - (zona!.x + zona!.width - columna!.x - columna!.width))).toBeLessThanOrEqual(2);

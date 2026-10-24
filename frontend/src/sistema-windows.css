@@ -483,10 +483,11 @@
 :root[data-sistema="windows"] .contenido { padding: 0 36px 36px; }
 :root[data-sistema="windows"] .panel-ajustes,
 :root[data-sistema="windows"] .panel-ajustes.lotes { max-width: 1000px; }
-/* Lotes, Presets y Ajustes, centrados como en los demás sistemas (lo pidió el
-   cliente): la cabecera y el contenido, en la misma columna de 1000. */
-:root[data-sistema="windows"] .seccion:has(.panel-ajustes) > .herramientas,
-:root[data-sistema="windows"] .seccion:has(.panel-ajustes) > .contenido { padding-inline: max(36px, calc((100% - 1000px) / 2)); }
+/* Lotes, Presets, Ajustes y la bienvenida del Estudio, centrados como en los
+   demás sistemas (lo pidió el cliente): la cabecera y el contenido, en la
+   misma columna de 1000. */
+:root[data-sistema="windows"] .seccion:has(.panel-ajustes, .bienvenida) > .herramientas,
+:root[data-sistema="windows"] .seccion:has(.panel-ajustes, .bienvenida) > .contenido { padding-inline: max(36px, calc((100% - 1000px) / 2)); }
 
 /* El Estudio con una imagen es una herramienta, no una página: su cabecera es
    una barra de órdenes de 48 (CommandBar), con el nombre en BodyStrong, sus

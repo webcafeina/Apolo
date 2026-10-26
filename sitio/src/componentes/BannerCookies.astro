@@ -108,4 +108,15 @@ const hay = Boolean(import.meta.env.PUBLIC_GTM_ID);
   .botones button[hidden] {
     display: none;
   }
+  /* En pantallas anchas, una tarjeta abajo a la izquierda: el botón de descarga de la portada va
+     centrado y queda a la vista. */
+  @media (min-width: 1000px) {
+    .aviso {
+      right: auto;
+      max-width: 360px;
+      margin-inline: 0;
+      left: max(24px, env(safe-area-inset-left, 0px));
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+  }
 </style>

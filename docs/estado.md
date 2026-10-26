@@ -4,7 +4,24 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-26, 10:02 UTC): v0.18.3 publicada, macOS en el idioma de Apolo.**
+> **PARADA AQUÍ (2026-10-26, mediodía): empieza la fase comercial, antes de la 1.0.0.** Plan
+> aprobado por el cliente en `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (léelo entero:
+> tiene todas sus decisiones de cinco rondas de preguntas). En resumen: web nueva en **Astro**
+> estático, construida en `sitio/` sin desplegar y cambiada por `web/` al final; detección de
+> sistema con selector de distribución en Linux; capturas y tarjetas de descarga por sistema; ESP /
+> ENG; páginas de descarga por sistema, preguntas, novedades, CLI y agentes; SEO completo; GTM con
+> banner propio y Consent Mode v2 básico (GA4 propio, ID pendiente del cliente); frase nueva
+> «Imágenes más ligeras, igual de buenas»; Squoosh fuera de todo lo público; README comercial; la
+> **1.0.0 sale con la web**. Fases F1 (prototipo con 3 estilos × 4 portadas, para que elija) a F10.
+> **Ahora: F1, el prototipo, publicado y esperando la elección del cliente**:
+> https://claude.ai/artifact/5PFdGPJ2fcMJNmdsuLuPwn (3 estilos × 4 portadas, «Ver en» con las 4 vistas,
+> tarjetas de descarga con selector de distribución, ESP/ENG, banner de cookies). Ficheros en el
+> scratchpad de la sesión (`prototipo/`), con el guion del borrador del vídeo (`zz-video.spec.ts`).
+> Foto del comparador: máscara de oro de Micenas, de Jebulon (CC0, Wikimedia Commons); a 1600 px y
+> nota 80, PNG 3,3 MB → AVIF 378 KB (−88,5 %). El disco se llenó otra vez: `target/debug/deps` tenía 43 GB de compilaciones
+> viejas (deuda.md).
+>
+> **(2026-10-26, 10:02 UTC): v0.18.3 publicada, macOS en el idioma de Apolo.**
 > `Publicar` 40297208352 en verde a la primera (la primera compilación de `menu_macos.rs`). Borrador
 > revisado: 31 ficheros, 30 sumas, 9 firmas, `latest.json` con 16 plataformas, CLI, `apolo-mcp` y
 > los cinco `.mcpb` en 0.18.3, sin DLL de Visual C++, manifiesto ARM64 con UTF-8, AVIF 3/3, `.deb`

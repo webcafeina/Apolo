@@ -46,8 +46,7 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       cliente el 2026-10-23: publicada el 2026-10-24 y vista por el cliente en todos sus sistemas,
       Arch incluido; ~~v0.18.1~~ con sus arreglos, publicada el mismo día;
     - ~~**v0.18.2**~~ (macOS con el material de barra lateral, sus iconos en un oro más vivo, la
-      bienvenida de Windows centrada): publicada el 2026-10-26. Falta que el cliente la compare con
-      Finder en su Mac (docs/estado.md);
+      bienvenida de Windows centrada): publicada el 2026-10-26 y vista por el cliente: «Todo perfecto»;
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

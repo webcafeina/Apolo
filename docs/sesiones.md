@@ -10,7 +10,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   `ventana_macos.rs` compila en macOS.
 - Borrador revisado entero (sumas, firmas, `latest.json`, versiones, DLL, manifiesto, AVIF 3/3,
   `.deb` y `.rpm`) y **v0.18.2 publicada a las 07:51 UTC**, como pidió el cliente.
-- **Abierto**: que la compare con Finder en su Mac.
+- El cliente la vio actualizada, con la barra lateral de macOS junto a Finder: «Todo perfecto».
+- **Lo siguiente**: la prueba guiada final y la 1.0.0.
 
 ---
 

@@ -8,10 +8,9 @@
 > verde en todo, macOS incluido (la primera compilación del cambio de `ventana_macos.rs`). Borrador
 > revisado: 31 ficheros, 30 sumas, 9 firmas, `latest.json` con 16 plataformas, CLI, `apolo-mcp` y
 > los cinco `.mcpb` en 0.18.2, sin DLL de Visual C++, manifiesto ARM64 con UTF-8, AVIF 3/3, `.deb`
-> con «Webcafeína», `.rpm` con `digests signatures OK`. **Lo siguiente**: que el cliente la vea en
-> su Mac junto a Finder (la barra lateral, ahora con `NSVisualEffectMaterial::Sidebar`); si sigue
-> más transparente, el plan B es un velo claro encima de la barra lateral (sistema-macos.css). Luego,
-> la prueba guiada final y la 1.0.0.
+> con «Webcafeína», `.rpm` con `digests signatures OK`. **El cliente la vio actualizada: «Todo
+> perfecto»** (la barra lateral de macOS con el material de barra lateral, los iconos en el oro
+> nuevo, la bienvenida de Windows). **Lo siguiente**: la prueba guiada final y la 1.0.0.
 >
 > **(2026-10-24, noche): v0.18.2 etiquetada, sin publicar.** El
 > cliente la pidió como versión, para verla actualizando. Etiqueta `v0.18.2` en `bac46b0`

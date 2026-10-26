@@ -574,3 +574,14 @@ Desde la v0.18.0, el `createrepo_c` del runner de `web.yml` escribe los metadato
 (`primary.xml.zst`), no en gzip. dnf (Fedora, RHEL 9) y zypper los leen; para mirarlos a mano hay
 que buscar `.zst` en `repomd.xml` y descomprimir con `zstd -dc`, o la comprobación da un 404 que no
 es del repositorio. · 2026-10-24
+
+## macOS pone en inglés el menú y los diálogos de una aplicación de Tauri
+
+Dos causas distintas, con el mismo síntoma (lo vio el cliente con la v0.18.2, con el Mac en
+español). **El menú**: sin menú propio, Tauri pone `Menu::default`, con los textos escritos en
+inglés («About», «Hide», «Quit», «Edit»…). **Los diálogos** (abrir y guardar de Finder) y lo que
+macOS añade al menú (Emoji y símbolos, Dictado): AppKit los pone en el idioma en que esté la
+aplicación, y un `.app` sin `CFBundleLocalizations` ni carpetas `.lproj` cuenta como solo inglés.
+Arreglo: menú propio con `tr!` (`menu_macos.rs`) y los idiomas en `src-tauri/Info.plist`, que Tauri
+fusiona con el suyo, más `es.lproj` y `en.lproj` en `bundle.macOS.files`. En Windows y Linux los
+diálogos los pone el sistema en su idioma (IFileOpenDialog, GTK o el portal) y no hay menú. · 2026-10-26

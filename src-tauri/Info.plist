@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Se fusiona con el Info.plist que genera Tauri. Los idiomas de Apolo: sin
+  ellos, macOS da por hecho que la aplicación solo está en inglés y pone en
+  inglés lo que dibuja él (el diálogo de abrir de Finder, Emoji y símbolos,
+  Dictado), aunque el Mac esté en español. Van con es.lproj y en.lproj
+  (tauri.macos.conf.json, bundle.macOS.files). En un Mac en otro idioma, en
+  inglés, como Apolo (ADR 0025).
+-->
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>en</string>
+  <key>CFBundleLocalizations</key>
+  <array>
+    <string>es</string>
+    <string>en</string>
+  </array>
+</dict>
+</plist>

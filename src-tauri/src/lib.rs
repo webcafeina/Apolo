@@ -19,6 +19,8 @@ use apolo_servicio::{
 use tauri::State;
 use tauri::http::{Response, StatusCode, header};
 
+#[cfg(target_os = "macos")]
+mod menu_macos;
 #[cfg(target_os = "linux")]
 mod ventana_linux;
 #[cfg(target_os = "macos")]
@@ -304,9 +306,17 @@ fn buscar_actualizaciones(s: Estado, si: bool) -> Ajustes {
 
 /// «Idioma» en Ajustes › General (ADR 0025): lo guarda y lo pone en el
 /// núcleo. Devuelve el que sale de verdad, para que la interfaz cambie al mismo.
+/// En macOS rehace el menú de la aplicación en el idioma nuevo.
 #[tauri::command]
-fn poner_idioma(s: Estado, idioma: PreferenciaIdioma) -> Idioma {
-    s.poner_idioma(idioma)
+fn poner_idioma(app: tauri::AppHandle, s: Estado, idioma: PreferenciaIdioma) -> Idioma {
+    let i = s.poner_idioma(idioma);
+    #[cfg(target_os = "macos")]
+    if let Ok(menu) = menu_macos::crear(&app) {
+        let _ = app.set_menu(menu);
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = app;
+    i
 }
 
 #[tauri::command]
@@ -378,7 +388,12 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
 
 pub fn arrancar() {
     apolo_nucleo::memoria::preparar();
-    tauri::Builder::default()
+    let constructor = tauri::Builder::default();
+    // En macOS, el menú de la aplicación en el idioma de Apolo: el de Tauri va
+    // en inglés. Se hace al arrancar, con el idioma de los ajustes ya puesto.
+    #[cfg(target_os = "macos")]
+    let constructor = constructor.menu(menu_macos::crear);
+    constructor
         .plugin(tauri_plugin_dialog::init())
         // Actualizarse desde la propia aplicación (ADR 0018): el plugin baja el
         // instalador de la Release, comprueba su firma y lo instala; `process`

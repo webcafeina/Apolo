@@ -47,7 +47,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       Arch incluido; ~~v0.18.1~~ con sus arreglos, publicada el mismo día;
     - ~~**v0.18.2**~~ (macOS con el material de barra lateral, sus iconos en un oro más vivo, la
       bienvenida de Windows centrada): publicada el 2026-10-26 y vista por el cliente: «Todo perfecto»;
-    - la prueba guiada final.
+    - ~~la prueba guiada final~~: **descartada por el cliente el 2026-10-26** (ADR 0024): ya ha
+      visto Apolo en todos sus sistemas; lo que salga, con revisiones puntuales y el uso;
+    - el menú y los diálogos de macOS en el idioma de Apolo (arreglado el 2026-10-26, sin ver en un
+      Mac: va en la siguiente versión);
+    - la 1.0.0, cuando lo diga el cliente.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:
   - ~~**7a**~~: `crates/mcp` con las diez herramientas (once desde la 7b), pruebas, catálogo y el paseo con Claude Code

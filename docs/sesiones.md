@@ -4,6 +4,27 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-26 (mañana) · Sin prueba guiada final; macOS en el idioma de Apolo
+
+- **El cliente descarta la prueba guiada final**: con las 0.13 a 0.18 ya ha visto Apolo en todos sus
+  sistemas. Lo que salga, con revisiones puntuales y el uso; el MCP en Windows y Linux, Cursor y VS
+  Code, también. ADR 0024 matizada y su línea en decisiones.md.
+- **macOS: el menú de arriba y el diálogo de abrir, en inglés** con el Mac en español. El menú era
+  el de Tauri (`Menu::default`, textos en inglés): ahora uno propio con `tr!` en `menu_macos.rs`,
+  que se rehace al cambiar el idioma (`poner_idioma`). Los diálogos los pone AppKit en el idioma de
+  la aplicación, y el `.app` no declaraba ninguno: `src-tauri/Info.plist` con
+  `CFBundleLocalizations` (es, en; inglés de reserva) y `es.lproj`/`en.lproj` en
+  `bundle.macOS.files`. En Windows y Linux los diálogos ya salen en el idioma del sistema y no hay
+  menú. **Sin ver en un Mac** (no se compila aquí). Trampa nueva.
+- **El AUR**, mirado a petición del cliente: el registro sigue cerrado (la página tiene ahora un
+  filtro contra bots; ni noticias de Arch ni `aur-general` anuncian la reapertura). La vía es
+  escribir a accountsupport@archlinux.org.
+- **Deuda obsoleta**: saldadas las compilaciones sin abrir, Ubuntu 26.10, el interruptor de macOS y
+  el editor de Windows; anotados KDE y Arch vistos, el AUR cerrado y el MCP, Cursor y VS Code con el
+  uso. Fila nueva: el menú y los diálogos de macOS.
+
+---
+
 ## 2026-10-26 · La v0.18.2, publicada
 
 - `Publicar` 40118422741, lanzado el sábado sin esperar, acabó en verde en todo: el cambio de

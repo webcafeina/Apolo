@@ -1,0 +1,236 @@
+{
+  "vistas": {
+    "macos": {
+      "estudio": {
+        "es": {
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "bytes": 169152
+        },
+        "en": {
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": false,
+          "bytes": 169152
+        }
+      },
+      "diferencias": {
+        "es": {
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "bytes": 209022
+        },
+        "en": {
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": false,
+          "bytes": 209022
+        }
+      },
+      "lotes": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 29180
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 29180
+        }
+      },
+      "agentes": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 44092
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 44092
+        }
+      }
+    },
+    "windows": {
+      "estudio": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 81678
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 81678
+        }
+      },
+      "diferencias": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 97884
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 97884
+        }
+      },
+      "lotes": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 36598
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 36598
+        }
+      },
+      "agentes": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 52824
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 52824
+        }
+      }
+    },
+    "gnome": {
+      "estudio": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 83266
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 83266
+        }
+      },
+      "diferencias": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 100478
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 100478
+        }
+      },
+      "lotes": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 42476
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 42476
+        }
+      },
+      "agentes": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 49972
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 49972
+        }
+      }
+    },
+    "kde": {
+      "estudio": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 77530
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 77530
+        }
+      },
+      "diferencias": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 93266
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 93266
+        }
+      },
+      "lotes": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 39018
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 39018
+        }
+      },
+      "agentes": {
+        "es": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": true,
+          "bytes": 54444
+        },
+        "en": {
+          "ancho": 1280,
+          "alto": 800,
+          "propia": false,
+          "bytes": 54444
+        }
+      }
+    }
+  }
+}

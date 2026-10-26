@@ -1,0 +1,123 @@
+---
+// La cabecera (ADR 0033): la marca, las secciones, ESP / ENG con el activo en
+// negrita (lleva a la misma página en el otro idioma) y Descargar.
+import { textos } from "../i18n";
+import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+  pagina: Pagina;
+}
+const { idioma, pagina } = Astro.props;
+const t = textos(idioma);
+const inicio = ruta("inicio", idioma);
+const ancla = (id: string) => (pagina === "inicio" ? `#${id}` : `${inicio}#${id}`);
+const descargas = idioma === "es" ? "descargas" : "downloads";
+---
+
+<header class="cabecera">
+  <div class="envoltura">
+    <a class="logo" href={inicio}>
+      <img src="/icono.png" alt="" width="28" height="28" />
+      <span>Apolo</span>
+    </a>
+    <nav class="nav" aria-label={t.nav.etiqueta}>
+      <a href={ancla(idioma === "es" ? "sistema" : "system")}>{t.nav.sistema}</a>
+      <a href={ancla(idioma === "es" ? "que-hace" : "what-it-does")}>{t.nav.queHace}</a>
+      <a href={ancla(descargas)}>{t.nav.descargar}</a>
+    </nav>
+    <div class="derecha">
+      <nav class="idioma" aria-label={t.idioma.etiqueta}>
+        <a href={ruta(pagina, "es")} lang="es" hreflang="es" aria-label={t.idioma.es} aria-current={idioma === "es" ? "page" : undefined}>ESP</a>
+        <span aria-hidden="true">/</span>
+        <a href={ruta(pagina, "en")} lang="en" hreflang="en" aria-label={t.idioma.en} aria-current={idioma === "en" ? "page" : undefined}>ENG</a>
+      </nav>
+      <a class="boton boton-cabecera" href={ancla(descargas)}>{t.nav.descargar}</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: color-mix(in srgb, var(--lienzo) 82%, transparent);
+    backdrop-filter: saturate(1.8) blur(20px);
+    -webkit-backdrop-filter: saturate(1.8) blur(20px);
+    border-bottom: 1px solid color-mix(in srgb, var(--filete) 70%, transparent);
+  }
+  .envoltura {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    min-height: var(--alto-cabecera);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    color: var(--tinta);
+  }
+  .logo img {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+  .logo span {
+    font-family: var(--marca);
+    font-size: 22px;
+  }
+  .nav {
+    display: flex;
+    gap: 24px;
+    font-size: 14px;
+  }
+  .nav a {
+    color: var(--cuerpo);
+    text-decoration: none;
+  }
+  .nav a:hover {
+    color: var(--tinta);
+  }
+  .derecha {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .idioma {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--apagado);
+  }
+  .idioma a {
+    padding: 6px 2px;
+    color: var(--apagado);
+    text-decoration: none;
+  }
+  .idioma a[aria-current="page"] {
+    color: var(--tinta);
+    font-weight: 800;
+  }
+  .boton-cabecera {
+    min-height: 34px;
+    padding: 6px 16px;
+    font-size: 14px;
+  }
+  @media (max-width: 820px) {
+    .nav {
+      display: none;
+    }
+  }
+  @media (max-width: 420px) {
+    .boton-cabecera {
+      display: none;
+    }
+  }
+</style>

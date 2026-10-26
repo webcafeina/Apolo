@@ -1,0 +1,51 @@
+---
+// El pie (ADR 0033): las páginas, GitHub, lo legal (de webcafeina.com, salvo
+// las cookies, que son de esta web) y el idioma.
+import { textos } from "../i18n";
+import type { Idioma } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const t = textos(idioma);
+---
+
+<footer class="pie">
+  <div class="envoltura">
+    <nav class="enlaces" aria-label="Apolo">
+      <a href="https://github.com/webcafeina/Apolo" rel="noopener">GitHub</a>
+      <a href="https://webcafeina.com/aviso-legal/" rel="noopener">{t.pie.aviso}</a>
+      <a href="https://webcafeina.com/politica-privacidad/" rel="noopener">{t.pie.privacidad}</a>
+      <slot name="enlaces" />
+    </nav>
+    <p>{t.pie.licencia}</p>
+    <p>{t.pie.optimizadas}</p>
+  </div>
+</footer>
+
+<style>
+  .pie {
+    border-top: 1px solid var(--filete);
+    padding-block: 36px calc(48px + env(safe-area-inset-bottom, 0px));
+    font-size: 13px;
+    color: var(--apagado);
+  }
+  .envoltura {
+    display: grid;
+    gap: 14px;
+  }
+  .enlaces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+  }
+  .enlaces a {
+    color: var(--cuerpo);
+    text-decoration: none;
+  }
+  .enlaces a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

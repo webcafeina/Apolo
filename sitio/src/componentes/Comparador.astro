@@ -1,0 +1,263 @@
+---
+// El comparador de la portada (ADR 0033): el original y lo que sale de Apolo,
+// con un deslizador (un <input type="range">, que se maneja con el teclado y
+// los lectores de pantalla), las pestañas de formato y los pesos y la nota
+// reales (herramientas/comparador.mjs). El JPEG XL solo lo pinta Safari: en los
+// demás se ve el original, y lo dice.
+import datos from "../datos/comparador.json";
+import { textos } from "../i18n";
+import type { Idioma } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const t = textos(idioma);
+const foto = datos.fotos[0];
+const numero = (n: number, decimales = 1) =>
+  new Intl.NumberFormat(idioma === "es" ? "es-ES" : "en-US", { maximumFractionDigits: decimales }).format(n);
+const peso = (b: number) => (b >= 1e6 ? `${numero(b / 1e6)} MB` : `${numero(b / 1e3, 0)} KB`);
+const NOMBRES: Record<string, string> = { avif: "AVIF", webp: "WebP", jxl: "JPEG XL", jpeg: "JPEG" };
+const formatos = Object.entries(foto.formatos).map(([clave, f]) => ({
+  clave,
+  nombre: NOMBRES[clave],
+  ...f,
+  ahorro: numero(100 * (1 - f.bytes / foto.original.bytes)),
+}));
+const base = `/comparador/${foto.id}`;
+const credito = t.comparador.credito
+  .replace("{titulo}", foto.titulo[idioma])
+  .replace("{autor}", foto.autor)
+  .replace("{licencia}", foto.licencia)
+  .replace("{ancho}", String(foto.ancho))
+  .replace("{alto}", String(foto.alto))
+  .replace("{nota}", String(foto.nota));
+---
+
+<div class="comparador" data-comparador data-formato="avif">
+  <div class="lienzo" style={`aspect-ratio: ${foto.ancho} / ${foto.alto}`}>
+    <img class="original" src={`${base}/original.webp`} alt={foto.titulo[idioma]} width={foto.ancho} height={foto.alto} fetchpriority="high" />
+    {
+      formatos.map((f, i) =>
+        f.clave === "jxl" ? (
+          <picture class="resultado" data-formato={f.clave}>
+            <source type="image/jxl" srcset={`${base}/${f.fichero}`} />
+            <img src={`${base}/original.webp`} alt="" width={foto.ancho} height={foto.alto} loading="lazy" data-jxl />
+          </picture>
+        ) : (
+          <img
+            class="resultado"
+            data-formato={f.clave}
+            src={`${base}/${f.fichero}`}
+            alt=""
+            width={foto.ancho}
+            height={foto.alto}
+            loading={i === 0 ? "eager" : "lazy"}
+            fetchpriority={i === 0 ? "high" : undefined}
+          />
+        ),
+      )
+    }
+    <span class="linea" aria-hidden="true"></span>
+    <span class="rotulo izquierda">{t.comparador.original} · PNG<br /><b>{peso(foto.original.bytes)}</b></span>
+    {
+      formatos.map((f) => (
+        <span class="rotulo derecha" data-formato={f.clave}>
+          {f.nombre} · Apolo
+          <br />
+          <b>{peso(f.bytes)}</b>
+        </span>
+      ))
+    }
+    <input type="range" min="0" max="100" step="0.5" value="50" aria-label={t.comparador.arrastra} />
+    <span class="tirador" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"></path></svg>
+    </span>
+  </div>
+  <div class="bajo">
+    <div class="formatos" role="radiogroup" aria-label={t.comparador.formatos}>
+      {formatos.map((f, i) => <button type="button" role="radio" aria-checked={i === 0 ? "true" : "false"} data-formato={f.clave}>{f.nombre}</button>)}
+    </div>
+    {
+      formatos.map((f) => (
+        <p class="cifras" data-formato={f.clave}>
+          <span class="ahorro"><strong>−{f.ahorro} %</strong> {t.comparador.menos}</span>
+          <span><strong>{numero(f.nota)}</strong> {t.comparador.nota} · {t.comparador.notaTexto}</span>
+        </p>
+      ))
+    }
+  </div>
+  <p class="sin-jxl" hidden>{t.comparador.sinJxl}</p>
+  <p class="credito">{credito} <a href={foto.origen} rel="noopener" target="_blank">Wikimedia Commons</a></p>
+</div>
+
+<style>
+  .comparador {
+    --corte: 50%;
+    max-width: 1080px;
+    margin-inline: auto;
+  }
+  .lienzo {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radio);
+    background: var(--elevada);
+    box-shadow: var(--sombra), 0 0 0 1px var(--filete);
+    user-select: none;
+    touch-action: pan-y;
+    max-width: 100%;
+  }
+  .lienzo img,
+  .lienzo picture {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lienzo picture img {
+    position: static;
+  }
+  .resultado {
+    clip-path: inset(0 0 0 var(--corte));
+    display: none;
+  }
+  .linea {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--corte);
+    width: 2px;
+    margin-left: -1px;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.2);
+    pointer-events: none;
+  }
+  .tirador {
+    position: absolute;
+    top: 50%;
+    left: var(--corte);
+    width: 46px;
+    height: 46px;
+    margin: -23px 0 0 -23px;
+    border-radius: 50%;
+    background: var(--relleno);
+    color: var(--sobre-acento);
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.35);
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+  input[type="range"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+  }
+  input[type="range"]:focus-visible ~ .tirador {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+  .rotulo {
+    position: absolute;
+    top: 14px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    background: rgb(20 20 24 / 0.72);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.35;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .rotulo b {
+    color: #ffd56b;
+    font-size: 15px;
+  }
+  .izquierda {
+    left: 14px;
+  }
+  .derecha {
+    right: 14px;
+    text-align: right;
+    display: none;
+  }
+  .bajo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 14px 28px;
+    margin-top: 22px;
+  }
+  .formatos {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--elevada);
+  }
+  .formatos button {
+    border: 0;
+    background: transparent;
+    padding: 7px 15px;
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--cuerpo);
+  }
+  .formatos button[aria-checked="true"] {
+    background: var(--lienzo);
+    color: var(--tinta);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.14);
+  }
+  .cifras {
+    display: none;
+    flex-wrap: wrap;
+    gap: 4px 22px;
+    font-size: 14px;
+    color: var(--apagado);
+    font-variant-numeric: tabular-nums;
+  }
+  .cifras strong {
+    color: var(--tinta);
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .ahorro strong {
+    color: var(--oro-trazo);
+  }
+  /* El formato elegido: su imagen, su rótulo y sus cifras. */
+  [data-comparador][data-formato="avif"] [data-formato="avif"],
+  [data-comparador][data-formato="webp"] [data-formato="webp"],
+  [data-comparador][data-formato="jxl"] [data-formato="jxl"],
+  [data-comparador][data-formato="jpeg"] [data-formato="jpeg"] {
+    display: block;
+  }
+  [data-comparador] .cifras[data-formato] {
+    display: none;
+  }
+  [data-comparador][data-formato="avif"] .cifras[data-formato="avif"],
+  [data-comparador][data-formato="webp"] .cifras[data-formato="webp"],
+  [data-comparador][data-formato="jxl"] .cifras[data-formato="jxl"],
+  [data-comparador][data-formato="jpeg"] .cifras[data-formato="jpeg"] {
+    display: flex;
+  }
+  [data-comparador] .formatos button {
+    display: inline-block;
+  }
+  .sin-jxl,
+  .credito {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--apagado);
+    text-align: center;
+  }
+</style>

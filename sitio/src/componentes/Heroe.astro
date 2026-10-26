@@ -1,0 +1,165 @@
+---
+// La portada (ADR 0033): la frase, el botón de la descarga del ordenador de
+// quien visita y el comparador. El HTML lleva los botones de todos los
+// sistemas; el CSS enseña el que toca según data-plataforma y
+// data-arquitectura, que temprano.js pone antes de pintar. Sin JavaScript se ve
+// «Descargar Apolo», que lleva a las descargas.
+import { release } from "../datos/version";
+import { megas } from "../datos/release";
+import { textos } from "../i18n";
+import type { Idioma } from "../i18n/rutas";
+import Comparador from "./Comparador.astro";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const t = textos(idioma);
+const f = release.ficheros;
+const descargas = idioma === "es" ? "#descargas" : "#downloads";
+const flecha =
+  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M6 11l6 6 6-6M5 20h14"/></svg>';
+const BOTONES = [
+  { para: "macos", arq: "", href: f["dmg"].url, texto: t.heroe.boton.macos, meta: `${t.heroe.meta.macos} · ${megas(f["dmg"].bytes, idioma)}`, descarga: f["dmg"] },
+  { para: "windows", arq: "x64", href: f["exe-x64"].url, texto: t.heroe.boton.windows, meta: `${t.heroe.meta.windows} · x64 · ${megas(f["exe-x64"].bytes, idioma)}`, descarga: f["exe-x64"] },
+  { para: "windows", arq: "arm64", href: f["exe-arm64"].url, texto: t.heroe.boton.windows, meta: `${t.heroe.meta.windows} · ARM · ${megas(f["exe-arm64"].bytes, idioma)}`, descarga: f["exe-arm64"] },
+  { para: "linux", arq: "", href: "#linux", texto: t.heroe.boton.linux, meta: t.heroe.meta.linux, descarga: null },
+  { para: "otro", arq: "", href: descargas, texto: t.heroe.boton.otro, meta: t.heroe.meta.otro, descarga: null },
+];
+---
+
+<section class="heroe" aria-labelledby="titulo">
+  <div class="envoltura">
+    <div class="texto">
+      <span class="etiqueta">{t.heroe.etiqueta}</span>
+      <h1 id="titulo">{t.heroe.titulo}</h1>
+      <p class="entrada">{t.heroe.entrada}</p>
+      <div class="acciones">
+        {
+          BOTONES.map((b) => (
+            <a
+              class="boton cta"
+              href={b.href}
+              data-para={b.para}
+              data-arq={b.arq || undefined}
+              data-descarga={b.descarga ? `${b.descarga.sistema}|${b.descarga.arquitectura}|${b.descarga.formato}` : undefined}
+            >
+              <Fragment set:html={flecha} />
+              {b.texto}
+            </a>
+          ))
+        }
+        <a class="enlace-flecha" href={descargas}>{t.heroe.otros}</a>
+      </div>
+      {
+        BOTONES.map((b) => (
+          <p class="meta" data-para={b.para} data-arq={b.arq || undefined}>
+            v{release.version} · {b.meta}
+          </p>
+        ))
+      }
+      <div class="movil">
+        <p>{t.heroe.movil}</p>
+        <div class="acciones">
+          <button type="button" class="boton" data-compartir>{t.heroe.enviar}</button>
+          <button type="button" class="enlace-flecha boton-texto" data-copiar-enlace data-hecho={t.descargas.copiado}>{t.heroe.copiarEnlace}</button>
+        </div>
+      </div>
+    </div>
+    <div class="visual" data-aparece>
+      <Comparador idioma={idioma} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .heroe {
+    position: relative;
+    padding-block: clamp(56px, 9vw, 104px) 40px;
+    text-align: center;
+  }
+  .texto {
+    display: grid;
+    justify-items: center;
+    gap: 22px;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+  h1 {
+    font-size: clamp(44px, 8vw, 96px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+  .entrada {
+    max-width: 640px;
+    font-size: clamp(18px, 2vw, 22px);
+    line-height: 1.45;
+    color: var(--cuerpo);
+  }
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px 26px;
+    margin-top: 6px;
+  }
+  .meta {
+    font-size: 14px;
+    color: var(--apagado);
+    font-variant-numeric: tabular-nums;
+  }
+  .visual {
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+  .boton-texto {
+    border: 0;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 17px;
+  }
+
+  /* El botón y la línea de su sistema. Sin plataforma (sin JavaScript), el genérico. */
+  .cta,
+  .meta {
+    display: none;
+  }
+  :global(html:not([data-plataforma])) [data-para="otro"],
+  :global(html[data-plataforma="otro"]) [data-para="otro"],
+  :global(html[data-plataforma="chromeos"]) [data-para="otro"],
+  :global(html[data-plataforma="macos"]) [data-para="macos"],
+  :global(html[data-plataforma="linux"]) [data-para="linux"],
+  :global(html[data-plataforma="windows"][data-arquitectura="x64"]) [data-para="windows"][data-arq="x64"],
+  :global(html[data-plataforma="windows"][data-arquitectura="arm64"]) [data-para="windows"][data-arq="arm64"] {
+    display: revert;
+  }
+  .cta[data-para] {
+    display: none;
+  }
+  :global(html:not([data-plataforma])) .cta[data-para="otro"],
+  :global(html[data-plataforma="otro"]) .cta[data-para="otro"],
+  :global(html[data-plataforma="chromeos"]) .cta[data-para="otro"],
+  :global(html[data-plataforma="macos"]) .cta[data-para="macos"],
+  :global(html[data-plataforma="linux"]) .cta[data-para="linux"],
+  :global(html[data-plataforma="windows"][data-arquitectura="x64"]) .cta[data-para="windows"][data-arq="x64"],
+  :global(html[data-plataforma="windows"][data-arquitectura="arm64"]) .cta[data-para="windows"][data-arq="arm64"] {
+    display: inline-flex;
+  }
+  /* En el móvil, en vez de descargar, el enlace para el ordenador. */
+  .movil {
+    display: none;
+    gap: 16px;
+    justify-items: center;
+    max-width: 520px;
+    padding: 20px;
+    border-radius: var(--radio-chico);
+    background: var(--suave);
+  }
+  :global(html[data-plataforma="movil"]) .movil {
+    display: grid;
+  }
+  :global(html[data-plataforma="movil"]) .texto > .acciones {
+    display: none;
+  }
+</style>

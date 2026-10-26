@@ -4,6 +4,16 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-26 · La v0.18.2, publicada
+
+- `Publicar` 40118422741, lanzado el sábado sin esperar, acabó en verde en todo: el cambio de
+  `ventana_macos.rs` compila en macOS.
+- Borrador revisado entero (sumas, firmas, `latest.json`, versiones, DLL, manifiesto, AVIF 3/3,
+  `.deb` y `.rpm`) y **v0.18.2 publicada a las 07:51 UTC**, como pidió el cliente.
+- **Abierto**: que la compare con Finder en su Mac.
+
+---
+
 ## 2026-10-24 (noche) · Antes de la prueba guiada final: macOS y Windows
 
 - **macOS claro: los iconos de la barra lateral, apagados.** `--oro-trazo` es el oro oscurecido

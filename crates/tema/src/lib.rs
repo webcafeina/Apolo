@@ -57,6 +57,10 @@ pub struct Tema {
     /// color de acento, como los de la barra lateral de macOS 27 (ADR 0028);
     /// nunca para texto.
     pub oro_trazo: Rgb,
+    /// El oro como texto: oscurecido (o aclarado, en oscuro) hasta 4,5:1 sobre
+    /// la peor superficie. Para las etiquetas pequeñas de la web (ADR 0033),
+    /// que con `oro_trazo` no llegaban.
+    pub oro_texto: Rgb,
 
     // El oro con transparencia: el halo del foco (`anillo`) y el fondo de lo
     // seleccionado sin rellenar (`relleno_tenue`). Decoración: no llevan
@@ -122,6 +126,7 @@ pub fn claro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: PIEDRA,
         anillo: (ORO, 35),
@@ -162,6 +167,7 @@ pub fn oscuro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: BLANCO,
         anillo: (ORO, 45),
@@ -209,6 +215,7 @@ pub fn windows_claro() -> Tema {
         relleno_vivo: relleno.oscurecer(0.92),
         // Sobre la fila con el puntero encima, algo más oscura que `peor`.
         oro_trazo: contraste::acento_legible(ORO, Rgb::hex(0xeaeaea), AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, Rgb::hex(0xeaeaea), AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: PIEDRA,
         anillo: (ORO, 35),
@@ -248,6 +255,7 @@ pub fn windows_oscuro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: BLANCO,
         anillo: (ORO, 45),
@@ -291,6 +299,7 @@ pub fn macos_claro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: PIEDRA,
         anillo: (ORO, 35),
@@ -329,6 +338,7 @@ pub fn macos_oscuro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: BLANCO,
         anillo: (ORO, 45),
@@ -377,6 +387,7 @@ pub fn linux_claro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: PIEDRA,
         anillo: (ORO, 50),
@@ -417,6 +428,7 @@ pub fn linux_oscuro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: BLANCO,
         anillo: (ORO, 50),
@@ -463,6 +475,7 @@ pub fn kde_claro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: PIEDRA,
         anillo: (ORO, 50),
@@ -505,6 +518,7 @@ pub fn kde_oscuro() -> Tema {
         relleno,
         relleno_vivo: relleno.oscurecer(0.92),
         oro_trazo: contraste::acento_legible(ORO, peor, AA_GRANDE),
+        oro_texto: contraste::acento_legible(ORO, peor, AA_NORMAL),
         sobre_acento: PIEDRA,
         acento: BLANCO,
         anillo: (ORO, 50),

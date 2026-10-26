@@ -5,47 +5,88 @@
 <h1 align="center">Apolo</h1>
 
 <p align="center">
-  Optimiza imágenes en tu escritorio con los motores de Squoosh.<br>
-  macOS · Windows · Linux
+  <strong>Imágenes más ligeras, igual de buenas.</strong><br>
+  El optimizador de imágenes para macOS, Windows y Linux: WebP, AVIF, JPEG XL, JPEG y PNG en tu
+  ordenador, viendo lo que pierdes antes de guardar. Gratis y de código abierto.
+</p>
+
+<p align="center">
+  <a href="https://apolo.webcafeina.com/descargar/mac/"><img src=".github/readme/descargar-mac-es.svg" alt="Descargar para Mac" height="46"></a>
+  <a href="https://apolo.webcafeina.com/descargar/windows/"><img src=".github/readme/descargar-windows-es.svg" alt="Descargar para Windows" height="46"></a>
+  <a href="https://apolo.webcafeina.com/descargar/linux/"><img src=".github/readme/descargar-linux-es.svg" alt="Descargar para Linux" height="46"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/webcafeina/Apolo/releases/latest"><img src="https://img.shields.io/github/v/release/webcafeina/Apolo?label=versi%C3%B3n" alt="Versión"></a>
+  <a href="https://github.com/webcafeina/Apolo/releases"><img src="https://img.shields.io/github/downloads/webcafeina/Apolo/total?label=descargas" alt="Descargas"></a>
+  <a href="https://github.com/webcafeina/Apolo/actions/workflows/comprobar.yml"><img src="https://github.com/webcafeina/Apolo/actions/workflows/comprobar.yml/badge.svg" alt="Comprobar"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licencia-GPLv3-blue" alt="GPLv3"></a>
 </p>
 
 <p align="center"><a href="https://apolo.webcafeina.com">apolo.webcafeina.com</a> · <a href="README.en.md">English</a></p>
 
 <p align="center">
-  <a href="https://github.com/webcafeina/Apolo/releases/latest"><img src="https://img.shields.io/github/v/release/webcafeina/Apolo?label=versi%C3%B3n" alt="Versión"></a>
-  <a href="https://github.com/webcafeina/Apolo/actions/workflows/comprobar.yml"><img src="https://github.com/webcafeina/Apolo/actions/workflows/comprobar.yml/badge.svg" alt="Comprobar"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/licencia-GPLv3-blue" alt="GPLv3"></a>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/readme/apolo-macos-oscuro.webp">
+    <img src=".github/readme/apolo-macos-claro.webp" alt="Apolo en macOS: el Estudio compara el original con el resultado" width="900">
+  </picture>
 </p>
 
----
+## Por qué Apolo
 
-## Descargas
+- **Ves lo que pierdes antes de guardar.** Comparas el original y el resultado con un deslizador,
+  lado a lado o con un mapa de diferencias, y Apolo te da la nota SSIMULACRA 2 de cada uno.
+- **El mismo fichero que las herramientas oficiales**, byte a byte: `cwebp`, `cjpeg` (MozJPEG),
+  `oxipng`, `avifenc` y `cjxl` van dentro, con todas sus opciones, y Apolo te da la orden
+  equivalente.
+- **Calidad por nota.** Pide que no se note, y Apolo busca la calidad más baja que lo consigue, foto
+  a foto.
+- **Carpetas enteras**: lotes en paralelo, varios formatos a la vez, el más ligero de cada foto, un
+  tamaño para todas, y nunca sobrescribe nada.
+- **Recortar y redimensionar** sobre la imagen, por el lado mayor, un porcentaje o ancho y alto.
+- **Abre las fotos del iPhone** (HEIC), además de PNG, JPEG, WebP, AVIF, JPEG XL, TIFF, GIF, BMP,
+  QOI y PNM.
+- **Hecha para cada sistema**: Liquid Glass en macOS, Fluent y Mica en Windows, Adwaita en GNOME y
+  Breeze en KDE. En español y en inglés.
+- **Privada y ligera**: tus imágenes no salen de tu ordenador, y con fotos de 24 megapíxeles no pasa
+  de unos 2 GB de memoria.
+- **Con tu agente de IA**: Claude, Cursor o VS Code optimizan por ti con su servidor MCP.
 
-Todo está en la **[última versión](https://github.com/webcafeina/Apolo/releases/latest)**. Busca tu
-sistema en esta tabla:
+<table>
+  <tr>
+    <td><img src=".github/readme/apolo-windows-claro.webp" alt="Apolo en Windows 11" width="300"></td>
+    <td><img src=".github/readme/apolo-gnome-claro.webp" alt="Apolo en Ubuntu (GNOME)" width="300"></td>
+    <td><img src=".github/readme/apolo-kde-claro.webp" alt="Apolo en KDE Plasma" width="300"></td>
+  </tr>
+  <tr>
+    <td align="center">Windows 11</td>
+    <td align="center">Ubuntu (GNOME)</td>
+    <td align="center">KDE Plasma</td>
+  </tr>
+</table>
 
-| Sistema | Aplicación | Línea de órdenes | Claude Desktop |
-|---|---|---|---|
-| **macOS 11+**, Apple Silicon e Intel | `Apolo_X.Y.Z_universal.dmg` | `apolo-cli-X.Y.Z-macos-universal.tar.gz` | `Apolo-X.Y.Z-macos.mcpb` |
-| **Windows 10/11**, x64 | `Apolo_X.Y.Z_x64-setup.exe` | `apolo-cli-X.Y.Z-windows-x64.zip` | `Apolo-X.Y.Z-windows-x64.mcpb` |
-| **Windows 10/11**, ARM64 | `Apolo_X.Y.Z_arm64-setup.exe` | `apolo-cli-X.Y.Z-windows-arm64.zip` | `Apolo-X.Y.Z-windows-arm64.mcpb` |
-| **Linux**, amd64 | `Apolo_X.Y.Z_amd64.deb`, `Apolo-X.Y.Z-1.x86_64.rpm` o `.AppImage` | `apolo-cli-X.Y.Z-linux-amd64.tar.gz` | — |
-| **Linux**, arm64 | `Apolo_X.Y.Z_arm64.deb`, `Apolo-X.Y.Z-1.aarch64.rpm` o `.AppImage` | `apolo-cli-X.Y.Z-linux-arm64.tar.gz` | — |
+## Descargar
 
-El `.deb` es para Debian 12+ y Ubuntu 22.04+; el `.rpm`, para Fedora y openSUSE; la AppImage, para
-cualquier distribución.
+La forma más fácil es **[apolo.webcafeina.com](https://apolo.webcafeina.com)**: sabe qué ordenador
+tienes y te da su descarga. Todos los ficheros están en la
+**[última versión](https://github.com/webcafeina/Apolo/releases/latest)**, con su suma en
+`SHA256SUMS.txt`.
 
-`SHA256SUMS.txt` tiene la suma de cada fichero.
+| Sistema | Aplicación |
+|---|---|
+| **macOS 11+**, Apple Silicon e Intel | `.dmg` universal |
+| **Windows 10 y 11**, x64 y ARM | instalador `.exe` |
+| **Linux**, x64 y ARM | `.deb` (Debian, Ubuntu), `.rpm` (Fedora, openSUSE), AppImage o PKGBUILD (Arch) |
 
-**Con Homebrew**, en macOS y Linux (con el nombre completo: así Homebrew confía en el tap):
+**Con Homebrew**, en macOS y Linux:
 
 ```sh
-brew install webcafeina/apolo/apolo          # la línea de órdenes y apolo-mcp
 brew install --cask webcafeina/apolo/apolo   # la aplicación (macOS)
+brew install webcafeina/apolo/apolo          # la línea de comandos y el servidor para agentes
 ```
 
-**En Linux, con tu gestor de paquetes** (los repositorios están firmados con
-[la clave de Apolo](https://apolo.webcafeina.com/apolo.asc)):
+**En Linux, con el repositorio** (firmado con [la clave de Apolo](https://apolo.webcafeina.com/apolo.asc)),
+se actualiza con el resto del sistema:
 
 ```sh
 # Debian y Ubuntu
@@ -68,74 +109,52 @@ curl -fsSLO https://apolo.webcafeina.com/aur/PKGBUILD
 makepkg -si
 ```
 
-**Se actualiza sola**: cuando hay una versión nueva, Apolo lo avisa y se instala con un clic. Con
-el PKGBUILD de Arch, se actualiza volviendo a construirlo (y, cuando esté en el AUR, con `yay`).
+**Se actualiza sola**: cuando hay una versión nueva, Apolo lo avisa y se instala con un clic.
 
-### La primera vez
-
-Los instaladores **no están firmados**, así que cada sistema avisa la primera vez:
-
-- **macOS**: abre Apolo y, en Ajustes del Sistema › Privacidad y seguridad, pulsa «Abrir
-  igualmente». Si dice que está dañada: `xattr -dr com.apple.quarantine /Applications/Apolo.app`.
+**La primera vez**, como los instaladores no están firmados, el sistema avisa:
+- **macOS**: en Ajustes del Sistema › Privacidad y seguridad, pulsa «Abrir igualmente». Si dice que
+  está dañada: `xattr -dr com.apple.quarantine /Applications/Apolo.app`.
 - **Windows**: en SmartScreen, «Más información» › «Ejecutar de todos modos».
-- **Linux**:
-  - con el paquete suelto: `sudo apt install ./Apolo_X.Y.Z_amd64.deb` o
-    `sudo dnf install ./Apolo-X.Y.Z-1.x86_64.rpm`;
-  - con la AppImage: `chmod +x` y ábrela.
 
-## Qué es
+## En la terminal
 
-Apolo comprime imágenes a **WebP**, **AVIF**, **JPEG XL**, **MozJPEG**, **PNG** (OxiPNG) y **QOI**,
-y **el resultado se ve al momento**. Comparas el original y el comprimido con un deslizador, ves cuánto
-pesa y dónde se pierde calidad, y ajustas hasta que te convence.
+La línea de comandos `apolo` hace lo mismo que la aplicación, con las opciones de cada herramienta
+oficial y los mismos presets:
 
-- **El mismo fichero que las herramientas oficiales**, byte a byte: `cwebp`, `cjpeg` (MozJPEG),
-  `oxipng`, `avifenc` y `cjxl` van dentro de Apolo. Puedes usar todas sus opciones viéndolas, y
-  copiar la orden equivalente.
-- **Calidad medida, no a ojo**:
-  - SSIMULACRA 2, PSNR y SSIM;
-  - un mapa de dónde se pierde detalle;
-  - **la calidad por nota**: Apolo busca la más baja que no se distingue del original.
-- **Estudio y lotes.** Afinas una imagen, guardas el ajuste como preset y lo aplicas a carpetas
-  enteras, con subcarpetas y sin sobrescribir nada.
-- **Recortar y redimensionar, encima de la imagen**: por el lado mayor, un porcentaje o ancho y
-  alto, sin agrandar nunca salvo que lo pidas, también para un lote entero. Y reducir la paleta, como
-  en Squoosh.
-- **Abre las fotos del iPhone** (HEIC), además de PNG, JPEG, WebP, AVIF, JPEG XL, TIFF, GIF, BMP,
-  QOI y PNM.
-- **Línea de órdenes `apolo`**, con los mismos presets, para scripts.
-- **En español y en inglés**: la ventana, la línea de órdenes y el agente. Por defecto, el idioma
-  del sistema; se cambia en Ajustes › General, con `apolo --idioma en` o con `APOLO_IDIOMA=en` para
-  el agente.
-- **Nativo, ligero y sin conexión**: tus imágenes no salen de tu ordenador. Con fotos de 24
-  megapíxeles no pasa de unos 2 GB de memoria, ni en lotes de cientos: cabe en un Mac de 8 GB
-  ([docs/rendimiento.md](docs/rendimiento.md)).
+```sh
+apolo webp -q 80 foto.png -o foto.webp                       # como cwebp
+apolo avif -q 60 foto.png foto.avif                          # como avifenc
+apolo lote fotos/ --formato webp,avif --objetivo 80          # carpetas enteras, por nota
+apolo lote fotos/ --mas-ligero --formato webp,avif,jpeg --lado-mayor 1920
+apolo medir foto.png foto.webp                               # SSIMULACRA 2, PSNR y SSIM
+```
+
+Más ejemplos en [la página de la línea de comandos](https://apolo.webcafeina.com/linea-de-comandos/).
 
 ## Con un agente de IA
 
-Apolo se puede usar desde **Claude, Cursor, VS Code** y cualquier agente que hable
-[MCP](https://modelcontextprotocol.io). El agente analiza, optimiza, compara formatos a la misma
-calidad percibida, mide la pérdida, recorta, mira las imágenes y convierte carpetas, con los motores
-de Apolo y en tu ordenador. **Nunca sobrescribe ni borra**: siempre escribe ficheros nuevos.
+Apolo se usa desde **Claude, Cursor, VS Code** y cualquier agente que hable
+[MCP](https://modelcontextprotocol.io): analiza, optimiza, compara formatos a la misma calidad
+percibida, mide la pérdida y convierte carpetas, en tu ordenador. **Nunca sobrescribe ni borra.**
 
-El servidor, `apolo-mcp`, va dentro de la aplicación y **se actualiza con ella**. En Apolo, la fila
-**MCP** de la barra lateral lleva a todo lo necesario: lo que hay que copiar para cada agente, y la
-extensión de Claude Desktop, que se instala una vez. Después de actualizar Apolo, cierra y vuelve a
-abrir Claude Desktop.
-
-Para Claude Code, según el sistema:
+El servidor, `apolo-mcp`, va dentro de la aplicación y se actualiza con ella. En Apolo, la fila
+**MCP** de la barra lateral tiene lo que hay que copiar para cada agente y la extensión de Claude
+Desktop. Para Claude Code:
 
 ```sh
-# macOS
-claude mcp add --scope user apolo -- "/Applications/Apolo.app/Contents/MacOS/apolo-mcp"
-# Windows
-claude mcp add --scope user apolo -- "%LOCALAPPDATA%\Apolo\apolo-mcp.exe"
-# Linux (.deb, .rpm y AUR)
-claude mcp add --scope user apolo -- /usr/bin/apolo-mcp
+claude mcp add --scope user apolo -- "/Applications/Apolo.app/Contents/MacOS/apolo-mcp"   # macOS
+claude mcp add --scope user apolo -- "%LOCALAPPDATA%\Apolo\apolo-mcp.exe"                  # Windows
+claude mcp add --scope user apolo -- /usr/bin/apolo-mcp                                    # Linux
 ```
 
 Las herramientas están en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que el agente pide (rutas,
 nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo.
+
+## Preguntas
+
+¿Es gratis? ¿Sube mis imágenes? ¿Por qué avisa el sistema? Las respuestas, en
+[las preguntas frecuentes](https://apolo.webcafeina.com/preguntas/). Y lo que trae cada versión, en
+[novedades](https://apolo.webcafeina.com/novedades/).
 
 ## Compilar
 
@@ -147,9 +166,9 @@ Hace falta:
 Clona con submódulos: `git clone --recurse-submodules`.
 
 ```sh
-make comprobar     # formato, clippy, pruebas e interfaz
+make comprobar     # formato, clippy, pruebas, interfaz y web
 make equivalencia  # el mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl
-make cli           # la línea de órdenes
+make cli           # la línea de comandos
 make mcp           # el servidor para agentes, apolo-mcp
 make app           # la aplicación (con apolo-mcp dentro)
 ```
@@ -168,4 +187,4 @@ motores que lleva dentro tienen sus propias licencias, todas compatibles:
 | Apache-2.0 | highway, sjpeg y rmcp |
 | MIT o Apache-2.0 | sys-locale |
 
-Hecho por [Webcafeína](https://webcafeina.com).
+Hecho por [Webcafeína](https://webcafeina.com/?utm_source=github&utm_medium=readme&utm_campaign=apolo).

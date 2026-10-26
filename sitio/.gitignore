@@ -1,9 +1,5 @@
 dist/
+dist-e2e/
 .astro/
 test-results/
 playwright-report/
-# Las imágenes, el vídeo y el comparador se suben en la fase 5 (ADR 0033), ya
-# definitivos: hasta entonces son de prueba y engordarían el historial.
-public/img/
-public/video/
-public/comparador/

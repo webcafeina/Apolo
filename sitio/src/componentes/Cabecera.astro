@@ -25,6 +25,7 @@ const descargas = idioma === "es" ? "descargas" : "downloads";
       <a href={ancla(idioma === "es" ? "sistema" : "system")}>{t.nav.sistema}</a>
       <a href={ancla(idioma === "es" ? "que-hace" : "what-it-does")}>{t.nav.queHace}</a>
       <a href={ancla(descargas)}>{t.nav.descargar}</a>
+      <a href={ruta("preguntas", idioma)}>{t.nav.preguntas}</a>
     </nav>
     <div class="derecha">
       <nav class="idioma" aria-label={t.idioma.etiqueta}>

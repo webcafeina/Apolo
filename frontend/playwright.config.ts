@@ -35,10 +35,10 @@ export default defineConfig({
   webServer: [
     {
       command: `cargo run -q -p apolo-dev -- --direccion 127.0.0.1:34591 --config ${config}`,
-      // Las capturas para la web en inglés (`CAPTURAS_IDIOMA=en`, `make capturas-en`) arrancan
-      // apolo-dev en inglés; todo lo demás, en español.
+      // Las capturas y los vídeos para la web en inglés (`CAPTURAS_IDIOMA=en`, `VIDEO_IDIOMA=en`)
+      // arrancan apolo-dev en inglés; todo lo demás, en español.
       env: {
-        LC_ALL: process.env.CAPTURAS_IDIOMA === "en" ? "en_US.UTF-8" : "es_ES.UTF-8",
+        LC_ALL: [process.env.CAPTURAS_IDIOMA, process.env.VIDEO_IDIOMA].includes("en") ? "en_US.UTF-8" : "es_ES.UTF-8",
         // La ruta de apolo-mcp que enseña la sección MCP en las capturas de la web.
         ...(process.env.APOLO_DEV_RUTA_MCP ? { APOLO_DEV_RUTA_MCP: process.env.APOLO_DEV_RUTA_MCP } : {}),
       },

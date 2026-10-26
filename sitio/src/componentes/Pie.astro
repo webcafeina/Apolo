@@ -2,7 +2,7 @@
 // El pie (ADR 0033): las páginas, GitHub, lo legal (de webcafeina.com, salvo
 // las cookies, que son de esta web) y el idioma.
 import { textos } from "../i18n";
-import type { Idioma } from "../i18n/rutas";
+import { type Idioma, ruta } from "../i18n/rutas";
 
 interface Props {
   idioma: Idioma;
@@ -14,10 +14,18 @@ const t = textos(idioma);
 <footer class="pie">
   <div class="envoltura">
     <nav class="enlaces" aria-label="Apolo">
+      <a href={ruta("descargarMac", idioma)}>Mac</a>
+      <a href={ruta("descargarWindows", idioma)}>Windows</a>
+      <a href={ruta("descargarLinux", idioma)}>Linux</a>
+      <a href={ruta("preguntas", idioma)}>{t.pie.preguntas}</a>
+      <a href={ruta("novedades", idioma)}>{t.pie.novedades}</a>
+      <a href={ruta("cli", idioma)}>{t.pie.cli}</a>
+      <a href={ruta("agentes", idioma)}>{t.pie.agentes}</a>
       <a href="https://github.com/webcafeina/Apolo" rel="noopener">GitHub</a>
       <a href="https://webcafeina.com/aviso-legal/" rel="noopener">{t.pie.aviso}</a>
       <a href="https://webcafeina.com/politica-privacidad/" rel="noopener">{t.pie.privacidad}</a>
-      <slot name="enlaces" />
+      <a href={ruta("cookies", idioma)}>{t.pie.cookies}</a>
+      <button type="button" class="preferencias" data-preferencias-cookies hidden>{t.cookies.preferencias}</button>
     </nav>
     <p>{t.pie.licencia}</p>
     <p>{t.pie.optimizadas}</p>
@@ -43,6 +51,19 @@ const t = textos(idioma);
   .enlaces a {
     color: var(--cuerpo);
     text-decoration: none;
+  }
+  .preferencias {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--cuerpo);
+    font-size: 13px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .preferencias[hidden] {
+    display: none;
   }
   .enlaces a:hover {
     text-decoration: underline;

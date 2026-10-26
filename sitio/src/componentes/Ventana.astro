@@ -1,7 +1,10 @@
 ---
 // Una captura de Apolo como una ventana en su escritorio (ADR 0033): el radio,
 // el borde y la sombra de cada sistema, y detrás un fondo propio con los
-// colores de la marca (no los fondos oficiales, que tienen dueño).
+// colores de la marca (no los fondos oficiales, que tienen dueño). Las capturas
+// de macOS y Windows tienen transparente lo que en la ventana es vidrio (la
+// barra lateral, Mica): la ventana pone ahí el escritorio desenfocado y con el
+// tinte de cada sistema, como el material de verdad.
 interface Props {
   vista: "macos" | "windows" | "gnome" | "kde";
 }
@@ -46,6 +49,22 @@ const { vista } = Astro.props;
   .ventana {
     position: relative;
     overflow: hidden;
+    -webkit-backdrop-filter: blur(28px) saturate(1.7);
+    backdrop-filter: blur(28px) saturate(1.7);
+  }
+  .ventana[data-vista="macos"] {
+    background: rgb(236 236 240 / 0.62);
+  }
+  .ventana[data-vista="windows"] {
+    background: rgb(243 243 243 / 0.82);
+  }
+  @media (prefers-color-scheme: dark) {
+    .ventana[data-vista="macos"] {
+      background: rgb(40 40 44 / 0.62);
+    }
+    .ventana[data-vista="windows"] {
+      background: rgb(32 32 32 / 0.84);
+    }
   }
   .ventana :global(img) {
     width: 100%;

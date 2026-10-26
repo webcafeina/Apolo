@@ -8,12 +8,15 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz web contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz web web-e2e capturas-sitio video-sitio contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste, interfaz y web (la puerta de CI)"
 	@echo "make tokens     regenera los tokens.css de la interfaz y de la web desde crates/tema"
 	@echo "make web        la web nueva (sitio/, ADR 0033): tipos, compilación y pruebas"
+	@echo "make web-e2e    la web nueva en el navegador: detección, cookies, SEO, accesibilidad"
+	@echo "make capturas-sitio  las capturas de la web nueva, en sus cuatro vistas y dos idiomas"
+	@echo "make video-sitio  los vídeos de la web nueva (necesita ffmpeg)"
 	@echo "make contraste  solo la prueba de contraste"
 	@echo "make equivalencia  mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl, y la misma nota que ssimulacra2"
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
@@ -52,6 +55,12 @@ web:
 	pnpm -C sitio check
 	pnpm -C sitio build
 	pnpm -C sitio test
+
+# La web nueva en el navegador (Playwright, con axe): sin red, contra una compilación con un GTM de
+# prueba.
+web-e2e:
+	pnpm -C sitio install --frozen-lockfile
+	pnpm -C sitio exec playwright test
 
 contraste:
 	cargo test -p apolo-tema --test contraste
@@ -163,6 +172,50 @@ capturas-web:
 	  target/release/apolo webp $$o -quiet frontend/capturas/$$f-$$t.png -o web/img/$$f-$$t.webp; \
 	  target/release/apolo webp $$o -quiet frontend/capturas/en/$$f-$$t.png -o web/img/en/$$f-$$t.webp; \
 	done; done
+
+# Las de la web nueva (sitio/, ADR 0033): las cuatro vistas (macOS y Windows con su vidrio y el fondo
+# transparente, para que la web ponga detrás su escritorio; GNOME y KDE con la barra de Apolo), en los
+# dos idiomas y a doble densidad, con la ruta de apolo-mcp de cada sistema en la pantalla de agentes.
+# Después, sitio/herramientas/capturas.mjs las pasa a AVIF y WebP con el propio Apolo.
+capturas-sitio:
+	cargo build -p apolo-dev -p apolo-mcp
+	cargo build --release -p apolo-cli
+	@test -f $(KODAK)/kodim23.png || { echo "Faltan las fotos de Kodak: pruebas/lotes/generar.sh"; exit 1; }
+	rm -rf target/capturas-lote && mkdir -p target/capturas-lote/fotos
+	for n in 03 05 07 12 15 20 22 23; do cp $(KODAK)/kodim$$n.png target/capturas-lote/fotos/; done
+	for v in macos windows gnome kde; do \
+	  case $$v in \
+	    macos) e="CAPTURAS_SISTEMA=macos CAPTURAS_VIDRIO=si"; mcp=/Applications/Apolo.app/Contents/MacOS/apolo-mcp;; \
+	    windows) e="CAPTURAS_SISTEMA=windows CAPTURAS_VIDRIO=si"; mcp='%LOCALAPPDATA%\Apolo\apolo-mcp.exe';; \
+	    gnome) e="CAPTURAS_SISTEMA=linux CAPTURAS_BARRA=propia"; mcp=/usr/bin/apolo-mcp;; \
+	    kde) e="CAPTURAS_SISTEMA=linux CAPTURAS_BARRA=propia CAPTURAS_ESCRITORIO=kde"; mcp=/usr/bin/apolo-mcp;; \
+	  esac; \
+	  for idioma in es en; do \
+	    env $$e CAPTURAS=1 CAPTURAS_IDIOMA=$$idioma CAPTURAS_FONDO=transparente CAPTURAS_ESCALA=2 \
+	      CAPTURAS_FOTO=$(KODAK)/kodim23.png CAPTURAS_LOTE=$(CURDIR)/target/capturas-lote/fotos APOLO_DEV_RUTA_MCP="$$mcp" \
+	      pnpm -C frontend exec playwright test capturas -g ' (estudio|medidas y diferencias|lotes|agentes)$$' || exit 1; \
+	  done; \
+	done
+	node sitio/herramientas/capturas.mjs
+
+# Los vídeos de la web nueva (ADR 0033): la máscara de oro del comparador, en las cuatro vistas y
+# los dos idiomas (frontend/e2e/video.spec.ts y sitio/herramientas/video.mjs, con ffmpeg).
+FOTO_VIDEO := $(or $(XDG_CACHE_HOME),$(HOME)/.cache)/apolo-comparador/video/mascara.png
+video-sitio:
+	cargo build -p apolo-dev -p apolo-mcp
+	cargo build --release -p apolo-cli
+	@test -f $(FOTO_VIDEO) || { mkdir -p $(dir $(FOTO_VIDEO)) && target/release/apolo lote $(dir $(FOTO_VIDEO))../mascara.jpg --formato png --lado-mayor 1600 -s $(dir $(FOTO_VIDEO)); }
+	for v in macos windows gnome kde; do \
+	  case $$v in \
+	    macos) q="sistema=macos&vidrio=si";; windows) q="sistema=windows&vidrio=si";; \
+	    gnome) q="sistema=linux&barra=propia";; kde) q="sistema=linux&barra=propia&escritorio=kde";; \
+	  esac; \
+	  for idioma in es en; do \
+	    VIDEO=1 VIDEO_SISTEMA="$$q" VIDEO_IDIOMA=$$idioma VIDEO_FOTO=$(FOTO_VIDEO) VIDEO_DESTINO=$(CURDIR)/target/video-sitio/$$v-$$idioma \
+	      pnpm -C frontend exec playwright test video --project claro || exit 1; \
+	    node sitio/herramientas/video.mjs target/video-sitio/$$v-$$idioma $$v $$idioma || exit 1; \
+	  done; \
+	done
 
 # La prueba de la ADR 0002 contra el cwebp oficial de Google, de la misma
 # versión que la libwebp enlazada. El binario se descarga una vez y se

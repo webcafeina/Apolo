@@ -1,0 +1,35 @@
+---
+// Una página de secciones de texto (ADR 0033): la línea de comandos y los
+// agentes. Las mismas piezas que las páginas de descarga, sin tarjeta.
+import type { PaginaDescarga as Contenido } from "../contenido/descargar";
+import type { Idioma, Pagina as P } from "../i18n/rutas";
+import Pagina from "../layouts/Pagina.astro";
+import Comando from "./Comando.astro";
+
+interface Props {
+  idioma: Idioma;
+  pagina: P;
+  c: Contenido;
+}
+const { idioma, pagina, c } = Astro.props;
+---
+
+<Pagina idioma={idioma} pagina={pagina} titulo={c.titulo} descripcion={c.descripcion} etiqueta={c.etiqueta} h1={c.h1} entrada={c.entrada}>
+  {
+    c.secciones.map((s) => (
+      <section>
+        <h2>{s.titulo}</h2>
+        {s.lista && <ul>{s.lista.map((p) => <li>{p}</li>)}</ul>}
+        {s.parrafos?.map((p) => <p>{p}</p>)}
+        {s.pasos && <ol>{s.pasos.map((p) => <li>{p}</li>)}</ol>}
+        {s.comandos?.map((k) => (
+          <>
+            {k.titulo && <h3>{k.titulo}</h3>}
+            <Comando idioma={idioma} nombre={k.nombre} lineas={k.lineas} />
+          </>
+        ))}
+      </section>
+    ))
+  }
+  <slot />
+</Pagina>

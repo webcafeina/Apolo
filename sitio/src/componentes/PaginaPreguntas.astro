@@ -1,0 +1,74 @@
+---
+// Las preguntas frecuentes (ADR 0033), con sus datos estructurados (FAQPage).
+import { PREGUNTAS } from "../contenido/preguntas";
+import type { Idioma } from "../i18n/rutas";
+import Pagina from "../layouts/Pagina.astro";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const c = PREGUNTAS[idioma];
+const datos = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  inLanguage: idioma,
+  mainEntity: c.lista.map((q) => ({ "@type": "Question", name: q.p, acceptedAnswer: { "@type": "Answer", text: q.r.join(" ") } })),
+};
+---
+
+<Pagina idioma={idioma} pagina="preguntas" titulo={c.titulo} descripcion={c.descripcion} etiqueta={c.etiqueta} h1={c.h1} entrada={c.entrada}>
+  <script type="application/ld+json" set:html={JSON.stringify(datos)} />
+  <div class="preguntas">
+    {
+      c.lista.map((q) => (
+        <details>
+          <summary>{q.p}</summary>
+          {q.r.map((r) => <p>{r}</p>)}
+        </details>
+      ))
+    }
+  </div>
+</Pagina>
+
+<style>
+  .preguntas {
+    display: grid;
+    border-top: 1px solid var(--filete);
+  }
+  details {
+    border-bottom: 1px solid var(--filete);
+  }
+  summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 20px 36px 20px 0;
+    position: relative;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--tinta);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: "+";
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--apagado);
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::after {
+    transform: translateY(-50%) rotate(45deg);
+  }
+  details p {
+    padding-right: 36px;
+  }
+  details p:last-child {
+    padding-bottom: 12px;
+  }
+</style>

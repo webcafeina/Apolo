@@ -16,6 +16,7 @@
   --sobre-acento: #2b2b31;
   --acento: #2b2b31;
   --oro-trazo: #a38027;
+  --oro-texto: #80641f;
   --barra: #f6f6f8;
   --barra-encima: #e8e8ed;
   --campo: #ffffff;
@@ -48,6 +49,7 @@
     --sobre-acento: #2b2b31;
     --acento: #ffffff;
     --oro-trazo: #ffc83d;
+    --oro-texto: #ffc83d;
     --barra: #242426;
     --barra-encima: #343437;
     --campo: #1a1a1c;
@@ -80,6 +82,7 @@
   --sobre-acento: #2b2b31;
   --acento: #2b2b31;
   --oro-trazo: #a38027;
+  --oro-texto: #82661f;
   --barra: #f3f3f3;
   --barra-encima: #eaeaea;
   --campo: #ffffff;
@@ -112,6 +115,7 @@
     --sobre-acento: #2b2b31;
     --acento: #ffffff;
     --oro-trazo: #ffc83d;
+    --oro-texto: #ffc83d;
     --barra: #202020;
     --barra-encima: #2d2d2d;
     --campo: #1e1e1e;
@@ -144,6 +148,7 @@
   --sobre-acento: #2b2b31;
   --acento: #2b2b31;
   --oro-trazo: #967624;
+  --oro-texto: #755c1c;
   --barra: #e6e6e6;
   --barra-encima: #d9d9d9;
   --campo: #ffffff;
@@ -176,6 +181,7 @@
     --sobre-acento: #2b2b31;
     --acento: #ffffff;
     --oro-trazo: #ffc83d;
+    --oro-texto: #ffc83d;
     --barra: #161616;
     --barra-encima: #2a2a2a;
     --campo: #262626;
@@ -208,6 +214,7 @@
   --sobre-acento: #2b2b31;
   --acento: #2b2b31;
   --oro-trazo: #947423;
+  --oro-texto: #735a1b;
   --barra: #ebebeb;
   --barra-encima: #d8d8d8;
   --campo: #ebebeb;
@@ -240,6 +247,7 @@
     --sobre-acento: #2b2b31;
     --acento: #ffffff;
     --oro-trazo: #ffc83d;
+    --oro-texto: #ffc83d;
     --barra: #393939;
     --barra-encima: #4a4a4a;
     --campo: #3e3e3e;
@@ -272,6 +280,7 @@
   --sobre-acento: #2b2b31;
   --acento: #2b2b31;
   --oro-trazo: #9c7a25;
+  --oro-texto: #7a601d;
   --barra: #ffffff;
   --barra-encima: #fff4d8;
   --campo: #ffffff;
@@ -304,6 +313,7 @@
     --sobre-acento: #2b2b31;
     --acento: #ffffff;
     --oro-trazo: #ffc83d;
+    --oro-texto: #ffc83d;
     --barra: #141618;
     --barra-encima: #433a1f;
     --campo: #141618;

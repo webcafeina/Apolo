@@ -100,6 +100,7 @@ export const es = {
     titulo: "Apolo para tu ordenador.",
     entrada: "Gratis y de código abierto. Se actualiza sola cuando hay una versión nueva.",
     tuya: "Para tu ordenador",
+    mas: "Instalar, requisitos y más",
     version: "Versión",
     tamano: "Tamaño",
     suma: "SHA-256",
@@ -136,6 +137,21 @@ export const es = {
     texto:
       "Apolo es un proyecto de Webcafeína, un estudio de diseño y desarrollo web. Si quieres una web cuidada hasta el último kilobyte, hablemos.",
     boton: "Conoce Webcafeína",
+  },
+  cookies: {
+    titulo: "¿Medimos las visitas?",
+    texto:
+      "Con tu permiso, esta web usa cookies de Google Analytics para saber cuánta gente la visita y qué descarga. La aplicación no envía nada.",
+    mas: "Política de cookies",
+    aceptar: "Aceptar",
+    rechazar: "Rechazar",
+    configurar: "Configurar",
+    guardar: "Guardar la elección",
+    necesarias: "Necesarias",
+    necesariasTexto: "recuerdan tu sistema, tu distribución y esta elección, en este navegador.",
+    analitica: "Analítica",
+    analiticaTexto: "Google Analytics, para contar visitas y descargas.",
+    preferencias: "Preferencias de cookies",
   },
   pie: {
     preguntas: "Preguntas frecuentes",

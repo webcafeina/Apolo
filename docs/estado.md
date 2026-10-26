@@ -4,7 +4,27 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-26, mediodía): empieza la fase comercial, antes de la 1.0.0.** Plan
+> **PARADA AQUÍ (2026-10-26, tarde): la web nueva, terminada en `sitio/` (F1 a F9) y lista para
+> que la revise el cliente.** Todo subido (ver sesiones.md). Hecho: la portada (estilo Apple,
+> comparador y vídeo), las imágenes definitivas (capturas de las 4 vistas en 2 idiomas, AVIF y WebP,
+> y 8 vídeos), las páginas (descarga por sistema, preguntas, novedades, CLI, agentes, cookies, 404),
+> SEO, GTM con el aviso de cookies (Consent Mode v2 básico), README nuevo con sus imágenes, y las
+> pruebas: `make web` (34 de vitest) y `make web-e2e` (34 de Playwright con axe, también en CI).
+> **Lo siguiente**:
+> 1. Que el cliente revise la web terminada (galería o compilación local; la web publicada sigue
+>    siendo la vieja).
+> 2. Del cliente: el ID de GTM (variable `GTM_ID` del repositorio) con su GA4, el registro DNS de
+>    Search Console en Cloudflare, el sí a `gh repo edit` (descripción en español, homepage, topics
+>    sin `squoosh`) y subir la imagen social del repositorio en Settings.
+> 3. F10, el cambio: borrar el `web/` estático y `git mv sitio web`; `RUTA_WEB`/`RUTA_SITIO` en
+>    `crates/tema/src/tokens.rs` (y quitar `web/tokens.css`), Makefile (`web`, `web-e2e`,
+>    `capturas-sitio`, `video-sitio` → rutas `web/`; quitar el viejo `capturas-web`),
+>    `comprobar.yml`, `publico.test.ts`, `CLAUDE.md`; y el `web.yml` nuevo, ya escrito en
+>    `.github/web-nuevo.yml` (fuera de `workflows/`, no se ejecuta: compila con Astro desde `main`, datos de la Release,
+>    paquetes en `web/dist`, comprueba los enlaces). Justo después, **la 1.0.0** con su revisión del
+>    borrador de siempre.
+>
+> **(2026-10-26, mediodía): empieza la fase comercial, antes de la 1.0.0.** Plan
 > aprobado por el cliente en `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (léelo entero:
 > tiene todas sus decisiones de cinco rondas de preguntas). En resumen: web nueva en **Astro**
 > estático, construida en `sitio/` sin desplegar y cambiada por `web/` al final; detección de
@@ -20,8 +40,7 @@
 > compilación falla si falta uno), `plataforma.ts` con su tabla de navegadores, `rutas.ts`, y `make
 > web` dentro de `make comprobar` (y de CI). **Lo siguiente: F4, los componentes** (cabecera con ESP /
 > ENG, comparador, marcos, tarjetas de descarga, banner), con el estilo Apple del prototipo. El
-> prototipo (F1):
-> https://claude.ai/artifact/5PFdGPJ2fcMJNmdsuLuPwn (3 estilos × 4 portadas, «Ver en» con las 4 vistas,
+> prototipo (F1, artefacto borrado al cerrar la sesión) (3 estilos × 4 portadas, «Ver en» con las 4 vistas,
 > tarjetas de descarga con selector de distribución, ESP/ENG, banner de cookies). Ficheros en el
 > scratchpad de la sesión (`prototipo/`), con el guion del borrador del vídeo (`zz-video.spec.ts`).
 > Foto del comparador: máscara de oro de Micenas, de Jebulon (CC0, Wikimedia Commons); a 1600 px y

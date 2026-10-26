@@ -7,13 +7,18 @@
 import { release } from "../datos/version";
 import { type Fichero, megas } from "../datos/release";
 import { textos } from "../i18n";
-import type { Idioma } from "../i18n/rutas";
+import { type Idioma, ruta } from "../i18n/rutas";
 import Comando from "./Comando.astro";
 
 interface Props {
   idioma: Idioma;
+  /** Solo la tarjeta de un sistema (las páginas de descarga). */
+  solo?: "macos" | "windows" | "linux";
+  /** El título de la sección (en las páginas de descarga ya lo lleva la página). */
+  cabeza?: boolean;
 }
-const { idioma } = Astro.props;
+const { idioma, solo, cabeza = true } = Astro.props;
+const ver = (s: "macos" | "windows" | "linux") => !solo || solo === s;
 const t = textos(idioma);
 const f = release.ficheros;
 const id = idioma === "es" ? "descargas" : "downloads";
@@ -42,19 +47,23 @@ const corta = (s: string) => `${s.slice(0, 16)}…`;
 const appimage = (a: "x64" | "arm64") => f[`appimage-${a}`].nombre;
 ---
 
-<section class="seccion" id={id} aria-labelledby={`${id}-titulo`}>
+<section class="seccion" id={solo ? undefined : id} aria-labelledby={cabeza ? `${id}-titulo` : undefined} data-solo={solo}>
   <div class="envoltura">
-    <div class="cabeza" data-aparece>
-      <span class="etiqueta">{t.descargas.etiqueta}</span>
-      <h2 id={`${id}-titulo`}>{t.descargas.titulo}</h2>
-      <p>{t.descargas.entrada}</p>
-    </div>
+    {
+      cabeza && (
+        <div class="cabeza" data-aparece>
+          <span class="etiqueta">{t.descargas.etiqueta}</span>
+          <h2 id={`${id}-titulo`}>{t.descargas.titulo}</h2>
+          <p>{t.descargas.entrada}</p>
+        </div>
+      )
+    }
 
-    <div class="tarjetas">
-      <!-- macOS -->
+    <div class="tarjetas" data-solo={solo}>
+      {ver("macos") && (
       <article class="tarjeta" data-para="macos" data-sistema="macos">
         <span class="tuya">{t.descargas.tuya}</span>
-        <header><span class="so" set:html={icono.macos} /><div><h3>macOS</h3><p class="req">{t.descargas.req.macos}</p></div></header>
+        <header><span class="so" set:html={icono.macos} /><div><h3>macOS</h3><p class="req">{t.descargas.req.macos}</p>{!solo && <a class="mas" href={ruta("descargarMac", idioma)}>{t.descargas.mas}</a>}</div></header>
         <a class="boton descargar" href={f["dmg"].url} data-descarga={marca(f["dmg"])}>
           <Fragment set:html={icono.flecha} /><span>{t.descargas.boton.dmg}</span><small>{megas(f["dmg"].bytes, idioma)}</small>
         </a>
@@ -72,11 +81,12 @@ const appimage = (a: "x64" | "arm64") => f[`appimage-${a}`].nombre;
         </details>
         <p class="primera">{t.descargas.primera.macos}</p>
       </article>
+      )}
 
-      <!-- Windows -->
+      {ver("windows") && (
       <article class="tarjeta" data-para="windows" data-sistema="windows">
         <span class="tuya">{t.descargas.tuya}</span>
-        <header><span class="so" set:html={icono.windows} /><div><h3>Windows</h3><p class="req">{t.descargas.req.windows}</p></div></header>
+        <header><span class="so" set:html={icono.windows} /><div><h3>Windows</h3><p class="req">{t.descargas.req.windows}</p>{!solo && <a class="mas" href={ruta("descargarWindows", idioma)}>{t.descargas.mas}</a>}</div></header>
         <div class="grupo">
           <span class="titulo-grupo" id={`${id}-arq-win`}>{t.descargas.procesador}</span>
           <div class="opciones" role="radiogroup" aria-labelledby={`${id}-arq-win`} data-elige="arquitectura">
@@ -106,11 +116,12 @@ const appimage = (a: "x64" | "arm64") => f[`appimage-${a}`].nombre;
         }
         <p class="primera">{t.descargas.primera.windows}</p>
       </article>
+      )}
 
-      <!-- Linux -->
+      {ver("linux") && (
       <article class="tarjeta" data-para="linux" data-sistema="linux" id="linux">
         <span class="tuya">{t.descargas.tuya}</span>
-        <header><span class="so" set:html={icono.linux} /><div><h3>Linux</h3><p class="req">{t.descargas.req.linux}</p></div></header>
+        <header><span class="so" set:html={icono.linux} /><div><h3>Linux</h3><p class="req">{t.descargas.req.linux}</p>{!solo && <a class="mas" href={ruta("descargarLinux", idioma)}>{t.descargas.mas}</a>}</div></header>
         <div class="grupo">
           <span class="titulo-grupo" id={`${id}-distro`}>{t.descargas.distribucion}</span>
           <div class="opciones" role="radiogroup" aria-labelledby={`${id}-distro`} data-elige="distro">
@@ -184,6 +195,7 @@ const appimage = (a: "x64" | "arm64") => f[`appimage-${a}`].nombre;
         ))}
         <p class="primera">{t.descargas.primera.linux}</p>
       </article>
+      )}
     </div>
   </div>
 </section>
@@ -203,6 +215,13 @@ const appimage = (a: "x64" | "arm64") => f[`appimage-${a}`].nombre;
   h2 {
     font-size: clamp(34px, 5vw, 60px);
     line-height: 1.04;
+  }
+  [data-solo] {
+    padding-block: 0 24px;
+  }
+  .tarjetas[data-solo] {
+    max-width: 560px;
+    margin-inline: auto;
   }
   .tarjetas {
     display: grid;
@@ -241,6 +260,11 @@ const appimage = (a: "x64" | "arm64") => f[`appimage-${a}`].nombre;
   .req {
     font-size: 14px;
     color: var(--apagado);
+  }
+  .mas {
+    font-size: 14px;
+    color: var(--tinta);
+    text-underline-offset: 3px;
   }
   .descargar {
     width: 100%;

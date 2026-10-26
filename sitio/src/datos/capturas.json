@@ -1,4 +1,9 @@
 {
+  "nota": 90,
+  "anchos": [
+    1280,
+    2560
+  ],
   "vistas": {
     "macos": {
       "estudio": {
@@ -6,13 +11,27 @@
           "ancho": 2560,
           "alto": 1600,
           "propia": true,
-          "bytes": 169152
+          "pesos": {
+            "estudio-claro-1280.avif": 102994,
+            "estudio-claro-1280.webp": 168366,
+            "estudio-claro-2560.avif": 307907,
+            "estudio-oscuro-1280.avif": 112160,
+            "estudio-oscuro-1280.webp": 183610,
+            "estudio-oscuro-2560.avif": 191854
+          }
         },
         "en": {
           "ancho": 2560,
           "alto": 1600,
-          "propia": false,
-          "bytes": 169152
+          "propia": true,
+          "pesos": {
+            "estudio-claro-1280.avif": 102548,
+            "estudio-claro-1280.webp": 167318,
+            "estudio-claro-2560.avif": 306912,
+            "estudio-oscuro-1280.avif": 111983,
+            "estudio-oscuro-1280.webp": 182370,
+            "estudio-oscuro-2560.avif": 191393
+          }
         }
       },
       "diferencias": {
@@ -20,215 +39,425 @@
           "ancho": 2560,
           "alto": 1600,
           "propia": true,
-          "bytes": 209022
+          "pesos": {
+            "diferencias-claro-1280.avif": 157010,
+            "diferencias-claro-1280.webp": 199418,
+            "diferencias-claro-2560.avif": 393688,
+            "diferencias-oscuro-1280.avif": 163176,
+            "diferencias-oscuro-1280.webp": 214280,
+            "diferencias-oscuro-2560.avif": 237959
+          }
         },
         "en": {
           "ancho": 2560,
           "alto": 1600,
-          "propia": false,
-          "bytes": 209022
+          "propia": true,
+          "pesos": {
+            "diferencias-claro-1280.avif": 156272,
+            "diferencias-claro-1280.webp": 197960,
+            "diferencias-claro-2560.avif": 391866,
+            "diferencias-oscuro-1280.avif": 162714,
+            "diferencias-oscuro-1280.webp": 212338,
+            "diferencias-oscuro-2560.avif": 236188
+          }
         }
       },
       "lotes": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 29180
+          "pesos": {
+            "lotes-claro-1280.avif": 27850,
+            "lotes-claro-1280.webp": 58244,
+            "lotes-claro-2560.avif": 49439,
+            "lotes-oscuro-1280.avif": 28175,
+            "lotes-oscuro-1280.webp": 67402,
+            "lotes-oscuro-2560.avif": 33870
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 29180
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "lotes-claro-1280.avif": 30407,
+            "lotes-claro-1280.webp": 60120,
+            "lotes-claro-2560.avif": 51343,
+            "lotes-oscuro-1280.avif": 28460,
+            "lotes-oscuro-1280.webp": 69352,
+            "lotes-oscuro-2560.avif": 34318
+          }
         }
       },
       "agentes": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 44092
+          "pesos": {
+            "agentes-claro-1280.avif": 50464,
+            "agentes-claro-1280.webp": 84492,
+            "agentes-claro-2560.avif": 103181,
+            "agentes-oscuro-1280.avif": 54713,
+            "agentes-oscuro-1280.webp": 96874,
+            "agentes-oscuro-2560.avif": 69140
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 44092
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "agentes-claro-1280.avif": 51425,
+            "agentes-claro-1280.webp": 81522,
+            "agentes-claro-2560.avif": 108713,
+            "agentes-oscuro-1280.avif": 54212,
+            "agentes-oscuro-1280.webp": 93048,
+            "agentes-oscuro-2560.avif": 66253
+          }
         }
       }
     },
     "windows": {
       "estudio": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 81678
+          "pesos": {
+            "estudio-claro-1280.avif": 139338,
+            "estudio-claro-1280.webp": 224816,
+            "estudio-claro-2560.avif": 413820,
+            "estudio-oscuro-1280.avif": 154296,
+            "estudio-oscuro-1280.webp": 245986,
+            "estudio-oscuro-2560.avif": 252780
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 81678
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "estudio-claro-1280.avif": 138495,
+            "estudio-claro-1280.webp": 223804,
+            "estudio-claro-2560.avif": 414841,
+            "estudio-oscuro-1280.avif": 152977,
+            "estudio-oscuro-1280.webp": 244628,
+            "estudio-oscuro-2560.avif": 252143
+          }
         }
       },
       "diferencias": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 97884
+          "pesos": {
+            "diferencias-claro-1280.avif": 193912,
+            "diferencias-claro-1280.webp": 255614,
+            "diferencias-claro-2560.avif": 455094,
+            "diferencias-oscuro-1280.avif": 203852,
+            "diferencias-oscuro-1280.webp": 278192,
+            "diferencias-oscuro-2560.avif": 302122
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 97884
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "diferencias-claro-1280.avif": 193203,
+            "diferencias-claro-1280.webp": 254492,
+            "diferencias-claro-2560.avif": 454953,
+            "diferencias-oscuro-1280.avif": 202045,
+            "diferencias-oscuro-1280.webp": 275846,
+            "diferencias-oscuro-2560.avif": 300508
+          }
         }
       },
       "lotes": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 36598
+          "pesos": {
+            "lotes-claro-1280.avif": 25894,
+            "lotes-claro-1280.webp": 50384,
+            "lotes-claro-2560.avif": 57956,
+            "lotes-oscuro-1280.avif": 26355,
+            "lotes-oscuro-1280.webp": 40616,
+            "lotes-oscuro-2560.avif": 33120
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 36598
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "lotes-claro-1280.avif": 27604,
+            "lotes-claro-1280.webp": 53894,
+            "lotes-claro-2560.avif": 61622,
+            "lotes-oscuro-1280.avif": 27227,
+            "lotes-oscuro-1280.webp": 42126,
+            "lotes-oscuro-2560.avif": 36280
+          }
         }
       },
       "agentes": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 52824
+          "pesos": {
+            "agentes-claro-1280.avif": 44290,
+            "agentes-claro-1280.webp": 74394,
+            "agentes-claro-2560.avif": 111214,
+            "agentes-oscuro-1280.avif": 46946,
+            "agentes-oscuro-1280.webp": 55250,
+            "agentes-oscuro-2560.avif": 62295
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 52824
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "agentes-claro-1280.avif": 42467,
+            "agentes-claro-1280.webp": 71568,
+            "agentes-claro-2560.avif": 104277,
+            "agentes-oscuro-1280.avif": 44127,
+            "agentes-oscuro-1280.webp": 52728,
+            "agentes-oscuro-2560.avif": 59292
+          }
         }
       }
     },
     "gnome": {
       "estudio": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 83266
+          "pesos": {
+            "estudio-claro-1280.avif": 122016,
+            "estudio-claro-1280.webp": 179870,
+            "estudio-claro-2560.avif": 385433,
+            "estudio-oscuro-1280.avif": 116237,
+            "estudio-oscuro-1280.webp": 195242,
+            "estudio-oscuro-2560.avif": 195634
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 83266
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "estudio-claro-1280.avif": 120789,
+            "estudio-claro-1280.webp": 177782,
+            "estudio-claro-2560.avif": 382356,
+            "estudio-oscuro-1280.avif": 115131,
+            "estudio-oscuro-1280.webp": 192746,
+            "estudio-oscuro-2560.avif": 194602
+          }
         }
       },
       "diferencias": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 100478
+          "pesos": {
+            "diferencias-claro-1280.avif": 64655,
+            "diferencias-claro-1280.webp": 141430,
+            "diferencias-claro-2560.avif": 109147,
+            "diferencias-oscuro-1280.avif": 176113,
+            "diferencias-oscuro-1280.webp": 227276,
+            "diferencias-oscuro-2560.avif": 241581
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 100478
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "diferencias-claro-1280.avif": 179943,
+            "diferencias-claro-1280.webp": 210568,
+            "diferencias-claro-2560.avif": 494177,
+            "diferencias-oscuro-1280.avif": 173679,
+            "diferencias-oscuro-1280.webp": 224542,
+            "diferencias-oscuro-2560.avif": 240433
+          }
         }
       },
       "lotes": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 42476
+          "pesos": {
+            "lotes-claro-1280.avif": 26811,
+            "lotes-claro-1280.webp": 60268,
+            "lotes-claro-2560.avif": 57198,
+            "lotes-oscuro-1280.avif": 26576,
+            "lotes-oscuro-1280.webp": 58068,
+            "lotes-oscuro-2560.avif": 33017
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 42476
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "lotes-claro-1280.avif": 27477,
+            "lotes-claro-1280.webp": 62284,
+            "lotes-claro-2560.avif": 58942,
+            "lotes-oscuro-1280.avif": 28238,
+            "lotes-oscuro-1280.webp": 61258,
+            "lotes-oscuro-2560.avif": 35566
+          }
         }
       },
       "agentes": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 49972
+          "pesos": {
+            "agentes-claro-1280.avif": 47459,
+            "agentes-claro-1280.webp": 75040,
+            "agentes-claro-2560.avif": 93831,
+            "agentes-oscuro-1280.avif": 44686,
+            "agentes-oscuro-1280.webp": 72870,
+            "agentes-oscuro-2560.avif": 55009
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 49972
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "agentes-claro-1280.avif": 45967,
+            "agentes-claro-1280.webp": 73406,
+            "agentes-claro-2560.avif": 86864,
+            "agentes-oscuro-1280.avif": 45723,
+            "agentes-oscuro-1280.webp": 71808,
+            "agentes-oscuro-2560.avif": 53610
+          }
         }
       }
     },
     "kde": {
       "estudio": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 77530
+          "pesos": {
+            "estudio-claro-1280.avif": 135091,
+            "estudio-claro-1280.webp": 171634,
+            "estudio-claro-2560.avif": 977034,
+            "estudio-oscuro-1280.avif": 133449,
+            "estudio-oscuro-1280.webp": 189904,
+            "estudio-oscuro-2560.avif": 259756
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 77530
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "estudio-claro-1280.avif": 132850,
+            "estudio-claro-1280.webp": 169410,
+            "estudio-claro-2560.avif": 971624,
+            "estudio-oscuro-1280.avif": 131866,
+            "estudio-oscuro-1280.webp": 187822,
+            "estudio-oscuro-2560.avif": 255553
+          }
         }
       },
       "diferencias": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 93266
+          "pesos": {
+            "diferencias-claro-1280.avif": 187160,
+            "diferencias-claro-1280.webp": 200778,
+            "diferencias-claro-2560.avif": 1219075,
+            "diferencias-oscuro-1280.avif": 192971,
+            "diferencias-oscuro-1280.webp": 220876,
+            "diferencias-oscuro-2560.avif": 292025
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 93266
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "diferencias-claro-1280.avif": 184892,
+            "diferencias-claro-1280.webp": 198270,
+            "diferencias-claro-2560.avif": 1214786,
+            "diferencias-oscuro-1280.avif": 190352,
+            "diferencias-oscuro-1280.webp": 217996,
+            "diferencias-oscuro-2560.avif": 288333
+          }
         }
       },
       "lotes": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 39018
+          "pesos": {
+            "lotes-claro-1280.avif": 48344,
+            "lotes-claro-1280.webp": 57340,
+            "lotes-claro-2560.avif": 127310,
+            "lotes-oscuro-1280.avif": 30905,
+            "lotes-oscuro-1280.webp": 71790,
+            "lotes-oscuro-2560.avif": 37724
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 39018
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "lotes-claro-1280.avif": 50735,
+            "lotes-claro-1280.webp": 59344,
+            "lotes-claro-2560.avif": 134665,
+            "lotes-oscuro-1280.avif": 30612,
+            "lotes-oscuro-1280.webp": 72466,
+            "lotes-oscuro-2560.avif": 37538
+          }
         }
       },
       "agentes": {
         "es": {
-          "ancho": 1280,
-          "alto": 800,
+          "ancho": 2560,
+          "alto": 1600,
           "propia": true,
-          "bytes": 54444
+          "pesos": {
+            "agentes-claro-1280.avif": 73322,
+            "agentes-claro-1280.webp": 74956,
+            "agentes-claro-2560.avif": 194879,
+            "agentes-oscuro-1280.avif": 55980,
+            "agentes-oscuro-1280.webp": 93346,
+            "agentes-oscuro-2560.avif": 67531
+          }
         },
         "en": {
-          "ancho": 1280,
-          "alto": 800,
-          "propia": false,
-          "bytes": 54444
+          "ancho": 2560,
+          "alto": 1600,
+          "propia": true,
+          "pesos": {
+            "agentes-claro-1280.avif": 105228,
+            "agentes-claro-1280.webp": 72006,
+            "agentes-claro-2560.avif": 189840,
+            "agentes-oscuro-1280.avif": 54043,
+            "agentes-oscuro-1280.webp": 89704,
+            "agentes-oscuro-2560.avif": 66590
+          }
         }
       }
     }

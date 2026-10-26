@@ -1,0 +1,111 @@
+---
+// El aviso de cookies (ADR 0033): abajo, sin tapar la página. «Aceptar» y
+// «Rechazar» pesan lo mismo, como pide la AEPD, y «Configurar» enseña el
+// interruptor de la analítica. Solo existe si hay GTM (Gtm.astro); se vuelve a
+// abrir desde el pie. consentimiento.ts guarda la elección.
+import { textos } from "../i18n";
+import { type Idioma, ruta } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const t = textos(idioma).cookies;
+const hay = Boolean(import.meta.env.PUBLIC_GTM_ID);
+---
+
+{
+  hay && (
+    <div class="aviso" role="dialog" aria-modal="false" aria-labelledby="cookies-titulo" aria-describedby="cookies-texto" data-cookies hidden>
+      <h2 id="cookies-titulo">{t.titulo}</h2>
+      <p id="cookies-texto">
+        {t.texto} <a href={ruta("cookies", idioma)}>{t.mas}</a>
+      </p>
+      <div class="configurar" data-configurar hidden>
+        <label class="opcion">
+          <input type="checkbox" checked disabled /> <span><strong>{t.necesarias}</strong> · {t.necesariasTexto}</span>
+        </label>
+        <label class="opcion">
+          <input type="checkbox" data-analitica /> <span><strong>{t.analitica}</strong> · {t.analiticaTexto}</span>
+        </label>
+      </div>
+      <div class="botones">
+        <button type="button" data-cookies-rechazar>{t.rechazar}</button>
+        <button type="button" data-cookies-aceptar>{t.aceptar}</button>
+        <button type="button" class="secundario" data-cookies-configurar>{t.configurar}</button>
+        <button type="button" class="secundario" data-cookies-guardar hidden>{t.guardar}</button>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .aviso {
+    position: fixed;
+    z-index: 60;
+    left: max(16px, env(safe-area-inset-left, 0px));
+    right: max(16px, env(safe-area-inset-right, 0px));
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    max-width: 560px;
+    margin-inline: auto;
+    display: grid;
+    gap: 12px;
+    padding: 20px;
+    border-radius: 18px;
+    background: var(--lienzo);
+    color: var(--cuerpo);
+    font-size: 14px;
+    box-shadow: 0 0 0 1px var(--filete), 0 24px 60px -18px rgb(0 0 0 / 0.45);
+  }
+  .aviso[hidden] {
+    display: none;
+  }
+  h2 {
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+  a {
+    color: var(--tinta);
+    text-underline-offset: 3px;
+  }
+  .configurar {
+    display: grid;
+    gap: 8px;
+  }
+  .configurar[hidden] {
+    display: none;
+  }
+  .opcion {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .opcion input {
+    margin-top: 3px;
+    accent-color: var(--tinta);
+  }
+  .botones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .botones button {
+    min-height: 42px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--tinta);
+    color: var(--lienzo);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .botones .secundario {
+    grid-column: 1 / -1;
+    background: transparent;
+    color: var(--tinta);
+    box-shadow: inset 0 0 0 1px var(--filete);
+    font-weight: 500;
+  }
+  .botones button[hidden] {
+    display: none;
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+// Novedades (ADR 0033): lo que cambia en cada versión, desde las notas de
+// .github/notas, hasta la publicada. En inglés, las notas antiguas salen en
+// español, y se dice.
+import { join } from "node:path";
+import { leerNotas } from "../datos/notas";
+import { release } from "../datos/version";
+import type { Idioma } from "../i18n/rutas";
+import Pagina from "../layouts/Pagina.astro";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+// Al compilar, la carpeta de trabajo es la de la web (sitio/ o web/).
+const notas = leerNotas(join(process.cwd(), "../.github/notas"), release.version);
+const T = {
+  es: {
+    titulo: "Novedades de Apolo · Lo que cambia en cada versión",
+    descripcion: "Lo que trae cada versión de Apolo, el optimizador de imágenes para macOS, Windows y Linux, de la más nueva a la primera.",
+    etiqueta: "Novedades",
+    h1: "Lo que cambia en cada versión.",
+    entrada: "Apolo se actualiza sola: cuando sale una versión, te lo dice y se instala con un clic.",
+    soloEs: "",
+    github: "Todas las versiones, con sus ficheros, en GitHub",
+  },
+  en: {
+    titulo: "What's new in Apolo · What changes in each version",
+    descripcion: "What each version of Apolo, the image optimizer for macOS, Windows and Linux, brings, from the newest to the first.",
+    etiqueta: "What's new",
+    h1: "What changes in each version.",
+    entrada: "Apolo updates itself: when a version comes out, it tells you and installs it with one click.",
+    soloEs: "Only in Spanish",
+    github: "Every version, with its files, on GitHub",
+  },
+}[idioma];
+---
+
+<Pagina idioma={idioma} pagina="novedades" titulo={T.titulo} descripcion={T.descripcion} etiqueta={T.etiqueta} h1={T.h1} entrada={T.entrada}>
+  {
+    notas.map((n) => (
+      <article class="nota" id={`v${n.version}`}>
+        <h2>
+          <a href={`#v${n.version}`}>v{n.version}</a>
+          {idioma === "en" && n.en === null && <span class="solo">{T.soloEs}</span>}
+        </h2>
+        <div lang={idioma === "en" && n.en === null ? "es" : idioma} set:html={idioma === "en" && n.en !== null ? n.en : n.es} />
+      </article>
+    ))
+  }
+  <p><a href="https://github.com/webcafeina/Apolo/releases" rel="noopener">{T.github}</a></p>
+</Pagina>
+
+<style>
+  .nota {
+    padding-top: 8px;
+    border-top: 1px solid var(--filete);
+  }
+  .nota h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 40px;
+  }
+  .nota h2 a {
+    text-decoration: none;
+    color: var(--tinta);
+  }
+  .solo {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--apagado);
+  }
+</style>

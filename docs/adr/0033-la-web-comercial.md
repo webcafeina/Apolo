@@ -58,6 +58,25 @@ y un agente de diseño. El plan está en `~/.claude/plans/buenos-d-as-vamos-a-vi
   `src/datos/release.ts` lee la Release al compilar y falla si falta alguno de los 19 ficheros que
   enlaza la web; `src/scripts/plataforma.ts` detecta el ordenador; `src/i18n/rutas.ts` empareja las
   páginas. `make web` (check, build y vitest) va dentro de `make comprobar`.
+- **La portada** (F4), con el estilo de Apple y «las dos», y **las imágenes definitivas** (F5):
+  `make capturas-sitio` (capturas a 2x con fondo transparente en macOS y Windows, en las cuatro
+  vistas y los dos idiomas) y `sitio/herramientas/capturas.mjs`, que las pasa con el propio Apolo a
+  AVIF (1280 y 2560 px) y WebP (1280; a 2560 sumaba 19 MB para los pocos navegadores sin AVIF),
+  buscando la nota 90; `make video-sitio`, con `frontend/e2e/video.spec.ts` (screencast de Chromium a
+  2x, más nítido que la grabación de Playwright, y un puntero dibujado) y
+  `sitio/herramientas/video.mjs` (H.264 a 1600 px). La ventana pone detrás del vidrio el escritorio
+  desenfocado (`backdrop-filter`). Iconos e imagen social con `herramientas/iconos.mjs`; el
+  comparador con `herramientas/comparador.mjs`; las imágenes del README con `herramientas/readme.mjs`.
+- **Las páginas** (F6): descarga por sistema, preguntas (FAQPage), novedades (desde
+  `.github/notas`, recortadas a lo que cambia, con marked, MIT), CLI, agentes, cookies y 404.
+- **SEO y medición** (F7): `Seo.astro`, sitemap y robots con las rutas traducidas, manifiesto;
+  `Gtm.astro` y `BannerCookies.astro` con Consent Mode v2 básico. `crates/tema` gana `oro_texto`
+  (4,5:1), porque `oro_trazo` (3:1) no vale para un texto de 13 px.
+- **El README** (F8) en los dos idiomas, comercial, con botones SVG que llevan a las páginas de
+  descarga y capturas de cada sistema.
+- **Las pruebas** (F9): vitest (plataforma, temprano, release, rutas, notas, consentimiento) y
+  Playwright con axe (`make web-e2e`, también en CI): detección, idiomas, descargas, consentimiento,
+  SEO y accesibilidad en las 18 páginas.
 - **`frontend/herramientas/rasterizar.mjs` admite un filtro** (`node rasterizar.mjs fondo-dmg`),
   para rehacer un PNG sin tocar los demás.
 
@@ -87,6 +106,10 @@ y un agente de diseño. El plan está en `~/.claude/plans/buenos-d-as-vamos-a-vi
 - `make comprobar` gana la compilación y las pruebas de la web (fase 3).
 
 ## Verificación
+
+- 2026-10-26, tarde: `make web` (34 pruebas de vitest) y `make web-e2e` (34 de Playwright, con axe
+  WCAG 2 AA en las 18 páginas) en verde. axe se pasa con «reducir el movimiento»: la animación de
+  aparecer deja lo de abajo a media opacidad hasta que entra en pantalla, y axe mediría ese contraste.
 
 - `make comprobar` en verde con `publico.test.ts` (48 casos).
 - El PNG nuevo del fondo del `.dmg`, mirado: la frase nueva, con Marcellus y Figtree.

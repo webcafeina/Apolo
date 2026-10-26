@@ -1,0 +1,37 @@
+---
+// La 404 (ADR 0033): GitHub Pages sirve una sola para toda la web, así que va
+// en los dos idiomas. Sin canonical y con noindex (Base sin `pagina`).
+import Base from "../layouts/Base.astro";
+---
+
+<Base idioma="es" titulo="Página no encontrada · Apolo" descripcion="Esta página no existe.">
+  <section class="no">
+    <div class="envoltura">
+      <span class="etiqueta">404</span>
+      <h1>Esta página no existe.</h1>
+      <p><a class="boton" href="/">Volver a Apolo</a></p>
+      <p lang="en" class="en">This page doesn't exist. <a href="/en/">Back to Apolo in English</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .no {
+    padding-block: clamp(80px, 14vw, 160px);
+    text-align: center;
+  }
+  .envoltura {
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+  }
+  h1 {
+    font-size: clamp(36px, 6vw, 64px);
+  }
+  .en {
+    color: var(--apagado);
+  }
+  .en a {
+    color: var(--tinta);
+  }
+</style>

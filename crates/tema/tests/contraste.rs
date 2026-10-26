@@ -26,6 +26,7 @@ fn parejas(t: &Tema) -> Vec<(&'static str, Rgb, &'static str, Rgb, f64)> {
         v.push(("exito", t.exito, nf, f, AA_NORMAL));
         v.push(("aviso", t.aviso, nf, f, AA_NORMAL));
         v.push(("error", t.error, nf, f, AA_NORMAL));
+        v.push(("oro-texto", t.oro_texto, nf, f, AA_NORMAL));
     }
     v.push((
         "sobre-acento",

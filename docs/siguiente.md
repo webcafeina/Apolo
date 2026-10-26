@@ -1,6 +1,6 @@
 # Lo siguiente
 
-Última actualización: **2026-10-24**
+Última actualización: **2026-10-26**
 
 El plan entero salió de la sesión del 2026-10-06, decidido con el cliente en cuatro rondas de
 preguntas (ver [decisiones.md](decisiones.md)). Va **por entregas**; cada una se cierra con sus
@@ -45,10 +45,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     - ~~**v0.18.0, Recortar y Redimensionar sobre la imagen**~~ ([ADR 0032](adr/0032-recortar-y-redimensionar-sobre-la-imagen.md)), pedida por el
       cliente el 2026-10-23: publicada el 2026-10-24 y vista por el cliente en todos sus sistemas,
       Arch incluido; ~~v0.18.1~~ con sus arreglos, publicada el mismo día;
-    - **v0.18.2** (macOS con el material de barra lateral, sus iconos en un oro más vivo, la
-      bienvenida de Windows centrada): etiquetada el 2026-10-24 por la noche, **sin publicar**;
-      revisar el borrador de `Publicar` 40118422741 y publicarla (el cliente ya lo pidió), y que la
-      compare con Finder en su Mac (docs/estado.md);
+    - ~~**v0.18.2**~~ (macOS con el material de barra lateral, sus iconos en un oro más vivo, la
+      bienvenida de Windows centrada): publicada el 2026-10-26. Falta que el cliente la compare con
+      Finder en su Mac (docs/estado.md);
     - la prueba guiada final.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

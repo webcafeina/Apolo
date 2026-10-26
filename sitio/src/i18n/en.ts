@@ -138,18 +138,18 @@ export const en: Textos = {
     boton: "Meet Webcafeína",
   },
   cookies: {
-    titulo: "Can we count visits?",
+    titulo: "This site uses cookies",
     texto:
-      "With your permission, this site uses Google Analytics cookies to know how many people visit and what they download. The app sends nothing.",
+      "We use our own cookies, needed for the site to work, and third-party cookies for analytics, only if you accept them. You can accept, reject or configure them.",
     mas: "Cookie policy",
     aceptar: "Accept",
     rechazar: "Reject",
     configurar: "Settings",
     guardar: "Save my choice",
     necesarias: "Necessary",
-    necesariasTexto: "remember your system, your distribution and this choice, in this browser.",
+    necesariasTexto: "essential for the site to work and to remember your preferences.",
     analitica: "Analytics",
-    analiticaTexto: "Google Analytics, to count visits and downloads.",
+    analiticaTexto: "help us understand how the site is used.",
     preferencias: "Cookie preferences",
   },
   pie: {

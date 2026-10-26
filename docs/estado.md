@@ -4,7 +4,32 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-26, tarde): la web nueva, terminada en `sitio/` (F1 a F9) y lista para
+> **PARADA AQUÍ (2026-10-26, noche): la web nueva, revisada por el cliente en la galería; mañana,
+> guiado paso a paso, lo que necesita de él.** Todo subido: `42f3d11` (el aviso de cookies, tarjeta
+> de 360 px abajo a la izquierda en pantallas de 1000 px o más, para no tapar el botón de descarga)
+> y `f9e5edb` (el aviso con texto genérico, «Esta web usa cookies», a petición del cliente: no
+> quiere que diga para qué se mide; el detalle se queda en la política). `make comprobar` y
+> `make web-e2e` en verde en local; `Comprobar` de CI en verde con `42f3d11` (comprobar, e2e con
+> `web-e2e` por primera vez en CI, y equivalencia). **Comprobar al empezar** cómo acabó `Comprobar`
+> de `f9e5edb` (ejecución 40354094153: `gh run view 40354094153`). Galería de revisión (artefacto):
+> https://claude.ai/artifact/JjVE3Sk5agvtzwLUZfdJfe, con las capturas en el scratchpad de la sesión
+> (`revision/`). **Lo siguiente, mañana, guiando al cliente paso a paso** (lo pidió así):
+> 1. **GTM y GA4**: que cree la propiedad de GA4 de Apolo (flujo web para apolo.webcafeina.com), el
+>    contenedor web de GTM, y dentro la etiqueta de Google (el ID `G-…`) que se dispare con
+>    «Consent Initialization»/todas las páginas, respetando el consentimiento (`analytics_storage`);
+>    sin activar el `file_download` de la medición mejorada, o las descargas se cuentan dos veces
+>    (ya contamos `descarga_apolo`). Me pasa el ID `GTM-…` y lo pongo como variable `GTM_ID` del
+>    repositorio (`gh variable set GTM_ID`, con su sí). Opcional: eventos de GA4 para
+>    `descarga_apolo`, `copiar_comando`, `cambiar_vista`, `cambiar_idioma` y `clic_webcafeina`.
+> 2. **Search Console**: propiedad de dominio o de prefijo para `apolo.webcafeina.com`, y el
+>    registro TXT en Cloudflare (lo pone él). El sitemap se envía después de la 1.0.0.
+> 3. **El repositorio**: su sí a `gh repo edit` (descripción en español, homepage
+>    https://apolo.webcafeina.com, topics sin `squoosh`: la lista está en el plan) y que suba la
+>    imagen social en Settings › Social preview: sirve `sitio/public/social/apolo-es.png` (1200×630;
+>    GitHub pide al menos 640×320 y recomienda 1280×640), o se genera una a 1280×640 si la quiere.
+> 4. Después, F10 (abajo) y la 1.0.0 con su sí.
+>
+> **(2026-10-26, tarde): la web nueva, terminada en `sitio/` (F1 a F9) y lista para
 > que la revise el cliente.** Todo subido (ver sesiones.md). Hecho: la portada (estilo Apple,
 > comparador y vídeo), las imágenes definitivas (capturas de las 4 vistas en 2 idiomas, AVIF y WebP,
 > y 8 vídeos), las páginas (descarga por sistema, preguntas, novedades, CLI, agentes, cookies, 404),

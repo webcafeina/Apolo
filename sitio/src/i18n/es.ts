@@ -139,18 +139,18 @@ export const es = {
     boton: "Conoce Webcafeína",
   },
   cookies: {
-    titulo: "¿Medimos las visitas?",
+    titulo: "Esta web usa cookies",
     texto:
-      "Con tu permiso, esta web usa cookies de Google Analytics para saber cuánta gente la visita y qué descarga. La aplicación no envía nada.",
+      "Usamos cookies propias, necesarias para que la web funcione, y de terceros, con fines analíticos, solo si las aceptas. Puedes aceptarlas, rechazarlas o configurarlas.",
     mas: "Política de cookies",
     aceptar: "Aceptar",
     rechazar: "Rechazar",
     configurar: "Configurar",
     guardar: "Guardar la elección",
     necesarias: "Necesarias",
-    necesariasTexto: "recuerdan tu sistema, tu distribución y esta elección, en este navegador.",
+    necesariasTexto: "imprescindibles para que la web funcione y recuerde tus preferencias.",
     analitica: "Analítica",
-    analiticaTexto: "Google Analytics, para contar visitas y descargas.",
+    analiticaTexto: "nos ayudan a entender cómo se usa la web.",
     preferencias: "Preferencias de cookies",
   },
   pie: {

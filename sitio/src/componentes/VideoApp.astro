@@ -1,7 +1,8 @@
 ---
 // Apolo en marcha (ADR 0033): unos segundos en bucle, sin sonido, en la
-// ventana de macOS. Arranca al entrar en pantalla (web.ts), no con «reducir el
-// movimiento», y tiene su botón de pausa (WCAG 2.2.2).
+// ventana del sistema de la vista (la de «En tu sistema») y en el idioma de la
+// página. Solo se descarga y arranca el que se ve, al entrar en pantalla
+// (web.ts), no con «reducir el movimiento», y tiene su botón de pausa (WCAG 2.2.2).
 import { textos } from "../i18n";
 import type { Idioma } from "../i18n/rutas";
 import Ventana from "./Ventana.astro";
@@ -11,6 +12,7 @@ interface Props {
 }
 const { idioma } = Astro.props;
 const t = textos(idioma);
+const VISTAS = ["macos", "windows", "gnome", "kde"] as const;
 ---
 
 <section class="seccion alterna" aria-labelledby="video-titulo">
@@ -20,17 +22,23 @@ const t = textos(idioma);
       <h2 id="video-titulo">{t.video.titulo}</h2>
     </div>
     <div data-aparece>
-      <Ventana vista="macos">
-        <div class="caja" data-video>
-          <video muted loop playsinline preload="none" poster="/video/macos-es-poster.webp" width="1280" height="800" aria-label={t.video.titulo}>
-            <source src="/video/macos-es.mp4" type="video/mp4" />
-          </video>
-          <button type="button" class="pausa" data-pausa={t.video.pausa} data-seguir={t.video.seguir} aria-label={t.video.seguir}>
-            <svg class="icono-seguir" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"></path></svg>
-            <svg class="icono-pausa" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2h3v12H4zM9 2h3v12H9z" fill="currentColor"></path></svg>
-          </button>
-        </div>
-      </Ventana>
+      {
+        VISTAS.map((v) => (
+          <div class="vista" data-vista={v}>
+            <Ventana vista={v}>
+              <div class="caja" data-video>
+                <video muted loop playsinline preload="none" poster={`/video/${v}-${idioma}-poster.webp`} width="1600" height="1000" aria-label={t.video.titulo}>
+                  <source src={`/video/${v}-${idioma}.mp4`} type="video/mp4" />
+                </video>
+                <button type="button" class="pausa" data-pausa={t.video.pausa} data-seguir={t.video.seguir} aria-label={t.video.seguir}>
+                  <svg class="icono-seguir" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor" /></svg>
+                  <svg class="icono-pausa" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2h3v12H4zM9 2h3v12H9z" fill="currentColor" /></svg>
+                </button>
+              </div>
+            </Ventana>
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -72,6 +80,16 @@ const t = textos(idioma);
     cursor: pointer;
     display: grid;
     place-items: center;
+  }
+  .vista {
+    display: none;
+  }
+  :global(html:not([data-vista])) .vista[data-vista="macos"],
+  :global(html[data-vista="macos"]) .vista[data-vista="macos"],
+  :global(html[data-vista="windows"]) .vista[data-vista="windows"],
+  :global(html[data-vista="gnome"]) .vista[data-vista="gnome"],
+  :global(html[data-vista="kde"]) .vista[data-vista="kde"] {
+    display: block;
   }
   .icono-pausa,
   [data-reproduciendo] .icono-seguir {

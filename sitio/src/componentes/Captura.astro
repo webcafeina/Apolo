@@ -1,0 +1,44 @@
+---
+// Una captura de Apolo (ADR 0033): en claro y oscuro, en AVIF a 1280 y 2560 px
+// y en WebP a 1280, con sus medidas (herramientas/capturas.mjs y capturas.json).
+import capturas from "../datos/capturas.json";
+import { textos } from "../i18n";
+import type { Idioma } from "../i18n/rutas";
+
+export type Vista = "macos" | "windows" | "gnome" | "kde";
+export type Pantalla = "estudio" | "diferencias" | "lotes" | "agentes";
+
+interface Props {
+  idioma: Idioma;
+  vista: Vista;
+  pantalla: Pantalla;
+  class?: string;
+  /** La de la portada de una página de descarga se pide ya; las demás, al acercarse. */
+  prioridad?: boolean;
+}
+const { idioma, vista, pantalla, class: clase, prioridad = false } = Astro.props;
+const t = textos(idioma);
+const m = capturas.vistas[vista][pantalla][idioma];
+const base = (tema: string) => `/img/${vista}/${idioma === "es" ? "" : "en/"}${pantalla}-${tema}`;
+// AVIF a 1280 y 2560; WebP, solo a 1280 (herramientas/capturas.mjs).
+const srcset = (tema: string, formato: string) =>
+  (formato === "avif" ? capturas.anchos : [1280]).map((a) => `${base(tema)}-${a}.${formato} ${a}w`).join(", ");
+const TAMANOS = "(max-width: 1180px) calc(100vw - 80px), 1060px";
+const alt = t.sistema.alt.replace("{vista}", t.sistema.vistas[vista]).replace("{pantalla}", t.sistema.pantallas[pantalla]);
+---
+
+<picture class={clase} data-pantalla={pantalla}>
+  <source media="(prefers-color-scheme: dark)" type="image/avif" srcset={srcset("oscuro", "avif")} sizes={TAMANOS} />
+  <source media="(prefers-color-scheme: dark)" type="image/webp" srcset={srcset("oscuro", "webp")} sizes={TAMANOS} />
+  <source type="image/avif" srcset={srcset("claro", "avif")} sizes={TAMANOS} />
+  <img
+    src={`${base("claro")}-1280.webp`}
+    srcset={srcset("claro", "webp")}
+    sizes={TAMANOS}
+    width={m.ancho}
+    height={m.alto}
+    alt={alt}
+    loading={prioridad ? "eager" : "lazy"}
+    fetchpriority={prioridad ? "high" : undefined}
+  />
+</picture>

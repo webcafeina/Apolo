@@ -1,8 +1,8 @@
 // Lo que ve el público, vigilado (ADR 0033): Squoosh no se nombra en ningún
 // texto que llegue a la gente, y la descripción del paquete de Linux va en
 // ASCII, que el Centro de aplicaciones de Ubuntu cambia las tildes por «?»
-// (docs/trampas.md). Los README y la web se suman al cambiar de web.
-import { readdirSync, readFileSync } from "node:fs";
+// (docs/trampas.md). También los README y toda la web nueva (sitio/src).
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -12,7 +12,16 @@ const de = (carpeta: string, filtro: (f: string) => boolean = () => true) =>
     .filter(filtro)
     .map((f) => join(carpeta, f));
 
+// Todos los ficheros de una carpeta, con las subcarpetas.
+const todos = (carpeta: string): string[] =>
+  readdirSync(join(RAIZ, carpeta)).flatMap((f) =>
+    statSync(join(RAIZ, carpeta, f)).isDirectory() ? todos(join(carpeta, f)) : [join(carpeta, f)],
+  );
+
 const PUBLICOS = [
+  "README.md",
+  "README.en.md",
+  ...todos("sitio/src"),
   ...de("frontend/src/i18n", (f) => f.endsWith(".json")),
   ...de("src-tauri", (f) => /^tauri.*\.json$/.test(f)),
   ...de("empaquetado/linux"),

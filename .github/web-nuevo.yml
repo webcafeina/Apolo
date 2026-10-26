@@ -1,0 +1,155 @@
+# BORRADOR para la fase 10 de la web comercial (ADR 0033): en el cambio de sitio/ a web/, este
+# fichero sustituye a .github/workflows/web.yml. Aquí, fuera de workflows/, no se ejecuta.
+
+# La web de Apolo (apolo.webcafeina.com, ADR 0026 y 0033): web/ es un proyecto de Astro que se
+# compila aquí, con los datos de la última versión publicada (los ficheros, sus tamaños y sus
+# sumas, que escribe este mismo flujo), y se publica con GitHub Pages. Las imágenes se hacen a mano
+# con el propio Apolo (`make capturas-sitio`, `make video-sitio` y las herramientas de
+# web/herramientas/) y van en git; los tokens, con `make tokens`.
+#
+# Pages está activado con «GitHub Actions» como origen y el dominio apolo.webcafeina.com en los
+# ajustes del repositorio (2026-10-21); el registro DNS (CNAME a webcafeina.github.io) es del
+# cliente, en Cloudflare. GTM_ID es una variable del repositorio: sin ella, la web no carga GTM ni
+# enseña el aviso de cookies.
+#
+# Con la web van los repositorios APT y RPM de Linux (ADR 0030): /apt y /rpm, con los .deb y .rpm
+# de la última versión publicada, firmados con la clave de los paquetes (PAQUETES_GPG_CLAVE, la
+# misma que firma el .rpm). Los paquetes no se guardan en git: se bajan de la Release al desplegar,
+# y por eso se despliega también al publicar una versión. Y en /aur, el PKGBUILD de apolo-bin.
+name: Web
+
+on:
+  push:
+    branches: [main]
+    paths: ["web/**", ".github/notas/**", ".github/workflows/web.yml"]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: web
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      # Siempre main, también al publicar una versión: con la etiqueta se desplegaría la web que
+      # había al etiquetar (trampas.md).
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+      - name: Los datos de la última versión
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ETIQUETA: ${{ github.event.release.tag_name }}
+        run: |
+          etiqueta="${ETIQUETA:-$(gh release view --json tagName -q .tagName)}"
+          echo "ETIQUETA=$etiqueta" >> "$GITHUB_ENV"
+          gh release view "$etiqueta" --json tagName,publishedAt,assets \
+            -q '{tagName, publishedAt, assets: [.assets[] | {name, size, url}]}' > web/src/datos/release.json
+          gh release download "$etiqueta" -p SHA256SUMS.txt -D "$RUNNER_TEMP"
+          cp "$RUNNER_TEMP/SHA256SUMS.txt" web/src/datos/sumas.txt
+      - name: La web
+        env:
+          PUBLIC_GTM_ID: ${{ vars.GTM_ID }}
+        run: |
+          pnpm -C web install --frozen-lockfile
+          pnpm -C web build
+      # Después de compilar: Astro vacía dist/ al empezar.
+      - name: Los paquetes de la última versión
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Paquetes de la $ETIQUETA"
+          mkdir -p web/dist/apt/pool/main web/dist/rpm web/dist/aur
+          gh release download "$ETIQUETA" -p '*.deb' -D web/dist/apt/pool/main
+          gh release download "$ETIQUETA" -p '*.rpm' -D web/dist/rpm
+          ls -la web/dist/apt/pool/main web/dist/rpm
+          # El PKGBUILD de apolo-bin, relleno con esta versión, para Arch mientras el AUR no
+          # admite cuentas nuevas (trampas.md): `makepkg -si`.
+          python3 -I empaquetado/aur/rellenar.py "${ETIQUETA#v}" "$RUNNER_TEMP/SHA256SUMS.txt" web/dist/aur/PKGBUILD
+      - name: La clave de los paquetes
+        env:
+          CLAVE: ${{ secrets.PAQUETES_GPG_CLAVE }}
+          FRASE: ${{ secrets.PAQUETES_GPG_FRASE }}
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gpg"
+          install -m 700 -d "$GNUPGHOME"
+          printf '%s\n' "$CLAVE" | gpg --batch --import 2> /dev/null
+          printf '%s' "$FRASE" > "$RUNNER_TEMP/frase"
+          echo "GNUPGHOME=$GNUPGHOME" >> "$GITHUB_ENV"
+      - name: El repositorio APT
+        run: |
+          sudo apt-get update > /dev/null
+          sudo apt-get install -y apt-utils createrepo-c > /dev/null
+          firmar() { gpg --batch --yes --pinentry-mode loopback --passphrase-file "$RUNNER_TEMP/frase" "$@"; }
+          cd web/dist/apt
+          for a in amd64 arm64; do
+            mkdir -p "dists/stable/main/binary-$a"
+            apt-ftparchive --arch "$a" packages pool > "dists/stable/main/binary-$a/Packages"
+            gzip -k9n "dists/stable/main/binary-$a/Packages"
+          done
+          apt-ftparchive \
+            -o APT::FTPArchive::Release::Origin=Apolo \
+            -o APT::FTPArchive::Release::Label=Apolo \
+            -o APT::FTPArchive::Release::Suite=stable \
+            -o APT::FTPArchive::Release::Codename=stable \
+            -o "APT::FTPArchive::Release::Architectures=amd64 arm64" \
+            -o APT::FTPArchive::Release::Components=main \
+            -o "APT::FTPArchive::Release::Description=Apolo, de Webcafeína" \
+            release dists/stable > dists/stable/Release
+          firmar --clearsign -o dists/stable/InRelease dists/stable/Release
+          firmar --armor --detach-sign -o dists/stable/Release.gpg dists/stable/Release
+          printf '%s\n' \
+            "Types: deb" \
+            "URIs: https://apolo.webcafeina.com/apt" \
+            "Suites: stable" \
+            "Components: main" \
+            "Architectures: amd64 arm64" \
+            "Signed-By: /etc/apt/keyrings/apolo.asc" > apolo.sources
+          cat dists/stable/main/binary-amd64/Packages
+      - name: El repositorio RPM
+        run: |
+          cd web/dist/rpm
+          createrepo_c --quiet .
+          gpg --batch --yes --pinentry-mode loopback --passphrase-file "$RUNNER_TEMP/frase" \
+            --armor --detach-sign -o repodata/repomd.xml.asc repodata/repomd.xml
+          printf '%s\n' \
+            "[apolo]" \
+            "name=Apolo" \
+            "baseurl=https://apolo.webcafeina.com/rpm" \
+            "enabled=1" \
+            "gpgcheck=1" \
+            "repo_gpgcheck=1" \
+            "gpgkey=https://apolo.webcafeina.com/apolo.asc" > apolo.repo
+          ls -la . repodata
+      - name: Fuera la clave
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/gpg" "$RUNNER_TEMP/frase"
+      # Cada descarga que enlaza la web existe en la Release.
+      - name: Los enlaces de descarga
+        run: |
+          grep -rhoE 'https://github\.com/webcafeina/Apolo/releases/download/[^"]+' web/dist --include=*.html | sort -u > "$RUNNER_TEMP/enlaces"
+          wc -l < "$RUNNER_TEMP/enlaces"
+          while read -r u; do curl -fsIL -o /dev/null "$u" || { echo "No responde: $u"; exit 1; }; done < "$RUNNER_TEMP/enlaces"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+      - id: despliegue
+        uses: actions/deploy-pages@v4

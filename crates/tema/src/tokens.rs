@@ -38,6 +38,7 @@ fn variables(t: &Tema) -> Vec<(&'static str, Rgb)> {
         ("sobre-acento", t.sobre_acento),
         ("acento", t.acento),
         ("oro-trazo", t.oro_trazo),
+        ("oro-texto", t.oro_texto),
         ("barra", t.barra),
         ("barra-encima", t.barra_encima),
         ("campo", t.campo),

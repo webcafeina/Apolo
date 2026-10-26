@@ -4,11 +4,38 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-26 (tarde) · La web nueva, terminada en sitio/
+
+- Capturas y vídeos definitivos, repetidos enteros (se habían parado a mediodía). El WebP a 2560 px
+  se quitó (19 MB para los pocos navegadores sin AVIF): las capturas pesan 30 MB. Los vídeos en
+  inglés fallaban porque apolo-dev arrancaba en español (`VIDEO_IDIOMA` en playwright.config.ts).
+- Pruebas de navegador en verde tras tres arreglos: un `astro preview` de la mañana seguía vivo con
+  su candado (`--ignore-lock`); los bloques de órdenes, enfocables (`tabindex`); la prueba del
+  parpadeo, rehecha (trampas.md). axe, con «reducir el movimiento».
+- Imágenes del README con `herramientas/readme.mjs`. ADR 0033, deuda y trampas al día. El
+  `web.yml` nuevo, escrito en `.github/web-nuevo.yml` para el cambio (F10).
+
+---
+
+## 2026-10-26 (mediodía) · La web nueva: portada, páginas, SEO, cookies y README
+
+- **F3** (`8da6391`): Astro en `sitio/`, `css_web()` en crates/tema, `release.ts`, `plataforma.ts`,
+  `make web` en `make comprobar`. Una lección: un commit con heredoc partió la cadena de órdenes y la
+  segunda línea se ejecutó con clippy fallido (no subió nada); el mensaje va ahora a un fichero
+  (memoria `comprobar-antes-de-subir`).
+- **F4** (`c469810`): la portada con el estilo de Apple y «las dos»; galería para el cliente (artefacto, borrado al cerrar). El cliente: «Adelante, se revisará cuando
+  esté terminada».
+- **F5 a F9, sin subir** (estado.md dice qué falta): capturas y vídeos definitivos en marcha,
+  páginas, SEO, GTM con el aviso propio, iconos e imagen social, README nuevo, pruebas de navegador
+  escritas, `oro_texto` en la paleta.
+
+---
+
 ## 2026-10-26 (tarde) · La fase comercial: plan, prototipo y Squoosh fuera de la app
 
 - **Plan** en modo plan, con cinco rondas de preguntas: web en Astro, detección de sistema, SEO, GTM
   con banner propio, README comercial, Squoosh fuera de lo público y la 1.0.0 con la web (ADR 0033).
-- **Prototipo** (F1): artefacto con 3 estilos × 4 portadas, capturas al día de las cuatro vistas,
+- **Prototipo** (F1, artefacto borrado al cerrar la sesión): 3 estilos × 4 portadas, capturas al día de las cuatro vistas,
   comparador con la máscara de oro de Micenas (CC0; a 1600 px y nota 80, PNG 3,3 MB → AVIF 378 KB)
   y un borrador de vídeo grabado con Playwright (cursor dibujado) y pasado por ffmpeg. **El cliente
   eligió el estilo Apple y la portada «las dos»**.

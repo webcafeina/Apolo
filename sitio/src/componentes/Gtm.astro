@@ -1,0 +1,49 @@
+---
+// Google Tag Manager con Consent Mode v2 en modo básico (ADR 0033): todo
+// denegado por defecto, y GTM no se carga hasta que se acepta la analítica en
+// el aviso de cookies (consentimiento.ts). Si ya se eligió (en los últimos 12
+// meses), se aplica antes de pintar. Sin ID (PUBLIC_GTM_ID, la variable GTM_ID
+// del repositorio en web.yml), no hay GTM ni aviso.
+const id = import.meta.env.PUBLIC_GTM_ID ?? "";
+---
+
+{
+  id && (
+    <script is:inline define:vars={{ id }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+      gtag("consent", "default", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+        functionality_storage: "granted",
+        security_storage: "granted",
+      });
+      gtag("set", "ads_data_redaction", true);
+      window.apoloCargarGtm = function () {
+        if (window.apoloGtm) return;
+        window.apoloGtm = true;
+        window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtm.js?id=" + encodeURIComponent(id);
+        document.head.appendChild(s);
+      };
+      document.documentElement.setAttribute("data-gtm", "");
+      try {
+        var c = JSON.parse(localStorage.getItem("apolo-consentimiento") || "null");
+        if (c && c.v === 1 && Date.now() - c.fecha < 365 * 864e5) {
+          document.documentElement.setAttribute("data-consentimiento", "dado");
+          if (c.analitica) {
+            gtag("consent", "update", { analytics_storage: "granted" });
+            window.apoloCargarGtm();
+          }
+        }
+      } catch (e) {}
+    </script>
+  )
+}

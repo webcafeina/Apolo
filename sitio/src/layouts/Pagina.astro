@@ -1,0 +1,102 @@
+---
+// Una página de contenido (ADR 0033): descarga por sistema, preguntas,
+// novedades, línea de comandos, agentes y cookies. La cabeza centrada, como la
+// portada, y el texto a una medida que se lee bien.
+import type { Idioma, Pagina as P } from "../i18n/rutas";
+import Base from "./Base.astro";
+
+interface Props {
+  idioma: Idioma;
+  pagina: P;
+  titulo: string;
+  descripcion: string;
+  etiqueta: string;
+  h1: string;
+  entrada: string;
+}
+const { idioma, pagina, titulo, descripcion, etiqueta, h1, entrada } = Astro.props;
+---
+
+<Base idioma={idioma} pagina={pagina} titulo={titulo} descripcion={descripcion}>
+  <header class="cabeza-pagina">
+    <div class="envoltura">
+      <span class="etiqueta">{etiqueta}</span>
+      <h1>{h1}</h1>
+      <p class="entrada">{entrada}</p>
+      <slot name="cabeza" />
+    </div>
+  </header>
+  <slot name="antes" />
+  <div class="envoltura">
+    <div class="prosa">
+      <slot />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .cabeza-pagina {
+    padding-block: clamp(56px, 8vw, 96px) 40px;
+    text-align: center;
+  }
+  .cabeza-pagina .envoltura {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    max-width: 900px;
+  }
+  h1 {
+    font-size: clamp(40px, 6.4vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+  }
+  .entrada {
+    max-width: 640px;
+    font-size: clamp(18px, 2vw, 21px);
+    line-height: 1.45;
+  }
+  .prosa {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-block: 24px clamp(64px, 9vw, 112px);
+  }
+  .prosa :global(h2) {
+    margin: 56px 0 14px;
+    font-size: clamp(26px, 3.2vw, 34px);
+    line-height: 1.12;
+  }
+  .prosa :global(h3) {
+    margin: 32px 0 10px;
+    font-size: 21px;
+    letter-spacing: -0.02em;
+  }
+  .prosa :global(p),
+  .prosa :global(ul),
+  .prosa :global(ol) {
+    margin: 0 0 16px;
+  }
+  .prosa :global(li) {
+    margin-bottom: 6px;
+  }
+  .prosa :global(a) {
+    color: var(--tinta);
+    text-underline-offset: 3px;
+  }
+  .prosa :global(code) {
+    font-size: 0.88em;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: var(--elevada);
+    color: var(--tinta);
+  }
+  .prosa :global(.comando),
+  .prosa :global(pre) {
+    margin: 0 0 18px;
+  }
+  .prosa :global(.comando code),
+  .prosa :global(pre code) {
+    padding: 0;
+    background: none;
+    color: inherit;
+  }
+</style>

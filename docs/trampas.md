@@ -585,3 +585,32 @@ aplicación, y un `.app` sin `CFBundleLocalizations` ni carpetas `.lproj` cuenta
 Arreglo: menú propio con `tr!` (`menu_macos.rs`) y los idiomas en `src-tauri/Info.plist`, que Tauri
 fusiona con el suyo, más `es.lproj` y `en.lproj` en `bundle.macOS.files`. En Windows y Linux los
 diálogos los pone el sistema en su idioma (IFileOpenDialog, GTK o el portal) y no hay menú. · 2026-10-26
+
+## `astro preview` (Astro 7) deja un candado y un servidor vivo
+
+Si un `astro preview` lanzado desde un guion no se cierra bien, el siguiente dice «Preview server
+already running» y termina enseguida: Playwright lo toma por un servidor caído («Process from
+config.webServer exited early») o por el puerto ocupado. `astro preview stop` lo para, y
+`--ignore-lock` (en `sitio/playwright.config.ts` y `herramientas/readme.mjs`) no mira el candado. · 2026-10-26
+
+## Medir «antes de pintar» desde Playwright
+
+Un `addInitScript` corre antes de que exista `document.documentElement`: un `MutationObserver` puesto
+ahí no observa nada. Para saber qué atributos tiene `<html>` al pintar, se intercepta el HTML con
+`page.route` y se mete un `<script>` justo al abrir `<body>` (pruebas/deteccion.spec.ts). · 2026-10-26
+
+## axe y las animaciones de aparecer
+
+Lo que sube al entrar en pantalla está a media opacidad hasta entonces, y axe mide el contraste de
+ese momento: da fallos de color que en reposo no existen. Se pasa con `reducedMotion: "reduce"`,
+que deja la página en reposo (y así la ve quien lo pide). · 2026-10-26
+
+## La grabación de vídeo de Playwright sale borrosa y sin puntero
+
+`recordVideo` graba en VP8 con poca calidad y no pinta el cursor. Para el vídeo de la web
+(`frontend/e2e/video.spec.ts`): el screencast de Chromium por CDP (`Page.startScreencast`) a doble
+densidad, cada fotograma con su hora, montado con ffmpeg (`sitio/herramientas/video.mjs`), y un
+puntero dibujado que sigue al ratón. Guardar los PNG ralentiza la página: el montaje lo acelera
+1,6×. Y apolo-dev arranca en inglés solo si el idioma va en la variable que mira
+`frontend/playwright.config.ts` (`CAPTURAS_IDIOMA` o `VIDEO_IDIOMA`). · 2026-10-26
+

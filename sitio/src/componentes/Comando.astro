@@ -15,7 +15,7 @@ const t = textos(idioma);
 ---
 
 <div class="comando">
-  <pre><code>{lineas.map((l) => <span class="linea"><span class="yo" aria-hidden="true">$ </span>{l}{"\n"}</span>)}</code></pre>
+  <pre tabindex="0" aria-label={lineas[0]}><code>{lineas.map((l) => <span class="linea"><span class="yo" aria-hidden="true">$ </span>{l}{"\n"}</span>)}</code></pre>
   <button type="button" data-copiar={lineas.join("\n")} data-comando={nombre} data-hecho={t.descargas.copiado}>{t.descargas.copiar}</button>
 </div>
 

@@ -99,6 +99,7 @@ export const en: Textos = {
     titulo: "Apolo for your computer.",
     entrada: "Free and open source. It updates itself when there's a new version.",
     tuya: "For your computer",
+    mas: "Install, requirements and more",
     version: "Version",
     tamano: "Size",
     suma: "SHA-256",
@@ -135,6 +136,21 @@ export const en: Textos = {
     texto:
       "Apolo is a project by Webcafeína, a web design and development studio. If you want a website polished down to the last kilobyte, let's talk.",
     boton: "Meet Webcafeína",
+  },
+  cookies: {
+    titulo: "Can we count visits?",
+    texto:
+      "With your permission, this site uses Google Analytics cookies to know how many people visit and what they download. The app sends nothing.",
+    mas: "Cookie policy",
+    aceptar: "Accept",
+    rechazar: "Reject",
+    configurar: "Settings",
+    guardar: "Save my choice",
+    necesarias: "Necessary",
+    necesariasTexto: "remember your system, your distribution and this choice, in this browser.",
+    analitica: "Analytics",
+    analiticaTexto: "Google Analytics, to count visits and downloads.",
+    preferencias: "Cookie preferences",
   },
   pie: {
     preguntas: "FAQ",

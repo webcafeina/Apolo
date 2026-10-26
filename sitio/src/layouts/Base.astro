@@ -1,25 +1,27 @@
 ---
-// La página de siempre (ADR 0033): idioma, título, descripción, canonical y
-// hreflang; temprano.js en línea, lo primero, para que el CSS acierte el
-// sistema antes de pintar; la cabecera y el pie. El SEO completo y GTM llegan
-// en la fase 7.
+// La página de siempre (ADR 0033): temprano.js en línea, lo primero, para que
+// el CSS acierte el sistema antes de pintar; el SEO (Seo.astro), GTM con su
+// consentimiento (Gtm.astro y BannerCookies.astro), los iconos, la cabecera y
+// el pie. Sin `pagina` (la 404), sin canonical ni hreflang, y con noindex.
 import "../estilos/tokens.css";
 import "../estilos/base.css";
+import BannerCookies from "../componentes/BannerCookies.astro";
 import Cabecera from "../componentes/Cabecera.astro";
+import Gtm from "../componentes/Gtm.astro";
 import Pie from "../componentes/Pie.astro";
+import Seo from "../componentes/Seo.astro";
 import { textos } from "../i18n";
-import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
+import type { Idioma, Pagina } from "../i18n/rutas";
 import temprano from "../scripts/temprano.js?raw";
 
 interface Props {
   idioma: Idioma;
-  pagina: Pagina;
+  pagina?: Pagina;
   titulo?: string;
   descripcion?: string;
 }
 const { idioma, pagina, titulo, descripcion } = Astro.props;
 const t = textos(idioma);
-const url = (i: Idioma) => new URL(ruta(pagina, i), Astro.site).href;
 ---
 
 <html lang={idioma}>
@@ -29,24 +31,28 @@ const url = (i: Idioma) => new URL(ruta(pagina, i), Astro.site).href;
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{titulo ?? t.sitio.titulo}</title>
     <meta name="description" content={descripcion ?? t.sitio.descripcion} />
-    <link rel="canonical" href={url(idioma)} />
-    <link rel="alternate" hreflang="es" href={url("es")} />
-    <link rel="alternate" hreflang="en" href={url("en")} />
-    <link rel="alternate" hreflang="x-default" href={url("en")} />
-    <link rel="icon" href="/icono.png" />
+    <Seo idioma={idioma} pagina={pagina} titulo={titulo ?? t.sitio.titulo} descripcion={descripcion ?? t.sitio.descripcion} />
+    <Gtm />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/icono.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="preload" href="/fuentes/marcellus-latin-400.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)" />
   </head>
   <body>
     <a class="saltar" href="#contenido">{t.sitio.saltar}</a>
-    <Cabecera idioma={idioma} pagina={pagina} />
+    <Cabecera idioma={idioma} pagina={pagina ?? "inicio"} />
     <main id="contenido">
       <slot />
     </main>
     <Pie idioma={idioma} />
+    <BannerCookies idioma={idioma} />
     <script>
       import "../scripts/web.ts";
+      import { iniciar } from "../scripts/consentimiento";
+      iniciar();
     </script>
   </body>
 </html>

@@ -3,9 +3,9 @@
 // pantallas. Todas van en el HTML; la vista sale de data-vista en <html> (lo
 // detectado o lo elegido, temprano.js) y la pantalla de data-pantalla en la
 // sección (web.ts). Las ocultas llevan loading="lazy" y no se descargan.
-import capturas from "../datos/capturas.json";
 import { textos } from "../i18n";
 import type { Idioma } from "../i18n/rutas";
+import Captura from "./Captura.astro";
 import Ventana from "./Ventana.astro";
 
 interface Props {
@@ -16,8 +16,6 @@ const t = textos(idioma);
 const VISTAS = ["macos", "windows", "gnome", "kde"] as const;
 const PANTALLAS = ["estudio", "diferencias", "lotes", "agentes"] as const;
 const id = idioma === "es" ? "sistema" : "system";
-const src = (vista: string, pantalla: string, tema: string) =>
-  `/img/${vista}/${idioma === "es" ? "" : "en/"}${pantalla}-${tema}.webp`;
 ---
 
 <section class="seccion" id={id} data-pantalla="estudio" aria-labelledby={`${id}-titulo`}>
@@ -40,21 +38,7 @@ const src = (vista: string, pantalla: string, tema: string) =>
         VISTAS.map((v) => (
           <div class="vista" data-vista={v}>
             <Ventana vista={v}>
-              {PANTALLAS.map((p) => {
-                const m = capturas.vistas[v][p][idioma];
-                return (
-                  <picture class="pantalla" data-pantalla={p}>
-                    <source media="(prefers-color-scheme: dark)" srcset={src(v, p, "oscuro")} />
-                    <img
-                      src={src(v, p, "claro")}
-                      width={m.ancho}
-                      height={m.alto}
-                      loading="lazy"
-                      alt={t.sistema.alt.replace("{vista}", t.sistema.vistas[v]).replace("{pantalla}", t.sistema.pantallas[p])}
-                    />
-                  </picture>
-                );
-              })}
+              {PANTALLAS.map((p) => <Captura class="pantalla" idioma={idioma} vista={v} pantalla={p} />)}
             </Ventana>
           </div>
         ))
@@ -112,8 +96,9 @@ const src = (vista: string, pantalla: string, tema: string) =>
     font-weight: 600;
     box-shadow: 0 1px 3px rgb(0 0 0 / 0.14);
   }
+  /* La captura es de otro componente (Captura.astro): sus reglas, sin el ámbito de este. */
   .vista,
-  .pantalla {
+  .vistas :global(.pantalla) {
     display: none;
   }
   /* La vista de <html> (sin ella, macOS) y la pantalla de la sección. */
@@ -122,10 +107,10 @@ const src = (vista: string, pantalla: string, tema: string) =>
   :global(html[data-vista="windows"]) .vista[data-vista="windows"],
   :global(html[data-vista="gnome"]) .vista[data-vista="gnome"],
   :global(html[data-vista="kde"]) .vista[data-vista="kde"],
-  [data-pantalla="estudio"] .pantalla[data-pantalla="estudio"],
-  [data-pantalla="diferencias"] .pantalla[data-pantalla="diferencias"],
-  [data-pantalla="lotes"] .pantalla[data-pantalla="lotes"],
-  [data-pantalla="agentes"] .pantalla[data-pantalla="agentes"] {
+  [data-pantalla="estudio"] .vistas :global(.pantalla[data-pantalla="estudio"]),
+  [data-pantalla="diferencias"] .vistas :global(.pantalla[data-pantalla="diferencias"]),
+  [data-pantalla="lotes"] .vistas :global(.pantalla[data-pantalla="lotes"]),
+  [data-pantalla="agentes"] .vistas :global(.pantalla[data-pantalla="agentes"]) {
     display: block;
   }
 </style>

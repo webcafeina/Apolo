@@ -1,0 +1,71 @@
+---
+// Lo que leen los buscadores y las redes de cada página (ADR 0033): canonical,
+// hreflang (x-default, el inglés), Open Graph, la tarjeta de X/Twitter, y en la
+// portada y las descargas, Apolo como aplicación (SoftwareApplication). Sin
+// valoraciones: no se inventan.
+import { release } from "../datos/version";
+import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+  pagina?: Pagina;
+  titulo: string;
+  descripcion: string;
+}
+const { idioma, pagina, titulo, descripcion } = Astro.props;
+const url = (i: Idioma) => (pagina ? new URL(ruta(pagina, i), Astro.site).href : undefined);
+const imagen = new URL(`/social/apolo-${idioma}.png`, Astro.site).href;
+const APLICACION = new Set<Pagina>(["inicio", "descargarMac", "descargarWindows", "descargarLinux"]);
+const datos =
+  pagina && APLICACION.has(pagina)
+    ? {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        name: "Apolo",
+        description: descripcion,
+        url: url(idioma),
+        image: imagen,
+        applicationCategory: "MultimediaApplication",
+        applicationSubCategory: idioma === "es" ? "Optimizador de imágenes" : "Image optimizer",
+        operatingSystem: "macOS 11+, Windows 10, Windows 11, Linux",
+        softwareVersion: release.version,
+        datePublished: release.fecha.slice(0, 10),
+        downloadUrl: new URL(ruta(pagina === "inicio" ? "descargarMac" : pagina, idioma), Astro.site).href,
+        license: "https://www.gnu.org/licenses/gpl-3.0.html",
+        isAccessibleForFree: true,
+        inLanguage: ["es", "en"],
+        offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+        publisher: { "@type": "Organization", name: "Webcafeína", url: "https://webcafeina.com" },
+        sameAs: ["https://github.com/webcafeina/Apolo"],
+      }
+    : null;
+---
+
+{
+  pagina ? (
+    <>
+      <link rel="canonical" href={url(idioma)} />
+      <link rel="alternate" hreflang="es" href={url("es")} />
+      <link rel="alternate" hreflang="en" href={url("en")} />
+      <link rel="alternate" hreflang="x-default" href={url("en")} />
+    </>
+  ) : (
+    <meta name="robots" content="noindex" />
+  )
+}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Apolo" />
+<meta property="og:title" content={titulo} />
+<meta property="og:description" content={descripcion} />
+{pagina && <meta property="og:url" content={url(idioma)} />}
+<meta property="og:locale" content={idioma === "es" ? "es_ES" : "en_US"} />
+<meta property="og:locale:alternate" content={idioma === "es" ? "en_US" : "es_ES"} />
+<meta property="og:image" content={imagen} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={titulo} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={titulo} />
+<meta name="twitter:description" content={descripcion} />
+<meta name="twitter:image" content={imagen} />
+{datos && <script type="application/ld+json" set:html={JSON.stringify(datos)} />}

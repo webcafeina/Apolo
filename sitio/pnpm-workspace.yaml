@@ -1,0 +1,6 @@
+# La web (ADR 0033). Sin sharp: las imágenes las optimiza el propio Apolo
+# (herramientas/), y sharp trae libvips.
+ignoredOptionalDependencies:
+  - sharp
+onlyBuiltDependencies:
+  - esbuild

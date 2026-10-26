@@ -1,6 +1,6 @@
-//! El generador de `frontend/src/tokens.css` y de `web/tokens.css`: la
-//! ventana y la web (entrega 8d) usan la misma paleta, medida en
-//! `tests/contraste.rs`.
+//! El generador de `frontend/src/tokens.css`, de `web/tokens.css` y de
+//! `sitio/src/estilos/tokens.css`: la ventana y la web (entrega 8d y ADR 0033)
+//! usan la misma paleta, medida en `tests/contraste.rs`.
 
 use crate::{
     Rgb, Tema, claro, kde_claro, kde_oscuro, linux_claro, linux_oscuro, macos_claro, macos_oscuro,
@@ -13,8 +13,14 @@ pub const RUTA: &str = "frontend/src/tokens.css";
 /// El mismo CSS para la web (`web/`, ADR 0024).
 pub const RUTA_WEB: &str = "web/tokens.css";
 
-/// Los dos ficheros que se generan con el mismo contenido.
-pub const RUTAS: [&str; 2] = [RUTA, RUTA_WEB];
+/// La de la web nueva (ADR 0033), mientras se construye en `sitio/`.
+pub const RUTA_SITIO: &str = "sitio/src/estilos/tokens.css";
+
+/// Un fichero generado: su ruta y la función que da su CSS.
+pub type Fichero = (&'static str, fn() -> String);
+
+/// Cada fichero generado, con el CSS que lleva.
+pub const FICHEROS: [Fichero; 3] = [(RUTA, css), (RUTA_WEB, css), (RUTA_SITIO, css_web)];
 
 fn variables(t: &Tema) -> Vec<(&'static str, Rgb)> {
     vec![
@@ -109,6 +115,41 @@ pub fn css() -> String {
             &oscuro,
             "",
         );
+    }
+    s
+}
+
+/// El CSS de la web nueva (ADR 0033). La página tiene su paleta en `:root`, y
+/// sigue al sistema sin `data-tema` (la web no tiene interruptor). Las de cada
+/// sistema van en `[data-sistema=…]` sin `:root`: se ponen en una tarjeta de
+/// descarga o en el marco de una captura, no en la página entera, que mantiene
+/// la identidad de Apolo.
+pub fn css_web() -> String {
+    let mut s = String::from(
+        "/* Generado por `make tokens` desde crates/tema. No se edita a mano (ADR 0008 y 0033). */\n\n",
+    );
+    for (selector, claro, oscuro) in [
+        (":root", claro(), oscuro()),
+        (
+            "[data-sistema=\"windows\"]",
+            windows_claro(),
+            windows_oscuro(),
+        ),
+        ("[data-sistema=\"macos\"]", macos_claro(), macos_oscuro()),
+        ("[data-sistema=\"linux\"]", linux_claro(), linux_oscuro()),
+        (
+            "[data-sistema=\"linux\"][data-escritorio=\"kde\"]",
+            kde_claro(),
+            kde_oscuro(),
+        ),
+    ] {
+        if selector != ":root" {
+            s += "\n";
+        }
+        s += &bloque(selector, &claro, "");
+        s += "\n@media (prefers-color-scheme: dark) {\n";
+        s += &bloque(selector, &oscuro, "  ");
+        s += "}\n";
     }
     s
 }

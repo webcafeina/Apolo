@@ -1,0 +1,34 @@
+---
+// La página de siempre (ADR 0033): idioma, título, descripción, canonical y
+// hreflang. El resto de la cabeza (SEO completo, GTM) llega en la fase 7.
+import "../estilos/tokens.css";
+import "../estilos/base.css";
+import { textos } from "../i18n";
+import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+  pagina: Pagina;
+  titulo?: string;
+  descripcion?: string;
+}
+const { idioma, pagina, titulo, descripcion } = Astro.props;
+const t = textos(idioma);
+const url = (i: Idioma) => new URL(ruta(pagina, i), Astro.site).href;
+---
+
+<html lang={idioma}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo ?? t.sitio.titulo}</title>
+    <meta name="description" content={descripcion ?? t.sitio.descripcion} />
+    <link rel="canonical" href={url(idioma)} />
+    <link rel="alternate" hreflang="es" href={url("es")} />
+    <link rel="alternate" hreflang="en" href={url("en")} />
+    <link rel="alternate" hreflang="x-default" href={url("en")} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

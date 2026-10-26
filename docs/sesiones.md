@@ -24,7 +24,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   uso. Fila nueva: el menú y los diálogos de macOS.
 - **v0.18.3 publicada** a las 10:02 UTC, con el sí del cliente: `Publicar` 40297208352 en verde a la
   primera y el borrador revisado entero; el `.app` lleva los `.lproj` y `CFBundleLocalizations`.
-  **Sin ver** todavía el menú y el diálogo en su Mac.
+  El cliente la vio en su Mac, con el menú de arriba y el diálogo de abrir en español: «Todo
+  perfecto».
 
 ---
 

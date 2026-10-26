@@ -49,8 +49,8 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
       bienvenida de Windows centrada): publicada el 2026-10-26 y vista por el cliente: «Todo perfecto»;
     - ~~la prueba guiada final~~: **descartada por el cliente el 2026-10-26** (ADR 0024): ya ha
       visto Apolo en todos sus sistemas; lo que salga, con revisiones puntuales y el uso;
-    - el menú y los diálogos de macOS en el idioma de Apolo: **v0.18.3 publicada el 2026-10-26**;
-      falta que el cliente lo vea en su Mac;
+    - ~~el menú y los diálogos de macOS en el idioma de Apolo~~: v0.18.3, publicada el 2026-10-26 y
+      vista por el cliente: «Todo perfecto»;
     - la 1.0.0, cuando lo diga el cliente.
 
 - ~~**Entrega 7 — Agentes por MCP**~~ (hecha: v0.8.0 a v0.9.1, [ADR 0023](adr/0023-mcp.md)). En tres partes:

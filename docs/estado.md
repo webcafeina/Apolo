@@ -9,8 +9,9 @@
 > revisado: 31 ficheros, 30 sumas, 9 firmas, `latest.json` con 16 plataformas, CLI, `apolo-mcp` y
 > los cinco `.mcpb` en 0.18.3, sin DLL de Visual C++, manifiesto ARM64 con UTF-8, AVIF 3/3, `.deb`
 > con «Webcafeína», `.rpm` con `digests signatures OK`, y el `.app` con `es.lproj`, `en.lproj` y
-> `CFBundleLocalizations` (es, en) en su `Info.plist`. **Lo siguiente**: que el cliente vea en su
-> Mac el menú de arriba y el diálogo de abrir en español; luego, la 1.0.0 cuando lo diga.
+> `CFBundleLocalizations` (es, en) en su `Info.plist`. **El cliente la vio en su Mac: «Todo
+> perfecto»** (el menú de arriba y el diálogo de abrir, en español). **Lo siguiente**: la 1.0.0,
+> cuando lo diga el cliente.
 >
 > **(2026-10-26, mañana): sin prueba guiada final, y macOS en el idioma de Apolo.** El
 > cliente descarta la prueba guiada final (ADR 0024): lo que salga, con revisiones puntuales y el

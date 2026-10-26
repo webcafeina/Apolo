@@ -15,7 +15,12 @@
 > **1.0.0 sale con la web**. Fases F1 (prototipo con 3 estilos × 4 portadas, para que elija) a F10.
 > **El cliente eligió el estilo Apple y la portada «las dos»** (comparador arriba, vídeo debajo). **F2
 > hecha** (Squoosh fuera de la app y los paquetes, `publico.test.ts`, `?fondo=transparente`, ADR
-> 0033). **Lo siguiente: F3, el andamiaje de Astro en `sitio/`.** El prototipo (F1):
+> 0033). **F3 hecha**: Astro 7.3.8 en `sitio/` (sin sharp; licencias revisadas, todas permisivas),
+> `css_web()` en crates/tema con `sitio/src/estilos/tokens.css`, `release.ts` (los 19 ficheros, la
+> compilación falla si falta uno), `plataforma.ts` con su tabla de navegadores, `rutas.ts`, y `make
+> web` dentro de `make comprobar` (y de CI). **Lo siguiente: F4, los componentes** (cabecera con ESP /
+> ENG, comparador, marcos, tarjetas de descarga, banner), con el estilo Apple del prototipo. El
+> prototipo (F1):
 > https://claude.ai/artifact/5PFdGPJ2fcMJNmdsuLuPwn (3 estilos × 4 portadas, «Ver en» con las 4 vistas,
 > tarjetas de descarga con selector de distribución, ESP/ENG, banner de cookies). Ficheros en el
 > scratchpad de la sesión (`prototipo/`), con el guion del borrador del vídeo (`zz-video.spec.ts`).

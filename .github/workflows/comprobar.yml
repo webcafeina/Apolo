@@ -41,9 +41,12 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: frontend/pnpm-lock.yaml
+          cache-dependency-path: |
+            frontend/pnpm-lock.yaml
+            sitio/pnpm-lock.yaml
 
-      # La interfaz va primero: src-tauri embebe frontend/dist al compilar.
+      # La interfaz va primero: src-tauri embebe frontend/dist al compilar. La
+      # web nueva (sitio/, ADR 0033) va dentro de make comprobar.
       - run: make comprobar
 
   # La interfaz de punta a punta en un navegador, contra apolo-dev (ADR 0013).

@@ -8,11 +8,12 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz web contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
 
 ayuda:
-	@echo "make comprobar  formato, clippy, pruebas, contraste e interfaz (la puerta de CI)"
-	@echo "make tokens     regenera frontend/src/tokens.css desde crates/tema"
+	@echo "make comprobar  formato, clippy, pruebas, contraste, interfaz y web (la puerta de CI)"
+	@echo "make tokens     regenera los tokens.css de la interfaz y de la web desde crates/tema"
+	@echo "make web        la web nueva (sitio/, ADR 0033): tipos, compilación y pruebas"
 	@echo "make contraste  solo la prueba de contraste"
 	@echo "make equivalencia  mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl, y la misma nota que ssimulacra2"
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
@@ -28,7 +29,7 @@ ayuda:
 	@echo "make iconos     rasteriza el icono y el fondo del .dmg y regenera src-tauri/icons"
 	@echo "make ventana-dmg  simula la ventana del .dmg sin un Mac (target/ventana-dmg.png)"
 
-comprobar: interfaz rust
+comprobar: interfaz rust web
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
@@ -43,6 +44,14 @@ interfaz:
 	pnpm -C frontend install --frozen-lockfile
 	pnpm -C frontend build
 	pnpm -C frontend test
+
+# La web nueva (ADR 0033), en sitio/ mientras se construye: tipos, compilación y
+# pruebas sin navegador.
+web:
+	pnpm -C sitio install --frozen-lockfile
+	pnpm -C sitio check
+	pnpm -C sitio build
+	pnpm -C sitio test
 
 contraste:
 	cargo test -p apolo-tema --test contraste

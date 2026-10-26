@@ -50,6 +50,14 @@ y un agente de diseño. El plan está en `~/.claude/plans/buenos-d-as-vamos-a-vi
 - **`?fondo=transparente`** (puente.ts y main.tsx), con `CAPTURAS_FONDO=transparente` y
   `CAPTURAS_ESCALA=2` en `capturas.spec.ts`: las capturas para la web dejan ver lo que hay detrás del
   vidrio, y la web pone su propio escritorio.
+- **El andamiaje de la web** (F3) en `sitio/`: Astro 7.3.8 (MIT; la 7.4 tenía menos de dos semanas),
+  sin sharp (`ignoredOptionalDependencies`), con @astrojs/check, vitest, Playwright y
+  @axe-core/playwright (MPL-2.0, solo en pruebas); el resto de dependencias, MIT, Apache, BSD, ISC
+  o CC0. `crates/tema` genera `sitio/src/estilos/tokens.css` con `css_web()`: las paletas de cada
+  sistema en `[data-sistema=…]` sobre cualquier elemento (una tarjeta, un marco), no en `:root`.
+  `src/datos/release.ts` lee la Release al compilar y falla si falta alguno de los 19 ficheros que
+  enlaza la web; `src/scripts/plataforma.ts` detecta el ordenador; `src/i18n/rutas.ts` empareja las
+  páginas. `make web` (check, build y vitest) va dentro de `make comprobar`.
 - **`frontend/herramientas/rasterizar.mjs` admite un filtro** (`node rasterizar.mjs fondo-dmg`),
   para rehacer un PNG sin tocar los demás.
 

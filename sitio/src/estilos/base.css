@@ -1,0 +1,12 @@
+/* La base de la web (ADR 0033). Los colores salen de tokens.css (crates/tema). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--lienzo);
+  color: var(--cuerpo);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}

@@ -8,14 +8,14 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <name>Apolo</name>
-  <summary>Optimize images with the Squoosh engines</summary>
-  <summary xml:lang="es">Optimiza imágenes con los motores de Squoosh</summary>
+  <summary>Lighter images, just as good</summary>
+  <summary xml:lang="es">Imágenes más ligeras, igual de buenas</summary>
   <developer id="com.webcafeina">
     <name>Webcafeína</name>
   </developer>
   <description>
-    <p>Apolo compresses images to WebP, AVIF, JPEG XL, MozJPEG and PNG with the same engines as Squoosh and cwebp, showing the result as you go.</p>
-    <p xml:lang="es">Apolo comprime imágenes a WebP, AVIF, JPEG XL, MozJPEG y PNG con los mismos motores que Squoosh y cwebp, viendo el resultado al momento.</p>
+    <p>Apolo compresses images to WebP, AVIF, JPEG XL, MozJPEG and PNG with the same engines as cwebp, cjpeg, oxipng, avifenc and cjxl, showing the result as you go.</p>
+    <p xml:lang="es">Apolo comprime imágenes a WebP, AVIF, JPEG XL, MozJPEG y PNG con los mismos motores que cwebp, cjpeg, oxipng, avifenc y cjxl, viendo el resultado al momento.</p>
   </description>
   <launchable type="desktop-id">Apolo.desktop</launchable>
   <icon type="stock">apolo-app</icon>

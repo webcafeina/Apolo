@@ -3,7 +3,7 @@
 # Release. Binarios ya compilados (los paquetes de la CLI), sin bottles: una fórmula no se pone en
 # cuarentena, así que macOS no los bloquea.
 class Apolo < Formula
-  desc "Image optimizer with Squoosh's engines: CLI and MCP server"
+  desc "Image optimizer CLI and MCP server: lighter images, just as good"
   homepage "https://apolo.webcafeina.com/"
   version "{{VERSION}}"
   license "GPL-3.0-only"

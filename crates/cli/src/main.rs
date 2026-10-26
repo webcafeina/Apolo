@@ -28,8 +28,8 @@ mod webp;
 #[command(
     name = "apolo",
     about = trs!(
-        "Optimiza imágenes con los motores de Squoosh",
-        "Optimizes images with Squoosh's engines"
+        "Optimiza imágenes: más ligeras, igual de buenas",
+        "Optimizes images: lighter, just as good"
     ),
     disable_version_flag = true
 )]

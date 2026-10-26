@@ -20,8 +20,9 @@ void Promise.allSettled([
   plataforma().then((p) => {
     document.documentElement.dataset.sistema = p.sistema;
     document.documentElement.dataset.vidrio = p.vidrio ? "si" : "no";
-    // En el navegador no hay vidrio de verdad: un degradado lo imita para las capturas.
-    if (p.simulado && p.vidrio) document.documentElement.dataset.vidrioSimulado = "si";
+    // En el navegador no hay vidrio de verdad: un degradado lo imita para las capturas. Las de
+    // la web lo quieren transparente, para poner detrás su propio escritorio (ADR 0033).
+    if (p.simulado && p.vidrio && !p.transparente) document.documentElement.dataset.vidrioSimulado = "si";
     // En las capturas de Linux con la barra del sistema, una dibujada ocupa su sitio arriba.
     if (p.simulado) document.documentElement.dataset.simulado = "si";
     // En Linux, si la parte de arriba es la barra de Apolo o la del sistema (ADR 0029).

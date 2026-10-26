@@ -147,6 +147,9 @@ export interface Plataforma {
   /** En Linux, el escritorio: «gnome», «kde» u «otro», que se ve como GNOME (ADR 0031). En el
    *  navegador, `?escritorio=kde`. */
   escritorio?: string;
+  /** Solo en el navegador, para las capturas de la web (ADR 0033): `?fondo=transparente` quita el
+   *  degradado que imita el vidrio, y la web pone detrás su propio escritorio. */
+  transparente?: boolean;
 }
 
 // En el navegador de desarrollo, el aspecto de otro sistema se puede pedir en la URL, como la
@@ -171,6 +174,7 @@ function simulada(): Plataforma {
     esquinas: q.get("esquinas") === "si",
     gestor,
     escritorio: q.get("escritorio") ?? "gnome",
+    transparente: q.get("fondo") === "transparente",
   };
 }
 

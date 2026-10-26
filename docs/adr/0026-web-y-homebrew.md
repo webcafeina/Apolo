@@ -1,6 +1,6 @@
 # ADR 0026 — La web y Homebrew
 
-**Fecha:** 2026-10-21 · **Estado:** aceptada · entrega 8d · desarrolla la [0024](0024-la-1-0.md)
+**Fecha:** 2026-10-21 · **Estado:** aceptada · matizada por la [0033](0033-la-web-comercial.md) (la web pasa a Astro, con medición) · entrega 8d · desarrolla la [0024](0024-la-1-0.md)
 
 ## Contexto
 

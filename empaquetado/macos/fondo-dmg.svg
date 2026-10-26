@@ -53,7 +53,7 @@
   <text x="34" y="35.5" class="texto" font-size="12" font-weight="600" fill="#cfcbc4" letter-spacing="0.4">webcafeína</text>
 
   <text x="330" y="70" text-anchor="middle" class="titulo" font-size="34" fill="#f6efe2" letter-spacing="1.5">Apolo</text>
-  <text x="330" y="96" text-anchor="middle" class="texto" font-size="13" fill="#bdb8b0">Optimiza imágenes con los motores de Squoosh</text>
+  <text x="330" y="96" text-anchor="middle" class="texto" font-size="13" fill="#bdb8b0">Imágenes más ligeras, igual de buenas</text>
 
   <!-- «Arrastra»: del icono de Apolo a Aplicaciones. -->
   <text x="330" y="196" text-anchor="middle" class="texto" font-size="13" font-weight="600" fill="#ffd27a" letter-spacing="0.6">Arrastra</text>

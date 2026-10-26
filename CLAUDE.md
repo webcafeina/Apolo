@@ -1,7 +1,7 @@
 # Apolo
 
-Optimizador de imágenes nativo para macOS, Windows y Linux que sustituye a Squoosh. El motor de WebP es
-**libwebp enlazada** —el mismo que hay detrás de `cwebp` y de Squoosh— y Apolo tiene que hacer todo lo que
+Optimizador de imágenes nativo para macOS, Windows y Linux: «Imágenes más ligeras, igual de buenas». El
+motor de WebP es **libwebp enlazada** —el mismo que hay detrás de `cwebp`— y Apolo tiene que hacer todo lo que
 hace `cwebp`, pero viéndolo. Además: MozJPEG, OxiPNG, QOI, AVIF y JPEG XL (el mismo fichero que `cjpeg`,
 `oxipng`, `qoiconv`, `avifenc` y `cjxl`); redimensionar, recortar, reducir paleta y medir la pérdida.
 

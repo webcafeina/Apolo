@@ -11,7 +11,7 @@ cask "apolo" do
 
   url "https://github.com/webcafeina/Apolo/releases/download/v#{version}/Apolo_#{version}_universal.dmg"
   name "Apolo"
-  desc "Image optimizer with Squoosh's engines"
+  desc "Desktop image optimizer: lighter images, just as good"
   homepage "https://apolo.webcafeina.com/"
 
   livecheck do

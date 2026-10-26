@@ -4,6 +4,22 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-26 (tarde) · La fase comercial: plan, prototipo y Squoosh fuera de la app
+
+- **Plan** en modo plan, con cinco rondas de preguntas: web en Astro, detección de sistema, SEO, GTM
+  con banner propio, README comercial, Squoosh fuera de lo público y la 1.0.0 con la web (ADR 0033).
+- **Prototipo** (F1): artefacto con 3 estilos × 4 portadas, capturas al día de las cuatro vistas,
+  comparador con la máscara de oro de Micenas (CC0; a 1600 px y nota 80, PNG 3,3 MB → AVIF 378 KB)
+  y un borrador de vídeo grabado con Playwright (cursor dibujado) y pasado por ffmpeg. **El cliente
+  eligió el estilo Apple y la portada «las dos»**.
+- **F2**: Squoosh fuera de la app y los paquetes (lista en la ADR 0033), `publico.test.ts`, el fondo
+  del `.dmg` rehecho (`rasterizar.mjs` con filtro), y `?fondo=transparente` y `CAPTURAS_ESCALA` para
+  las capturas de la web.
+- **El disco** se llenó otra vez (2,7 GB libres): `target/debug/deps` tenía 43 GB de copias viejas;
+  se borraron y quedaron 47 GB libres (deuda.md).
+
+---
+
 ## 2026-10-26 (mañana) · Sin prueba guiada final; macOS en el idioma de Apolo
 
 - **El cliente descarta la prueba guiada final**: con las 0.13 a 0.18 ya ha visto Apolo en todos sus

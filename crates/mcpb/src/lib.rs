@@ -120,7 +120,7 @@ pub fn manifiesto(version: &str, sistema: Sistema) -> Value {
             "avif",
             "jpeg xl",
             trs!("optimizar", "optimize"),
-            "squoosh"
+            trs!("comprimir", "compress")
         ],
         "compatibility": { "platforms": [sistema.manifiesto()] }
     })
@@ -260,6 +260,9 @@ mod pruebas {
         assert!(es["description"].as_str().unwrap().contains("Optimiza"));
         assert!(en["description"].as_str().unwrap().starts_with("Optimizes"));
         assert_eq!(en["keywords"][0], "images");
+        // Sin nombrar a Squoosh (la fase comercial lo quitó de todo lo público).
+        assert!(!es.to_string().to_lowercase().contains("squoosh"));
+        assert!(!en.to_string().to_lowercase().contains("squoosh"));
         // Las herramientas, con la misma traducción que tools/list.
         let d = |m: &Value, i: usize| m["tools"][i]["description"].as_str().unwrap().to_string();
         for i in 0..es["tools"].as_array().unwrap().len() {

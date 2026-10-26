@@ -1,12 +1,162 @@
-/* La base de la web (ADR 0033). Los colores salen de tokens.css (crates/tema). */
+/* La web de Apolo (ADR 0033), con el estilo de una página de producto de
+   Apple que eligió el cliente: la letra del sistema, titulares grandes y
+   apretados, mucho aire, todo centrado y las capturas como protagonistas. Los
+   colores salen de tokens.css (crates/tema, con el contraste medido): el oro
+   rellena y la piedra escribe. La marca va en Marcellus. */
+
+@font-face {
+  font-family: "Marcellus";
+  src: url("/fuentes/marcellus-latin-400.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", system-ui, "Ubuntu Sans", "Noto Sans", sans-serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", system-ui, "Ubuntu Sans", "Noto Sans", sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Ubuntu Mono", monospace;
+  --marca: "Marcellus", "Iowan Old Style", Georgia, serif;
+  --ancho: 1180px;
+  --radio: 22px;
+  --radio-chico: 14px;
+  --sombra: 0 40px 90px -40px rgb(0 0 0 / 0.45);
+  --alto-cabecera: 60px;
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
+html {
+  scroll-padding-top: calc(var(--alto-cabecera) + 16px);
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
 body {
   margin: 0;
   background: var(--lienzo);
   color: var(--cuerpo);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font: 17px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+h1,
+h2,
+h3 {
+  margin: 0;
+  color: var(--tinta);
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+p {
+  margin: 0;
+}
+a {
+  color: inherit;
+}
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 3px solid var(--relleno);
+  outline-offset: 3px;
+}
+code,
+pre {
+  font-family: var(--mono);
+}
+
+.saltar {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--tinta);
+  color: var(--lienzo);
+}
+.saltar:focus {
+  top: 12px;
+}
+
+.envoltura {
+  max-width: var(--ancho);
+  margin-inline: auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+.etiqueta {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--oro-trazo);
+}
+
+/* Botones: el oro rellena y la piedra escribe. */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--relleno);
+  color: var(--sobre-acento);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.boton:hover {
+  background: var(--relleno-vivo);
+}
+.boton:active {
+  transform: scale(0.98);
+}
+.boton small {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.75;
+}
+.enlace-flecha {
+  color: var(--tinta);
+  font-weight: 500;
+  text-decoration: none;
+}
+.enlace-flecha::after {
+  content: " ›";
+}
+.enlace-flecha:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Lo que entra en pantalla sube un poco, desde visible (web.ts). */
+@media (prefers-reduced-motion: no-preference) {
+  [data-aparece] {
+    transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.8s;
+  }
+  [data-aparece="fuera"] {
+    transform: translateY(24px);
+    opacity: 0.5;
+  }
 }

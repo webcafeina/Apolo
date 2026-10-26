@@ -1,0 +1,58 @@
+---
+// Una orden para copiar (ADR 0033): cada línea con su «$», y un botón que la
+// copia entera (web.ts, con el evento copiar_comando).
+import { textos } from "../i18n";
+import type { Idioma } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+  /** Para la medición: «apt», «dnf», «brew»… */
+  nombre: string;
+  lineas: string[];
+}
+const { idioma, nombre, lineas } = Astro.props;
+const t = textos(idioma);
+---
+
+<div class="comando">
+  <pre><code>{lineas.map((l) => <span class="linea"><span class="yo" aria-hidden="true">$ </span>{l}{"\n"}</span>)}</code></pre>
+  <button type="button" data-copiar={lineas.join("\n")} data-comando={nombre} data-hecho={t.descargas.copiado}>{t.descargas.copiar}</button>
+</div>
+
+<style>
+  .comando {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+    border-radius: 12px;
+    background: #1c1c1e;
+    color: #f2f2f7;
+    overflow: hidden;
+  }
+  pre {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+  .yo {
+    color: #ffd56b;
+    user-select: none;
+  }
+  button {
+    flex: none;
+    border: 0;
+    border-left: 1px solid #2c2c30;
+    background: #2a2a2e;
+    color: #f2f2f7;
+    padding: 0 14px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  button[data-copiado] {
+    color: #ffd56b;
+  }
+</style>

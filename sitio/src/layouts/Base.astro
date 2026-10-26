@@ -1,10 +1,15 @@
 ---
 // La página de siempre (ADR 0033): idioma, título, descripción, canonical y
-// hreflang. El resto de la cabeza (SEO completo, GTM) llega en la fase 7.
+// hreflang; temprano.js en línea, lo primero, para que el CSS acierte el
+// sistema antes de pintar; la cabecera y el pie. El SEO completo y GTM llegan
+// en la fase 7.
 import "../estilos/tokens.css";
 import "../estilos/base.css";
+import Cabecera from "../componentes/Cabecera.astro";
+import Pie from "../componentes/Pie.astro";
 import { textos } from "../i18n";
 import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
+import temprano from "../scripts/temprano.js?raw";
 
 interface Props {
   idioma: Idioma;
@@ -20,15 +25,28 @@ const url = (i: Idioma) => new URL(ruta(pagina, i), Astro.site).href;
 <html lang={idioma}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline set:html={temprano} />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{titulo ?? t.sitio.titulo}</title>
     <meta name="description" content={descripcion ?? t.sitio.descripcion} />
     <link rel="canonical" href={url(idioma)} />
     <link rel="alternate" hreflang="es" href={url("es")} />
     <link rel="alternate" hreflang="en" href={url("en")} />
     <link rel="alternate" hreflang="x-default" href={url("en")} />
+    <link rel="icon" href="/icono.png" />
+    <link rel="preload" href="/fuentes/marcellus-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)" />
   </head>
   <body>
-    <slot />
+    <a class="saltar" href="#contenido">{t.sitio.saltar}</a>
+    <Cabecera idioma={idioma} pagina={pagina} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Pie idioma={idioma} />
+    <script>
+      import "../scripts/web.ts";
+    </script>
   </body>
 </html>

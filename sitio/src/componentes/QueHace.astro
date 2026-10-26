@@ -1,0 +1,98 @@
+---
+// Qué hace Apolo (ADR 0033): seis puntos, cada uno con un dato de verdad (una
+// orden, una nota, una extensión).
+import { textos } from "../i18n";
+import type { Idioma } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const t = textos(idioma);
+const id = idioma === "es" ? "que-hace" : "what-it-does";
+const ICONOS = [
+  '<path d="M4 6h16M4 12h16M4 18h10"/>',
+  '<path d="M7 4h10v16H7zM4 9h3M17 15h3"/>',
+  '<path d="M12 4v16M4 12h16"/><circle cx="12" cy="12" r="8"/>',
+  '<path d="M4 18l5-6 4 3 7-9"/>',
+  '<path d="M4 6h6l2 2h8v10H4z"/>',
+  '<path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/>',
+];
+---
+
+<section class="seccion alterna" id={id} aria-labelledby={`${id}-titulo`}>
+  <div class="envoltura">
+    <div class="cabeza" data-aparece>
+      <span class="etiqueta">{t.queHace.etiqueta}</span>
+      <h2 id={`${id}-titulo`}>{t.queHace.titulo}</h2>
+    </div>
+    <ul class="rejilla">
+      {
+        t.queHace.puntos.map((p, i) => (
+          <li class="punto" data-aparece>
+            <span class="icono" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={ICONOS[i]} />
+            </span>
+            <h3>{p.titulo}</h3>
+            <p>{p.texto}</p>
+            <code>{p.dato}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .seccion {
+    padding-block: clamp(72px, 10vw, 128px);
+    background: var(--suave);
+  }
+  .cabeza {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    max-width: 760px;
+    margin: 0 auto 48px;
+    text-align: center;
+  }
+  h2 {
+    font-size: clamp(34px, 5vw, 60px);
+    line-height: 1.04;
+  }
+  .rejilla {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 18px;
+  }
+  .punto {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 28px;
+    border-radius: var(--radio);
+    background: var(--lienzo);
+  }
+  .icono {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--relleno-tenue);
+    color: var(--oro-trazo);
+  }
+  h3 {
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  code {
+    font-size: 13px;
+    color: var(--apagado);
+    overflow-wrap: anywhere;
+  }
+</style>

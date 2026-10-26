@@ -1,0 +1,57 @@
+---
+// La firma (ADR 0033): quién hace Apolo, con un enlace a webcafeina.com que se
+// mide (UTM y el evento clic_webcafeina).
+import { textos } from "../i18n";
+import type { Idioma } from "../i18n/rutas";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const t = textos(idioma);
+const enlace = `https://webcafeina.com/?utm_source=apolo&utm_medium=web&utm_campaign=apolo&utm_content=${idioma}`;
+---
+
+<section class="seccion">
+  <div class="envoltura">
+    <div class="bloque" data-aparece>
+      <div class="texto">
+        <span class="etiqueta">{t.webcafeina.etiqueta}</span>
+        <h2>{t.webcafeina.titulo}</h2>
+        <p>{t.webcafeina.texto}</p>
+      </div>
+      <a class="boton" href={enlace} target="_blank" rel="noopener" data-webcafeina>{t.webcafeina.boton}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .seccion {
+    padding-block: clamp(56px, 8vw, 96px);
+  }
+  .bloque {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px 48px;
+    padding: clamp(28px, 5vw, 56px);
+    border-radius: calc(var(--radio) + 4px);
+    background: #2b2b31;
+    color: #d9d6d0;
+  }
+  .texto {
+    display: grid;
+    gap: 14px;
+    max-width: 620px;
+    min-width: 0;
+  }
+  .etiqueta {
+    color: #ffd56b;
+  }
+  h2 {
+    color: #ffffff;
+    font-size: clamp(28px, 3.6vw, 42px);
+    line-height: 1.1;
+  }
+</style>

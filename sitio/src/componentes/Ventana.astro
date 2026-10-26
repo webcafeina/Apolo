@@ -1,0 +1,70 @@
+---
+// Una captura de Apolo como una ventana en su escritorio (ADR 0033): el radio,
+// el borde y la sombra de cada sistema, y detrás un fondo propio con los
+// colores de la marca (no los fondos oficiales, que tienen dueño).
+interface Props {
+  vista: "macos" | "windows" | "gnome" | "kde";
+}
+const { vista } = Astro.props;
+---
+
+<div class="escritorio" data-vista={vista}>
+  <div class="ventana" data-vista={vista}>
+    <slot />
+  </div>
+</div>
+
+<style>
+  .escritorio {
+    position: relative;
+    padding: clamp(14px, 4.5vw, 56px);
+    border-radius: calc(var(--radio) + 6px);
+    overflow: hidden;
+  }
+  .escritorio[data-vista="macos"] {
+    background:
+      radial-gradient(80% 90% at 12% 8%, #ffd77a 0%, transparent 55%),
+      radial-gradient(70% 80% at 92% 92%, #6d4bb8 0%, transparent 60%),
+      linear-gradient(140deg, #f08c1e, #b4487a 55%, #3c2f6b);
+  }
+  .escritorio[data-vista="windows"] {
+    background:
+      radial-gradient(60% 70% at 72% 58%, #78bdff 0%, transparent 60%),
+      radial-gradient(50% 60% at 28% 28%, #1f5fd1 0%, transparent 70%),
+      linear-gradient(160deg, #0b2a6b, #1c63c9 60%, #8cc8ff);
+  }
+  .escritorio[data-vista="gnome"] {
+    background:
+      radial-gradient(70% 80% at 82% 18%, #f39a5b 0%, transparent 55%),
+      linear-gradient(150deg, #2c1a3b, #77216f 55%, #e95420);
+  }
+  .escritorio[data-vista="kde"] {
+    background:
+      radial-gradient(70% 80% at 18% 82%, #3daee9 0%, transparent 60%),
+      linear-gradient(135deg, #10232f, #1d4f6e 55%, #6cc3d8);
+  }
+  .ventana {
+    position: relative;
+    overflow: hidden;
+  }
+  .ventana :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  .ventana[data-vista="macos"] {
+    border-radius: 12px;
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.35), 0 30px 70px -10px rgb(0 0 0 / 0.55);
+  }
+  .ventana[data-vista="windows"] {
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.28), 0 26px 60px -14px rgb(0 0 0 / 0.6);
+  }
+  .ventana[data-vista="gnome"] {
+    border-radius: 14px;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.25), 0 22px 54px -12px rgb(0 0 0 / 0.55);
+  }
+  .ventana[data-vista="kde"] {
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.3), 0 18px 46px -8px rgb(0 0 0 / 0.6);
+  }
+</style>

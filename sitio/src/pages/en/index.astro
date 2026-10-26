@@ -1,9 +1,18 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { textos } from "../../i18n";
-const t = textos("en");
+import Descargas from "../../componentes/Descargas.astro";
+import EnTuSistema from "../../componentes/EnTuSistema.astro";
+import Heroe from "../../componentes/Heroe.astro";
+import QueHace from "../../componentes/QueHace.astro";
+import VideoApp from "../../componentes/VideoApp.astro";
+import Webcafeina from "../../componentes/Webcafeina.astro";
 ---
 
 <Base idioma="en" pagina="inicio">
-  <h1>{t.heroe.titulo}</h1>
+  <Heroe idioma="en" />
+  <VideoApp idioma="en" />
+  <EnTuSistema idioma="en" />
+  <QueHace idioma="en" />
+  <Descargas idioma="en" />
+  <Webcafeina idioma="en" />
 </Base>

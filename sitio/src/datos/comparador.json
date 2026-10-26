@@ -1,0 +1,47 @@
+{
+  "fotos": [
+    {
+      "id": "mascara",
+      "titulo": {
+        "es": "Máscara funeraria de oro, Micenas, siglo XVI a. C.",
+        "en": "Gold funerary mask, Mycenae, 16th century BC"
+      },
+      "autor": "Jebulon",
+      "licencia": "CC0",
+      "origen": "https://commons.wikimedia.org/wiki/File:Mycene_gold_mask_1_NAMA_Athens_Greece.jpg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Mycene_gold_mask_1_NAMA_Athens_Greece.jpg",
+      "ancho": 1600,
+      "alto": 1149,
+      "original": {
+        "bytes": 3088626
+      },
+      "formatos": {
+        "avif": {
+          "fichero": "mascara.avif",
+          "bytes": 383998,
+          "calidad": 79,
+          "nota": 80.7
+        },
+        "webp": {
+          "fichero": "mascara.webp",
+          "bytes": 481400,
+          "calidad": 89,
+          "nota": 81.2
+        },
+        "jxl": {
+          "fichero": "mascara.jxl",
+          "bytes": 356717,
+          "calidad": 89,
+          "nota": 80.6
+        },
+        "jpeg": {
+          "fichero": "mascara.jpg",
+          "bytes": 548221,
+          "calidad": 90,
+          "nota": 80.6
+        }
+      },
+      "nota": 80
+    }
+  ]
+}

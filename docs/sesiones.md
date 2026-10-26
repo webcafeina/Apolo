@@ -4,6 +4,23 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-26 (noche) · La web nueva, revisada por el cliente: el aviso de cookies
+
+- **El aviso tapaba el botón de descarga** en portátiles: en pantallas de 1000 px o más pasa a ser
+  una tarjeta de 360 px abajo a la izquierda (`42f3d11`). A 1280×800 queda a 40 px del botón;
+  medido con Playwright, también en 1366×680, 1440×760 y 1920×950.
+- **Galería de revisión** para el cliente (artefacto JjVE3Sk5agvtzwLUZfdJfe): portada en Mac, Windows
+  y KDE, descargas, páginas, aviso y móvil. Su única pega: el aviso no debe decir para qué se mide
+  («¿Medimos las visitas?»). Ahora es genérico: «Esta web usa cookies», cookies propias necesarias
+  y de terceros con fines analíticos (`f9e5edb`, es y en).
+- Verificado: `make comprobar` y `make web-e2e` (34) en local; `Comprobar` de CI en verde con
+  `42f3d11`, con `web-e2e` por primera vez en CI. El de `e1a6005` se canceló al subir otro commit
+  (la concurrencia de `comprobar.yml`). El de `f9e5edb`, en marcha al cerrar.
+- Abierto: GTM con GA4, Search Console y `gh repo edit`, mañana con el cliente guiado paso a paso;
+  luego F10 y la 1.0.0 (estado.md).
+
+---
+
 ## 2026-10-26 (tarde) · La web nueva, terminada en sitio/
 
 - Capturas y vídeos definitivos, repetidos enteros (se habían parado a mediodía). El WebP a 2560 px

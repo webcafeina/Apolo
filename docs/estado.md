@@ -4,7 +4,15 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-26, 07:51 UTC): v0.18.2 publicada.** `Publicar` 40118422741 acabó en
+> **PARADA AQUÍ (2026-10-26, mañana): sin prueba guiada final, y macOS en el idioma de Apolo.** El
+> cliente descarta la prueba guiada final (ADR 0024): lo que salga, con revisiones puntuales y el
+> uso; el MCP en Windows y Linux, Cursor y VS Code, también con el uso. Vio en su Mac el menú de
+> arriba y el diálogo de abrir de Finder en inglés: arreglado **sin versión y sin ver en un Mac**
+> (`src-tauri/src/menu_macos.rs`, `src-tauri/Info.plist`, `empaquetado/macos/*.lproj`; trampas.md).
+> El AUR sigue con el registro cerrado (deuda.md). Deuda obsoleta puesta al día. **Lo siguiente**:
+> una versión con el arreglo de macOS para que lo vea, y la 1.0.0 cuando lo diga.
+>
+> **(2026-10-26, 07:51 UTC): v0.18.2 publicada.** `Publicar` 40118422741 acabó en
 > verde en todo, macOS incluido (la primera compilación del cambio de `ventana_macos.rs`). Borrador
 > revisado: 31 ficheros, 30 sumas, 9 firmas, `latest.json` con 16 plataformas, CLI, `apolo-mcp` y
 > los cinco `.mcpb` en 0.18.2, sin DLL de Visual C++, manifiesto ARM64 con UTF-8, AVIF 3/3, `.deb`

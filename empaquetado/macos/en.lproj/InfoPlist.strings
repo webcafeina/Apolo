@@ -1,0 +1,2 @@
+/* Apolo is in English: macOS draws its own dialogs (Open, Save, Emoji & Symbols, Dictation) in English. */
+"CFBundleName" = "Apolo";

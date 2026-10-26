@@ -36,6 +36,10 @@
           "x": 495,
           "y": 220
         }
+      },
+      "files": {
+        "Resources/es.lproj/InfoPlist.strings": "../empaquetado/macos/es.lproj/InfoPlist.strings",
+        "Resources/en.lproj/InfoPlist.strings": "../empaquetado/macos/en.lproj/InfoPlist.strings"
       }
     }
   }

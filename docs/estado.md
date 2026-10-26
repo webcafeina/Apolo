@@ -10,8 +10,9 @@
 > y `f9e5edb` (el aviso con texto genérico, «Esta web usa cookies», a petición del cliente: no
 > quiere que diga para qué se mide; el detalle se queda en la política). `make comprobar` y
 > `make web-e2e` en verde en local; `Comprobar` de CI en verde con `42f3d11` (comprobar, e2e con
-> `web-e2e` por primera vez en CI, y equivalencia). **Comprobar al empezar** cómo acabó `Comprobar`
-> de `f9e5edb` (ejecución 40354094153: `gh run view 40354094153`). Galería de revisión (artefacto):
+> `web-e2e` por primera vez en CI, y equivalencia). **Comprobar al empezar** cómo acabó el último
+> `Comprobar` de `main` (`gh run list --workflow comprobar.yml --limit 1`): las de `f9e5edb` y de
+> los documentos se cancelan al subir el siguiente commit, y la última prueba todo junto. Galería de revisión (artefacto):
 > https://claude.ai/artifact/JjVE3Sk5agvtzwLUZfdJfe, con las capturas en el scratchpad de la sesión
 > (`revision/`). **Lo siguiente, mañana, guiando al cliente paso a paso** (lo pidió así):
 > 1. **GTM y GA4**: que cree la propiedad de GA4 de Apolo (flujo web para apolo.webcafeina.com), el

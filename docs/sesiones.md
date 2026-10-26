@@ -9,7 +9,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **El aviso tapaba el botón de descarga** en portátiles: en pantallas de 1000 px o más pasa a ser
   una tarjeta de 360 px abajo a la izquierda (`42f3d11`). A 1280×800 queda a 40 px del botón;
   medido con Playwright, también en 1366×680, 1440×760 y 1920×950.
-- **Galería de revisión** para el cliente (artefacto JjVE3Sk5agvtzwLUZfdJfe): portada en Mac, Windows
+- **Galería de revisión** para el cliente (artefacto, borrado al cerrar): portada en Mac, Windows
   y KDE, descargas, páginas, aviso y móvil. Su única pega: el aviso no debe decir para qué se mide
   («¿Medimos las visitas?»). Ahora es genérico: «Esta web usa cookies», cookies propias necesarias
   y de terceros con fines analíticos (`f9e5edb`, es y en).

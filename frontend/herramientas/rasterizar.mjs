@@ -70,9 +70,13 @@ const copias = [
   ["empaquetado/marca.svg", "frontend/src/marca/marca.svg"],
 ];
 
+// Con un nombre (`node rasterizar.mjs fondo-dmg`), solo los SVG que lo llevan y
+// sin las copias: rehacer todo cambia bytes de PNG que no se han tocado.
+const filtro = process.argv[2];
+
 const navegador = await chromium.launch();
 const pagina = await navegador.newPage();
-for (const [origen, destino, ancho] of trabajos) {
+for (const [origen, destino, ancho] of trabajos.filter(([o]) => !filtro || o.includes(filtro))) {
   const svg = readFileSync(resolve(raiz, origen), "utf8");
   const [, , w, h] = svg.match(/viewBox="([^"]+)"/)[1].split(/\s+/).map(Number);
   const alto = Math.round((ancho * h) / w);
@@ -105,7 +109,7 @@ for (const [origen, destino, ancho] of trabajos) {
 }
 await navegador.close();
 
-for (const [origen, destino] of copias) {
+for (const [origen, destino] of filtro ? [] : copias) {
   mkdirSync(dirname(resolve(raiz, destino)), { recursive: true });
   copyFileSync(resolve(raiz, origen), resolve(raiz, destino));
   console.log(destino);

@@ -10,7 +10,7 @@
 pkgname=apolo-bin
 pkgver={{VERSION}}
 pkgrel=1
-pkgdesc="Image optimizer with the Squoosh engines: WebP, AVIF, JPEG XL, MozJPEG and PNG, byte for byte"
+pkgdesc="Desktop image optimizer for WebP, AVIF, JPEG XL, MozJPEG and PNG: lighter images, just as good"
 arch=('x86_64' 'aarch64')
 url="https://apolo.webcafeina.com"
 license=('GPL-3.0-or-later')

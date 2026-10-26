@@ -3,8 +3,8 @@ Categories={{categories}}
 {{#if comment}}
 Comment={{comment}}
 {{/if}}
-Comment[es]=Optimiza imágenes con los motores de Squoosh
-Comment[en]=Optimize images with the Squoosh engines
+Comment[es]=Imágenes más ligeras, igual de buenas
+Comment[en]=Lighter images, just as good
 Exec={{exec}}
 StartupWMClass={{exec}}
 Icon={{icon}}

@@ -27,6 +27,10 @@ const VIDRIO = process.env.CAPTURAS_VIDRIO === "si";
 const BARRA = process.env.CAPTURAS_BARRA ?? "";
 // Y el escritorio (ADR 0031): `CAPTURAS_ESCRITORIO=kde` pide `?escritorio=kde`.
 const ESCRITORIO = process.env.CAPTURAS_ESCRITORIO ?? "";
+// Las de la web (ADR 0033): `CAPTURAS_FONDO=transparente` deja ver lo de detrás del vidrio (la
+// web pone su escritorio), y `CAPTURAS_ESCALA=2` las saca para pantallas de alta densidad.
+const TRANSPARENTE = process.env.CAPTURAS_FONDO === "transparente";
+const ESCALA = Number(process.env.CAPTURAS_ESCALA ?? "1");
 const BASE = SISTEMA
   ? `capturas/${SISTEMA}${ESCRITORIO ? `-${ESCRITORIO}` : ""}${VIDRIO ? "-vidrio" : ""}${BARRA ? `-${BARRA}` : ""}`
   : "capturas";
@@ -37,6 +41,7 @@ function raiz(extra = ""): string {
   if (VIDRIO) q.set("vidrio", "si");
   if (BARRA) q.set("barra", BARRA);
   if (ESCRITORIO) q.set("escritorio", ESCRITORIO);
+  if (TRANSPARENTE) q.set("fondo", "transparente");
   const s = q.toString();
   return s ? `/?${s}` : "/";
 }
@@ -76,7 +81,13 @@ function empieza(texto: string): RegExp {
 }
 
 test.skip(!process.env.CAPTURAS, "solo con CAPTURAS=1");
-test.use({ testIdAttribute: "data-prueba" });
+test.use({ testIdAttribute: "data-prueba", deviceScaleFactor: ESCALA });
+// Con el fondo transparente, cada captura guarda la transparencia.
+test.beforeEach(({ page }) => {
+  if (!TRANSPARENTE) return;
+  const captura = page.screenshot.bind(page);
+  page.screenshot = (o = {}) => captura({ ...o, omitBackground: true });
+});
 
 test("estudio", async ({ page }, info) => {
   await page.goto(raiz());

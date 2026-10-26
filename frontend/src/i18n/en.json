@@ -1,7 +1,7 @@
 {
   "app": {
     "nombre": "Apolo",
-    "lema": "Optimize images with the Squoosh engines",
+    "lema": "Lighter images, just as good",
     "sinServicio": "Can't reach the Apolo engine.",
     "casa": "Webcafeína"
   },
@@ -259,7 +259,7 @@
     "recorteCwebp": "Crop like cwebp",
     "recorteCwebpAyuda": "cwebp's -crop. To repeat a cwebp command; normally you'd use Crop, above the image.",
     "procesoPaleta": "Reduce the palette",
-    "procesoPaletaAyuda": "Leaves the image with few colors using libimagequant, like Squoosh. Much smaller as PNG; dithering hides the color steps.",
+    "procesoPaletaAyuda": "Leaves the image with few colors using libimagequant. Much smaller as PNG; dithering hides the color steps.",
     "calidadJpeg": "Quality",
     "calidadJpegAyuda": "Higher means more faithful and bigger. From 80, MozJPEG reduces color less, and from 90 not at all.",
     "colorJpeg": "Color",

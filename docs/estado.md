@@ -13,7 +13,9 @@
 > banner propio y Consent Mode v2 básico (GA4 propio, ID pendiente del cliente); frase nueva
 > «Imágenes más ligeras, igual de buenas»; Squoosh fuera de todo lo público; README comercial; la
 > **1.0.0 sale con la web**. Fases F1 (prototipo con 3 estilos × 4 portadas, para que elija) a F10.
-> **Ahora: F1, el prototipo, publicado y esperando la elección del cliente**:
+> **El cliente eligió el estilo Apple y la portada «las dos»** (comparador arriba, vídeo debajo). **F2
+> hecha** (Squoosh fuera de la app y los paquetes, `publico.test.ts`, `?fondo=transparente`, ADR
+> 0033). **Lo siguiente: F3, el andamiaje de Astro en `sitio/`.** El prototipo (F1):
 > https://claude.ai/artifact/5PFdGPJ2fcMJNmdsuLuPwn (3 estilos × 4 portadas, «Ver en» con las 4 vistas,
 > tarjetas de descarga con selector de distribución, ESP/ENG, banner de cookies). Ficheros en el
 > scratchpad de la sesión (`prototipo/`), con el guion del borrador del vídeo (`zz-video.spec.ts`).

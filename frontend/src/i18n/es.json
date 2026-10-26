@@ -1,7 +1,7 @@
 {
   "app": {
     "nombre": "Apolo",
-    "lema": "Optimiza imágenes con los motores de Squoosh",
+    "lema": "Imágenes más ligeras, igual de buenas",
     "sinServicio": "No se puede hablar con el motor de Apolo.",
     "casa": "Webcafeína"
   },
@@ -259,7 +259,7 @@
     "recorteCwebp": "Recortar como cwebp",
     "recorteCwebpAyuda": "El -crop de cwebp. Para repetir una orden de cwebp; lo normal es Recortar, encima de la imagen.",
     "procesoPaleta": "Reducir paleta",
-    "procesoPaletaAyuda": "Deja la imagen en pocos colores con libimagequant, como Squoosh. Pesa mucho menos en PNG; el tramado disimula los saltos de color.",
+    "procesoPaletaAyuda": "Deja la imagen en pocos colores con libimagequant. Pesa mucho menos en PNG; el tramado disimula los saltos de color.",
     "calidadJpeg": "Calidad",
     "calidadJpegAyuda": "Más alta, más fiel y más pesada. Desde 80, MozJPEG reduce menos el color, y desde 90 nada.",
     "colorJpeg": "Color",

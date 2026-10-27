@@ -12,7 +12,13 @@ automático: un validador de documentación se acaba sorteando, y lo que hay que
 Es el mismo sistema que Esfinge (`~/proyectos/Esfinge/docs/`).
 
 **Al empezar**, leer [docs/estado.md](docs/estado.md). Dice dónde está el proyecto y cuál es la
-siguiente acción concreta.
+siguiente acción concreta. Y repasar la pestaña Security de GitHub con `scripts/seguridad-github.sh`
+(avisos de CodeQL y Scorecard, alertas de Dependabot, secretos subidos por error, avisos privados y
+PR abiertos): decir al cliente si hay algo nuevo desde la última vez.
+
+**Al subir algo a GitHub**, cuando acabe la CI de esa subida, volver a pasar
+`scripts/seguridad-github.sh`: CodeQL y Scorecard analizan cada subida a `main`, y lo nuevo se
+atiende o se cierra con su motivo (y va a [docs/deuda.md](docs/deuda.md) si se acepta).
 
 **Al tomar una decisión** que costaría volver a discutir, o que deja el código raro sin explicación,
 o que descarta lo que parecía la opción evidente: una ficha en [docs/adr/](docs/adr/) y su línea en

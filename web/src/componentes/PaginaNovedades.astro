@@ -12,7 +12,7 @@ interface Props {
   idioma: Idioma;
 }
 const { idioma } = Astro.props;
-// Al compilar, la carpeta de trabajo es la de la web (sitio/ o web/).
+// Al compilar, la carpeta de trabajo es la de la web (web/).
 const notas = leerNotas(join(process.cwd(), "../.github/notas"), release.version);
 const T = {
   es: {

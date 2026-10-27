@@ -8,16 +8,16 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz web seguridad web-e2e capturas-sitio video-sitio contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz web seguridad web-e2e capturas-web video-web contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste, interfaz y web (la puerta de CI)"
 	@echo "make tokens     regenera los tokens.css de la interfaz y de la web desde crates/tema"
-	@echo "make web        la web nueva (sitio/, ADR 0033): tipos, compilación y pruebas"
+	@echo "make web        la web (web/, ADR 0033): tipos, compilación y pruebas"
 	@echo "make seguridad  zizmor sobre los workflows y los avisos de seguridad de las dependencias de Rust"
-	@echo "make web-e2e    la web nueva en el navegador: detección, cookies, SEO, accesibilidad"
-	@echo "make capturas-sitio  las capturas de la web nueva, en sus cuatro vistas y dos idiomas"
-	@echo "make video-sitio  los vídeos de la web nueva (necesita ffmpeg)"
+	@echo "make web-e2e    la web en el navegador: detección, cookies, SEO, accesibilidad"
+	@echo "make capturas-web  las capturas de la web, en sus cuatro vistas y dos idiomas"
+	@echo "make video-web  los vídeos de la web (necesita ffmpeg)"
 	@echo "make contraste  solo la prueba de contraste"
 	@echo "make equivalencia  mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl, y la misma nota que ssimulacra2"
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
@@ -49,27 +49,24 @@ interfaz:
 	pnpm -C frontend build
 	pnpm -C frontend test
 
-# La web nueva (ADR 0033), en sitio/ mientras se construye: tipos, compilación y
-# pruebas sin navegador.
+# La web (ADR 0033): tipos, compilación y pruebas sin navegador.
 web:
-	pnpm -C sitio install --frozen-lockfile
-	pnpm -C sitio check
-	pnpm -C sitio build
-	pnpm -C sitio test
+	pnpm -C web install --frozen-lockfile
+	pnpm -C web check
+	pnpm -C web build
+	pnpm -C web test
 
-# La web nueva en el navegador (Playwright, con axe): sin red, contra una compilación con un GTM de
+# La web en el navegador (Playwright, con axe): sin red, contra una compilación con un GTM de
 # prueba.
 web-e2e:
-	pnpm -C sitio install --frozen-lockfile
-	pnpm -C sitio exec playwright test
+	pnpm -C web install --frozen-lockfile
+	pnpm -C web exec playwright test
 
-# La seguridad de lo que no es código propio (ADR 0034): zizmor revisa los workflows (el borrador de
-# la web también), y cargo deny, los avisos de RustSec de las dependencias. cargo-deny se instala con
+# La seguridad de lo que no es código propio (ADR 0034): zizmor revisa los workflows, y cargo deny, los avisos de RustSec de las dependencias. cargo-deny se instala con
 # `cargo install --locked cargo-deny`; zizmor lo trae uv.
 ZIZMOR := uvx zizmor==1.31.1 --config .github/zizmor.yml
 seguridad:
 	$(ZIZMOR) --offline .github/workflows/
-	cp .github/web-nuevo.yml $${TMPDIR:-/tmp}/web.yml && $(ZIZMOR) --offline $${TMPDIR:-/tmp}/web.yml
 	cargo deny check advisories
 
 contraste:
@@ -160,34 +157,15 @@ capturas-kde:
 	CAPTURAS=1 CAPTURAS_SISTEMA=linux CAPTURAS_ESCRITORIO=kde CAPTURAS_BARRA=sistema pnpm -C frontend exec playwright test capturas
 	CAPTURAS=1 CAPTURAS_SISTEMA=linux CAPTURAS_ESCRITORIO=kde CAPTURAS_BARRA=propia pnpm -C frontend exec playwright test capturas
 
-# Las de la web (web/img/), en los dos idiomas, con fotos de Kodak (pruebas/lotes/generar.sh las
-# deja en la caché) en vez de las del corpus, y pasadas a WebP con el propio Apolo: las que llevan
-# la foto, casi sin pérdida (SSIMULACRA 2 de 93: con pérdida, el texto de la interfaz no deja pasar
-# de 84 ni con calidad 100); las que son solo interfaz, sin pérdida, que pesa menos.
+# Las fotos de Kodak que deja en la caché pruebas/lotes/generar.sh: las capturas y el vídeo las usan
+# en vez de las del corpus.
 KODAK := $(or $(XDG_CACHE_HOME),$(HOME)/.cache)/apolo-kodak
-capturas-web:
-	cargo build -p apolo-dev -p apolo-mcp
-	cargo build --release -p apolo-cli
-	@test -f $(KODAK)/kodim23.png || { echo "Faltan las fotos de Kodak: pruebas/lotes/generar.sh"; exit 1; }
-	rm -rf target/capturas-lote && mkdir -p target/capturas-lote/fotos
-	for n in 03 05 07 12 15 20 22 23; do cp $(KODAK)/kodim$$n.png target/capturas-lote/fotos/; done
-	for idioma in es en; do \
-	  CAPTURAS=1 CAPTURAS_IDIOMA=$$idioma CAPTURAS_FOTO=$(KODAK)/kodim23.png \
-	    APOLO_DEV_RUTA_MCP=/Applications/Apolo.app/Contents/MacOS/apolo-mcp \
-	    CAPTURAS_LOTE=$(CURDIR)/target/capturas-lote/fotos pnpm -C frontend exec playwright test capturas || exit 1; \
-	done
-	mkdir -p web/img/en
-	for f in estudio mapa lotes-resumen agentes; do for t in claro oscuro; do \
-	  case $$f in estudio|mapa) o="-near_lossless 60 -m 6";; *) o="-lossless -z 6";; esac; \
-	  target/release/apolo webp $$o -quiet frontend/capturas/$$f-$$t.png -o web/img/$$f-$$t.webp; \
-	  target/release/apolo webp $$o -quiet frontend/capturas/en/$$f-$$t.png -o web/img/en/$$f-$$t.webp; \
-	done; done
 
-# Las de la web nueva (sitio/, ADR 0033): las cuatro vistas (macOS y Windows con su vidrio y el fondo
+# Las de la web (web/, ADR 0033): las cuatro vistas (macOS y Windows con su vidrio y el fondo
 # transparente, para que la web ponga detrás su escritorio; GNOME y KDE con la barra de Apolo), en los
 # dos idiomas y a doble densidad, con la ruta de apolo-mcp de cada sistema en la pantalla de agentes.
-# Después, sitio/herramientas/capturas.mjs las pasa a AVIF y WebP con el propio Apolo.
-capturas-sitio:
+# Después, web/herramientas/capturas.mjs las pasa a AVIF y WebP con el propio Apolo.
+capturas-web:
 	cargo build -p apolo-dev -p apolo-mcp
 	cargo build --release -p apolo-cli
 	@test -f $(KODAK)/kodim23.png || { echo "Faltan las fotos de Kodak: pruebas/lotes/generar.sh"; exit 1; }
@@ -206,12 +184,12 @@ capturas-sitio:
 	      pnpm -C frontend exec playwright test capturas -g ' (estudio|medidas y diferencias|lotes|agentes)$$' || exit 1; \
 	  done; \
 	done
-	node sitio/herramientas/capturas.mjs
+	node web/herramientas/capturas.mjs
 
 # Los vídeos de la web nueva (ADR 0033): la máscara de oro del comparador, en las cuatro vistas y
-# los dos idiomas (frontend/e2e/video.spec.ts y sitio/herramientas/video.mjs, con ffmpeg).
+# los dos idiomas (frontend/e2e/video.spec.ts y web/herramientas/video.mjs, con ffmpeg).
 FOTO_VIDEO := $(or $(XDG_CACHE_HOME),$(HOME)/.cache)/apolo-comparador/video/mascara.png
-video-sitio:
+video-web:
 	cargo build -p apolo-dev -p apolo-mcp
 	cargo build --release -p apolo-cli
 	@test -f $(FOTO_VIDEO) || { mkdir -p $(dir $(FOTO_VIDEO)) && target/release/apolo lote $(dir $(FOTO_VIDEO))../mascara.jpg --formato png --lado-mayor 1600 -s $(dir $(FOTO_VIDEO)); }
@@ -221,9 +199,9 @@ video-sitio:
 	    gnome) q="sistema=linux&barra=propia";; kde) q="sistema=linux&barra=propia&escritorio=kde";; \
 	  esac; \
 	  for idioma in es en; do \
-	    VIDEO=1 VIDEO_SISTEMA="$$q" VIDEO_IDIOMA=$$idioma VIDEO_FOTO=$(FOTO_VIDEO) VIDEO_DESTINO=$(CURDIR)/target/video-sitio/$$v-$$idioma \
+	    VIDEO=1 VIDEO_SISTEMA="$$q" VIDEO_IDIOMA=$$idioma VIDEO_FOTO=$(FOTO_VIDEO) VIDEO_DESTINO=$(CURDIR)/target/video-web/$$v-$$idioma \
 	      pnpm -C frontend exec playwright test video --project claro || exit 1; \
-	    node sitio/herramientas/video.mjs target/video-sitio/$$v-$$idioma $$v $$idioma || exit 1; \
+	    node web/herramientas/video.mjs target/video-web/$$v-$$idioma $$v $$idioma || exit 1; \
 	  done; \
 	done
 

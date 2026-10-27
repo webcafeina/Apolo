@@ -1,5 +1,5 @@
 // Las capturas de Apolo para la web (ADR 0033), pasadas por el propio Apolo:
-// `node herramientas/capturas.mjs`, que `make capturas-sitio` corre después de
+// `node herramientas/capturas.mjs`, que `make capturas-web` corre después de
 // sacarlas (frontend/capturas/…, a doble densidad). Necesita target/release/apolo.
 //
 // Cada vista (macOS, Windows, GNOME, KDE), pantalla, tema e idioma sale en AVIF a
@@ -51,7 +51,7 @@ for (const [vista, carpeta] of Object.entries(VISTAS)) {
       const origen = propias[pantalla] ? dir : join(CAPTURAS, carpeta);
       for (const tema of TEMAS) {
         const png = join(origen, `${captura}-${tema}.png`);
-        if (!existsSync(png)) throw new Error(`Falta ${png}: make capturas-sitio`);
+        if (!existsSync(png)) throw new Error(`Falta ${png}: make capturas-web`);
         copyFileSync(png, join(tmp, "png", `${pantalla}-${tema}.png`));
       }
     }

@@ -1,10 +1,14 @@
-# La web de Apolo (apolo.webcafeina.com, entrega 8d, ADR 0026): la carpeta web/ tal cual, con
-# GitHub Pages. Es estática: no hay nada que compilar. Las capturas se hacen a mano con
-# `make capturas-web` y van en web/img/; los tokens, con `make tokens`.
+# La web de Apolo (apolo.webcafeina.com, ADR 0026 y 0033): web/ es un proyecto de Astro que se
+# compila aquí, con los datos de la última versión publicada (los ficheros, sus tamaños y sus
+# sumas, que escribe este mismo flujo), y se publica con GitHub Pages. Las imágenes se hacen a mano
+# con el propio Apolo (`make capturas-web`, `make video-web` y las herramientas de
+# web/herramientas/) y van en git; los tokens, con `make tokens`.
 #
 # Pages está activado con «GitHub Actions» como origen y el dominio apolo.webcafeina.com en los
 # ajustes del repositorio (2026-10-21); el registro DNS (CNAME a webcafeina.github.io) es del
-# cliente, en Cloudflare.
+# cliente, en Cloudflare, con su proxy delante desde el 2026-10-27 (ADR 0034: las cabeceras de
+# seguridad, y /apt, /rpm y /aur sin caché). GTM_ID es una variable del repositorio: sin ella, la web no carga GTM ni
+# enseña el aviso de cookies.
 #
 # Con la web van los repositorios APT y RPM de Linux (ADR 0030): /apt y /rpm, con los .deb y .rpm
 # de la última versión publicada, firmados con la clave de los paquetes (PAQUETES_GPG_CLAVE, la
@@ -12,10 +16,10 @@
 # y por eso se despliega también al publicar una versión. Y en /aur, el PKGBUILD de apolo-bin.
 name: Web
 
+# Solo al publicar una versión, o a mano (ADR 0034): la web nueva sale con la 1.0.0, a la vez que
+# la versión, y no al subir el cambio de sitio/ a web/. Tras el lanzamiento, se vuelve a desplegar
+# también con cada cambio de web/ en main (push con paths: web/**, .github/notas/** y este fichero).
 on:
-  push:
-    branches: [main]
-    paths: ["web/**", ".github/workflows/web.yml"]
   release:
     types: [published]
   workflow_dispatch:
@@ -36,25 +40,48 @@ jobs:
       name: github-pages
       url: ${{ steps.despliegue.outputs.page_url }}
     steps:
+      # Siempre main, también al publicar una versión: con la etiqueta se desplegaría la web que
+      # había al etiquetar (trampas.md).
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
-      - name: Los paquetes de la última versión
+          ref: main
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+      - name: Los datos de la última versión
         env:
           GH_TOKEN: ${{ github.token }}
           ETIQUETA: ${{ github.event.release.tag_name }}
         run: |
           etiqueta="${ETIQUETA:-$(gh release view --json tagName -q .tagName)}"
-          echo "Paquetes de la $etiqueta"
-          mkdir -p web/apt/pool/main web/rpm
-          gh release download "$etiqueta" -p '*.deb' -D web/apt/pool/main
-          # Las versiones de antes de la 0.16.0 no tienen .rpm.
-          gh release download "$etiqueta" -p '*.rpm' -D web/rpm || true
-          ls -la web/apt/pool/main web/rpm
+          echo "ETIQUETA=$etiqueta" >> "$GITHUB_ENV"
+          gh release view "$etiqueta" --json tagName,publishedAt,assets \
+            -q '{tagName, publishedAt, assets: [.assets[] | {name, size, url}]}' > web/src/datos/release.json
+          gh release download "$etiqueta" -p SHA256SUMS.txt -D "$RUNNER_TEMP"
+          cp "$RUNNER_TEMP/SHA256SUMS.txt" web/src/datos/sumas.txt
+      - name: La web
+        env:
+          PUBLIC_GTM_ID: ${{ vars.GTM_ID }}
+        run: |
+          pnpm -C web install --frozen-lockfile
+          pnpm -C web build
+      # Después de compilar: Astro vacía dist/ al empezar.
+      - name: Los paquetes de la última versión
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Paquetes de la $ETIQUETA"
+          mkdir -p web/dist/apt/pool/main web/dist/rpm web/dist/aur
+          gh release download "$ETIQUETA" -p '*.deb' -D web/dist/apt/pool/main
+          gh release download "$ETIQUETA" -p '*.rpm' -D web/dist/rpm
+          ls -la web/dist/apt/pool/main web/dist/rpm
           # El PKGBUILD de apolo-bin, relleno con esta versión, para Arch mientras el AUR no
           # admite cuentas nuevas (trampas.md): `makepkg -si`.
-          gh release download "$etiqueta" -p SHA256SUMS.txt -D "$RUNNER_TEMP"
-          python3 -I empaquetado/aur/rellenar.py "${etiqueta#v}" "$RUNNER_TEMP/SHA256SUMS.txt" web/aur/PKGBUILD
+          python3 -I empaquetado/aur/rellenar.py "${ETIQUETA#v}" "$RUNNER_TEMP/SHA256SUMS.txt" web/dist/aur/PKGBUILD
       - name: La clave de los paquetes
         env:
           CLAVE: ${{ secrets.PAQUETES_GPG_CLAVE }}
@@ -70,7 +97,7 @@ jobs:
           sudo apt-get update > /dev/null
           sudo apt-get install -y apt-utils createrepo-c > /dev/null
           firmar() { gpg --batch --yes --pinentry-mode loopback --passphrase-file "$RUNNER_TEMP/frase" "$@"; }
-          cd web/apt
+          cd web/dist/apt
           for a in amd64 arm64; do
             mkdir -p "dists/stable/main/binary-$a"
             apt-ftparchive --arch "$a" packages pool > "dists/stable/main/binary-$a/Packages"
@@ -97,8 +124,7 @@ jobs:
           cat dists/stable/main/binary-amd64/Packages
       - name: El repositorio RPM
         run: |
-          cd web/rpm
-          if ! ls *.rpm > /dev/null 2>&1; then echo "Sin .rpm en esta versión"; exit 0; fi
+          cd web/dist/rpm
           createrepo_c --quiet .
           gpg --batch --yes --pinentry-mode loopback --passphrase-file "$RUNNER_TEMP/frase" \
             --armor --detach-sign -o repodata/repomd.xml.asc repodata/repomd.xml
@@ -114,9 +140,32 @@ jobs:
       - name: Fuera la clave
         if: always()
         run: rm -rf "$RUNNER_TEMP/gpg" "$RUNNER_TEMP/frase"
+      # Cada descarga que enlaza la web existe en la Release.
+      - name: Los enlaces de descarga
+        run: |
+          grep -rhoE 'https://github\.com/webcafeina/Apolo/releases/download/[^"]+' web/dist --include=*.html | sort -u > "$RUNNER_TEMP/enlaces"
+          wc -l < "$RUNNER_TEMP/enlaces"
+          while read -r u; do curl -fsIL -o /dev/null "$u" || { echo "No responde: $u"; exit 1; }; done < "$RUNNER_TEMP/enlaces"
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
-          path: web
+          path: web/dist
       - id: despliegue
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+
+      # IndexNow (ADR 0034): avisa a Bing, Yandex y los demás de todas las
+      # páginas recién publicadas. ChatGPT busca sobre el índice de Bing. La
+      # clave no es secreta: está publicada en la propia web, que es como
+      # IndexNow comprueba que el aviso es nuestro. Si falla, no tumba nada.
+      - name: Avisar a los buscadores
+        continue-on-error: true
+        env:
+          CLAVE: 1283c6f1acc7f3c7d71dc2513d338e34
+        run: |
+          grep -oE '<loc>[^<]+' web/dist/sitemap.xml | sed 's/<loc>//' | python3 -c 'import json, os, sys
+          c = os.environ["CLAVE"]
+          urls = [l.strip() for l in sys.stdin if l.strip()]
+          print(json.dumps({"host": "apolo.webcafeina.com", "key": c, "keyLocation": "https://apolo.webcafeina.com/" + c + ".txt", "urlList": urls}))
+          ' > "$RUNNER_TEMP/indexnow.json"
+          curl -sS -o /dev/null -w "IndexNow: %{http_code}\n" -X POST https://api.indexnow.org/indexnow \
+            -H "Content-Type: application/json; charset=utf-8" --data @"$RUNNER_TEMP/indexnow.json"

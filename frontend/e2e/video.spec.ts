@@ -1,7 +1,7 @@
 // El vídeo de la web (ADR 0033): Apolo en marcha, unos segundos. Solo corre
 // con VIDEO=1 (make video-web). En vez de la grabación de Playwright (VP8,
 // borrosa), los fotogramas del screencast de Chromium a doble densidad, con su
-// hora; sitio/herramientas/video.mjs los junta con ffmpeg. Playwright no pinta
+// hora; web/herramientas/video.mjs los junta con ffmpeg. Playwright no pinta
 // el puntero: va uno dibujado que sigue al ratón.
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

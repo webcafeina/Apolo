@@ -1,7 +1,7 @@
 // Lo que ve el público, vigilado (ADR 0033): Squoosh no se nombra en ningún
 // texto que llegue a la gente, y la descripción del paquete de Linux va en
 // ASCII, que el Centro de aplicaciones de Ubuntu cambia las tildes por «?»
-// (docs/trampas.md). También los README y toda la web nueva (sitio/src). La
+// (docs/trampas.md). También los README y toda la web (web/src). La
 // única excepción es la comparativa con Squoosh (ADR 0034): su contenido y su
 // ruta.
 import { readdirSync, readFileSync, statSync } from "node:fs";
@@ -23,7 +23,7 @@ const todos = (carpeta: string): string[] =>
 const PUBLICOS = [
   "README.md",
   "README.en.md",
-  ...todos("sitio/src"),
+  ...todos("web/src"),
   ...de("frontend/src/i18n", (f) => f.endsWith(".json")),
   ...de("src-tauri", (f) => /^tauri.*\.json$/.test(f)),
   ...de("empaquetado/linux"),
@@ -35,8 +35,8 @@ const PUBLICOS = [
 
 // Dónde sí se puede nombrar: todo el fichero, o solo las líneas que lo digan.
 const PERMITIDO: Record<string, (linea: string) => boolean> = {
-  [join("sitio/src/contenido/comparativas.ts")]: () => true,
-  [join("sitio/src/i18n/rutas.ts")]: (l) => l.includes("frenteSquoosh"),
+  [join("web/src/contenido/comparativas.ts")]: () => true,
+  [join("web/src/i18n/rutas.ts")]: (l) => l.includes("frenteSquoosh"),
 };
 
 describe("lo que ve el público", () => {
@@ -47,7 +47,7 @@ describe("lo que ve el público", () => {
   });
 
   it("la comparativa con Squoosh sigue siendo la única excepción", () => {
-    expect(readFileSync(join(RAIZ, "sitio/src/contenido/comparativas.ts"), "utf8")).toContain("frenteSquoosh");
+    expect(readFileSync(join(RAIZ, "web/src/contenido/comparativas.ts"), "utf8")).toContain("frenteSquoosh");
   });
 
   it("la descripción del paquete de Linux va en ASCII", () => {

@@ -127,3 +127,13 @@ Decidido con el cliente: **todo antes de la 1.0.0**, en cinco partes (S1 a S5).
   repositorio, por subir sin revisión de PR y por CodeQL recién activado. Va cuando pase de 7
   (`docs/seo.md`).
 - **winget, con komac** (GPL-3.0, funciona en Linux) en vez de wingetcreate, que pide Windows.
+
+## El cambio de web (F10, 2026-10-27)
+
+- `sitio/` pasa a `web/` y la web estática de antes se borra. `web.yml` es el que era el borrador,
+  con un cambio decidido con el cliente: **solo despliega al publicar una versión o a mano**, para
+  que la web nueva salga a la vez que la 1.0.0. **Tras el lanzamiento hay que volver a añadirle el
+  `push` a `main`** con `paths: web/**, .github/notas/**, .github/workflows/web.yml`, o los cambios de
+  la web no se publicarían hasta la siguiente versión.
+- Los objetivos del Makefile pasan a llamarse `capturas-web` y `video-web`; el `capturas-web` de la
+  web vieja desaparece.

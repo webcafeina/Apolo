@@ -22,7 +22,7 @@ schemars = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "fs", "io-std", "io-util", "sync", "time", "macros"] }
 serde.workspace = true
 serde_json.workspace = true
-dirs = "6"
+dirs = "7"
 base64 = "0.22"
 
 [build-dependencies]

@@ -1,0 +1,35 @@
+# OpenSSF Scorecard (ADR 0034): una nota pública de las prácticas de seguridad
+# del repositorio (ramas protegidas, acciones fijadas, permisos, firmas…), con
+# su insignia en el README. Los resultados van también a la pestaña Security.
+name: Scorecard
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  scorecard:
+    runs-on: ubuntu-latest
+    permissions:
+      # Subir los resultados a la pestaña Security y publicar la nota.
+      security-events: write
+      id-token: write
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+        with:
+          results_file: resultados.sarif
+          results_format: sarif
+          publish_results: true
+      - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: resultados.sarif

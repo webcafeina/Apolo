@@ -1,0 +1,22 @@
+# cargo deny (ADR 0034): `make seguridad` comprueba los avisos de RustSec de
+# todas las dependencias. Cada excepción dice por qué no nos afecta y qué la
+# quitaría; se repasan cuando Dependabot sube las dependencias que las traen.
+[advisories]
+ignore = [
+    # Sin mantenimiento como paquetes sueltos (ahora van dentro de zbus 6). Los
+    # trae zbus 5 por tauri-plugin-opener, en Linux; se van cuando el plugin
+    # pase a zbus 6.
+    { id = "RUSTSEC-2026-0370", reason = "zvariant: lo trae tauri-plugin-opener (zbus 5); sin versión segura todavía" },
+    { id = "RUSTSEC-2026-0371", reason = "zbus_names: lo trae tauri-plugin-opener (zbus 5); sin versión segura todavía" },
+    { id = "RUSTSEC-2026-0372", reason = "zvariant_derive: lo trae tauri-plugin-opener (zbus 5); sin versión segura todavía" },
+    # Sin mantenimiento; lo usan las macros de glib 0.18 (gtk-rs), por Tauri en
+    # Linux, solo al compilar.
+    { id = "RUSTSEC-2024-0370", reason = "proc-macro-error: macro de compilación de glib 0.18, vía Tauri" },
+    # zip < 9 al extraer archivos hostiles. apolo-mcpb solo escribe zips (y los
+    # lee en sus pruebas); tauri-plugin-updater solo abre lo que ya ha pasado
+    # la firma minisign del actualizador, así que el archivo no lo elige nadie
+    # de fuera. Se van cuando el plugin pase a zip 9.
+    { id = "RUSTSEC-2026-0367", reason = "zip: no se extraen archivos de terceros sin firmar" },
+    { id = "RUSTSEC-2026-0368", reason = "zip: no se extraen archivos de terceros sin firmar" },
+    { id = "RUSTSEC-2026-0369", reason = "zip: no se extraen archivos de terceros sin firmar" },
+]

@@ -13,13 +13,14 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
-permissions:
-  contents: write
-  # Para que humo.yml baje los paquetes de esta ejecución.
-  actions: read
+# Cada trabajo pide lo suyo (ADR 0034).
+permissions: {}
 
 jobs:
   paquete:
+    # tauri-action crea el borrador de la Release y sube los paquetes.
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -57,8 +58,9 @@ jobs:
     env:
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.despliegue }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          persist-credentials: false
           submodules: true
 
       - name: Dependencias del sistema
@@ -68,7 +70,7 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev librsvg2-dev libssl-dev pkg-config file
 
       # mozjpeg compila su SIMD de x86 con nasm.
-      - uses: ilammy/setup-nasm@v1
+      - uses: ilammy/setup-nasm@72793074d3c8cdda771dba85f6deafe00623038b # v1.5.2
 
       # El fondo del .dmg en un TIFF HiDPI (1x + 2x): con un PNG suelto, macOS
       # lo escala y en Retina se ve borroso. Los PNG están en git (make iconos);
@@ -87,15 +89,16 @@ jobs:
           wget -qO llvm.sh https://apt.llvm.org/llvm.sh
           sudo bash llvm.sh 18
           echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
         with:
+          toolchain: stable
           targets: ${{ matrix.rust }}
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ matrix.objetivo }}
 
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
       - run: pnpm install --frozen-lockfile
@@ -125,7 +128,14 @@ jobs:
             cp target/${{ matrix.objetivo }}/release/apolo-mcp$E src-tauri/binaries/apolo-mcp-${{ matrix.objetivo }}$E
           fi
 
-      - uses: tauri-apps/tauri-action@v0
+      # La interfaz se compila aquí, sin ningún secreto en el entorno: si la
+      # compilara tauri-action (beforeBuildCommand), el código npm del frontend
+      # correría con las claves de firma a mano. tauri.publicar.conf.json quita
+      # ese paso (ADR 0034).
+      - name: La interfaz, sin secretos
+        run: pnpm -C frontend build
+
+      - uses: tauri-apps/tauri-action@84b9d35b5fc46c1e45415bdb6144030364f7ebc5 # v0.6.2
         id: tauri
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -155,7 +165,7 @@ jobs:
           # En Windows solo hay NSIS, pero si algún día hay .msi, el
           # actualizador sigue con el instalador con el que se instaló.
           updaterJsonPreferNsis: true
-          args: --target ${{ matrix.objetivo }} --config src-tauri/tauri.mcp.conf.json
+          args: --target ${{ matrix.objetivo }} --config src-tauri/tauri.mcp.conf.json --config src-tauri/tauri.publicar.conf.json
 
       # El paquete de Claude Desktop, con el mismo apolo-mcp. Instalado una vez,
       # le cede el turno al de la aplicación (relevo.rs), que es el que se
@@ -208,7 +218,7 @@ jobs:
 
       # También con etiqueta: los usan las pruebas de humo (abajo).
       - name: Paquetes como artefacto
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: apolo-${{ matrix.nombre }}
           path: |
@@ -224,6 +234,8 @@ jobs:
 
   # La línea de comandos `apolo`, suelta, para los mismos seis objetivos.
   cli:
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -257,10 +269,11 @@ jobs:
     env:
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.despliegue }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          persist-credentials: false
           submodules: true
-      - uses: ilammy/setup-nasm@v1
+      - uses: ilammy/setup-nasm@72793074d3c8cdda771dba85f6deafe00623038b # v1.5.2
       # libjxl se compila con clang 18, como el cjxl oficial (ADR 0021): con
       # gcc, cjxl da otros bytes.
       - name: clang 18
@@ -269,10 +282,11 @@ jobs:
           wget -qO llvm.sh https://apt.llvm.org/llvm.sh
           sudo bash llvm.sh 18
           echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
         with:
+          toolchain: stable
           targets: ${{ matrix.rust }}
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: cli-${{ matrix.nombre }}
 
@@ -311,7 +325,7 @@ jobs:
             tar czf "../$N.tar.gz" apolo apolo-mcp LICENSE
           fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: cli-${{ matrix.nombre }}
           path: apolo-cli-*
@@ -322,7 +336,11 @@ jobs:
   # revisarla); se miran al revisarla.
   humo:
     needs: [paquete, cli]
-    uses: ./.github/workflows/humo.yml
+    # Para que humo.yml baje los paquetes de esta ejecución.
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/humo.yml # zizmor: ignore[self-repository]
     with:
       ejecucion: ${{ github.run_id }}
 
@@ -331,13 +349,19 @@ jobs:
     if: github.ref_type == 'tag'
     needs: [paquete, cli]
     runs-on: ubuntu-latest
+    # Los de todo el workflow, más los de la procedencia (ADR 0034).
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          persist-credentials: false
           submodules: true
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           pattern: cli-*
           merge-multiple: true
@@ -386,3 +410,12 @@ jobs:
           gh release download "$GITHUB_REF_NAME" -D todo --skip-existing
           (cd todo && rm -f SHA256SUMS.txt && sha256sum * > ../SHA256SUMS.txt)
           gh release upload "$GITHUB_REF_NAME" SHA256SUMS.txt --clobber
+          cp SHA256SUMS.txt todo/
+
+      # La procedencia de cada fichero de la Release, firmada por GitHub: quién
+      # lo compiló, desde qué commit y con qué workflow. Se comprueba con
+      # `gh attestation verify <fichero> --repo webcafeina/Apolo` (ADR 0034).
+      - name: Procedencia de los ficheros
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: todo/*

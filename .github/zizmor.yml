@@ -1,0 +1,10 @@
+# zizmor, el analizador de seguridad de los workflows (ADR 0034), en make
+# seguridad y en CI.
+rules:
+  # Publicar y la web leen cachés (Rust, pnpm), pero las que ve una etiqueta o
+  # main solo las escribe main, que es código propio: las de los PR quedan en
+  # su rama y no llegan aquí.
+  cache-poisoning:
+    ignore:
+      - publicar.yml
+      - web.yml

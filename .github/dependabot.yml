@@ -1,0 +1,35 @@
+# Dependabot (ADR 0034): avisa de las versiones nuevas una vez por semana, en
+# un PR por ecosistema, y espera unos días antes de proponerlas, como
+# minimumReleaseAge en pnpm. Los submódulos de vendor/ no: sus versiones son
+# las de las herramientas oficiales con las que se compara (make equivalencia).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      acciones:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directories: [/, /frontend, /sitio]
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      npm:
+        update-types: [minor, patch]
+
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      cargo:
+        update-types: [minor, patch]

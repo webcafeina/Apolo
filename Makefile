@@ -8,12 +8,13 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz web web-e2e capturas-sitio video-sitio contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz web seguridad web-e2e capturas-sitio video-sitio contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-web capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste, interfaz y web (la puerta de CI)"
 	@echo "make tokens     regenera los tokens.css de la interfaz y de la web desde crates/tema"
 	@echo "make web        la web nueva (sitio/, ADR 0033): tipos, compilación y pruebas"
+	@echo "make seguridad  zizmor sobre los workflows y los avisos de seguridad de las dependencias de Rust"
 	@echo "make web-e2e    la web nueva en el navegador: detección, cookies, SEO, accesibilidad"
 	@echo "make capturas-sitio  las capturas de la web nueva, en sus cuatro vistas y dos idiomas"
 	@echo "make video-sitio  los vídeos de la web nueva (necesita ffmpeg)"
@@ -32,7 +33,7 @@ ayuda:
 	@echo "make iconos     rasteriza el icono y el fondo del .dmg y regenera src-tauri/icons"
 	@echo "make ventana-dmg  simula la ventana del .dmg sin un Mac (target/ventana-dmg.png)"
 
-comprobar: interfaz rust web
+comprobar: interfaz rust web seguridad
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
@@ -61,6 +62,15 @@ web:
 web-e2e:
 	pnpm -C sitio install --frozen-lockfile
 	pnpm -C sitio exec playwright test
+
+# La seguridad de lo que no es código propio (ADR 0034): zizmor revisa los workflows (el borrador de
+# la web también), y cargo deny, los avisos de RustSec de las dependencias. cargo-deny se instala con
+# `cargo install --locked cargo-deny`; zizmor lo trae uv.
+ZIZMOR := uvx zizmor==1.31.1 --config .github/zizmor.yml
+seguridad:
+	$(ZIZMOR) --offline .github/workflows/
+	cp .github/web-nuevo.yml $${TMPDIR:-/tmp}/web.yml && $(ZIZMOR) --offline $${TMPDIR:-/tmp}/web.yml
+	cargo deny check advisories
 
 contraste:
 	cargo test -p apolo-tema --test contraste

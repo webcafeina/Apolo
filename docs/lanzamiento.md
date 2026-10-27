@@ -12,7 +12,7 @@ internacional.
 | Registro oficial de MCP | `.github/workflows/mcp.yml`, al publicar la Release: `io.github.webcafeina/apolo` con los cinco `.mcpb` (`empaquetado/mcp/servidor.py`). Validado con `mcp-publisher validate` el 2026-10-27 con los datos de la 0.18.3 |
 | Glama, PulseMCP, Smithery, mcp.so | Recogen el registro oficial y GitHub solos. Comprobar a la semana que aparece, y reclamar la ficha si lo piden |
 | Bing (y ChatGPT) | IndexNow en `web.yml` tras desplegar |
-| Search Console y Bing Webmaster Tools | El cliente envía `https://apolo.webcafeina.com/sitemap.xml`; en Bing, importar desde Search Console |
+| Search Console y Bing Webmaster Tools | El cliente envía `https://apolo.webcafeina.com/sitemap.xml` en los dos. Bing ya está dado de alta (importado desde Search Console el 2026-10-27; tarda unas 48 horas en tener datos) |
 | Homebrew, APT, RPM, PKGBUILD | Como en cada versión |
 
 ## Con un PR desde la cuenta del proyecto (con su sí)

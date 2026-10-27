@@ -23,7 +23,7 @@ tokio = { version = "1", features = ["rt-multi-thread", "fs", "io-std", "io-util
 serde.workspace = true
 serde_json.workspace = true
 dirs = "6"
-base64 = "0.22"
+base64 = "0.23"
 
 [build-dependencies]
 # MIT. Ya lo trae tauri-build; aquí, para el manifiesto de Windows (build.rs).

@@ -1,6 +1,6 @@
-//! El generador de `frontend/src/tokens.css`, de `web/tokens.css` y de
-//! `sitio/src/estilos/tokens.css`: la ventana y la web (entrega 8d y ADR 0033)
-//! usan la misma paleta, medida en `tests/contraste.rs`.
+//! El generador de `frontend/src/tokens.css` y de `web/src/estilos/tokens.css`:
+//! la ventana y la web (ADR 0033) usan la misma paleta, medida en
+//! `tests/contraste.rs`.
 
 use crate::{
     Rgb, Tema, claro, kde_claro, kde_oscuro, linux_claro, linux_oscuro, macos_claro, macos_oscuro,
@@ -10,17 +10,14 @@ use crate::{
 /// Ruta del fichero generado, relativa a la raíz del repositorio.
 pub const RUTA: &str = "frontend/src/tokens.css";
 
-/// El mismo CSS para la web (`web/`, ADR 0024).
-pub const RUTA_WEB: &str = "web/tokens.css";
-
-/// La de la web nueva (ADR 0033), mientras se construye en `sitio/`.
-pub const RUTA_SITIO: &str = "sitio/src/estilos/tokens.css";
+/// La de la web (`web/`, ADR 0033), con las paletas de cada sistema para sus tarjetas y marcos.
+pub const RUTA_WEB: &str = "web/src/estilos/tokens.css";
 
 /// Un fichero generado: su ruta y la función que da su CSS.
 pub type Fichero = (&'static str, fn() -> String);
 
 /// Cada fichero generado, con el CSS que lleva.
-pub const FICHEROS: [Fichero; 3] = [(RUTA, css), (RUTA_WEB, css), (RUTA_SITIO, css_web)];
+pub const FICHEROS: [Fichero; 2] = [(RUTA, css), (RUTA_WEB, css_web)];
 
 fn variables(t: &Tema) -> Vec<(&'static str, Rgb)> {
     vec![

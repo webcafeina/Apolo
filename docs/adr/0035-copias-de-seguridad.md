@@ -45,5 +45,5 @@ casa: rclone en un contenedor efímero, credenciales en un fichero 600 y avisos 
 - 2026-10-27: `claves.sh` (copia descifrada e idéntica), `semanal.sh` (108 ficheros, 1,78 GB) y
   `ensayo.sh` (repositorio clonado con 33 etiquetas, claves idénticas, sumas de la v0.18.3), todo en
   verde; el token, sin acceso a otros buckets.
-- **Sin verificar**: que la frase guardada en Coda abre la copia (lo prueba el cliente en su Mac), y
-  que el aviso de healthchecks.io llega (se ve en su panel).
+- 2026-10-27, el cliente: la frase de Coda abre la copia en su Mac, healthchecks.io recibió el
+  aviso y el contenedor de Tag Manager está exportado.

@@ -1,5 +1,5 @@
 //! `cargo run -p apolo-tema --bin tokens` (o `make tokens`): escribe
-//! `frontend/src/tokens.css`, `web/tokens.css` y `sitio/src/estilos/tokens.css`
+//! `frontend/src/tokens.css` y `web/src/estilos/tokens.css`
 //! desde la paleta.
 
 use std::path::Path;

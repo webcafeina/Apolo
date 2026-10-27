@@ -4,6 +4,27 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **(2026-10-27, tarde): S5, copias de seguridad y el cambio de web hechos; lo siguiente, la 1.0.0.**
+> - S5 (`c9fa1a1`): README con lo que se busca y «Verificar la descarga», plantillas de
+>   incidencias, Discussions (activado por el cliente), `mcp.yml` para el registro oficial de MCP al
+>   publicar, `docs/lanzamiento.md` (envíos del día de la 1.0.0) y `docs/seo.md`. Bing Webmaster
+>   Tools, dado de alta por el cliente. GA4 ya trae el canal «AI Assistant».
+> - **Copias de seguridad** (`6c695e0`, ADR 0035, `docs/restaurar.md`): claves cifradas en R2 y en
+>   el Mac del cliente (la frase, en su Coda; probada por él), copia semanal los domingos a las
+>   04:00 y ensayo de restauración el día 1 a las 05:00, con aviso de healthchecks.io.
+> - Dependabot: cerrados también el #6 (`zip` 9) y la alerta de `glib` (código sin usar).
+> - **F10, el cambio de web**: `sitio/` → `web/`, la web vieja borrada y `web.yml` nuevo, **que solo
+>   despliega al publicar una versión** (decisión del cliente). **Tras el lanzamiento, volver a
+>   añadirle el `push`** (ADR 0034).
+>
+> **Lo siguiente: la 1.0.0.** Versión 1.0.0 en los `Cargo.toml`, `package.json` y
+> `tauri.conf.json`; notas bilingües en `.github/notas/v1.0.0.md`, que el cliente revisa antes de
+> etiquetar; CI en verde; etiqueta; revisión del borrador de siempre (más la procedencia con
+> `gh attestation verify`); y **publicar con su sí**. Al publicar: `web.yml` despliega la web nueva,
+> `mcp.yml` publica en el registro de MCP, Homebrew y el AUR como siempre. Después, comprobar la web
+> (cabeceras, `apt`, `dnf`, `security.txt`, `llms.txt`), enviar el sitemap en Search Console y Bing,
+> y los envíos de `docs/lanzamiento.md`, cada uno con su sí.
+>
 > **PARADA AQUÍ (2026-10-27, mediodía): seguridad y posicionamiento antes de la 1.0.0 (ADR 0034),
 > S1 a S4 hechos y subidos; se sigue esta tarde con S5.** Plan aprobado en
 > `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (arriba el de ahora; el de la fase comercial,

@@ -85,3 +85,4 @@ Una copia que nunca se ha restaurado no se sabe si sirve. Apuntar aquí cada pru
 |---|---|---|
 | 2026-10-27 | `claves.sh`: la copia de R2 se baja, se descifra con la frase del VPS y es idéntica al original | Bien |
 | 2026-10-27 | `semanal.sh` (108 ficheros, 1,78 GB: repositorios, 12 motores, v0.18.1 a v0.18.3) y `ensayo.sh`: el repositorio se clona con 33 etiquetas, las claves se descifran y son las del VPS, las sumas de la v0.18.3 cuadran | Bien |
+| 2026-10-27 | El cliente, en su Mac: baja la copia de las claves y la frase de Coda la descifra (lista los ficheros); healthchecks.io recibe el aviso; contenedor de Tag Manager exportado y guardado | Bien |

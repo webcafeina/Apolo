@@ -11,11 +11,9 @@ import { join, resolve } from "node:path";
 const SITIO = resolve(import.meta.dirname, "..");
 const PUBLICO = join(SITIO, "public");
 const ICONO = resolve(SITIO, "../empaquetado/icono.svg");
-// Sin los comentarios, todos, hasta que no quede ninguno (un comentario dentro de otro no se cuela),
-// y sin ningún «<!--» o «-->» suelto que pudiera quedar.
-let svg = readFileSync(ICONO, "utf8");
-for (let antes = ""; antes !== svg; ) [antes, svg] = [svg, svg.replace(/<!--[\s\S]*?-->\s*/g, "")];
-svg = svg.replace(/<!--|-->/g, "");
+// Tal cual, con su comentario: dentro de la página que se fotografía, un comentario no se pinta, y
+// quitarlo con expresiones regulares es lo que CodeQL marca como sanitización incompleta.
+const svg = readFileSync(ICONO, "utf8");
 const fuente = (f) => `data:font/woff2;base64,${readFileSync(join(PUBLICO, "fuentes", f)).toString("base64")}`;
 const datos = JSON.parse(readFileSync(join(SITIO, "src/datos/comparador.json"), "utf8")).fotos[0];
 

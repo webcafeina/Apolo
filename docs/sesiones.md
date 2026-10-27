@@ -4,6 +4,32 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-27 (tarde y noche) · S5, copias de seguridad, el cambio de web y la 1.0.0
+
+- **S5** (`c9fa1a1`): README con lo que se busca y «Verificar la descarga», plantillas de incidencias,
+  Discussions, `mcp.yml` para el registro oficial de MCP y `docs/lanzamiento.md` y `docs/seo.md`.
+  El cliente dio de alta Bing Webmaster Tools; GA4 ya trae el canal «AI Assistant».
+- **Copias de seguridad** (ADR 0035): claves cifradas en R2 y en el Mac del cliente (frase en su
+  Coda, probada por él), copia semanal y ensayo mensual, con healthchecks.io.
+- **El cambio de web** (`52f7097`): `sitio/` → `web/`, la web vieja fuera y `web.yml` solo al
+  publicar hasta la 1.0.0.
+- **v1.0.0 publicada (18:05 UTC)**: Publicar en verde a la primera; borrador revisado entero, con la
+  procedencia de los 22 ficheros verificada; al publicar, la web nueva en el aire (comprobada en un
+  navegador con GTM y GA4 de verdad, sin violaciones de CSP), IndexNow 202, el registro de MCP y
+  Homebrew. El cliente envió el sitemap a Search Console y Bing.
+- **Después**: `.pyc` fuera, `llvm.sh` guardado en `.github/`, CodeQL limpio (`iconos.mjs` usa el SVG
+  tal cual: quitar HTML con expresiones regulares siempre le parece incompleto), Dependabot en pausa
+  y sus PR cerrados, `web.yml` otra vez con `push`, la página «Mapa del sitio» (XSLT se va de los
+  navegadores), `scripts/seguridad-github.sh` en la rutina de cada sesión y cada subida, y el `gh` del
+  VPS al día desde el repositorio oficial (lo puso el cliente).
+- Verificado: `make comprobar` y `make web-e2e` antes de cada subida, CI en verde, la pestaña
+  Security sin nada de CodeQL ni Dependabot. Quedan 7 avisos de Scorecard sobre el repositorio
+  (edad, revisión por PR, fuzzing, insignia de buenas prácticas).
+- Abierto: los envíos de `docs/lanzamiento.md`, cada uno con su sí, y la primera revisión de
+  `docs/seo.md`.
+
+---
+
 ## 2026-10-27 (mañana) · GA4, GTM, Search Console y repositorio; seguridad y SEO (S1 a S4)
 
 - **Guiando al cliente**: GA4 en cuenta propia «Apolo» (`G-H6S6RHHPY7`; la primera propiedad se

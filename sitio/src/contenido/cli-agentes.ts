@@ -125,8 +125,8 @@ export const AGENTES: Record<Idioma, PaginaSecciones> = {
           "Comparar formatos a la misma calidad percibida, y medir la pérdida con SSIMULACRA 2.",
           "Recortar, redimensionar y mirar las imágenes.",
           "Convertir carpetas enteras en lotes, y guardar presets.",
+          "Y nunca sobrescribe ni borra: siempre escribe ficheros nuevos.",
         ],
-        parrafos: ["Nunca sobrescribe ni borra: siempre escribe ficheros nuevos."],
       },
       {
         titulo: "Claude Desktop",
@@ -166,8 +166,8 @@ export const AGENTES: Record<Idioma, PaginaSecciones> = {
           "Compare formats at the same perceived quality, and measure the loss with SSIMULACRA 2.",
           "Crop, resize and look at images.",
           "Convert whole folders in batches, and save presets.",
+          "And it never overwrites or deletes: it always writes new files.",
         ],
-        parrafos: ["It never overwrites or deletes: it always writes new files."],
       },
       {
         titulo: "Claude Desktop",

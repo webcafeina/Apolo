@@ -1,6 +1,6 @@
 // Las páginas de descarga por sistema (ADR 0033), en los dos idiomas. Cada una:
 // su cabeza, su tarjeta de descarga (Descargas.astro) y estas secciones.
-import type { Idioma } from "../i18n/rutas";
+import type { Idioma, Pagina } from "../i18n/rutas";
 
 export interface Seccion {
   titulo: string;
@@ -8,6 +8,12 @@ export interface Seccion {
   pasos?: string[];
   lista?: string[];
   comandos?: { nombre: string; lineas: string[]; titulo?: string }[];
+  /** Una tabla de datos (guías y comparativas, ADR 0034): la primera columna es la de las filas. */
+  tabla?: { cabeza: string[]; filas: string[][]; nota?: string };
+  /** Código que no es una orden de terminal (HTML…), sin «$» ni botón de copiar. */
+  codigo?: string[];
+  /** Enlaces a otras páginas de la web, al final de la sección. */
+  enlaces?: { texto: string; pagina: Pagina }[];
 }
 export interface PaginaDescarga {
   titulo: string;

@@ -1,0 +1,111 @@
+---
+// Una guía o una comparativa (ADR 0034): sus secciones, la fecha, las páginas
+// relacionadas, la descarga al final y sus datos estructurados (TechArticle).
+import { type Articulo, dia } from "../contenido/articulos";
+import { COMPARATIVAS } from "../contenido/comparativas";
+import { GUIAS } from "../contenido/guias";
+import { textos } from "../i18n";
+import { type Idioma, ruta } from "../i18n/rutas";
+import Pagina from "../layouts/Pagina.astro";
+import JsonLd from "./JsonLd.astro";
+import Secciones from "./Secciones.astro";
+
+interface Props {
+  idioma: Idioma;
+  a: Articulo;
+}
+const { idioma, a } = Astro.props;
+const t = textos(idioma).articulos;
+const todos = [...GUIAS[idioma], ...COMPARATIVAS[idioma]];
+const relacionada = (p: string) => todos.find((x) => x.pagina === p);
+const fecha = (d: string) => dia(d, idioma);
+const url = new URL(ruta(a.pagina, idioma), Astro.site).href;
+const datos = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": `${url}#articulo`,
+  headline: a.h1.replace(/\.$/, ""),
+  description: a.descripcion,
+  inLanguage: idioma,
+  datePublished: a.publicado,
+  dateModified: a.revisado,
+  mainEntityOfPage: { "@id": `${url}#pagina` },
+  author: { "@id": "https://webcafeina.com/#organizacion" },
+  publisher: { "@id": "https://webcafeina.com/#organizacion" },
+  about: { "@id": new URL("/#apolo", Astro.site).href },
+  image: new URL(`/social/apolo-${idioma}.png`, Astro.site).href,
+};
+---
+
+<Pagina idioma={idioma} pagina={a.pagina} titulo={a.titulo} descripcion={a.descripcion} etiqueta={a.etiqueta} h1={a.h1} entrada={a.entrada}>
+  <JsonLd datos={datos} />
+  <p class="fecha">
+    {t.publicado} <time datetime={a.publicado}>{fecha(a.publicado)}</time>{
+      a.revisado !== a.publicado && (
+        <>
+          , {t.revisado} <time datetime={a.revisado}>{fecha(a.revisado)}</time>
+        </>
+      )
+    }
+  </p>
+  <Secciones idioma={idioma} secciones={a.secciones} />
+  <aside class="final">
+    <p><strong>{t.gratis}</strong></p>
+    <a class="boton" href={`${ruta("inicio", idioma)}#${idioma === "es" ? "descargas" : "downloads"}`}>{t.descargar}</a>
+  </aside>
+  <section class="relacionadas">
+    <h2>{t.relacionadas}</h2>
+    <ul>
+      {
+        a.relacionadas.map((p) => {
+          const r = relacionada(p);
+          return (
+            <li>
+              <a href={ruta(p, idioma)}>{r ? r.h1.replace(/\.$/, "") : textos(idioma).pie.agentes}</a>
+              {r && <span>{r.resumen}</span>}
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+</Pagina>
+
+<style>
+  .fecha {
+    color: var(--apagado);
+    font-size: 14px;
+  }
+  .final {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    margin-top: 48px;
+    padding: 20px 24px;
+    border-radius: 18px;
+    background: var(--suave);
+    box-shadow: 0 0 0 1px var(--filete);
+  }
+  .final p {
+    margin: 0;
+  }
+  .relacionadas ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .relacionadas li {
+    display: grid;
+    gap: 2px;
+  }
+  .relacionadas a {
+    font-weight: 600;
+  }
+  .relacionadas span {
+    color: var(--apagado);
+    font-size: 15px;
+  }
+</style>

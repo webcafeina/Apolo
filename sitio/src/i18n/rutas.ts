@@ -14,6 +14,19 @@ export const RUTAS = {
   cli: { es: "/linea-de-comandos/", en: "/en/cli/" },
   agentes: { es: "/agentes/", en: "/en/agents/" },
   cookies: { es: "/cookies/", en: "/en/cookies/" },
+  // Las guías y las comparativas (ADR 0034): un índice y una página por cada una.
+  guias: { es: "/guias/", en: "/en/guides/" },
+  guiaWebp: { es: "/guias/convertir-a-webp/", en: "/en/guides/convert-to-webp/" },
+  guiaFormatos: { es: "/guias/avif-webp-o-jpeg-xl/", en: "/en/guides/avif-webp-or-jpeg-xl/" },
+  guiaSinPerder: { es: "/guias/comprimir-imagenes-sin-perder-calidad/", en: "/en/guides/compress-images-without-losing-quality/" },
+  guiaWeb: { es: "/guias/optimizar-imagenes-para-la-web/", en: "/en/guides/optimize-images-for-the-web/" },
+  guiaAgente: { es: "/guias/optimizar-imagenes-con-un-agente-de-ia/", en: "/en/guides/optimize-images-with-an-ai-agent/" },
+  guiaHeic: { es: "/guias/heic-a-jpg/", en: "/en/guides/heic-to-jpg/" },
+  comparativas: { es: "/comparativas/", en: "/en/compare/" },
+  frenteSquoosh: { es: "/comparativas/apolo-frente-a-squoosh/", en: "/en/compare/apolo-vs-squoosh/" },
+  frenteTinypng: { es: "/comparativas/apolo-frente-a-tinypng/", en: "/en/compare/apolo-vs-tinypng/" },
+  frenteImageoptim: { es: "/comparativas/apolo-frente-a-imageoptim/", en: "/en/compare/apolo-vs-imageoptim/" },
+  frenteCaesium: { es: "/comparativas/apolo-frente-a-caesium/", en: "/en/compare/apolo-vs-caesium/" },
 } as const satisfies Record<string, Record<Idioma, string>>;
 
 export type Pagina = keyof typeof RUTAS;

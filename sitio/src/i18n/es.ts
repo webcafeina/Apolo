@@ -8,7 +8,7 @@ export const es = {
       "Optimizador de imágenes gratis para Mac, Windows y Linux: comprime y convierte a WebP, AVIF, JPEG XL, JPEG y PNG sin subir tus fotos, viendo lo que pierdes antes de guardar.",
     saltar: "Ir al contenido",
   },
-  nav: { etiqueta: "Secciones", sistema: "En tu sistema", queHace: "Qué hace", descargar: "Descargar", preguntas: "Preguntas" },
+  nav: { etiqueta: "Secciones", sistema: "En tu sistema", queHace: "Qué hace", descargar: "Descargar", preguntas: "Preguntas", guias: "Guías" },
   heroe: {
     etiqueta: "Gratis · macOS, Windows y Linux · Software libre",
     titulo: "Imágenes más ligeras, igual de buenas.",
@@ -140,6 +140,22 @@ export const es = {
     conGh: "Con la procedencia, si tienes la línea de comandos de GitHub:",
     clave: "Los repositorios APT y RPM y los .rpm van firmados con esta clave GPG:",
   },
+  articulos: {
+    guias: {
+      titulo: "Guías para optimizar imágenes · Apolo",
+      descripcion:
+        "Cómo convertir a WebP, elegir entre AVIF, WebP y JPEG XL, comprimir sin perder calidad, optimizar imágenes para la web, pasar HEIC a JPG y usar un agente de IA. Con medidas.",
+      etiqueta: "Guías",
+      h1: "Guías.",
+      entrada: "Lo que conviene saber para que tus imágenes pesen menos sin que se note, con cifras medidas por Apolo.",
+    },
+    publicado: "Publicado el",
+    revisado: "revisado el",
+    relacionadas: "Sigue leyendo",
+    leer: "Leer",
+    descargar: "Descargar Apolo",
+    gratis: "Gratis para macOS, Windows y Linux.",
+  },
   webcafeina: {
     etiqueta: "Hecho por Webcafeína",
     titulo: "Hacemos herramientas como esta, y webs que cargan rápido.",
@@ -164,6 +180,8 @@ export const es = {
   },
   pie: {
     preguntas: "Preguntas frecuentes",
+    guias: "Guías",
+    comparativas: "Comparativas",
     novedades: "Novedades",
     cli: "Línea de comandos",
     agentes: "Agentes de IA",

@@ -8,7 +8,7 @@ export const en: Textos = {
       "Free image optimizer for Mac, Windows and Linux: compress and convert to WebP, AVIF, JPEG XL, JPEG and PNG without uploading your photos, seeing what you lose before you save.",
     saltar: "Skip to content",
   },
-  nav: { etiqueta: "Sections", sistema: "On your system", queHace: "What it does", descargar: "Download", preguntas: "FAQ" },
+  nav: { etiqueta: "Sections", sistema: "On your system", queHace: "What it does", descargar: "Download", preguntas: "FAQ", guias: "Guides" },
   heroe: {
     etiqueta: "Free · macOS, Windows and Linux · Open source",
     titulo: "Lighter images, just as good.",
@@ -139,6 +139,22 @@ export const en: Textos = {
     conGh: "With the provenance, if you have GitHub's command line:",
     clave: "The APT and RPM repositories and the .rpm files are signed with this GPG key:",
   },
+  articulos: {
+    guias: {
+      titulo: "Guides to optimize images · Apolo",
+      descripcion:
+        "How to convert to WebP, choose between AVIF, WebP and JPEG XL, compress without losing quality, optimize images for the web, turn HEIC into JPG and use an AI agent. With measurements.",
+      etiqueta: "Guides",
+      h1: "Guides.",
+      entrada: "What's worth knowing to make your images weigh less without it showing, with figures measured by Apolo.",
+    },
+    publicado: "Published on",
+    revisado: "reviewed on",
+    relacionadas: "Keep reading",
+    leer: "Read",
+    descargar: "Download Apolo",
+    gratis: "Free for macOS, Windows and Linux.",
+  },
   webcafeina: {
     etiqueta: "Made by Webcafeína",
     titulo: "We build tools like this, and websites that load fast.",
@@ -163,6 +179,8 @@ export const en: Textos = {
   },
   pie: {
     preguntas: "FAQ",
+    guias: "Guides",
+    comparativas: "Comparisons",
     novedades: "What's new",
     cli: "Command line",
     agentes: "AI agents",

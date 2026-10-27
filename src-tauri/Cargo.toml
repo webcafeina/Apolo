@@ -33,7 +33,7 @@ tauri-plugin-updater = "2"
 # Apache-2.0, y en las versiones que ya trae Tauri: no se compila otra copia.
 [target.'cfg(windows)'.dependencies]
 window-vibrancy = "0.8"
-windows-version = "0.1"
+windows-version = "0.100"
 windows-sys = { version = "0.61", features = [
   "Win32_Foundation",
   "Win32_Graphics_Dwm",

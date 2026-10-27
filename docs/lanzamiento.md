@@ -17,6 +17,11 @@ internacional.
 
 ## Con un PR desde la cuenta del proyecto (con su sí)
 
+**Estado el 2026-10-27**: enviados los dos, con el sí del cliente, desde forks en la cuenta
+webcafeina: **awesome-mcp-servers#17812** (marcado con 🤖🤖🤖, como pide la lista a los agentes) y
+**microsoft/winget-pkgs#463314** (`Webcafeina.Apolo` 1.0.0, x64 y ARM64, sumas comprobadas con
+`SHA256SUMS.txt`). Pendientes de que los revisen.
+
 ### awesome-mcp-servers
 
 `punkpeye/awesome-mcp-servers`, sección **🎥 Multimedia Process**, en orden alfabético:
@@ -28,7 +33,10 @@ internacional.
 ### winget
 
 Un PR a `microsoft/winget-pkgs` con `Webcafeina.Apolo` (instalador NSIS, x64 y ARM64). Se genera
-con **komac** (GPL-3.0, en Rust, funciona en Linux) a partir de las URL de la Release:
+con **komac** (GPL-3.0, en Rust, funciona en Linux) a partir de las URL de la Release. Dos
+trampas: pregunta cosas por pantalla aunque se le den todas las opciones (se lanza con `script` para
+darle un terminal y se aceptan las respuestas por defecto), y el fork `webcafeina/winget-pkgs` hay
+que crearlo antes (`gh repo fork microsoft/winget-pkgs --clone=false --default-branch-only`):
 
 ```sh
 komac new Webcafeina.Apolo --version 1.0.0 \
@@ -44,6 +52,12 @@ validación de winget pasa los instaladores por Defender: puede tardar. Después
 ## Con la cuenta del cliente
 
 ### Directorio de extensiones de Claude Desktop
+
+**Cambiado (2026-10-27)**: según la documentación de Anthropic, el directorio ya no acepta `.mcpb`
+sueltos; un servidor local entra solo dentro de un *plugin* de Claude. Las herramientas ya llevan
+`title` y `readOnlyHint`/`destructiveHint`; faltarían la política de privacidad (sección en el README
+y `privacy_policies` en el manifiesto) y el *plugin*. Trabajo aparte, a decidir con el cliente.
+Lo de abajo era el plan anterior.
 
 El formulario de Anthropic para el directorio de extensiones (`.mcpb`). Datos: el `.mcpb` de cada
 sistema de la Release, la web de agentes como documentación, `SECURITY.md` y la política de

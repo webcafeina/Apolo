@@ -8,8 +8,14 @@
 > (con su sí) awesome-mcp-servers#17812 y winget (microsoft/winget-pkgs#463314). El directorio de
 > extensiones de Claude ya no acepta `.mcpb`: se hará **Apolo como *plugin***. Decidido con el
 > cliente: **Reddit y Show HN, de momento no**; **AlternativeTo y Product Hunt, mañana, guiado**; e
-> **investigar dónde más estar** (lanzada; el informe irá a `docs/distribucion.md`). Lo que queda, en
-> `docs/siguiente.md` (Alta). Al empezar: `docs/estado.md` y `scripts/seguridad-github.sh`.
+> **investigar dónde más estar**: hecha, en `docs/distribucion.md`. Lo que queda, en
+> `docs/siguiente.md` (Alta). **Mañana, con el cliente**: AlternativeTo y Product Hunt (guiados);
+> **la CLA de Microsoft** para que avance el PR de winget (lo decide él: firmarla él en el PR o darme
+> el sí; `@microsoft-github-policy-service agree company="Webcafeína"`); **Glama** (ficha y
+> Dockerfile, que pide awesome-mcp-servers); y decidir cuáles de los «ya» de `docs/distribucion.md`
+> se hacen (catálogos de MCP, Uptodown y demás directorios, listas awesome, prensa, Chocolatey).
+> Después, Apolo como *plugin* de Claude. La galería de las guías se borró al cerrar, a petición del
+> cliente. Al empezar: `docs/estado.md` y `scripts/seguridad-github.sh`.
 >
 > **(2026-10-27, noche): v1.0.0 PUBLICADA (18:05 UTC), con la web nueva.** `Publicar` 40546962088
 > en verde a la primera (humo incluido). Borrador revisado: 31 ficheros, 30 sumas, 9 firmas,

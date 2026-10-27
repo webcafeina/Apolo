@@ -1,6 +1,6 @@
 # Lo siguiente
 
-Última actualización: **2026-10-26**
+Última actualización: **2026-10-27**
 
 El plan entero salió de la sesión del 2026-10-06, decidido con el cliente en cuatro rondas de
 preguntas (ver [decisiones.md](decisiones.md)). Va **por entregas**; cada una se cierra con sus
@@ -8,6 +8,22 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
+- **Después de la 1.0.0: cerrar la fase comercial** (ADR 0033 y 0034), decidido con el cliente el
+  2026-10-27 por la noche. La seguridad está hecha; queda:
+  - **mañana, con el cliente guiado**: AlternativeTo y Product Hunt (textos en `docs/lanzamiento.md`;
+    Product Hunt, un martes a jueves a las 00:01 de California). **Reddit y Show HN, de momento no.**
+  - **Apolo como *plugin* de Claude**, para el directorio de Anthropic, que ya no acepta `.mcpb`
+    sueltos: el *plugin* con el servidor MCP local, una política de privacidad (sección en el
+    README y `privacy_policies` en el manifiesto) y su envío por el portal
+    (claude.ai/directory/manage). Las herramientas ya llevan `title` y `readOnlyHint` o
+    `destructiveHint`.
+  - **Dónde más estar**: tiendas oficiales (Microsoft Store, Mac App Store, Snap, Flathub), gestores
+    de paquetes (Scoop, Chocolatey, homebrew-core…), directorios de software y de MCP. Investigación
+    lanzada el 2026-10-27; decidir con el cliente qué se hace.
+  - **Cerrar el SEO**: la primera revisión de `docs/seo.md` cuando Search Console y Bing tengan datos,
+    y comprobar la indexación de las 45 páginas.
+  - Seguir los PR de winget (#463314) y awesome-mcp-servers (#17812).
+- ~~**Entrega 8 — la 1.0**~~: **v1.0.0 publicada el 2026-10-27**, con la web nueva.
 - **Entrega 8 — la 1.0** ([ADR 0024](adr/0024-la-1-0.md)), en cuatro partes con su versión:
   - **8a · v0.10.0**:
     - Windows y Linux de verdad: `humo.yml` en CI (Windows x64 y Linux x64; instalar, `apolo-mcp`,

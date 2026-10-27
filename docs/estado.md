@@ -4,6 +4,13 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-10-27, noche): la 1.0.0 publicada; queda cerrar la fase comercial.** Enviados
+> (con su sí) awesome-mcp-servers#17812 y winget (microsoft/winget-pkgs#463314). El directorio de
+> extensiones de Claude ya no acepta `.mcpb`: se hará **Apolo como *plugin***. Decidido con el
+> cliente: **Reddit y Show HN, de momento no**; **AlternativeTo y Product Hunt, mañana, guiado**; e
+> **investigar dónde más estar** (lanzada; el informe irá a `docs/distribucion.md`). Lo que queda, en
+> `docs/siguiente.md` (Alta). Al empezar: `docs/estado.md` y `scripts/seguridad-github.sh`.
+>
 > **(2026-10-27, noche): v1.0.0 PUBLICADA (18:05 UTC), con la web nueva.** `Publicar` 40546962088
 > en verde a la primera (humo incluido). Borrador revisado: 31 ficheros, 30 sumas, 9 firmas,
 > `latest.json` 1.0.0 con 16 plataformas y las 16 firmas válidas, **procedencia verificada en los 22
@@ -50,7 +57,7 @@
 > (cabeceras, `apt`, `dnf`, `security.txt`, `llms.txt`), enviar el sitemap en Search Console y Bing,
 > y los envíos de `docs/lanzamiento.md`, cada uno con su sí.
 >
-> **PARADA AQUÍ (2026-10-27, mediodía): seguridad y posicionamiento antes de la 1.0.0 (ADR 0034),
+> **(2026-10-27, mediodía): seguridad y posicionamiento antes de la 1.0.0 (ADR 0034),
 > S1 a S4 hechos y subidos; se sigue esta tarde con S5.** Plan aprobado en
 > `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (arriba el de ahora; el de la fase comercial,
 > como anexo). Decidido con el cliente: Cloudflare delante de Pages, sección de guías, comparativas

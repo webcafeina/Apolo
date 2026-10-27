@@ -156,6 +156,20 @@ export const es = {
     descargar: "Descargar Apolo",
     gratis: "Gratis para macOS, Windows y Linux.",
   },
+  mapa: {
+    titulo: "Mapa del sitio · Apolo",
+    descripcion: "Todas las páginas de la web de Apolo: descargas para Mac, Windows y Linux, guías, comparativas, preguntas frecuentes, línea de comandos, agentes de IA y novedades.",
+    etiqueta: "Mapa del sitio",
+    h1: "Todo Apolo, de un vistazo.",
+    entrada: "Cada página de la web, agrupada por lo que buscas.",
+    grupos: { empezar: "Empezar", descargar: "Descargar", guias: "Guías", comparativas: "Comparativas", usar: "Usar Apolo", legal: "Lo legal", maquinas: "Para máquinas" },
+    maquinas: {
+      sitemap: "El mapa para los buscadores",
+      llms: "Apolo en Markdown, para las IAs",
+      llmsCompleto: "El texto de todas las páginas, para las IAs",
+      seguridad: "A quién avisar de un fallo de seguridad",
+    },
+  },
   webcafeina: {
     etiqueta: "Hecho por Webcafeína",
     titulo: "Hacemos herramientas como esta, y webs que cargan rápido.",
@@ -182,6 +196,7 @@ export const es = {
     preguntas: "Preguntas frecuentes",
     guias: "Guías",
     comparativas: "Comparativas",
+    mapa: "Mapa del sitio",
     novedades: "Novedades",
     cli: "Línea de comandos",
     agentes: "Agentes de IA",

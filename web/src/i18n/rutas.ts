@@ -27,6 +27,8 @@ export const RUTAS = {
   frenteTinypng: { es: "/comparativas/apolo-frente-a-tinypng/", en: "/en/compare/apolo-vs-tinypng/" },
   frenteImageoptim: { es: "/comparativas/apolo-frente-a-imageoptim/", en: "/en/compare/apolo-vs-imageoptim/" },
   frenteCaesium: { es: "/comparativas/apolo-frente-a-caesium/", en: "/en/compare/apolo-vs-caesium/" },
+  // Todas las páginas, para personas (el sitemap.xml es para los buscadores).
+  mapa: { es: "/mapa-del-sitio/", en: "/en/sitemap/" },
 } as const satisfies Record<string, Record<Idioma, string>>;
 
 export type Pagina = keyof typeof RUTAS;

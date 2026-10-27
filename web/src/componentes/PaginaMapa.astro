@@ -1,0 +1,146 @@
+---
+// El mapa del sitio para personas (ADR 0034): cada página de la web, agrupada,
+// con su descripción. El sitemap.xml se queda para los buscadores, sin diseño:
+// los navegadores están quitando XSLT, que es lo que permitiría pintarlo.
+import { AGENTES, CLI } from "../contenido/cli-agentes";
+import { COMPARATIVAS, INDICE } from "../contenido/comparativas";
+import { DESCARGAR } from "../contenido/descargar";
+import { GUIAS } from "../contenido/guias";
+import { PREGUNTAS } from "../contenido/preguntas";
+import { textos } from "../i18n";
+import { type Idioma, ruta } from "../i18n/rutas";
+import Pagina from "../layouts/Pagina.astro";
+
+interface Props {
+  idioma: Idioma;
+}
+const { idioma } = Astro.props;
+const t = textos(idioma);
+const m = t.mapa;
+const sin = (s: string) => s.replace(/\.$/, "");
+const es = idioma === "es";
+
+interface Enlace {
+  href: string;
+  texto: string;
+  descripcion?: string;
+}
+const grupos: { titulo: string; enlaces: Enlace[] }[] = [
+  {
+    titulo: m.grupos.empezar,
+    enlaces: [
+      { href: ruta("inicio", idioma), texto: "Apolo", descripcion: t.sitio.descripcion },
+      { href: ruta("preguntas", idioma), texto: sin(PREGUNTAS[idioma].h1), descripcion: PREGUNTAS[idioma].descripcion },
+      { href: ruta("novedades", idioma), texto: t.pie.novedades, descripcion: es ? "Lo que cambia en cada versión." : "What changes in each version." },
+    ],
+  },
+  {
+    titulo: m.grupos.descargar,
+    enlaces: (["macos", "windows", "linux"] as const).map((s) => ({
+      href: ruta(({ macos: "descargarMac", windows: "descargarWindows", linux: "descargarLinux" } as const)[s], idioma),
+      texto: sin(DESCARGAR[idioma][s].h1),
+      descripcion: DESCARGAR[idioma][s].entrada,
+    })),
+  },
+  {
+    titulo: m.grupos.guias,
+    enlaces: [
+      { href: ruta("guias", idioma), texto: t.articulos.guias.etiqueta, descripcion: t.articulos.guias.entrada },
+      ...GUIAS[idioma].map((g) => ({ href: ruta(g.pagina, idioma), texto: sin(g.h1), descripcion: g.resumen })),
+    ],
+  },
+  {
+    titulo: m.grupos.comparativas,
+    enlaces: [
+      { href: ruta("comparativas", idioma), texto: INDICE[idioma].etiqueta, descripcion: INDICE[idioma].entrada },
+      ...COMPARATIVAS[idioma].map((c) => ({ href: ruta(c.pagina, idioma), texto: sin(c.h1), descripcion: c.resumen })),
+    ],
+  },
+  {
+    titulo: m.grupos.usar,
+    enlaces: [
+      { href: ruta("cli", idioma), texto: sin(CLI[idioma].h1), descripcion: CLI[idioma].entrada },
+      { href: ruta("agentes", idioma), texto: sin(AGENTES[idioma].h1), descripcion: AGENTES[idioma].entrada },
+    ],
+  },
+  {
+    titulo: m.grupos.legal,
+    enlaces: [
+      { href: ruta("cookies", idioma), texto: t.pie.cookies },
+      { href: "https://webcafeina.com/aviso-legal/", texto: t.pie.aviso },
+      { href: "https://webcafeina.com/politica-privacidad/", texto: t.pie.privacidad },
+    ],
+  },
+  {
+    titulo: m.grupos.maquinas,
+    enlaces: [
+      { href: "/sitemap.xml", texto: "sitemap.xml", descripcion: m.maquinas.sitemap },
+      { href: "/llms.txt", texto: "llms.txt", descripcion: m.maquinas.llms },
+      { href: "/llms-full.txt", texto: "llms-full.txt", descripcion: m.maquinas.llmsCompleto },
+      { href: "/.well-known/security.txt", texto: "security.txt", descripcion: m.maquinas.seguridad },
+    ],
+  },
+];
+---
+
+<Pagina idioma={idioma} pagina="mapa" titulo={m.titulo} descripcion={m.descripcion} etiqueta={m.etiqueta} h1={m.h1} entrada={m.entrada}>
+  <div class="rejilla">
+    {
+      grupos.map((g) => (
+        <section class="grupo">
+          <h2>{g.titulo}</h2>
+          <ul>
+            {g.enlaces.map((e) => (
+              <li>
+                <a href={e.href}>{e.texto}</a>
+                {e.descripcion && <span>{e.descripcion}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</Pagina>
+
+<style>
+  /* Más ancho que el texto, hasta 1080 px, como los índices. */
+  .rejilla {
+    width: min(1080px, calc(100vw - 40px));
+    margin-inline: calc(50% - min(540px, 50vw - 20px));
+    columns: 3 300px;
+    column-gap: 16px;
+  }
+  .grupo {
+    break-inside: avoid;
+    margin: 0 0 16px;
+    padding: 22px 24px;
+    border-radius: var(--radio);
+    background: var(--suave);
+    box-shadow: inset 0 0 0 1px var(--filete);
+  }
+  .grupo h2 {
+    margin: 0 0 12px;
+    font-size: 20px;
+  }
+  .grupo ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .grupo li {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+  }
+  .grupo a {
+    font-weight: 600;
+    color: var(--tinta);
+  }
+  .grupo span {
+    font-size: 14px;
+    color: var(--apagado);
+  }
+</style>

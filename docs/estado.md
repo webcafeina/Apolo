@@ -13,12 +13,13 @@
 > nuevo. Al publicar: **la web nueva en el aire** (27 rutas bien, cabeceras, CSP, APT, RPM y PKGBUILD
 > en 1.0.0; en un navegador, nada de Google antes de aceptar y GTM, gtag y la visita a GA4 después,
 > sin violaciones de CSP), **IndexNow 202**, **Apolo en el registro oficial de MCP** y Homebrew al
-> día. `gh` 2.102.0 en `~/.local/bin` (trampas.md). Después de publicar, en un cambio: el `.pyc`
+> día. `gh` de Ubuntu, en la 2.103.3 desde el repositorio oficial (trampas.md). Después de publicar, en un cambio: el `.pyc`
 > fuera, `llvm.sh` guardado en `.github/`, los dos avisos de CodeQL, Dependabot en pausa
 > (`open-pull-requests-limit: 0`) y `web.yml` otra vez con `push`.
-> **Lo siguiente**: que el cliente envíe el sitemap en Search Console y Bing; decidir entre el
-> `sitemap.xsl` y una página «Mapa del sitio» (los navegadores están quitando XSLT); los envíos de
-> `docs/lanzamiento.md`, cada uno con su sí; y la primera revisión de `docs/seo.md`.
+> El cliente envió el sitemap en Search Console y Bing. Página **«Mapa del sitio»**
+> (`/mapa-del-sitio/`, `/en/sitemap/`) en vez de un `sitemap.xsl`, porque los navegadores están
+> quitando XSLT. **Lo siguiente**: los envíos de `docs/lanzamiento.md`, cada uno con su sí, y la
+> primera revisión de `docs/seo.md`.
 >
 > **(2026-10-27, tarde): S5, copias de seguridad y el cambio de web hechos; lo siguiente, la 1.0.0.**
 > - S5 (`c9fa1a1`): README con lo que se busca y «Verificar la descarga», plantillas de

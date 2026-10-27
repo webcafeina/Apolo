@@ -154,3 +154,20 @@ jobs:
           path: web/dist
       - id: despliegue
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+
+      # IndexNow (ADR 0034): avisa a Bing, Yandex y los demás de todas las
+      # páginas recién publicadas. ChatGPT busca sobre el índice de Bing. La
+      # clave no es secreta: está publicada en la propia web, que es como
+      # IndexNow comprueba que el aviso es nuestro. Si falla, no tumba nada.
+      - name: Avisar a los buscadores
+        continue-on-error: true
+        env:
+          CLAVE: 1283c6f1acc7f3c7d71dc2513d338e34
+        run: |
+          grep -oE '<loc>[^<]+' web/dist/sitemap.xml | sed 's/<loc>//' | python3 -c 'import json, os, sys
+          c = os.environ["CLAVE"]
+          urls = [l.strip() for l in sys.stdin if l.strip()]
+          print(json.dumps({"host": "apolo.webcafeina.com", "key": c, "keyLocation": "https://apolo.webcafeina.com/" + c + ".txt", "urlList": urls}))
+          ' > "$RUNNER_TEMP/indexnow.json"
+          curl -sS -o /dev/null -w "IndexNow: %{http_code}\n" -X POST https://api.indexnow.org/indexnow \
+            -H "Content-Type: application/json; charset=utf-8" --data @"$RUNNER_TEMP/indexnow.json"

@@ -98,7 +98,10 @@ pub fn manifiesto(version: &str, sistema: Sistema) -> Value {
             "Lets the agent analyze, optimize, compare formats at equal perceived quality (SSIMULACRA 2), measure the loss, look at images and convert whole folders with Apolo, on this computer. It always writes new files: it never overwrites or deletes. For the images on your computer, the agent should use Apolo and not its own cloud environment; Apolo doesn't see images attached to the conversation, so you tell it where the file is. If Apolo is installed, the extension uses its copy, which updates with the app."
         ),
         "author": { "name": "Webcafeína", "url": "https://webcafeina.com" },
-        "homepage": "https://github.com/webcafeina/Apolo",
+        // La web, que es donde se explica y se descarga (ADR 0034); el código, en el repositorio.
+        "homepage": trs!("https://apolo.webcafeina.com/", "https://apolo.webcafeina.com/en/"),
+        "documentation": trs!("https://apolo.webcafeina.com/agentes/", "https://apolo.webcafeina.com/en/agents/"),
+        "support": "https://github.com/webcafeina/Apolo/issues",
         "repository": { "type": "git", "url": "https://github.com/webcafeina/Apolo" },
         "license": "GPL-3.0-or-later",
         "icon": "icon.png",
@@ -119,8 +122,11 @@ pub fn manifiesto(version: &str, sistema: Sistema) -> Value {
             "webp",
             "avif",
             "jpeg xl",
+            "png",
+            "jpeg",
             trs!("optimizar", "optimize"),
-            trs!("comprimir", "compress")
+            trs!("comprimir", "compress"),
+            trs!("convertir", "convert")
         ],
         "compatibility": { "platforms": [sistema.manifiesto()] }
     })

@@ -3,9 +3,9 @@
 export const es = {
   idioma: { etiqueta: "Idioma", es: "Español", en: "English" },
   sitio: {
-    titulo: "Apolo · Imágenes más ligeras, igual de buenas",
+    titulo: "Apolo · Comprime imágenes y conviértelas a WebP y AVIF, gratis",
     descripcion:
-      "Optimizador de imágenes gratuito para macOS, Windows y Linux: WebP, AVIF, JPEG XL, JPEG y PNG en tu ordenador, viendo lo que pierdes antes de guardar.",
+      "Optimizador de imágenes gratis para Mac, Windows y Linux: comprime y convierte a WebP, AVIF, JPEG XL, JPEG y PNG sin subir tus fotos, viendo lo que pierdes antes de guardar.",
     saltar: "Ir al contenido",
   },
   nav: { etiqueta: "Secciones", sistema: "En tu sistema", queHace: "Qué hace", descargar: "Descargar", preguntas: "Preguntas" },

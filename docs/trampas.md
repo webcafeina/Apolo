@@ -622,3 +622,26 @@ la política exista, y desde ahí todo lo demás tiene que cumplirla. Una prueba
 `<script>` en la página (el parpadeo de `deteccion.spec.ts`) lo ve bloqueado: quita la CSP de su
 copia de la página. Y cualquier etiqueta nueva de GTM cuyo dominio no esté en `astro.config.mjs` no
 cargará: la consola lo dice como `Refused to load…`. · 2026-10-27
+
+## Cloudflare delante de Pages: todo por reglas de `apolo`, y su robots.txt
+
+Desde el 2026-10-27 `apolo` va con el proxy de Cloudflare (ADR 0034). Casi todos los ajustes de
+Cloudflare son de la zona entera (`webcafeina.com`, la web principal incluida), así que lo de Apolo
+va en reglas con `http.host eq "apolo.webcafeina.com"`:
+- una **Configuration Rule** con SSL «Estricto»;
+- una **Cache Rule** que omite la caché en `/apt/`, `/rpm/` y `/aur/`, o `apt update` y `dnf`
+  verían el repositorio viejo tras publicar;
+- una **Response Header Transform Rule** con HSTS, `nosniff`, `Referrer-Policy`,
+  `Permissions-Policy`, COOP, `X-Frame-Options` y la CSP de `frame-ancestors`.
+
+Bot Fight Mode está apagado en la zona: encendido, desafiaría a `apt` y `dnf`. AI Crawl Control no
+bloquea a ningún rastreador. El **robots.txt gestionado de Cloudflare está activo** aunque no se
+vea en el panel: sin robots.txt propio sirve el suyo (solo comentarios de «content signals», sin
+ninguna señal), y con uno propio le añade ese texto delante. Se deja: es neutro y cambiarlo
+afecta a toda la zona.
+
+Al cliente, el certificado se lo da Cloudflare; el de GitHub (Let's Encrypt) solo lo ve
+Cloudflare, que lo exige válido. **GitHub lo renueva hacia el 20 de diciembre de 2026** (caduca el
+19 de enero de 2027): comprobar ese día que se renovó con el proxy delante
+(`openssl s_client -connect webcafeina.github.io:443 -servername apolo.webcafeina.com`). Si no,
+nube gris un rato, que GitHub lo emita, y otra vez naranja. · 2026-10-27

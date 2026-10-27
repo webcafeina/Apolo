@@ -4,6 +4,22 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **(2026-10-27, noche): v1.0.0 PUBLICADA (18:05 UTC), con la web nueva.** `Publicar` 40546962088
+> en verde a la primera (humo incluido). Borrador revisado: 31 ficheros, 30 sumas, 9 firmas,
+> `latest.json` 1.0.0 con 16 plataformas y las 16 firmas válidas, **procedencia verificada en los 22
+> ficheros** (`publicar.yml@refs/tags/v1.0.0`, commit `1c4ec98`), CLI y `apolo-mcp` 1.0.0, los cinco
+> `.mcpb` 1.0.0 sin Squoosh, Windows sin DLL de Visual C++ y manifiesto ARM64 idéntico al de la
+> 0.18.3, AVIF 3/3 igual que avifenc 1.4.2, `.deb` y lanzador con la frase nueva, `.dmg` con el fondo
+> nuevo. Al publicar: **la web nueva en el aire** (27 rutas bien, cabeceras, CSP, APT, RPM y PKGBUILD
+> en 1.0.0; en un navegador, nada de Google antes de aceptar y GTM, gtag y la visita a GA4 después,
+> sin violaciones de CSP), **IndexNow 202**, **Apolo en el registro oficial de MCP** y Homebrew al
+> día. `gh` 2.102.0 en `~/.local/bin` (trampas.md). Después de publicar, en un cambio: el `.pyc`
+> fuera, `llvm.sh` guardado en `.github/`, los dos avisos de CodeQL, Dependabot en pausa
+> (`open-pull-requests-limit: 0`) y `web.yml` otra vez con `push`.
+> **Lo siguiente**: que el cliente envíe el sitemap en Search Console y Bing; decidir entre el
+> `sitemap.xsl` y una página «Mapa del sitio» (los navegadores están quitando XSLT); los envíos de
+> `docs/lanzamiento.md`, cada uno con su sí; y la primera revisión de `docs/seo.md`.
+>
 > **(2026-10-27, tarde): S5, copias de seguridad y el cambio de web hechos; lo siguiente, la 1.0.0.**
 > - S5 (`c9fa1a1`): README con lo que se busca y «Verificar la descarga», plantillas de
 >   incidencias, Discussions (activado por el cliente), `mcp.yml` para el registro oficial de MCP al
@@ -16,6 +32,14 @@
 > - **F10, el cambio de web**: `sitio/` → `web/`, la web vieja borrada y `web.yml` nuevo, **que solo
 >   despliega al publicar una versión** (decisión del cliente). **Tras el lanzamiento, volver a
 >   añadirle el `push`** (ADR 0034).
+>
+> **Justo después de publicar la 1.0.0** (decidido con el cliente, en un solo cambio y sin romper
+> nada): (1) quitar del repositorio `pruebas/humo/__pycache__/humo.cpython-314.pyc` y añadir
+> `__pycache__` al `.gitignore`; (2) comprobar la suma SHA-256 de `llvm.sh` antes de ejecutarlo en
+> `comprobar.yml` y `publicar.yml` (cinco sitios, Scorecard «Pinned-Dependencies»); (3) los dos avisos
+> de CodeQL en `scripts/evaluar-mcp.mjs:201` y `web/herramientas/iconos.mjs:14`; (4) pausar las
+> propuestas de versión de Dependabot (`open-pull-requests-limit: 0`) y cerrar #12–#14; las de
+> seguridad siguen. Y volver a añadir el `push` a `web.yml`.
 >
 > **Lo siguiente: la 1.0.0.** Versión 1.0.0 en los `Cargo.toml`, `package.json` y
 > `tauri.conf.json`; notas bilingües en `.github/notas/v1.0.0.md`, que el cliente revisa antes de

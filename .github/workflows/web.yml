@@ -16,10 +16,13 @@
 # y por eso se despliega también al publicar una versión. Y en /aur, el PKGBUILD de apolo-bin.
 name: Web
 
-# Solo al publicar una versión, o a mano (ADR 0034): la web nueva sale con la 1.0.0, a la vez que
-# la versión, y no al subir el cambio de sitio/ a web/. Tras el lanzamiento, se vuelve a desplegar
-# también con cada cambio de web/ en main (push con paths: web/**, .github/notas/** y este fichero).
+# Con cada cambio de la web en main, al publicar una versión (por los paquetes de /apt y /rpm y los
+# datos de las descargas) y a mano. Entre el cambio de sitio/ a web/ y la 1.0.0 solo desplegaba al
+# publicar, para que la web nueva saliera con la versión (ADR 0034).
 on:
+  push:
+    branches: [main]
+    paths: ["web/**", ".github/notas/**", ".github/workflows/web.yml"]
   release:
     types: [published]
   workflow_dispatch:

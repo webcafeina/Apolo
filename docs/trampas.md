@@ -645,3 +645,12 @@ Cloudflare, que lo exige válido. **GitHub lo renueva hacia el 20 de diciembre d
 19 de enero de 2027): comprobar ese día que se renovó con el proxy delante
 (`openssl s_client -connect webcafeina.github.io:443 -servername apolo.webcafeina.com`). Si no,
 nube gris un rato, que GitHub lo emita, y otra vez naranja. · 2026-10-27
+
+## El `gh` de Ubuntu no sabe verificar la procedencia
+
+`gh attestation verify` llegó en `gh` 2.49, y Ubuntu trae la 2.46: con ella la orden ni existe, y
+un bucle que la use da «sin procedencia» para todos los ficheros aunque las atestaciones estén bien
+(la API lo confirma: `gh api repos/webcafeina/Apolo/attestations/sha256:<suma>`). En el VPS hay un
+`gh` 2.102.0 en `~/.local/bin` (va antes en el PATH que `/usr/bin/gh`), bajado de las Releases de
+cli/cli y comprobado con su `checksums.txt` el 2026-10-27. Fuera de un terminal, `gh attestation
+verify` no imprime nada: el resultado es el código de salida (0 bien, 1 mal). · 2026-10-27

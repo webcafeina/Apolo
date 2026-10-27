@@ -198,7 +198,7 @@ if (INFORME) {
     '',
     '| Escenario | Categoría | Resultado | Llamadas | Errores | s | Secuencia |',
     '|---|---|---|---|---|---|---|',
-    ...resultados.map((r) => `| \`${r.id}\` | ${r.categoria} | ${r.estado === 'ok' ? '✓' : `✗ ${String(r.motivo ?? '').replace(/\|/g, '\\|')}`} | ${r.llamadas ?? '-'} | ${r.errores ?? '-'} | ${r.segundos ?? '-'} | ${(r.secuencia ?? []).join(' → ')} |`),
+    ...resultados.map((r) => `| \`${r.id}\` | ${r.categoria} | ${r.estado === 'ok' ? '✓' : `✗ ${String(r.motivo ?? '').replace(/\\/g, '\\\\').replace(/\|/g, '\\|')}`} | ${r.llamadas ?? '-'} | ${r.errores ?? '-'} | ${r.segundos ?? '-'} | ${(r.secuencia ?? []).join(' → ')} |`),
     '',
     '## Método',
     '',

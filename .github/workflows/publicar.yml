@@ -86,8 +86,7 @@ jobs:
       - name: clang 18
         if: runner.os == 'Linux'
         run: |
-          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
-          sudo bash llvm.sh 18
+          sudo bash .github/llvm.sh 18
           echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
         with:
@@ -279,8 +278,7 @@ jobs:
       - name: clang 18
         if: runner.os == 'Linux'
         run: |
-          wget -qO llvm.sh https://apt.llvm.org/llvm.sh
-          sudo bash llvm.sh 18
+          sudo bash .github/llvm.sh 18
           echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
         with:

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Preguntas y dudas · Questions
+    url: https://github.com/webcafeina/Apolo/discussions
+    about: Para preguntar, mejor en Discussions · To ask, Discussions is better
+  - name: Preguntas frecuentes · FAQ
+    url: https://apolo.webcafeina.com/preguntas/
+    about: Lo que suele preguntarse · What people usually ask
+  - name: Un fallo de seguridad · A security issue
+    url: https://github.com/webcafeina/Apolo/security/advisories/new
+    about: En privado, no aquí · Privately, not here

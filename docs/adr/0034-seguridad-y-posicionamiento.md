@@ -113,3 +113,17 @@ Decidido con el cliente: **todo antes de la 1.0.0**, en cinco partes (S1 a S5).
   de resultados enriquecidos de Google y el aviso real a IndexNow (cuando la web esté en el aire).
 - **S4:** las cifras salen de `medidas.json` (Apolo 0.18.3, 2026-10-27); lo de cada herramienta
   comparada, comprobado en su web y su repositorio ese día. Vistas por el cliente en una galería.
+- **S5:** `server.json` validado contra el esquema y con `mcp-publisher validate` (v1.8.1) usando
+  los `.mcpb` de la 0.18.3; `mcp.yml` pasa zizmor. Discussions activado por el cliente, con su hilo
+  de bienvenida. **Sin verificar**: la publicación real en el registro (sale con la 1.0.0) y los
+  envíos a directorios, que esperan al lanzamiento (`docs/lanzamiento.md`).
+
+## Matices de S5 (2026-10-27)
+
+- **awesome-tauri ya no recoge aplicaciones**, solo plugins y plantillas: se descarta. Queda
+  awesome-mcp-servers, en «Multimedia Process».
+- **GA4 ya trae el canal «AI Assistant»** en su grupo predeterminado: no hace falta un grupo propio.
+- **La insignia de Scorecard no va en el README todavía**: la nota era 5,4 por la juventud del
+  repositorio, por subir sin revisión de PR y por CodeQL recién activado. Va cuando pase de 7
+  (`docs/seo.md`).
+- **winget, con komac** (GPL-3.0, funciona en Linux) en vez de wingetcreate, que pide Windows.

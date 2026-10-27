@@ -1,0 +1,49 @@
+name: Algo no funciona · Something doesn't work
+description: Un fallo de Apolo, de la línea de comandos o del servidor para agentes · A bug in Apolo, the command line or the agent server
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por avisar. Si es un fallo de seguridad, **no lo abras aquí**: usa el [aviso privado](https://github.com/webcafeina/Apolo/security/advisories/new).
+        Thanks for reporting. If it's a security issue, **don't open it here**: use [private reporting](https://github.com/webcafeina/Apolo/security/advisories/new).
+  - type: input
+    id: version
+    attributes:
+      label: Versión de Apolo · Apolo version
+      description: Ajustes › Acerca de, o `apolo --version` · Settings › About, or `apolo --version`
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: sistema
+    attributes:
+      label: Sistema · System
+      options:
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Windows x64
+        - Windows ARM
+        - Linux x64
+        - Linux ARM
+    validations:
+      required: true
+  - type: input
+    id: detalle
+    attributes:
+      label: Versión del sistema y escritorio · System version and desktop
+      placeholder: "macOS 27, Windows 11 24H2, Ubuntu 26.10 (GNOME), Fedora 44 (KDE)…"
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Qué hiciste · What you did
+      description: Los pasos para que vuelva a pasar · The steps to make it happen again
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Qué esperabas y qué pasó · What you expected and what happened
+      description: Si hay un mensaje de error, cópialo tal cual · If there's an error message, copy it as is
+    validations:
+      required: true

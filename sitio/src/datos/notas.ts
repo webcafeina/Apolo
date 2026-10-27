@@ -4,7 +4,22 @@
 // de la 0.12.0 solo están en español.
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { marked } from "marked";
+import { Marked } from "marked";
+
+// Las notas salen tal cual en la web (set:html), así que nada de lo que
+// traigan se ejecuta (ADR 0034): el HTML crudo se escribe como texto, y un
+// enlace que no sea http(s), mailto, un ancla o una ruta se queda en su texto.
+const escapar = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+export const enlaceSeguro = (href: string) => /^(https?:|mailto:|#|\/|\.)/i.test(href) || !/^[a-z][a-z0-9+.-]*:/i.test(href);
+const marked = new Marked({
+  renderer: {
+    html: ({ text }) => escapar(text),
+    link({ href, tokens }) {
+      return enlaceSeguro(href) ? false : this.parser.parseInline(tokens);
+    },
+    image: ({ href, text }) => (enlaceSeguro(href) ? false : escapar(text)),
+  },
+});
 
 export interface Nota {
   version: string;

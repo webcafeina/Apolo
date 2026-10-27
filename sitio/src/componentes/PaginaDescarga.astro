@@ -6,6 +6,7 @@ import type { Idioma, Pagina as P } from "../i18n/rutas";
 import Pagina from "../layouts/Pagina.astro";
 import Captura from "./Captura.astro";
 import Comando from "./Comando.astro";
+import Comprobar from "./Comprobar.astro";
 import Descargas from "./Descargas.astro";
 import Ventana from "./Ventana.astro";
 
@@ -42,6 +43,7 @@ const vista = sistema === "linux" ? "gnome" : sistema;
       </section>
     ))
   }
+  <Comprobar idioma={idioma} sistema={sistema} />
 </Pagina>
 
 <style>

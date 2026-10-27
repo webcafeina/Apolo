@@ -1,0 +1,82 @@
+---
+// Comprobar la descarga (ADR 0034): en cada página de descarga, la suma
+// SHA-256 entera de cada fichero de ese sistema, el enlace a SHA256SUMS.txt,
+// la orden para comprobarla, la procedencia de GitHub (gh attestation verify)
+// y, en Linux, la huella de la clave GPG de los repositorios.
+import { release } from "../datos/version";
+import type { Sistema } from "../datos/release";
+import { textos } from "../i18n";
+import type { Idioma } from "../i18n/rutas";
+import Comando from "./Comando.astro";
+
+interface Props {
+  idioma: Idioma;
+  sistema: Sistema;
+}
+const { idioma, sistema } = Astro.props;
+const t = textos(idioma).comprobar;
+const ficheros = Object.values(release.ficheros).filter((f) => f.sistema === sistema);
+const sumas = ficheros[0].url.replace(/[^/]+$/, "SHA256SUMS.txt");
+const ejemplo = ficheros[0].nombre;
+const conSuma = {
+  macos: [`shasum -a 256 ${ejemplo}`],
+  windows: [`Get-FileHash .\\${ejemplo} -Algorithm SHA256`],
+  linux: [`sha256sum ${ejemplo}`],
+}[sistema];
+const HUELLA = "6D95 3C94 D0D6 6AB6 B9B0 FA26 CA21 CD7A B7FA 57FC";
+---
+
+<section class="comprobar">
+  <h2>{t.titulo}</h2>
+  <p>{t.entrada}</p>
+  <dl class="sumas">
+    {
+      ficheros.map((f) => (
+        <div>
+          <dt>{f.nombre}</dt>
+          <dd><code>{f.sha256}</code></dd>
+        </div>
+      ))
+    }
+  </dl>
+  <p><a href={sumas}>{t.todas}</a></p>
+  <p>{t.conSuma}</p>
+  <Comando idioma={idioma} nombre="suma" lineas={conSuma} />
+  <p>{t.conGh}</p>
+  <Comando idioma={idioma} nombre="attestation" lineas={[`gh attestation verify ${ejemplo} --repo webcafeina/Apolo`]} />
+  {
+    sistema === "linux" && (
+      <>
+        <p>{t.clave}</p>
+        <p><code class="huella">{HUELLA}</code> · <a href="/apolo.asc">apolo.asc</a></p>
+      </>
+    )
+  }
+</section>
+
+<style>
+  .comprobar :global(.comando) {
+    margin-bottom: 16px;
+  }
+  .sumas {
+    margin: 0 0 16px;
+  }
+  .sumas div {
+    display: grid;
+    gap: 4px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--filete);
+  }
+  dt {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  dd {
+    margin: 0;
+  }
+  dd code,
+  .huella {
+    font-size: 12.5px;
+    word-break: break-all;
+  }
+</style>

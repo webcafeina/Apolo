@@ -131,6 +131,15 @@ export const es = {
       linux: "Sin el repositorio, el paquete suelto se instala con doble clic o con tu gestor de paquetes.",
     },
   },
+  comprobar: {
+    titulo: "Comprobar la descarga",
+    entrada:
+      "Cada fichero de la versión trae su suma SHA-256 y su procedencia firmada por GitHub, que dice qué compilación lo hizo y desde qué código. Si coinciden, el fichero es el que salió del repositorio.",
+    todas: "Todas las sumas de la versión (SHA256SUMS.txt)",
+    conSuma: "Con la suma, en la terminal:",
+    conGh: "Con la procedencia, si tienes la línea de comandos de GitHub:",
+    clave: "Los repositorios APT y RPM y los .rpm van firmados con esta clave GPG:",
+  },
   webcafeina: {
     etiqueta: "Hecho por Webcafeína",
     titulo: "Hacemos herramientas como esta, y webs que cargan rápido.",

@@ -1,0 +1,10 @@
+---
+// Datos estructurados (schema.org) en JSON-LD. JSON.stringify no escapa «<»:
+// un «</script>» en un texto cerraría el bloque, así que va como < (ADR 0034).
+interface Props {
+  datos: object;
+}
+const json = JSON.stringify(Astro.props.datos).replace(/</g, "\\u003c");
+---
+
+<script type="application/ld+json" set:html={json} />

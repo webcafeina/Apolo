@@ -155,6 +155,20 @@ export const en: Textos = {
     descargar: "Download Apolo",
     gratis: "Free for macOS, Windows and Linux.",
   },
+  mapa: {
+    titulo: "Sitemap · Apolo",
+    descripcion: "Every page of Apolo's website: downloads for Mac, Windows and Linux, guides, comparisons, FAQ, command line, AI agents and what's new.",
+    etiqueta: "Sitemap",
+    h1: "All of Apolo, at a glance.",
+    entrada: "Every page of the website, grouped by what you're looking for.",
+    grupos: { empezar: "Start", descargar: "Download", guias: "Guides", comparativas: "Comparisons", usar: "Using Apolo", legal: "Legal", maquinas: "For machines" },
+    maquinas: {
+      sitemap: "The map for search engines",
+      llms: "Apolo in Markdown, for AIs",
+      llmsCompleto: "The text of every page, for AIs",
+      seguridad: "Who to tell about a security issue",
+    },
+  },
   webcafeina: {
     etiqueta: "Made by Webcafeína",
     titulo: "We build tools like this, and websites that load fast.",
@@ -181,6 +195,7 @@ export const en: Textos = {
     preguntas: "FAQ",
     guias: "Guides",
     comparativas: "Comparisons",
+    mapa: "Sitemap",
     novedades: "What's new",
     cli: "Command line",
     agentes: "AI agents",

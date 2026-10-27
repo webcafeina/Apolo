@@ -14,9 +14,9 @@ describe("llms.txt", () => {
     expect(txt).toContain(release.version);
   });
 
-  it("enlaza las páginas en los dos idiomas (menos las cookies)", () => {
+  it("enlaza las páginas en los dos idiomas (menos las cookies y el mapa para personas)", () => {
     for (const [pagina, par] of Object.entries(RUTAS)) {
-      if (pagina === "cookies") continue;
+      if (pagina === "cookies" || pagina === "mapa") continue;
       expect(txt, par.es).toContain(`(https://apolo.webcafeina.com${par.es})`);
       expect(txt, par.en).toContain(`(https://apolo.webcafeina.com${par.en})`);
     }

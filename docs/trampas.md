@@ -650,7 +650,8 @@ nube gris un rato, que GitHub lo emita, y otra vez naranja. · 2026-10-27
 
 `gh attestation verify` llegó en `gh` 2.49, y Ubuntu trae la 2.46: con ella la orden ni existe, y
 un bucle que la use da «sin procedencia» para todos los ficheros aunque las atestaciones estén bien
-(la API lo confirma: `gh api repos/webcafeina/Apolo/attestations/sha256:<suma>`). En el VPS hay un
-`gh` 2.102.0 en `~/.local/bin` (va antes en el PATH que `/usr/bin/gh`), bajado de las Releases de
-cli/cli y comprobado con su `checksums.txt` el 2026-10-27. Fuera de un terminal, `gh attestation
-verify` no imprime nada: el resultado es el código de salida (0 bien, 1 mal). · 2026-10-27
+(la API lo confirma: `gh api repos/webcafeina/Apolo/attestations/sha256:<suma>`). **Arreglado el
+2026-10-27**: el cliente añadió al VPS el repositorio APT oficial de GitHub CLI
+(`/etc/apt/sources.list.d/github-cli.list`, clave en `/etc/apt/keyrings/`), así que `/usr/bin/gh` es
+la 2.103.3 y se pone al día con `apt upgrade`. Fuera de un terminal, `gh attestation verify` no
+imprime nada: el resultado es el código de salida (0 bien, 1 mal). · 2026-10-27

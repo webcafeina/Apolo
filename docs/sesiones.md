@@ -25,8 +25,13 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - Verificado: `make comprobar` y `make web-e2e` antes de cada subida, CI en verde, la pestaña
   Security sin nada de CodeQL ni Dependabot. Quedan 7 avisos de Scorecard sobre el repositorio
   (edad, revisión por PR, fuzzing, insignia de buenas prácticas).
-- Abierto: los envíos de `docs/lanzamiento.md`, cada uno con su sí, y la primera revisión de
-  `docs/seo.md`.
+- **Envíos** (con su sí): awesome-mcp-servers#17812 y microsoft/winget-pkgs#463314 (con komac). Esperan:
+  winget, la CLA de Microsoft; awesome-mcp-servers, la ficha en Glama. El directorio de Claude ya
+  no acepta `.mcpb`: Apolo irá como *plugin*. Reddit y Show HN, de momento no.
+- **Dónde más estar**: investigación de tiendas, gestores de paquetes, directorios y catálogos de
+  MCP, en `docs/distribucion.md`, con la recomendación (ya, más adelante y descartar).
+- Abierto: AlternativeTo y Product Hunt, la CLA, Glama, los «ya» de `docs/distribucion.md`, el
+  *plugin* de Claude y la primera revisión de `docs/seo.md`.
 
 ---
 

@@ -3,9 +3,9 @@ import type { Textos } from "./es";
 export const en: Textos = {
   idioma: { etiqueta: "Language", es: "Español", en: "English" },
   sitio: {
-    titulo: "Apolo · Lighter images, just as good",
+    titulo: "Apolo · Free image optimizer: compress to WebP, AVIF and JPEG XL",
     descripcion:
-      "Free image optimizer for macOS, Windows and Linux: WebP, AVIF, JPEG XL, JPEG and PNG on your own computer, seeing what you lose before you save.",
+      "Free image optimizer for Mac, Windows and Linux: compress and convert to WebP, AVIF, JPEG XL, JPEG and PNG without uploading your photos, seeing what you lose before you save.",
     saltar: "Skip to content",
   },
   nav: { etiqueta: "Sections", sistema: "On your system", queHace: "What it does", descargar: "Download", preguntas: "FAQ" },

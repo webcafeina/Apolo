@@ -1,7 +1,9 @@
 // El mapa del sitio (ADR 0033), con cada página en los dos idiomas y sus
 // alternas (hreflang). A mano y no con @astrojs/sitemap: los slugs van
-// traducidos y rutas.ts ya sabe emparejarlos.
+// traducidos y rutas.ts ya sabe emparejarlos. La fecha de cada página
+// (lastmod, ADR 0034) es la de la versión publicada: la web se compila con ella.
 import type { APIRoute } from "astro";
+import { release } from "../datos/version";
 import { RUTAS } from "../i18n/rutas";
 
 export const GET: APIRoute = ({ site }) => {
@@ -10,6 +12,7 @@ export const GET: APIRoute = ({ site }) => {
     (["es", "en"] as const).map(
       (i) => `  <url>
     <loc>${url(par[i])}</loc>
+    <lastmod>${release.fecha.slice(0, 10)}</lastmod>
     <xhtml:link rel="alternate" hreflang="es" href="${url(par.es)}"/>
     <xhtml:link rel="alternate" hreflang="en" href="${url(par.en)}"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="${url(par.en)}"/>

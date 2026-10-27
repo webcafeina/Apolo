@@ -1,8 +1,9 @@
 ---
-// Lo que leen los buscadores y las redes de cada página (ADR 0033): canonical,
-// hreflang (x-default, el inglés), Open Graph, la tarjeta de X/Twitter, y en la
-// portada y las descargas, Apolo como aplicación (SoftwareApplication). Sin
-// valoraciones: no se inventan.
+// Lo que leen los buscadores, las IAs y las redes de cada página (ADR 0033 y
+// 0034): canonical, hreflang (x-default, el inglés), Open Graph, la tarjeta de
+// X/Twitter y los datos estructurados. Apolo como aplicación entera
+// (SoftwareApplication) en la portada y las descargas; en las demás, solo su
+// referencia. Sin valoraciones: no se inventan.
 import { release } from "../datos/version";
 import JsonLd from "./JsonLd.astro";
 import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
@@ -15,31 +16,105 @@ interface Props {
 }
 const { idioma, pagina, titulo, descripcion } = Astro.props;
 const url = (i: Idioma) => (pagina ? new URL(ruta(pagina, i), Astro.site).href : undefined);
+const urlDe = (p: Pagina) => new URL(ruta(p, idioma), Astro.site).href;
 const imagen = new URL(`/social/apolo-${idioma}.png`, Astro.site).href;
 const APLICACION = new Set<Pagina>(["inicio", "descargarMac", "descargarWindows", "descargarLinux"]);
-const datos =
-  pagina && APLICACION.has(pagina)
-    ? {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        name: "Apolo",
-        description: descripcion,
-        url: url(idioma),
-        image: imagen,
-        applicationCategory: "MultimediaApplication",
-        applicationSubCategory: idioma === "es" ? "Optimizador de imágenes" : "Image optimizer",
-        operatingSystem: "macOS 11+, Windows 10, Windows 11, Linux",
-        softwareVersion: release.version,
-        datePublished: release.fecha.slice(0, 10),
-        downloadUrl: new URL(ruta(pagina === "inicio" ? "descargarMac" : pagina, idioma), Astro.site).href,
-        license: "https://www.gnu.org/licenses/gpl-3.0.html",
-        isAccessibleForFree: true,
-        inLanguage: ["es", "en"],
-        offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-        publisher: { "@type": "Organization", name: "Webcafeína", url: "https://webcafeina.com" },
-        sameAs: ["https://github.com/webcafeina/Apolo"],
-      }
-    : null;
+const sitio = Astro.site!.href;
+const REPO = "https://github.com/webcafeina/Apolo";
+const ID = {
+  organizacion: "https://webcafeina.com/#organizacion",
+  web: `${sitio}#web`,
+  apolo: `${sitio}#apolo`,
+  codigo: `${REPO}#codigo`,
+};
+const RASGOS = {
+  es: [
+    "Comprime y convierte imágenes a WebP, AVIF, JPEG XL, JPEG (MozJPEG) y PNG (OxiPNG)",
+    "El mismo fichero, byte a byte, que cwebp, cjpeg, oxipng, avifenc y cjxl",
+    "Compara el original y el resultado y mide la pérdida con SSIMULACRA 2",
+    "Calidad por nota: busca la calidad más baja que da la nota pedida",
+    "Lotes de carpetas enteras, en paralelo",
+    "Línea de comandos y servidor MCP para agentes de IA (Claude, Cursor, VS Code)",
+    "Todo en tu ordenador: no sube las imágenes a ningún sitio",
+  ],
+  en: [
+    "Compresses and converts images to WebP, AVIF, JPEG XL, JPEG (MozJPEG) and PNG (OxiPNG)",
+    "The same file, byte for byte, as cwebp, cjpeg, oxipng, avifenc and cjxl",
+    "Compares the original and the result and measures the loss with SSIMULACRA 2",
+    "Quality by score: finds the lowest quality that reaches the score you ask for",
+    "Batches of whole folders, in parallel",
+    "Command line and MCP server for AI agents (Claude, Cursor, VS Code)",
+    "Everything on your computer: images are never uploaded",
+  ],
+};
+// Un grafo (ADR 0034): Webcafeína, el sitio, Apolo (la aplicación) y su código
+// enlazados por @id en todas las páginas, y la página con sus migas de pan.
+const nombre = titulo.split(" · ")[0];
+const estaPagina = pagina && {
+  "@type": "WebPage",
+  "@id": `${url(idioma)}#pagina`,
+  url: url(idioma),
+  name: titulo,
+  description: descripcion,
+  inLanguage: idioma,
+  isPartOf: { "@id": ID.web },
+  about: { "@id": ID.apolo },
+  primaryImageOfPage: imagen,
+  dateModified: release.fecha.slice(0, 10),
+  ...(pagina !== "inicio" && {
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Apolo", item: urlDe("inicio") },
+        { "@type": "ListItem", position: 2, name: nombre, item: url(idioma) },
+      ],
+    },
+  }),
+};
+const aplicacion = {
+  "@type": "SoftwareApplication",
+  "@id": ID.apolo,
+  name: "Apolo",
+  alternateName: idioma === "es" ? "Apolo, optimizador de imágenes" : "Apolo image optimizer",
+  description: descripcion,
+  url: urlDe("inicio"),
+  image: imagen,
+  applicationCategory: "MultimediaApplication",
+  applicationSubCategory: idioma === "es" ? "Optimizador de imágenes" : "Image optimizer",
+  operatingSystem: "macOS 11+, Windows 10, Windows 11, Linux",
+  softwareVersion: release.version,
+  datePublished: release.fecha.slice(0, 10),
+  downloadUrl: new URL(ruta(pagina && pagina !== "inicio" && APLICACION.has(pagina) ? pagina : "descargarMac", idioma), Astro.site).href,
+  releaseNotes: urlDe("novedades"),
+  featureList: RASGOS[idioma],
+  license: "https://www.gnu.org/licenses/gpl-3.0.html",
+  isAccessibleForFree: true,
+  inLanguage: ["es", "en"],
+  offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+  author: { "@id": ID.organizacion },
+  publisher: { "@id": ID.organizacion },
+  sameAs: [REPO],
+};
+const grafo = pagina && {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "Organization", "@id": ID.organizacion, name: "Webcafeína", url: "https://webcafeina.com/", sameAs: ["https://github.com/webcafeina"] },
+    { "@type": "WebSite", "@id": ID.web, url: sitio, name: "Apolo", inLanguage: ["es", "en"], publisher: { "@id": ID.organizacion } },
+    estaPagina,
+    APLICACION.has(pagina) ? aplicacion : { "@type": "SoftwareApplication", "@id": ID.apolo, name: "Apolo", url: urlDe("inicio") },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": ID.codigo,
+      name: "Apolo",
+      codeRepository: REPO,
+      programmingLanguage: ["Rust", "TypeScript"],
+      runtimePlatform: ["macOS", "Windows", "Linux"],
+      license: "https://www.gnu.org/licenses/gpl-3.0.html",
+      targetProduct: { "@id": ID.apolo },
+      author: { "@id": ID.organizacion },
+    },
+  ],
+};
 ---
 
 {
@@ -69,4 +144,4 @@ const datos =
 <meta name="twitter:title" content={titulo} />
 <meta name="twitter:description" content={descripcion} />
 <meta name="twitter:image" content={imagen} />
-{datos && <JsonLd datos={datos} />}
+{grafo && <JsonLd datos={grafo} />}

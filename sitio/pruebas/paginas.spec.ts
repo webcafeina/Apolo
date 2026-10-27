@@ -29,7 +29,13 @@ for (const ruta of PAGINAS) {
     expect(await page.locator('link[rel="canonical"]').getAttribute("href")).toBe(`https://apolo.webcafeina.com${ruta}`);
     for (const l of ["es", "en", "x-default"]) await expect(page.locator(`link[rel="alternate"][hreflang="${l}"]`)).toHaveCount(1);
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/social\/apolo-(es|en)\.png$/);
-    for (const s of await page.locator('script[type="application/ld+json"]').allTextContents()) JSON.parse(s);
+    const bloques = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((s) => JSON.parse(s));
+    // El grafo (ADR 0034): Webcafeína, el sitio, la página, Apolo y su código; migas de pan fuera de la portada.
+    const grafo: { "@type": string; breadcrumb?: unknown; url?: string }[] = bloques.find((b) => b["@graph"])?.["@graph"] ?? [];
+    expect(grafo.map((n) => n["@type"]).sort()).toEqual(["Organization", "SoftwareApplication", "SoftwareSourceCode", "WebPage", "WebSite"]);
+    const web = grafo.find((n) => n["@type"] === "WebPage")!;
+    expect(web.url).toBe(`https://apolo.webcafeina.com${ruta}`);
+    expect(Boolean(web.breadcrumb)).toBe(ruta !== "/" && ruta !== "/en/");
     // Accesibilidad (WCAG 2 AA), con axe.
     const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
     expect(r.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(" ")}`)).toEqual([]);

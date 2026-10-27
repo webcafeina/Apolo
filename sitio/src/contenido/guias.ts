@@ -3,7 +3,7 @@
 // medidas por Apolo (articulos.ts). Las órdenes son las de la página de la CLI,
 // probadas con la CLI de verdad.
 import type { Idioma } from "../i18n/rutas";
-import { type Articulo, M, fotos, menos, peso, tablaFotos } from "./articulos";
+import { type Articulo, M, barrasFotos, barrasGraficos, barrasHeic, fotos, menos, peso, tarjetas } from "./articulos";
 
 const f80 = fotos(80);
 const f90 = fotos(90);
@@ -16,6 +16,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
   es: [
     {
       pagina: "guiaWebp",
+      destacado: { valor: `−${f90.webp.frenteJpeg} %`, texto: "frente a JPEG, sin que se note ni de cerca" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Cómo convertir imágenes a WebP, en Mac, Windows y Linux · Apolo",
@@ -33,6 +34,11 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             `Con la misma calidad percibida, WebP pesa menos que JPEG: en nuestras medidas con 24 fotos, un ${f80.webp.frenteJpeg} % menos cuando no se distingue puesta al lado, y un ${f90.webp.frenteJpeg} % menos cuando no se distingue ni de cerca. Frente al PNG original, ahorra un ${f80.webp.frentePng} %.`,
             "Además guarda transparencia (como PNG) y tiene un modo sin pérdida que va muy bien con capturas de pantalla y logos. Lo abren Chrome, Safari, Firefox y Edge, y casi cualquier programa de edición actual.",
           ],
+          cifras: [
+            { valor: `−${f90.webp.frenteJpeg} %`, texto: "frente a JPEG, sin que se note ni de cerca" },
+            { valor: `−${f80.webp.frentePng} %`, texto: "frente al PNG original" },
+            { valor: "Todos", texto: "los navegadores actuales lo abren" },
+          ],
           enlaces: [{ texto: "WebP frente a AVIF y JPEG XL", pagina: "guiaFormatos" }],
         },
         {
@@ -44,12 +50,14 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             "Mira el resultado con el deslizador o lado a lado, con el peso y la nota SSIMULACRA 2 de cada lado.",
             "Pulsa Exportar: el original no se toca.",
           ],
+          captura: "estudio",
         },
         {
           titulo: "Muchas a la vez",
           parrafos: [
             "En Lotes, elige una carpeta, WebP y el preset: Apolo convierte todas en paralelo, repite las subcarpetas y deja el resultado al lado, sin sobrescribir nada.",
           ],
+          captura: "lotes",
         },
         {
           titulo: "Desde la terminal",
@@ -66,11 +74,13 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           parrafos: [
             `En imágenes con texto, colores planos o transparencia, WebP sin pérdida guarda exactamente los mismos píxeles y pesa mucho menos: en nuestras capturas y logos de prueba, un ${graficoWebp} % menos que el PNG original, frente al ${graficoPng} % que se consigue optimizando el PNG con OxiPNG.`,
           ],
+          barras: barrasGraficos("es"),
         },
       ],
     },
     {
       pagina: "guiaFormatos",
+      destacado: { valor: `−${f90.jxl.frenteJpeg} %`, texto: "pesa JPEG XL frente a JPEG, sin que se note ni de cerca" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "AVIF, WebP o JPEG XL: cuál usar, con medidas · Apolo",
@@ -91,32 +101,32 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
         },
         {
           titulo: "Si no se distingue al lado (nota 80)",
-          tabla: tablaFotos(80, "es"),
+          barras: barrasFotos(80, "es"),
         },
         {
           titulo: "Si no se distingue ni de cerca (nota 90)",
-          tabla: tablaFotos(90, "es"),
+          barras: barrasFotos(90, "es"),
           parrafos: [
             `Con calidad alta, JPEG XL se adelanta (${f90.jxl.frenteJpeg} % menos que JPEG) y AVIF le sigue de cerca (${f90.avif.frenteJpeg} %). Con calidad más justa, AVIF es el más ligero (${f80.avif.frenteJpeg} %). WebP queda en medio, y su ventaja crece con la calidad.`,
           ],
         },
         {
           titulo: "Dónde se abre cada uno",
-          lista: [
+          columnas: tarjetas([
             "WebP: en todos los navegadores actuales y en casi cualquier programa. El más seguro.",
             "AVIF: en los navegadores actuales (Chrome, Edge, Firefox y Safari desde hace años) y en cada vez más programas.",
             "JPEG XL: Safari lo abre; en otros navegadores llega poco a poco. Antes de servirlo solo, compruébalo en caniuse.com.",
             "JPEG: en todas partes, también en correos, impresoras y programas antiguos.",
-          ],
+          ]),
         },
         {
           titulo: "Cuál elegir",
-          lista: [
+          columnas: tarjetas([
             "Para una web: AVIF, con WebP o JPEG de respaldo en un <picture> para lo que no lo abra.",
             "Para compartir sin pensar: WebP, o JPEG si va a un sitio antiguo.",
             "Para guardar con calidad alta: JPEG XL. Además recomprime los JPEG que ya tienes sin perder nada.",
             "Capturas, logos y gráficos: WebP sin pérdida o PNG optimizado.",
-          ],
+          ]),
           enlaces: [
             { texto: "Optimizar imágenes para la web", pagina: "guiaWeb" },
             { texto: "Comprimir sin perder calidad", pagina: "guiaSinPerder" },
@@ -131,6 +141,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
     },
     {
       pagina: "guiaSinPerder",
+      destacado: { valor: `−${f90.jxl.frentePng} %`, texto: "frente al PNG original, sin que se note ni de cerca" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Comprimir imágenes sin perder calidad (y sin que se note) · Apolo",
@@ -148,6 +159,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             `La imagen resultante es idéntica, píxel a píxel. Es lo que conviene en capturas de pantalla, logos y gráficos. En nuestras pruebas con ese tipo de imágenes, optimizar el PNG con OxiPNG ahorra un ${graficoPng} %, y pasarlo a WebP sin pérdida, un ${graficoWebp} %.`,
             "Con fotos, el ahorro sin pérdida es pequeño. La excepción: un JPEG que ya tienes se puede pasar a JPEG XL sin perder nada, y pesa bastante menos.",
           ],
+          barras: barrasGraficos("es"),
           comandos: [
             { titulo: "PNG optimizado, como oxipng", nombre: "apolo-png", lineas: ["apolo png -o 4 captura.png"] },
             { titulo: "WebP sin pérdida", nombre: "apolo-webp", lineas: ["apolo webp -lossless -z 9 captura.png -o captura.webp"] },
@@ -158,7 +170,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           parrafos: [
             `Las fotos se comprimen mucho más si se acepta perder detalle que el ojo no aprecia. A una nota de 90 de SSIMULACRA 2, que no se distingue ni de cerca, nuestras 24 fotos pesan un ${f90.jxl.frentePng} % menos en JPEG XL y un ${f90.avif.frentePng} % menos en AVIF que el PNG original.`,
           ],
-          tabla: tablaFotos(90, "es"),
+          barras: barrasFotos(90, "es"),
         },
         {
           titulo: "Cómo saber que no se nota",
@@ -166,6 +178,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             "Apolo mide cada resultado con SSIMULACRA 2, la métrica de calidad percibida del proyecto JPEG XL: con 90 o más no se distingue; con 70, es alta calidad; con 50, se nota. Y enseña el original y el resultado con un deslizador, lado a lado o con un mapa de diferencias.",
             "En vez de probar calidades a ciegas, se puede pedir la nota: «Calidad por nota» busca, foto a foto, la calidad más baja que llega a ella.",
           ],
+          captura: "diferencias",
           comandos: [
             { titulo: "Una carpeta, sin que se note ni de cerca", nombre: "apolo-lote", lineas: ["apolo lote fotos/ --formato avif --objetivo 90"] },
             { titulo: "Medir un resultado frente a su original", nombre: "apolo-medir", lineas: ["apolo medir foto.png foto.avif"] },
@@ -182,6 +195,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
     },
     {
       pagina: "guiaWeb",
+      destacado: { valor: `−${f80.avif.frenteJpeg} %`, texto: "pesa AVIF frente a JPEG, a la misma calidad percibida" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Optimizar imágenes para la web: tamaño, formato y código · Apolo",
@@ -204,6 +218,10 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           titulo: "2. El formato",
           parrafos: [
             `AVIF es hoy el más ligero que abren todos los navegadores actuales: en nuestras medidas, un ${f80.avif.frenteJpeg} % menos que JPEG a la misma calidad percibida. WebP, como respaldo, y PNG o WebP sin pérdida para logos y capturas.`,
+          ],
+          cifras: [
+            { valor: `−${f80.avif.frenteJpeg} %`, texto: "AVIF frente a JPEG, a la misma calidad percibida" },
+            { valor: `−${graficoWebp} %`, texto: "WebP sin pérdida frente al PNG, en capturas y logos" },
           ],
           enlaces: [{ texto: "AVIF, WebP o JPEG XL: las medidas", pagina: "guiaFormatos" }],
         },
@@ -236,6 +254,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
     },
     {
       pagina: "guiaAgente",
+      destacado: { valor: "11", texto: "herramientas para tu agente, en tu ordenador" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Optimizar imágenes con un agente de IA (Claude, Cursor, VS Code) · Apolo",
@@ -252,19 +271,20 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           parrafos: [
             "MCP es la forma en que los agentes de IA usan herramientas de tu ordenador. Apolo trae un servidor MCP con once herramientas: analizar, optimizar, comparar formatos, medir la calidad, mirar una imagen, convertir carpetas en lotes y guardar presets. Las imágenes se procesan en tu ordenador con los mismos motores que la aplicación.",
           ],
+          captura: "agentes",
         },
         {
           titulo: "Conectarlo",
-          lista: [
+          columnas: tarjetas([
             "Claude Desktop: en Apolo, la fila MCP de la barra lateral crea la extensión, que se instala una vez y se actualiza con la aplicación.",
             "Claude Code: una orden, la de tu sistema, en la página de agentes.",
             "Cursor, VS Code y los demás: la fila MCP de Apolo te da lo que hay que copiar.",
-          ],
+          ]),
           enlaces: [{ texto: "Cómo conectarlo en cada agente", pagina: "agentes" }],
         },
         {
           titulo: "Qué pedirle",
-          lista: [
+          peticiones: [
             "«Convierte a AVIF las fotos de ~/Escritorio/viaje a 1920 píxeles y dime cuánto he ahorrado.»",
             "«Compara WebP, AVIF y JPEG XL para esta foto a la misma calidad y quédate con el más ligero.»",
             "«Mide cuánto se ha perdido entre foto.png y foto.webp.»",
@@ -283,6 +303,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
     },
     {
       pagina: "guiaHeic",
+      destacado: { valor: `−${heic("jpeg")} %`, texto: "en JPEG frente al HEIC, sin que se note al lado" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Convertir HEIC a JPG (o WebP) gratis, sin subir tus fotos · Apolo",
@@ -307,12 +328,14 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             "Elige JPEG para que se abra en todas partes, o WebP o AVIF si va a una web.",
             "Exporta. Para una carpeta entera de fotos del móvil, usa Lotes.",
           ],
+          captura: "estudio",
         },
         {
           titulo: "Cuánto pesa cada opción",
           parrafos: [
             `Con la foto de ejemplo de libheif (${peso(M.heic.original, "es")} en HEIC), a una nota de 80 que no se distingue al lado: en JPEG, ${peso(M.heic.jpeg, "es")} (${heic("jpeg")} % menos); en WebP, ${peso(M.heic.webp, "es")} (${heic("webp")} % menos), y en AVIF, ${peso(M.heic.avif, "es")} (${heic("avif")} % menos). La nota se mide frente al HEIC abierto, que ya es una foto comprimida.`,
           ],
+          barras: barrasHeic("es"),
         },
         {
           titulo: "Desde la terminal",
@@ -333,6 +356,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
   en: [
     {
       pagina: "guiaWebp",
+      destacado: { valor: `−${f90.webp.frenteJpeg}%`, texto: "vs JPEG, without it showing even up close" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "How to convert images to WebP on Mac, Windows and Linux · Apolo",
@@ -350,6 +374,11 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             `At the same perceived quality, WebP weighs less than JPEG: in our measurements with 24 photos, ${f80.webp.frenteJpeg}% less when you can't tell it apart side by side, and ${f90.webp.frenteJpeg}% less when you can't tell it apart even up close. Against the original PNG, it saves ${f80.webp.frentePng}%.`,
             "It also keeps transparency (like PNG) and has a lossless mode that works very well for screenshots and logos. Chrome, Safari, Firefox and Edge open it, and so does almost any current editing app.",
           ],
+          cifras: [
+            { valor: `−${f90.webp.frenteJpeg}%`, texto: "vs JPEG, without it showing even up close" },
+            { valor: `−${f80.webp.frentePng}%`, texto: "vs the original PNG" },
+            { valor: "All", texto: "current browsers open it" },
+          ],
           enlaces: [{ texto: "WebP against AVIF and JPEG XL", pagina: "guiaFormatos" }],
         },
         {
@@ -361,12 +390,14 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             "Look at the result with the slider or side by side, with each side's size and SSIMULACRA 2 score.",
             "Press Export: the original is left untouched.",
           ],
+          captura: "estudio",
         },
         {
           titulo: "Many at once",
           parrafos: [
             "In Batches, choose a folder, WebP and the preset: Apolo converts them all in parallel, repeats the subfolders and leaves the result next to it, without overwriting anything.",
           ],
+          captura: "lotes",
         },
         {
           titulo: "From the terminal",
@@ -383,11 +414,13 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           parrafos: [
             `In images with text, flat colors or transparency, lossless WebP keeps exactly the same pixels and weighs much less: in our test screenshots and logos, ${graficoWebp}% less than the original PNG, against the ${graficoPng}% you get optimizing the PNG with OxiPNG.`,
           ],
+          barras: barrasGraficos("en"),
         },
       ],
     },
     {
       pagina: "guiaFormatos",
+      destacado: { valor: `−${f90.jxl.frenteJpeg}%`, texto: "JPEG XL vs JPEG, without it showing even up close" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "AVIF, WebP or JPEG XL: which to use, with measurements · Apolo",
@@ -408,32 +441,32 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
         },
         {
           titulo: "If you can't tell side by side (score 80)",
-          tabla: tablaFotos(80, "en"),
+          barras: barrasFotos(80, "en"),
         },
         {
           titulo: "If you can't tell even up close (score 90)",
-          tabla: tablaFotos(90, "en"),
+          barras: barrasFotos(90, "en"),
           parrafos: [
             `At high quality, JPEG XL pulls ahead (${f90.jxl.frenteJpeg}% less than JPEG) with AVIF close behind (${f90.avif.frenteJpeg}%). At tighter quality, AVIF is the lightest (${f80.avif.frenteJpeg}%). WebP sits in between, and its advantage grows with quality.`,
           ],
         },
         {
           titulo: "Where each one opens",
-          lista: [
+          columnas: tarjetas([
             "WebP: in every current browser and almost any app. The safest.",
             "AVIF: in current browsers (Chrome, Edge, Firefox, and Safari for years now) and in more and more apps.",
             "JPEG XL: Safari opens it; other browsers are getting there. Before serving it alone, check caniuse.com.",
             "JPEG: everywhere, including email, printers and old software.",
-          ],
+          ]),
         },
         {
           titulo: "Which to choose",
-          lista: [
+          columnas: tarjetas([
             "For a website: AVIF, with WebP or JPEG as a fallback in a <picture> for whatever can't open it.",
             "To share without thinking: WebP, or JPEG if it goes somewhere old.",
             "To archive at high quality: JPEG XL. It also recompresses the JPEGs you already have without losing anything.",
             "Screenshots, logos and graphics: lossless WebP or optimized PNG.",
-          ],
+          ]),
           enlaces: [
             { texto: "Optimize images for the web", pagina: "guiaWeb" },
             { texto: "Compress without losing quality", pagina: "guiaSinPerder" },
@@ -448,6 +481,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
     },
     {
       pagina: "guiaSinPerder",
+      destacado: { valor: `−${f90.jxl.frentePng}%`, texto: "vs the original PNG, without it showing even up close" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Compress images without losing quality (or without it showing) · Apolo",
@@ -465,6 +499,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             `The resulting image is identical, pixel for pixel. It's what you want for screenshots, logos and graphics. In our tests with that kind of image, optimizing the PNG with OxiPNG saves ${graficoPng}%, and turning it into lossless WebP, ${graficoWebp}%.`,
             "With photos, lossless savings are small. The exception: a JPEG you already have can be turned into JPEG XL without losing anything, and it weighs quite a bit less.",
           ],
+          barras: barrasGraficos("en"),
           comandos: [
             { titulo: "Optimized PNG, like oxipng", nombre: "apolo-png", lineas: ["apolo png -o 4 screenshot.png"] },
             { titulo: "Lossless WebP", nombre: "apolo-webp", lineas: ["apolo webp -lossless -z 9 screenshot.png -o screenshot.webp"] },
@@ -475,7 +510,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           parrafos: [
             `Photos compress much further if you accept losing detail the eye doesn't notice. At a SSIMULACRA 2 score of 90, which you can't tell apart even up close, our 24 photos weigh ${f90.jxl.frentePng}% less in JPEG XL and ${f90.avif.frentePng}% less in AVIF than the original PNG.`,
           ],
-          tabla: tablaFotos(90, "en"),
+          barras: barrasFotos(90, "en"),
         },
         {
           titulo: "How to know it doesn't show",
@@ -483,6 +518,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             "Apolo measures each result with SSIMULACRA 2, the perceived-quality metric from the JPEG XL project: at 90 or more you can't tell them apart; at 70, it's high quality; at 50, it shows. And it shows the original and the result with a slider, side by side or with a difference map.",
             "Instead of trying qualities blindly, you can ask for the score: “Quality by score” finds, photo by photo, the lowest quality that reaches it.",
           ],
+          captura: "diferencias",
           comandos: [
             { titulo: "A folder, without it showing even up close", nombre: "apolo-lote", lineas: ["apolo lote photos/ --formato avif --objetivo 90"] },
             { titulo: "Measure a result against its original", nombre: "apolo-medir", lineas: ["apolo medir photo.png photo.avif"] },
@@ -499,6 +535,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
     },
     {
       pagina: "guiaWeb",
+      destacado: { valor: `−${f80.avif.frenteJpeg}%`, texto: "AVIF vs JPEG, at the same perceived quality" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Optimize images for the web: size, format and code · Apolo",
@@ -521,6 +558,10 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           titulo: "2. Format",
           parrafos: [
             `AVIF is today the lightest format every current browser opens: in our measurements, ${f80.avif.frenteJpeg}% less than JPEG at the same perceived quality. WebP as a fallback, and PNG or lossless WebP for logos and screenshots.`,
+          ],
+          cifras: [
+            { valor: `−${f80.avif.frenteJpeg}%`, texto: "AVIF vs JPEG, at the same perceived quality" },
+            { valor: `−${graficoWebp}%`, texto: "lossless WebP vs PNG, for screenshots and logos" },
           ],
           enlaces: [{ texto: "AVIF, WebP or JPEG XL: the measurements", pagina: "guiaFormatos" }],
         },
@@ -553,6 +594,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
     },
     {
       pagina: "guiaAgente",
+      destacado: { valor: "11", texto: "tools for your agent, on your computer" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Optimize images with an AI agent (Claude, Cursor, VS Code) · Apolo",
@@ -569,19 +611,20 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           parrafos: [
             "MCP is how AI agents use tools on your computer. Apolo ships an MCP server with eleven tools: analyze, optimize, compare formats, measure quality, look at an image, convert folders in batches and save presets. Images are processed on your computer with the same engines as the app.",
           ],
+          captura: "agentes",
         },
         {
           titulo: "Connect it",
-          lista: [
+          columnas: tarjetas([
             "Claude Desktop: in Apolo, the MCP row in the sidebar creates the extension, which you install once and updates with the app.",
             "Claude Code: one command, your system's, on the agents page.",
             "Cursor, VS Code and the rest: Apolo's MCP row gives you what to copy.",
-          ],
+          ]),
           enlaces: [{ texto: "How to connect it to each agent", pagina: "agentes" }],
         },
         {
           titulo: "What to ask",
-          lista: [
+          peticiones: [
             "“Convert the photos in ~/Desktop/trip to AVIF at 1920 pixels and tell me how much I saved.”",
             "“Compare WebP, AVIF and JPEG XL for this photo at the same quality and keep the lightest.”",
             "“Measure how much was lost between photo.png and photo.webp.”",
@@ -600,6 +643,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
     },
     {
       pagina: "guiaHeic",
+      destacado: { valor: `−${heic("jpeg")}%`, texto: "as JPEG vs the HEIC, without it showing side by side" },
       publicado: FECHA,
       revisado: FECHA,
       titulo: "Convert HEIC to JPG (or WebP) for free, without uploading · Apolo",
@@ -624,12 +668,14 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
             "Choose JPEG so it opens everywhere, or WebP or AVIF if it's going to a website.",
             "Export. For a whole folder of phone photos, use Batches.",
           ],
+          captura: "estudio",
         },
         {
           titulo: "How much each option weighs",
           parrafos: [
             `With libheif's sample photo (${peso(M.heic.original, "en")} as HEIC), at a score of 80 you can't tell apart side by side: as JPEG, ${peso(M.heic.jpeg, "en")} (${heic("jpeg")}% less); as WebP, ${peso(M.heic.webp, "en")} (${heic("webp")}% less), and as AVIF, ${peso(M.heic.avif, "en")} (${heic("avif")}% less). The score is measured against the opened HEIC, which is already a compressed photo.`,
           ],
+          barras: barrasHeic("en"),
         },
         {
           titulo: "From the terminal",

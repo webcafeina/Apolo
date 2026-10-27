@@ -82,6 +82,10 @@ function seccionesMd(p: PaginaDescarga): string {
                 (s.tabla.nota ? `\n\n${s.tabla.nota}` : ""),
             ]
           : []),
+        ...(s.cifras ? [s.cifras.map((c) => `- **${c.valor}**: ${c.texto}`).join("\n")] : []),
+        ...(s.barras ? [s.barras.filas.map((f) => `- ${f.etiqueta}: ${f.texto}`).join("\n") + (s.barras.nota ? `\n\n${s.barras.nota}` : "")] : []),
+        ...(s.peticiones ? [s.peticiones.map((x) => `- ${x}`).join("\n")] : []),
+        ...(s.columnas ?? []).map((c) => `**${c.titulo}**\n\n${c.lista.map((x) => `- ${x}`).join("\n")}`),
         ...(s.codigo ? [`\`\`\`html\n${s.codigo.join("\n")}\n\`\`\``] : []),
         ...(s.comandos ?? []).map((k) => `${k.titulo ? `${k.titulo}:\n\n` : ""}\`\`\`sh\n${k.lineas.join("\n")}\n\`\`\``),
       ].join("\n\n"),

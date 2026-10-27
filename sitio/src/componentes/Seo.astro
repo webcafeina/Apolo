@@ -5,6 +5,8 @@
 // (SoftwareApplication) en la portada y las descargas; en las demás, solo su
 // referencia. Sin valoraciones: no se inventan.
 import { release } from "../datos/version";
+import { INDICE } from "../contenido/comparativas";
+import { textos } from "../i18n";
 import JsonLd from "./JsonLd.astro";
 import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
 
@@ -50,6 +52,8 @@ const RASGOS = {
 // Un grafo (ADR 0034): Webcafeína, el sitio, Apolo (la aplicación) y su código
 // enlazados por @id en todas las páginas, y la página con sus migas de pan.
 const nombre = titulo.split(" · ")[0];
+// Las guías y las comparativas cuelgan de su índice.
+const indice = pagina?.startsWith("guia") && pagina !== "guias" ? "guias" : pagina?.startsWith("frente") ? "comparativas" : undefined;
 const estaPagina = pagina && {
   "@type": "WebPage",
   "@id": `${url(idioma)}#pagina`,
@@ -65,9 +69,10 @@ const estaPagina = pagina && {
     breadcrumb: {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Apolo", item: urlDe("inicio") },
-        { "@type": "ListItem", position: 2, name: nombre, item: url(idioma) },
-      ],
+        { name: "Apolo", item: urlDe("inicio") },
+        ...(indice ? [{ name: (indice === "guias" ? textos(idioma).articulos.guias : INDICE[idioma]).h1.replace(/\.$/, ""), item: urlDe(indice) }] : []),
+        { name: nombre, item: url(idioma) },
+      ].map((x, i) => ({ "@type": "ListItem", position: i + 1, ...x })),
     },
   }),
 };

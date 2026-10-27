@@ -1,0 +1,14 @@
+---
+// Una página por cada una (ADR 0034); la ruta sale de rutas.ts.
+import PaginaArticulo from "../../componentes/PaginaArticulo.astro";
+import type { Articulo } from "../../contenido/articulos";
+import { COMPARATIVAS } from "../../contenido/comparativas";
+import { ruta } from "../../i18n/rutas";
+
+export function getStaticPaths() {
+  return COMPARATIVAS.es.map((a) => ({ params: { cual: ruta(a.pagina, "es").split("/").at(-2) }, props: { a } }));
+}
+const { a } = Astro.props as { a: Articulo };
+---
+
+<PaginaArticulo idioma="es" a={a} />

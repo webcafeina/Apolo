@@ -1,0 +1,35 @@
+{
+  "version": "apolo 0.18.3",
+  "fecha": "2026-10-27",
+  "fotos": {
+    "imagenes": 24,
+    "ancho": 768,
+    "alto": 512,
+    "original": 15394305,
+    "notas": {
+      "80": {
+        "avif": 1530904,
+        "jxl": 1631125,
+        "webp": 1922318,
+        "jpeg": 2045650
+      },
+      "90": {
+        "avif": 3580466,
+        "jxl": 3304177,
+        "webp": 4288428,
+        "jpeg": 5563279
+      }
+    }
+  },
+  "heic": {
+    "original": 718114,
+    "jpeg": 357926,
+    "webp": 295918,
+    "avif": 258184
+  },
+  "graficos": {
+    "png": 281740,
+    "webpSinPerdida": 159166,
+    "original": 417535
+  }
+}

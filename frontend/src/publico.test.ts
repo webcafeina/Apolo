@@ -1,7 +1,9 @@
 // Lo que ve el público, vigilado (ADR 0033): Squoosh no se nombra en ningún
 // texto que llegue a la gente, y la descripción del paquete de Linux va en
 // ASCII, que el Centro de aplicaciones de Ubuntu cambia las tildes por «?»
-// (docs/trampas.md). También los README y toda la web nueva (sitio/src).
+// (docs/trampas.md). También los README y toda la web nueva (sitio/src). La
+// única excepción es la comparativa con Squoosh (ADR 0034): su contenido y su
+// ruta.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -31,9 +33,21 @@ const PUBLICOS = [
   ...de(".github/notas", (f) => f.endsWith(".md")),
 ];
 
+// Dónde sí se puede nombrar: todo el fichero, o solo las líneas que lo digan.
+const PERMITIDO: Record<string, (linea: string) => boolean> = {
+  [join("sitio/src/contenido/comparativas.ts")]: () => true,
+  [join("sitio/src/i18n/rutas.ts")]: (l) => l.includes("frenteSquoosh"),
+};
+
 describe("lo que ve el público", () => {
   it.each(PUBLICOS)("%s no nombra a Squoosh", (f) => {
-    expect(readFileSync(join(RAIZ, f), "utf8").toLowerCase()).not.toContain("squoosh");
+    const vale = PERMITIDO[f] ?? (() => false);
+    const lineas = readFileSync(join(RAIZ, f), "utf8").split("\n");
+    expect(lineas.filter((l) => l.toLowerCase().includes("squoosh") && !vale(l))).toEqual([]);
+  });
+
+  it("la comparativa con Squoosh sigue siendo la única excepción", () => {
+    expect(readFileSync(join(RAIZ, "sitio/src/contenido/comparativas.ts"), "utf8")).toContain("frenteSquoosh");
   });
 
   it("la descripción del paquete de Linux va en ASCII", () => {

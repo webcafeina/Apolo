@@ -3,8 +3,11 @@
 // así que no se desfasan: el índice con un enlace por página y lo que es Apolo
 // en pocas líneas, y el completo con el texto de las páginas, en los dos
 // idiomas (el inglés primero: es el que más leen).
+import type { Articulo } from "../contenido/articulos";
 import { AGENTES, CLI } from "../contenido/cli-agentes";
+import { COMPARATIVAS, INDICE } from "../contenido/comparativas";
 import { DESCARGAR, type PaginaDescarga, type Sistema } from "../contenido/descargar";
+import { GUIAS } from "../contenido/guias";
 import { PREGUNTAS } from "../contenido/preguntas";
 import { textos } from "../i18n";
 import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
@@ -55,6 +58,11 @@ export function indice(site: URL): string {
         enlace("novedades", i === "en" ? "What's new" : "Novedades", i === "en" ? "What changes in each version." : "Lo que cambia en cada versión."),
       ].join("\n") + "\n",
     );
+    const articulos = (indice: Pagina, cabeza: { titulo: string; descripcion: string; h1: string }, lista: Articulo[]) =>
+      [`## ${cabeza.h1.replace(/\.$/, "")}\n`, enlace(indice, cabeza.titulo, cabeza.descripcion), ...lista.map((x) => enlace(x.pagina, x.titulo, x.descripcion))].join("\n") +
+      "\n";
+    partes.push(articulos("guias", textos(i).articulos.guias, GUIAS[i]));
+    partes.push(articulos("comparativas", INDICE[i], COMPARATIVAS[i]));
   }
   partes.push(`## Optional\n\n- [llms-full.txt](${new URL("/llms-full.txt", site).href}): the text of these pages in one file.\n`);
   return partes.join("\n");
@@ -68,6 +76,13 @@ function seccionesMd(p: PaginaDescarga): string {
         ...(s.parrafos ?? []),
         ...(s.pasos ?? []).map((x, n) => `${n + 1}. ${x}`),
         ...(s.lista ?? []).map((x) => `- ${x}`),
+        ...(s.tabla
+          ? [
+              [s.tabla.cabeza, s.tabla.cabeza.map(() => "---"), ...s.tabla.filas].map((f) => `| ${f.join(" | ")} |`).join("\n") +
+                (s.tabla.nota ? `\n\n${s.tabla.nota}` : ""),
+            ]
+          : []),
+        ...(s.codigo ? [`\`\`\`html\n${s.codigo.join("\n")}\n\`\`\``] : []),
         ...(s.comandos ?? []).map((k) => `${k.titulo ? `${k.titulo}:\n\n` : ""}\`\`\`sh\n${k.lineas.join("\n")}\n\`\`\``),
       ].join("\n\n"),
     )
@@ -87,6 +102,9 @@ export function completo(site: URL): string {
     }
     for (const [pagina, p] of [["cli", CLI[i]], ["agentes", AGENTES[i]]] as const) {
       partes.push(`## ${p.h1}\n\n${url(site, pagina, i)}\n\n${p.entrada}\n\n${seccionesMd(p)}`);
+    }
+    for (const x of [...GUIAS[i], ...COMPARATIVAS[i]]) {
+      partes.push(`## ${x.h1}\n\n${url(site, x.pagina, i)}\n\n${x.entrada}\n\n${seccionesMd(x)}`);
     }
     const q = PREGUNTAS[i];
     partes.push(`## ${q.h1}\n\n${url(site, "preguntas", i)}\n\n${q.lista.map((x) => `### ${x.p}\n\n${x.r.join("\n\n")}`).join("\n\n")}`);

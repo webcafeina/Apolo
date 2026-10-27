@@ -1,0 +1,109 @@
+---
+// Las secciones de una página de texto (ADR 0033 y 0034): párrafos, pasos,
+// listas, órdenes para copiar, tablas de datos, código y enlaces a otras
+// páginas. Las usan las de descarga, CLI, agentes, guías y comparativas.
+import type { Seccion } from "../contenido/descargar";
+import { type Idioma, ruta } from "../i18n/rutas";
+import Comando from "./Comando.astro";
+
+interface Props {
+  idioma: Idioma;
+  secciones: Seccion[];
+}
+const { idioma, secciones } = Astro.props;
+---
+
+{
+  secciones.map((s) => (
+    <section>
+      <h2>{s.titulo}</h2>
+      {s.parrafos?.map((p) => <p>{p}</p>)}
+      {s.pasos && <ol>{s.pasos.map((p) => <li>{p}</li>)}</ol>}
+      {s.lista && <ul>{s.lista.map((p) => <li>{p}</li>)}</ul>}
+      {s.tabla && (
+        <figure class="tabla">
+          <div class="desliza" tabindex="0" role="region" aria-label={s.titulo}>
+            <table>
+              <thead>
+                <tr>{s.tabla.cabeza.map((c) => <th scope="col">{c}</th>)}</tr>
+              </thead>
+              <tbody>
+                {s.tabla.filas.map((f) => (
+                  <tr>
+                    <th scope="row">{f[0]}</th>
+                    {f.slice(1).map((c) => <td>{c}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {s.tabla.nota && <figcaption>{s.tabla.nota}</figcaption>}
+        </figure>
+      )}
+      {s.codigo && (
+        <pre class="codigo" tabindex="0"><code>{s.codigo.join("\n")}</code></pre>
+      )}
+      {s.comandos?.map((k) => (
+        <>
+          {k.titulo && <h3>{k.titulo}</h3>}
+          <Comando idioma={idioma} nombre={k.nombre} lineas={k.lineas} />
+        </>
+      ))}
+      {s.enlaces && (
+        <p class="enlaces">
+          {s.enlaces.map((e) => <a href={ruta(e.pagina, idioma)}>{e.texto} →</a>)}
+        </p>
+      )}
+    </section>
+  ))
+}
+
+<style>
+  .tabla {
+    margin: 8px 0 20px;
+  }
+  .desliza {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  th,
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--filete);
+    text-align: left;
+    vertical-align: top;
+  }
+  thead th {
+    font-size: 13px;
+    color: var(--apagado);
+    font-weight: 600;
+  }
+  tbody th {
+    font-weight: 600;
+  }
+  figcaption {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--apagado);
+  }
+  .codigo {
+    margin: 0 0 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #1c1c1e;
+    color: #f2f2f7;
+    font-size: 12.5px;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+  .enlaces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    font-weight: 600;
+  }
+</style>

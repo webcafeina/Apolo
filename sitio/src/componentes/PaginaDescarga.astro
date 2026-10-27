@@ -5,9 +5,9 @@ import { DESCARGAR, type Sistema } from "../contenido/descargar";
 import type { Idioma, Pagina as P } from "../i18n/rutas";
 import Pagina from "../layouts/Pagina.astro";
 import Captura from "./Captura.astro";
-import Comando from "./Comando.astro";
 import Comprobar from "./Comprobar.astro";
 import Descargas from "./Descargas.astro";
+import Secciones from "./Secciones.astro";
 import Ventana from "./Ventana.astro";
 
 interface Props {
@@ -27,22 +27,7 @@ const vista = sistema === "linux" ? "gnome" : sistema;
       <Ventana vista={vista}><Captura idioma={idioma} vista={vista} pantalla="estudio" /></Ventana>
     </div>
   </Fragment>
-  {
-    c.secciones.map((s) => (
-      <section>
-        <h2>{s.titulo}</h2>
-        {s.parrafos?.map((p) => <p>{p}</p>)}
-        {s.pasos && <ol>{s.pasos.map((p) => <li>{p}</li>)}</ol>}
-        {s.lista && <ul>{s.lista.map((p) => <li>{p}</li>)}</ul>}
-        {s.comandos?.map((k) => (
-          <>
-            {k.titulo && <h3>{k.titulo}</h3>}
-            <Comando idioma={idioma} nombre={k.nombre} lineas={k.lineas} />
-          </>
-        ))}
-      </section>
-    ))
-  }
+  <Secciones idioma={idioma} secciones={c.secciones} />
   <Comprobar idioma={idioma} sistema={sistema} />
 </Pagina>
 

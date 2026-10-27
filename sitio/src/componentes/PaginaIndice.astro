@@ -20,11 +20,24 @@ const otro = cual === "guias" ? "comparativas" : "guias";
 ---
 
 <Pagina idioma={idioma} pagina={cual} titulo={c.titulo} descripcion={c.descripcion} etiqueta={c.etiqueta} h1={c.h1} entrada={c.entrada}>
+  <div class="rejilla">
   <ul class="indice">
     {
       articulos.map((a) => (
         <li>
           <a href={ruta(a.pagina, idioma)}>
+            {a.rival ? (
+              <span class="cifra versus">
+                <span>Apolo</span>
+                <small>{idioma === "es" ? "frente a" : "vs"}</small>
+                <span>{a.rival}</span>
+              </span>
+            ) : (
+              <span class="cifra">
+                <strong>{a.destacado.valor}</strong>
+                <small>{a.destacado.texto}</small>
+              </span>
+            )}
             <h2>{a.h1.replace(/\.$/, "")}</h2>
             <p>{a.resumen}</p>
             <span class="leer">{t.leer} →</span>
@@ -33,6 +46,7 @@ const otro = cual === "guias" ? "comparativas" : "guias";
       ))
     }
   </ul>
+  </div>
   <p class="otro"><a href={ruta(otro, idioma)}>{cabeza(otro).h1.replace(/\.$/, "")} →</a></p>
 </Pagina>
 
@@ -42,12 +56,21 @@ const otro = cual === "guias" ? "comparativas" : "guias";
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 16px;
+  }
+  /* Más ancho que el texto: hasta 1080 px, como las capturas. En un div, porque
+     las reglas de .prosa para las listas le quitarían el margen a la lista. */
+  .rejilla {
+    width: min(1080px, calc(100vw - 40px));
+    margin-inline: calc(50% - min(540px, 50vw - 20px));
   }
   .indice a {
     display: grid;
-    gap: 6px;
-    padding: 20px 22px;
+    align-content: start;
+    gap: 8px;
+    height: 100%;
+    padding: 24px 26px;
     border-radius: 18px;
     background: var(--suave);
     box-shadow: 0 0 0 1px var(--filete);
@@ -57,6 +80,39 @@ const otro = cual === "guias" ? "comparativas" : "guias";
   .indice a:hover,
   .indice a:focus-visible {
     box-shadow: 0 0 0 2px var(--oro-trazo);
+  }
+  .cifra {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 8px;
+    padding: 16px 18px;
+    border-radius: var(--radio-chico);
+    background: color-mix(in srgb, var(--relleno) 16%, var(--lienzo));
+  }
+  .cifra strong {
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--tinta);
+  }
+  .cifra small {
+    font-size: 14px;
+    color: var(--cuerpo);
+  }
+  .cifra.versus {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--tinta);
+  }
+  .cifra.versus small {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    color: var(--apagado);
   }
   .indice h2 {
     margin: 0;

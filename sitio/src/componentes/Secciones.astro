@@ -1,9 +1,12 @@
 ---
 // Las secciones de una página de texto (ADR 0033 y 0034): párrafos, pasos,
-// listas, órdenes para copiar, tablas de datos, código y enlaces a otras
-// páginas. Las usan las de descarga, CLI, agentes, guías y comparativas.
+// listas, órdenes para copiar, cifras grandes, gráficos de barras, capturas de
+// Apolo, tarjetas lado a lado, tablas, código y enlaces a otras páginas. Las
+// usan las de descarga, CLI, agentes, guías y comparativas. Las capturas y las
+// tarjetas salen del ancho del texto, para que se vean como en la portada.
 import type { Seccion } from "../contenido/descargar";
 import { type Idioma, ruta } from "../i18n/rutas";
+import CapturaSistema from "./CapturaSistema.astro";
 import Comando from "./Comando.astro";
 
 interface Props {
@@ -11,6 +14,7 @@ interface Props {
   secciones: Seccion[];
 }
 const { idioma, secciones } = Astro.props;
+const maximo = (s: Seccion) => Math.max(...(s.barras?.filas.map((f) => f.valor) ?? [1]));
 ---
 
 {
@@ -18,10 +22,72 @@ const { idioma, secciones } = Astro.props;
     <section>
       <h2>{s.titulo}</h2>
       {s.parrafos?.map((p) => <p>{p}</p>)}
-      {s.pasos && <ol>{s.pasos.map((p) => <li>{p}</li>)}</ol>}
+      {s.cifras && (
+        <dl class="cifras">
+          {s.cifras.map((c) => (
+            <div>
+              <dt>{c.valor}</dt>
+              <dd>{c.texto}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      {s.barras && (
+        <figure class="barras">
+          <ul>
+            {s.barras.filas.map((f, i) => (
+              <li data-destacada={i === s.barras!.destacar ? "" : undefined}>
+                <span class="etiqueta-barra">{f.etiqueta}</span>
+                <span class="pista" aria-hidden="true">
+                  <span class="relleno" style={`--v: ${(100 * f.valor) / maximo(s)}%`} />
+                </span>
+                <span class="texto-barra">{f.texto}</span>
+              </li>
+            ))}
+          </ul>
+          {s.barras.nota && <figcaption>{s.barras.nota}</figcaption>}
+        </figure>
+      )}
+      {s.pasos && (
+        <ol class="pasos">
+          {s.pasos.map((p) => (
+            <li>{p}</li>
+          ))}
+        </ol>
+      )}
       {s.lista && <ul>{s.lista.map((p) => <li>{p}</li>)}</ul>}
+      {s.captura && (
+        <div class="ancha captura">
+          <CapturaSistema idioma={idioma} pantalla={s.captura} />
+        </div>
+      )}
+      {s.peticiones && (
+        <ul class="peticiones">
+          {s.peticiones.map((x) => (
+            <li>{x.replace(/^[«“]|[»”]$/g, "")}</li>
+          ))}
+        </ul>
+      )}
+      {s.columnas && (
+        <div class="ancha columnas">
+          {s.columnas.map((c) => (
+            <div class="columna" data-destacada={c.destacada ? "" : undefined}>
+              <h3>{c.titulo}</h3>
+              {c.lista.length === 1 ? (
+                <p>{c.lista[0]}</p>
+              ) : (
+                <ul>
+                  {c.lista.map((x) => (
+                    <li>{x}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
       {s.tabla && (
-        <figure class="tabla">
+        <figure class="tabla" data-destacar={s.tabla.destacar !== undefined ? "" : undefined}>
           <div class="desliza" tabindex="0" role="region" aria-label={s.titulo}>
             <table>
               <thead>
@@ -59,6 +125,183 @@ const { idioma, secciones } = Astro.props;
 }
 
 <style>
+  /* Lo ancho sale de la columna de texto (720 px) hasta 1080, centrado. */
+  .ancha {
+    width: min(1080px, calc(100vw - 40px));
+    margin-inline: calc(50% - min(540px, 50vw - 20px));
+  }
+  .captura {
+    margin-block: 28px 8px;
+  }
+
+  .cifras {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 20px 0 24px;
+  }
+  .cifras div {
+    display: grid;
+    gap: 4px;
+    padding: 20px 22px;
+    border-radius: var(--radio-chico);
+    background: var(--suave);
+    box-shadow: inset 0 0 0 1px var(--filete);
+  }
+  .cifras dt {
+    font-size: clamp(36px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--tinta);
+  }
+  .cifras dd {
+    margin: 0;
+    font-size: 15px;
+    color: var(--apagado);
+  }
+
+  .barras {
+    margin: 20px 0 24px;
+    padding: 22px 24px;
+    border-radius: var(--radio-chico);
+    background: var(--suave);
+    box-shadow: inset 0 0 0 1px var(--filete);
+  }
+  .barras ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .barras li {
+    display: grid;
+    grid-template-columns: 9.5em 1fr;
+    grid-template-areas: "etiqueta texto" "pista pista";
+    gap: 6px 12px;
+    margin: 0;
+    align-items: baseline;
+  }
+  .etiqueta-barra {
+    grid-area: etiqueta;
+    font-weight: 600;
+    color: var(--tinta);
+  }
+  .texto-barra {
+    grid-area: texto;
+    justify-self: end;
+    font-size: 14px;
+    color: var(--apagado);
+    font-variant-numeric: tabular-nums;
+  }
+  .pista {
+    grid-area: pista;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--elevada);
+    overflow: hidden;
+  }
+  .relleno {
+    display: block;
+    width: var(--v);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--filete-fuerte);
+  }
+  [data-destacada] .relleno {
+    background: var(--relleno);
+  }
+  [data-destacada] .texto-barra {
+    color: var(--tinta);
+    font-weight: 600;
+  }
+  .barras figcaption,
+  .tabla figcaption {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--apagado);
+  }
+
+  .pasos {
+    counter-reset: paso;
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .pasos li {
+    counter-increment: paso;
+    position: relative;
+    margin: 0;
+    padding: 16px 18px 16px 64px;
+    border-radius: var(--radio-chico);
+    background: var(--suave);
+    box-shadow: inset 0 0 0 1px var(--filete);
+  }
+  .pasos li::before {
+    content: counter(paso);
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--relleno);
+    color: var(--sobre-acento);
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .columnas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 16px;
+    margin-block: 20px 8px;
+  }
+  .columna {
+    padding: 24px 26px;
+    border-radius: var(--radio);
+    background: var(--suave);
+    box-shadow: inset 0 0 0 1px var(--filete);
+  }
+  .columna[data-destacada] {
+    box-shadow: inset 0 0 0 2px var(--relleno);
+  }
+  .columna h3 {
+    margin: 0 0 12px;
+  }
+  .columna ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .columna p {
+    margin: 0;
+  }
+
+  /* Lo que se le pide al agente: mensajes de una conversación, a la derecha. */
+  .peticiones {
+    list-style: none;
+    padding: 22px 24px;
+    margin: 20px 0 24px;
+    display: grid;
+    gap: 12px;
+    border-radius: var(--radio);
+    background: var(--suave);
+    box-shadow: inset 0 0 0 1px var(--filete);
+  }
+  .peticiones li {
+    justify-self: end;
+    max-width: min(88%, 520px);
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px;
+    background: color-mix(in srgb, var(--relleno) 22%, var(--lienzo));
+    color: var(--tinta);
+  }
+
   .tabla {
     margin: 8px 0 20px;
   }
@@ -72,7 +315,7 @@ const { idioma, secciones } = Astro.props;
   }
   th,
   td {
-    padding: 10px 12px;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--filete);
     text-align: left;
     vertical-align: top;
@@ -85,11 +328,19 @@ const { idioma, secciones } = Astro.props;
   tbody th {
     font-weight: 600;
   }
-  figcaption {
-    margin-top: 10px;
-    font-size: 13px;
-    color: var(--apagado);
+  /* La columna de Apolo (la segunda), resaltada en oro suave. */
+  [data-destacar] thead th:nth-child(2) {
+    color: var(--oro-texto);
   }
+  [data-destacar] tbody td:nth-child(2) {
+    background: color-mix(in srgb, var(--relleno) 14%, transparent);
+    color: var(--tinta);
+  }
+  [data-destacar] thead th:nth-child(2) {
+    background: color-mix(in srgb, var(--relleno) 14%, transparent);
+    border-radius: 10px 10px 0 0;
+  }
+
   .codigo {
     margin: 0 0 16px;
     padding: 14px 16px;

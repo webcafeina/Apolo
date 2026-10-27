@@ -378,8 +378,22 @@ const RIVALES: Rival[] = [
 ];
 
 const ENCABEZADOS = {
-  es: { corto: "En corto", tabla: "Lado a lado", mejorElla: (n: string) => `Lo que hace mejor ${n}`, mejorApolo: "Lo que hace mejor Apolo", elegir: "Cuál elegir" },
-  en: { corto: "In short", tabla: "Side by side", mejorElla: (n: string) => `What ${n} does better`, mejorApolo: "What Apolo does better", elegir: "Which to choose" },
+  es: {
+    corto: "En corto",
+    tabla: "Lado a lado",
+    cadaUno: "Lo que hace mejor cada uno",
+    mejorElla: (n: string) => `Lo que hace mejor ${n}`,
+    mejorApolo: "Lo que hace mejor Apolo",
+    elegir: "Cuál elegir",
+  },
+  en: {
+    corto: "In short",
+    tabla: "Side by side",
+    cadaUno: "What each one does better",
+    mejorElla: (n: string) => `What ${n} does better`,
+    mejorApolo: "What Apolo does better",
+    elegir: "Which to choose",
+  },
 };
 
 export const COMPARATIVAS: Record<Idioma, Articulo[]> = {
@@ -401,12 +415,27 @@ function articulo(r: Rival, idioma: Idioma): Articulo {
     entrada: t.entrada,
     resumen: t.resumen,
     relacionadas: (["frenteSquoosh", "frenteTinypng", "frenteImageoptim", "frenteCaesium"] as const).filter((p) => p !== r.id),
+    destacado: { valor: r.nombre, texto: t.resumen },
+    rival: r.nombre,
     secciones: [
-      { titulo: e.corto, parrafos: t.corto },
-      { titulo: e.tabla, tabla: tabla(idioma, r.nombre, r.datos[idioma]) },
-      { titulo: e.mejorElla(r.nombre), lista: t.mejorElla },
-      { titulo: e.mejorApolo, lista: t.mejorApolo },
-      { titulo: e.elegir, lista: t.elegir, enlaces: [{ texto: idioma === "es" ? "AVIF, WebP o JPEG XL: las medidas" : "AVIF, WebP or JPEG XL: the measurements", pagina: "guiaFormatos" }] },
+      { titulo: e.corto, parrafos: t.corto, captura: "estudio" },
+      { titulo: e.tabla, tabla: { ...tabla(idioma, r.nombre, r.datos[idioma])!, destacar: true } },
+      {
+        titulo: e.cadaUno,
+        columnas: [
+          { titulo: e.mejorElla(r.nombre), lista: t.mejorElla },
+          { titulo: e.mejorApolo, lista: t.mejorApolo, destacada: true },
+        ],
+      },
+      {
+        titulo: e.elegir,
+        // «Una imagen de vez en cuando…: Squoosh.» → una tarjeta por herramienta.
+        columnas: t.elegir.map((x) => {
+          const [cuando, cual] = [x.slice(0, x.lastIndexOf(":")), x.slice(x.lastIndexOf(":") + 1).trim().replace(/\.$/, "")];
+          return { titulo: cual, lista: [`${cuando}.`], destacada: cual === "Apolo" };
+        }),
+        enlaces: [{ texto: idioma === "es" ? "AVIF, WebP o JPEG XL: las medidas" : "AVIF, WebP or JPEG XL: the measurements", pagina: "guiaFormatos" }],
+      },
     ],
   };
 }

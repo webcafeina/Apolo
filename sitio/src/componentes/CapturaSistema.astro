@@ -1,0 +1,41 @@
+---
+// Una pantalla de Apolo en el sistema de quien visita (ADR 0034), como «En tu
+// sistema» de la portada: las cuatro vistas van en el HTML y el CSS enseña la
+// de <html data-vista> (sin ella, macOS). Las ocultas no se descargan: sus
+// imágenes son lazy y están en display: none.
+import type { Idioma } from "../i18n/rutas";
+import Captura, { type Pantalla, type Vista } from "./Captura.astro";
+import Ventana from "./Ventana.astro";
+
+interface Props {
+  idioma: Idioma;
+  pantalla: Pantalla;
+}
+const { idioma, pantalla } = Astro.props;
+const VISTAS: Vista[] = ["macos", "windows", "gnome", "kde"];
+---
+
+<div class="captura-sistema">
+  {
+    VISTAS.map((v) => (
+      <div class="vista" data-vista={v}>
+        <Ventana vista={v}>
+          <Captura idioma={idioma} vista={v} pantalla={pantalla} />
+        </Ventana>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .vista {
+    display: none;
+  }
+  :global(html:not([data-vista])) .vista[data-vista="macos"],
+  :global(html[data-vista="macos"]) .vista[data-vista="macos"],
+  :global(html[data-vista="windows"]) .vista[data-vista="windows"],
+  :global(html[data-vista="gnome"]) .vista[data-vista="gnome"],
+  :global(html[data-vista="kde"]) .vista[data-vista="kde"] {
+    display: block;
+  }
+</style>

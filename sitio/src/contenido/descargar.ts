@@ -8,8 +8,19 @@ export interface Seccion {
   pasos?: string[];
   lista?: string[];
   comandos?: { nombre: string; lineas: string[]; titulo?: string }[];
-  /** Una tabla de datos (guías y comparativas, ADR 0034): la primera columna es la de las filas. */
-  tabla?: { cabeza: string[]; filas: string[][]; nota?: string };
+  /** Una tabla de datos (guías y comparativas, ADR 0034): la primera columna es la de las filas;
+   * con `destacar`, la segunda columna (la de Apolo) va resaltada. */
+  tabla?: { cabeza: string[]; filas: string[][]; nota?: string; destacar?: boolean };
+  /** Cifras grandes, con lo que significan. */
+  cifras?: { valor: string; texto: string }[];
+  /** Un gráfico de barras: cada fila con su valor (la barra) y su texto; la de `destacar`, en oro. */
+  barras?: { filas: { etiqueta: string; valor: number; texto: string }[]; destacar?: number; nota?: string };
+  /** Una captura de Apolo en el sistema de quien visita (como «En tu sistema»). */
+  captura?: "estudio" | "diferencias" | "lotes" | "agentes";
+  /** Tarjetas lado a lado (lo que hace mejor cada uno, cuál elegir…); la `destacada`, con el oro. */
+  columnas?: { titulo: string; lista: string[]; destacada?: boolean }[];
+  /** Lo que se le pide a un agente, como mensajes de una conversación. */
+  peticiones?: string[];
   /** Código que no es una orden de terminal (HTML…), sin «$» ni botón de copiar. */
   codigo?: string[];
   /** Enlaces a otras páginas de la web, al final de la sección. */

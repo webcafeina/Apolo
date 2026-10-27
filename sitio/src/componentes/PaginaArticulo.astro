@@ -2,6 +2,7 @@
 // Una guía o una comparativa (ADR 0034): sus secciones, la fecha, las páginas
 // relacionadas, la descarga al final y sus datos estructurados (TechArticle).
 import { type Articulo, dia } from "../contenido/articulos";
+import { AGENTES, CLI } from "../contenido/cli-agentes";
 import { COMPARATIVAS } from "../contenido/comparativas";
 import { GUIAS } from "../contenido/guias";
 import { textos } from "../i18n";
@@ -17,7 +18,13 @@ interface Props {
 const { idioma, a } = Astro.props;
 const t = textos(idioma).articulos;
 const todos = [...GUIAS[idioma], ...COMPARATIVAS[idioma]];
-const relacionada = (p: string) => todos.find((x) => x.pagina === p);
+// Una guía o comparativa, o una de las páginas de la CLI y de agentes, con su título y su resumen.
+const relacionada = (p: string) => {
+  const a = todos.find((x) => x.pagina === p);
+  if (a) return { h1: a.h1, resumen: a.resumen };
+  const c = p === "agentes" ? AGENTES[idioma] : p === "cli" ? CLI[idioma] : undefined;
+  return c && { h1: c.h1, resumen: c.descripcion };
+};
 const fecha = (d: string) => dia(d, idioma);
 const url = new URL(ruta(a.pagina, idioma), Astro.site).href;
 const datos = {
@@ -38,6 +45,22 @@ const datos = {
 ---
 
 <Pagina idioma={idioma} pagina={a.pagina} titulo={a.titulo} descripcion={a.descripcion} etiqueta={a.etiqueta} h1={a.h1} entrada={a.entrada}>
+  <Fragment slot="cabeza">
+    {
+      a.rival ? (
+        <div class="versus" aria-hidden="true">
+          <span class="lado apolo"><img src="/icono.png" alt="" width="28" height="28" />Apolo</span>
+          <span class="vs">{idioma === "es" ? "frente a" : "vs"}</span>
+          <span class="lado">{a.rival}</span>
+        </div>
+      ) : (
+        <div class="destacado">
+          <strong>{a.destacado.valor}</strong>
+          <span>{a.destacado.texto}</span>
+        </div>
+      )
+    }
+  </Fragment>
   <JsonLd datos={datos} />
   <p class="fecha">
     {t.publicado} <time datetime={a.publicado}>{fecha(a.publicado)}</time>{
@@ -61,7 +84,7 @@ const datos = {
           const r = relacionada(p);
           return (
             <li>
-              <a href={ruta(p, idioma)}>{r ? r.h1.replace(/\.$/, "") : textos(idioma).pie.agentes}</a>
+              <a href={ruta(p, idioma)}>{r ? r.h1.replace(/\.$/, "") : ruta(p, idioma)}</a>
               {r && <span>{r.resumen}</span>}
             </li>
           );
@@ -72,6 +95,58 @@ const datos = {
 </Pagina>
 
 <style>
+  .destacado {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    padding: 18px 28px 20px;
+    border-radius: var(--radio);
+    background: color-mix(in srgb, var(--relleno) 16%, var(--lienzo));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--relleno) 55%, transparent);
+  }
+  .destacado strong {
+    font-size: clamp(44px, 7vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--tinta);
+  }
+  .destacado span {
+    max-width: 30ch;
+    color: var(--cuerpo);
+    font-size: 15px;
+  }
+  .versus {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .lado {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--suave);
+    box-shadow: inset 0 0 0 1px var(--filete);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--tinta);
+  }
+  .lado.apolo {
+    background: color-mix(in srgb, var(--relleno) 16%, var(--lienzo));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--relleno) 55%, transparent);
+  }
+  .vs {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--apagado);
+  }
   .fecha {
     color: var(--apagado);
     font-size: 14px;
@@ -95,17 +170,25 @@ const datos = {
     list-style: none;
     padding: 0;
     display: grid;
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 12px;
   }
   .relacionadas li {
     display: grid;
-    gap: 2px;
+    align-content: start;
+    gap: 6px;
+    margin: 0;
+    padding: 18px 20px;
+    border-radius: var(--radio-chico);
+    background: var(--suave);
+    box-shadow: inset 0 0 0 1px var(--filete);
   }
   .relacionadas a {
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--tinta);
   }
   .relacionadas span {
     color: var(--apagado);
-    font-size: 15px;
+    font-size: 14px;
   }
 </style>

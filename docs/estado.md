@@ -1,10 +1,49 @@
 # Estado
 
-Última actualización: **2026-10-26**
+Última actualización: **2026-10-27**
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-26, noche): la web nueva, revisada por el cliente en la galería; mañana,
+> **PARADA AQUÍ (2026-10-27, mediodía): seguridad y posicionamiento antes de la 1.0.0 (ADR 0034),
+> S1 a S4 hechos y subidos; se sigue esta tarde con S5.** Plan aprobado en
+> `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (arriba el de ahora; el de la fase comercial,
+> como anexo). Decidido con el cliente: Cloudflare delante de Pages, sección de guías, comparativas
+> que nombran a otras herramientas (Squoosh incluido, **solo ahí**) y **todo antes de la 1.0.0**.
+> - **S1, repositorio y CI** (`337a5d4`): acciones fijadas por commit, permisos mínimos,
+>   `persist-credentials: false`, `make seguridad` (zizmor y `cargo deny`, dentro de
+>   `make comprobar` y de CI; excepciones en `.github/zizmor.yml` y `deny.toml`), Dependabot,
+>   Scorecard, procedencia firmada de la Release (`attest-build-provenance`, **se verá por primera vez
+>   con la 1.0.0**: `gh attestation verify`), las claves de firma fuera del código npm
+>   (`tauri.publicar.conf.json`), `SECURITY.md` con `info@webcafeina.com`. En GitHub, hecho por el
+>   cliente guiado: rulesets en `main` y `v*`, workflows en solo lectura, aviso privado de
+>   vulnerabilidades, actualizaciones de seguridad de Dependabot y CodeQL. **Dependabot**: cerrados
+>   los PR #1–#5 y #7–#10 hasta después de la 1.0.0 (con su sí); **el #6 (`zip` 9) sigue abierto**
+>   para revisarlo aparte (quitaría tres excepciones de `deny.toml`).
+> - **S2, la web** (`e348d2f` y Cloudflare, hecho por el cliente guiado): proxy de Cloudflare en
+>   `apolo` con tres reglas solo para ese nombre (SSL Estricto, sin caché en `/apt` `/rpm` `/aur`,
+>   siete cabeceras de seguridad), comprobado con `curl` (cabeceras, repositorios, `apt`, GPTBot y
+>   ClaudeBot); CSP con hashes de Astro (`security.csp`); notas saneadas; `security.txt`;
+>   «Comprobar la descarga» en cada página de descarga. **El 20 de diciembre de 2026, comprobar que
+>   GitHub renovó su certificado con el proxy delante** (trampas.md).
+> - **S3, SEO técnico** (`e9cb296`): grafo JSON-LD en cada página, `lastmod`, `llms.txt` y
+>   `llms-full.txt`, rastreadores de IA en `robots.txt`, IndexNow en el borrador de `web.yml`,
+>   título de la portada con lo que se busca, `.mcpb` apuntando a la web.
+> - **S4, contenido** (`4f07203` y `7198500`): seis guías y cuatro comparativas en es y en, con
+>   cifras medidas por Apolo (`sitio/herramientas/medidas.mjs` → `src/datos/medidas.json`); el
+>   cliente pidió más diseño y se rehicieron con cifras, barras, capturas y tarjetas. Galería:
+>   https://claude.ai/artifact/WZ1BcoNiDeTPjYDBcNK88R (capturas en el scratchpad,
+>   `revision-s4/`). El cliente: «me vale de momento».
+>
+> **Lo siguiente (esta tarde), S5**: README es/en (primer párrafo con lo que se busca, enlaces a
+> agentes, guías y comparativas, «Verificar la descarga», insignia de Scorecard); con su sí,
+> Discussions y plantillas de issues; `server.json` y publicar en el registro oficial de MCP desde CI
+> (OIDC, `io.github.webcafeina`); preparar los envíos a directorios (awesome-mcp-servers,
+> awesome-tauri, winget, directorio de extensiones de Claude; AlternativeTo y Product Hunt con
+> cuenta del cliente; textos de Show HN y Reddit para el día del lanzamiento); en GA4, el grupo de
+> canales «IA» (guiado); `docs/seo.md`. Después, F10 (el cambio de web) y la 1.0.0, como dice el
+> bloque de abajo.
+>
+> **(2026-10-26, noche): la web nueva, revisada por el cliente en la galería; mañana,
 > guiado paso a paso, lo que necesita de él.** Todo subido: `42f3d11` (el aviso de cookies, tarjeta
 > de 360 px abajo a la izquierda en pantallas de 1000 px o más, para no tapar el botón de descarga)
 > y `f9e5edb` (el aviso con texto genérico, «Esta web usa cookies», a petición del cliente: no

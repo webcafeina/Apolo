@@ -130,6 +130,15 @@ export const en: Textos = {
       linux: "Without the repository, the package installs with a double click or with your package manager.",
     },
   },
+  comprobar: {
+    titulo: "Verify your download",
+    entrada:
+      "Every file in the release comes with its SHA-256 sum and its provenance signed by GitHub, which states which build produced it and from which code. If they match, the file is the one that came out of the repository.",
+    todas: "All the sums of the release (SHA256SUMS.txt)",
+    conSuma: "With the sum, in the terminal:",
+    conGh: "With the provenance, if you have GitHub's command line:",
+    clave: "The APT and RPM repositories and the .rpm files are signed with this GPG key:",
+  },
   webcafeina: {
     etiqueta: "Made by Webcafeína",
     titulo: "We build tools like this, and websites that load fast.",

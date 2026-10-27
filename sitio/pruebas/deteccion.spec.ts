@@ -33,13 +33,13 @@ test("el sistema está puesto antes de pintar: sin parpadeo", async ({ browser }
   await cookiesElegidas(ctx);
   const page = await ctx.newPage();
   await sinGoogle(page);
-  // Un script justo al abrir <body>, que corre antes de pintar nada del cuerpo: lo que ve.
+  // Un script justo al abrir <body>, que corre antes de pintar nada del cuerpo: lo que ve. La CSP
+  // (ADR 0034) lo bloquearía, con razón: en esta copia de la página se quita.
   await page.route("**/", async (r) => {
     const res = await r.fetch();
-    const html = (await res.text()).replace(
-      /<body([^>]*)>/,
-      '<body$1><script>window.alPintar = document.documentElement.getAttribute("data-plataforma")</script>',
-    );
+    const html = (await res.text())
+      .replace(/<meta http-equiv="content-security-policy"[^>]*>/, "")
+      .replace(/<body([^>]*)>/, '<body$1><script>window.alPintar = document.documentElement.getAttribute("data-plataforma")</script>');
     await r.fulfill({ response: res, body: html });
   });
   await page.goto("/");

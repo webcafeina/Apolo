@@ -8,7 +8,8 @@
 
 **No abras un issue público.** Usa el aviso privado de GitHub:
 [Report a vulnerability](https://github.com/webcafeina/Apolo/security/advisories/new). Solo lo ve
-quien mantiene Apolo.
+quien mantiene Apolo. Si no tienes cuenta de GitHub, escribe a
+[info@webcafeina.com](mailto:info@webcafeina.com).
 
 Cuenta qué versión usas, en qué sistema, y cómo reproducirlo. Contestamos en unos días, y
 publicamos el arreglo y el aviso cuando la versión corregida ya está disponible.
@@ -38,7 +39,8 @@ seguridad salen como una versión nueva.
 
 **Please don't open a public issue.** Use GitHub's private reporting:
 [Report a vulnerability](https://github.com/webcafeina/Apolo/security/advisories/new). Only the
-maintainers can see it.
+maintainers can see it. If you don't have a GitHub account, write to
+[info@webcafeina.com](mailto:info@webcafeina.com).
 
 Tell us which version you use, on which system, and how to reproduce it. We reply within a few
 days, and publish the fix and the advisory once the fixed version is available.

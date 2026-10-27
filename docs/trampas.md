@@ -614,3 +614,11 @@ puntero dibujado que sigue al ratón. Guardar los PNG ralentiza la página: el m
 1,6×. Y apolo-dev arranca en inglés solo si el idioma va en la variable que mira
 `frontend/playwright.config.ts` (`CAPTURAS_IDIOMA` o `VIDEO_IDIOMA`). · 2026-10-26
 
+## La CSP de la web va al final de la cabeza, y bloquea lo que se inyecta en las pruebas
+
+Con `security.csp`, Astro pone el `<meta http-equiv="content-security-policy">` al final de
+`<head>`, detrás de `temprano.js` y del arranque de GTM, que van en línea: se ejecutan antes de que
+la política exista, y desde ahí todo lo demás tiene que cumplirla. Una prueba que mete su propio
+`<script>` en la página (el parpadeo de `deteccion.spec.ts`) lo ve bloqueado: quita la CSP de su
+copia de la página. Y cualquier etiqueta nueva de GTM cuyo dominio no esté en `astro.config.mjs` no
+cargará: la consola lo dice como `Refused to load…`. · 2026-10-27

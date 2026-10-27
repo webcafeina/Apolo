@@ -3,6 +3,7 @@
 import { PREGUNTAS } from "../contenido/preguntas";
 import type { Idioma } from "../i18n/rutas";
 import Pagina from "../layouts/Pagina.astro";
+import JsonLd from "./JsonLd.astro";
 
 interface Props {
   idioma: Idioma;
@@ -18,7 +19,7 @@ const datos = {
 ---
 
 <Pagina idioma={idioma} pagina="preguntas" titulo={c.titulo} descripcion={c.descripcion} etiqueta={c.etiqueta} h1={c.h1} entrada={c.entrada}>
-  <script type="application/ld+json" set:html={JSON.stringify(datos)} />
+  <JsonLd datos={datos} />
   <div class="preguntas">
     {
       c.lista.map((q) => (

@@ -4,6 +4,7 @@
 // portada y las descargas, Apolo como aplicación (SoftwareApplication). Sin
 // valoraciones: no se inventan.
 import { release } from "../datos/version";
+import JsonLd from "./JsonLd.astro";
 import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
 
 interface Props {
@@ -68,4 +69,4 @@ const datos =
 <meta name="twitter:title" content={titulo} />
 <meta name="twitter:description" content={descripcion} />
 <meta name="twitter:image" content={imagen} />
-{datos && <script type="application/ld+json" set:html={JSON.stringify(datos)} />}
+{datos && <JsonLd datos={datos} />}

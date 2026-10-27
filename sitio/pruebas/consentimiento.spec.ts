@@ -38,6 +38,41 @@ test("rechazar: no carga nada, y se puede cambiar desde el pie", async ({ page }
   await expect.poll(() => pedidas.some((u) => u.includes("gtm.js"))).toBe(true);
 });
 
+test("la CSP deja trabajar a GTM y GA4 y bloquea lo demás", async ({ page }) => {
+  // Lo que hacen de verdad al aceptar: gtm.js trae gtag.js, y gtag.js manda la visita por
+  // imagen y por fetch. Un script de otro dominio, en cambio, no debe cargar (ADR 0034).
+  const violaciones: string[] = [];
+  await page.exposeFunction("violacion", (v: string) => violaciones.push(v));
+  await page.addInitScript(() =>
+    document.addEventListener("securitypolicyviolation", (e) =>
+      (window as unknown as { violacion: (v: string) => void }).violacion(`${e.effectiveDirective} ${e.blockedURI}`),
+    ),
+  );
+  await page.route(/googletagmanager\.com\/gtm\.js/, (r) =>
+    r.fulfill({
+      contentType: "text/javascript",
+      body: 'var s=document.createElement("script");s.src="https://www.googletagmanager.com/gtag/js?id=G-PRUEBA";document.head.appendChild(s);',
+    }),
+  );
+  await page.route(/googletagmanager\.com\/gtag/, (r) =>
+    r.fulfill({
+      contentType: "text/javascript",
+      body: 'new Image().src="https://region1.google-analytics.com/g/collect?v=2";fetch("https://region1.analytics.google.com/g/collect?v=2",{method:"POST",mode:"no-cors"});window.gtagCargado=true;',
+    }),
+  );
+  await page.route(/google-analytics\.com|analytics\.google\.com|ajeno\.example/, (r) => r.fulfill({ status: 204 }));
+  await page.goto("/");
+  await page.getByRole("button", { name: "Aceptar" }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { gtagCargado?: boolean }).gtagCargado)).toBe(true);
+  await page.evaluate(() => {
+    const s = document.createElement("script");
+    s.src = "https://ajeno.example/x.js";
+    document.head.appendChild(s);
+  });
+  await expect.poll(() => violaciones.length).toBeGreaterThan(0);
+  expect(violaciones).toEqual(["script-src-elem https://ajeno.example/x.js"]);
+});
+
 test("las descargas cuentan en la capa de datos", async ({ page }) => {
   await sinGoogle(page);
   await page.goto("/");

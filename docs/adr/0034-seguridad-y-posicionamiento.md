@@ -98,4 +98,18 @@ Decidido con el cliente: **todo antes de la 1.0.0**, en cinco partes (S1 a S5).
 
 - **S1:**
   - zizmor sin avisos: 6 ignorados con su motivo y 46 suprimidos por su baja confianza (2026-10-27);
-  - el resto, al terminar S1.
+  - `cargo deny check advisories` en verde tras subir rustls, rustls-webpki, webpki-root-certs y
+    tokio; las excepciones, con su motivo en `deny.toml`;
+  - Tauri ya no ejecuta `beforeBuildCommand` con `tauri.publicar.conf.json` (comprobado con
+    `pnpm tauri build --no-bundle`);
+  - los ajustes de GitHub, leídos con `gh api` tras ponerlos el cliente;
+  - **sin verificar**: la procedencia de la Release (sale con la 1.0.0).
+- **S2:** cabeceras, repositorios (`apt` incluido), GPTBot y ClaudeBot comprobados con `curl` a
+  través de Cloudflare; la CSP, con una prueba de Playwright que simula GTM y GA4 y ve bloqueado un
+  script ajeno; las notas, con una prueba de vitest. **Sin verificar**: la renovación del
+  certificado de GitHub con el proxy (diciembre de 2026).
+- **S3:** el grafo JSON-LD, comprobado en las 43 páginas por `paginas.spec.ts`; `llms.txt`, por
+  `llms.test.ts`; el JSON de IndexNow, generado a mano con el sitemap. **Sin verificar**: la prueba
+  de resultados enriquecidos de Google y el aviso real a IndexNow (cuando la web esté en el aire).
+- **S4:** las cifras salen de `medidas.json` (Apolo 0.18.3, 2026-10-27); lo de cada herramienta
+  comparada, comprobado en su web y su repositorio ese día. Vistas por el cliente en una galería.

@@ -4,6 +4,26 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-27 (mañana) · GA4, GTM, Search Console y repositorio; seguridad y SEO (S1 a S4)
+
+- **Guiando al cliente**: GA4 en cuenta propia «Apolo» (`G-H6S6RHHPY7`; la primera propiedad se
+  creó por error en la cuenta de otro cliente y se borró), GTM `GTM-KJ4MVVRP` (variable `GTM_ID`
+  del repositorio), Search Console con la propiedad de dominio `webcafeina.com` y la de
+  `apolo.webcafeina.com` vinculada a GA4, y el repositorio con descripción, web y etiquetas sin
+  Squoosh, más la imagen social.
+- **Plan nuevo (ADR 0034)**, en modo plan: seguridad y posicionamiento en buscadores e IAs antes de
+  la 1.0.0. S1 (repositorio y CI), S2 (Cloudflare, CSP, descargas verificables), S3 (SEO técnico,
+  `llms.txt`, IndexNow) y S4 (guías y comparativas) hechos y subidos.
+- **Verificado**: `make comprobar` (ya con zizmor y `cargo deny`) y `make web-e2e` (59, con axe en
+  las 43 páginas) antes de cada subida, y CI en verde; cabeceras, repositorios y rastreadores con
+  `curl` a través de Cloudflare; la CSP con una prueba que simula GTM y GA4 y bloquea un script
+  ajeno.
+- **No verificado**: la procedencia firmada de la Release (sale con la 1.0.0), la renovación del
+  certificado de GitHub con Cloudflare delante (diciembre) y los datos estructurados en la prueba de
+  resultados enriquecidos de Google (cuando la web esté en el aire).
+
+---
+
 ## 2026-10-26 (noche) · La web nueva, revisada por el cliente: el aviso de cookies
 
 - **El aviso tapaba el botón de descarga** en portátiles: en pantallas de 1000 px o más pasa a ser

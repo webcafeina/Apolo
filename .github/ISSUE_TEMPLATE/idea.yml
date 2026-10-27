@@ -1,0 +1,15 @@
+name: Una idea · An idea
+description: Algo que Apolo podría hacer · Something Apolo could do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: para
+    attributes:
+      label: Qué quieres conseguir · What you want to achieve
+      description: Cuéntalo con un caso real; mejor eso que la solución · Tell us with a real case; that's better than the solution
+    validations:
+      required: true
+  - type: textarea
+    id: ahora
+    attributes:
+      label: Cómo lo haces ahora · How you do it now

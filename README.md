@@ -11,6 +11,11 @@
 </p>
 
 <p align="center">
+  Comprime imágenes y conviértelas a WebP, AVIF o JPEG XL sin subirlas a ningún sitio: de una en
+  una, por carpetas, desde la terminal o con tu agente de IA.
+</p>
+
+<p align="center">
   <a href="https://apolo.webcafeina.com/descargar/mac/"><img src=".github/readme/descargar-mac-es.svg" alt="Descargar para Mac" height="46"></a>
   <a href="https://apolo.webcafeina.com/descargar/windows/"><img src=".github/readme/descargar-windows-es.svg" alt="Descargar para Windows" height="46"></a>
   <a href="https://apolo.webcafeina.com/descargar/linux/"><img src=".github/readme/descargar-linux-es.svg" alt="Descargar para Linux" height="46"></a>
@@ -23,7 +28,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/licencia-GPLv3-blue" alt="GPLv3"></a>
 </p>
 
-<p align="center"><a href="https://apolo.webcafeina.com">apolo.webcafeina.com</a> · <a href="README.en.md">English</a></p>
+<p align="center"><a href="https://apolo.webcafeina.com">apolo.webcafeina.com</a> · <a href="https://apolo.webcafeina.com/guias/">Guías</a> · <a href="https://apolo.webcafeina.com/comparativas/">Comparativas</a> · <a href="README.en.md">English</a></p>
 
 <p align="center">
   <picture>
@@ -116,6 +121,19 @@ makepkg -si
   está dañada: `xattr -dr com.apple.quarantine /Applications/Apolo.app`.
 - **Windows**: en SmartScreen, «Más información» › «Ejecutar de todos modos».
 
+### Verificar la descarga
+
+Cada fichero de la versión trae su suma SHA-256 en `SHA256SUMS.txt` y su procedencia firmada por
+GitHub (qué compilación lo hizo y desde qué commit). Con la [línea de comandos de GitHub](https://cli.github.com):
+
+```sh
+gh attestation verify Apolo_1.0.0_universal.dmg --repo webcafeina/Apolo
+```
+
+Los repositorios APT y RPM y los `.rpm` van firmados con la clave GPG
+`6D95 3C94 D0D6 6AB6 B9B0 FA26 CA21 CD7A B7FA 57FC`. Cómo avisar de un fallo de seguridad, en
+[SECURITY.md](SECURITY.md).
+
 ## En la terminal
 
 La línea de comandos `apolo` hace lo mismo que la aplicación, con las opciones de cada herramienta
@@ -147,8 +165,23 @@ claude mcp add --scope user apolo -- "%LOCALAPPDATA%\Apolo\apolo-mcp.exe"       
 claude mcp add --scope user apolo -- /usr/bin/apolo-mcp                                    # Linux
 ```
 
-Las herramientas están en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que el agente pide (rutas,
+Cómo conectarlo en cada agente, en [la página de agentes](https://apolo.webcafeina.com/agentes/); qué
+pedirle, en [la guía](https://apolo.webcafeina.com/guias/optimizar-imagenes-con-un-agente-de-ia/); y
+las once herramientas, en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que el agente pide (rutas,
 nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo.
+
+## Guías
+
+Con cifras medidas por Apolo sobre 24 fotos de uso libre:
+
+- [Convertir imágenes a WebP](https://apolo.webcafeina.com/guias/convertir-a-webp/)
+- [AVIF, WebP o JPEG XL: cuál usar](https://apolo.webcafeina.com/guias/avif-webp-o-jpeg-xl/)
+- [Comprimir imágenes sin perder calidad](https://apolo.webcafeina.com/guias/comprimir-imagenes-sin-perder-calidad/)
+- [Optimizar imágenes para la web](https://apolo.webcafeina.com/guias/optimizar-imagenes-para-la-web/)
+- [Optimizar imágenes con un agente de IA](https://apolo.webcafeina.com/guias/optimizar-imagenes-con-un-agente-de-ia/)
+- [Convertir HEIC a JPG](https://apolo.webcafeina.com/guias/heic-a-jpg/)
+
+Y Apolo frente a otras herramientas, en [las comparativas](https://apolo.webcafeina.com/comparativas/).
 
 ## Preguntas
 

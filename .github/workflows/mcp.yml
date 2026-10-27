@@ -1,0 +1,65 @@
+# El registro oficial de MCP (ADR 0034): cuando se publica una versión, Apolo se publica (o se
+# actualiza) como io.github.webcafeina/apolo, con los cinco .mcpb de la Release y sus sumas
+# (empaquetado/mcp/servidor.py). Directorios como Smithery, Glama o PulseMCP lo recogen de ahí.
+#
+# Al publicar y no al etiquetar, como Homebrew: hasta entonces los .mcpb no se pueden descargar.
+# Sin secretos: mcp-publisher se identifica con el OIDC de GitHub, que da el espacio
+# io.github.webcafeina. mcp-publisher va fijado a una versión y se comprueba su firma (Sigstore).
+name: Registro MCP
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión publicada, sin la v (p. ej. 1.0.0)"
+        required: true
+
+permissions: {}
+
+concurrency:
+  group: registro-mcp
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      MCP_PUBLISHER_VERSION: v1.8.1
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: El server.json de la versión
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ETIQUETA: ${{ github.event.release.tag_name }}
+          A_MANO: ${{ inputs.version }}
+        run: |
+          version="${A_MANO:-${ETIQUETA#v}}"
+          gh release download "v$version" --pattern SHA256SUMS.txt --dir "$RUNNER_TEMP"
+          python3 empaquetado/mcp/servidor.py "$version" "$RUNNER_TEMP/SHA256SUMS.txt" > server.json
+          cat server.json
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      - name: mcp-publisher, comprobado
+        run: |
+          set -euo pipefail
+          archivo="mcp-publisher_linux_amd64.tar.gz"
+          base="https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}"
+          curl -fsSL -o "$archivo" "$base/$archivo"
+          curl -fsSL -o "$archivo.sigstore.json" "$base/$archivo.sigstore.json"
+          cosign verify-blob \
+            --bundle "$archivo.sigstore.json" \
+            --certificate-identity "https://github.com/modelcontextprotocol/registry/.github/workflows/release.yml@refs/tags/${MCP_PUBLISHER_VERSION}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "$archivo"
+          tar xzf "$archivo" mcp-publisher
+          rm -f "$archivo" "$archivo.sigstore.json"
+      - name: Publicar
+        run: |
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish

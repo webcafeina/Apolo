@@ -4,3 +4,7 @@ ignoredOptionalDependencies:
   - sharp
 onlyBuiltDependencies:
   - esbuild
+# Una versión nueva de cualquier paquete no se instala hasta que lleva un día
+# publicada: lo que se sube y se retira por malicioso, casi siempre antes
+# (ADR 0034). Es lo que pnpm 11 hace por defecto; aquí, escrito.
+minimumReleaseAge: 1440

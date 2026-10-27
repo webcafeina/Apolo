@@ -10,12 +10,17 @@ concurrency:
   group: comprobar-${{ github.ref }}
   cancel-in-progress: true
 
+# Solo leer: ningún trabajo escribe en el repositorio (ADR 0034).
+permissions:
+  contents: read
+
 jobs:
   comprobar:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          persist-credentials: false
           submodules: true
 
       - name: Dependencias del sistema (webkit para la ventana)
@@ -31,19 +36,28 @@ jobs:
           wget -qO llvm.sh https://apt.llvm.org/llvm.sh
           sudo bash llvm.sh 18
           echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
         with:
+          toolchain: stable
           components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
 
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: pnpm
           cache-dependency-path: |
             frontend/pnpm-lock.yaml
             sitio/pnpm-lock.yaml
+
+      # make seguridad (ADR 0034): zizmor con uv, y cargo-deny.
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          enable-cache: false
+      - uses: taiki-e/install-action@5488ac5a951645ce95062214902ac4b6bc1a1037 # v2.87.32
+        with:
+          tool: cargo-deny
 
       # La interfaz va primero: src-tauri embebe frontend/dist al compilar. La
       # web nueva (sitio/, ADR 0033) va dentro de make comprobar.
@@ -53,8 +67,9 @@ jobs:
   e2e:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          persist-credentials: false
           submodules: true
       - run: sudo apt-get update && sudo apt-get install -y nasm
       # libjxl se compila con clang 18, como el cjxl oficial (ADR 0021): con
@@ -65,12 +80,14 @@ jobs:
           wget -qO llvm.sh https://apt.llvm.org/llvm.sh
           sudo bash llvm.sh 18
           echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: e2e
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: pnpm
@@ -82,7 +99,7 @@ jobs:
       - run: make e2e
       # La web nueva (sitio/, ADR 0033), con el mismo Chromium.
       - run: make web-e2e
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
           name: informe-e2e
@@ -94,8 +111,9 @@ jobs:
   equivalencia:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          persist-credentials: false
           submodules: true
       - run: sudo apt-get update && sudo apt-get install -y nasm
       # libjxl se compila con clang 18, como el cjxl oficial (ADR 0021): con
@@ -106,8 +124,10 @@ jobs:
           wget -qO llvm.sh https://apt.llvm.org/llvm.sh
           sudo bash llvm.sh 18
           echo "APOLO_CLANG=/usr/lib/llvm-18/bin" >> "$GITHUB_ENV"
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: equivalencia
       - run: make equivalencia

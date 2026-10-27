@@ -44,11 +44,12 @@ jobs:
     steps:
       # Siempre main, también al publicar una versión: con la etiqueta se desplegaría la web que
       # había al etiquetar (trampas.md).
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          persist-credentials: false
           ref: main
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: pnpm
@@ -147,9 +148,9 @@ jobs:
           grep -rhoE 'https://github\.com/webcafeina/Apolo/releases/download/[^"]+' web/dist --include=*.html | sort -u > "$RUNNER_TEMP/enlaces"
           wc -l < "$RUNNER_TEMP/enlaces"
           while read -r u; do curl -fsIL -o /dev/null "$u" || { echo "No responde: $u"; exit 1; }; done < "$RUNNER_TEMP/enlaces"
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: web/dist
       - id: despliegue
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

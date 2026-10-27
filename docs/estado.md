@@ -15,7 +15,31 @@
 > los documentos se cancelan al subir el siguiente commit, y la última prueba todo junto. La galería de revisión (artefacto) se borró al cerrar, a
 > petición del cliente; sus capturas y su página siguen en el scratchpad de la sesión
 > (`revision/`), por si hace falta rehacerla. **Lo siguiente, mañana, guiando al cliente paso a paso** (lo pidió así):
-> 1. **GTM y GA4**: que cree la propiedad de GA4 de Apolo (flujo web para apolo.webcafeina.com), el
+> **Hecho el 2026-10-27 por la mañana (los puntos 1 a 3): lo siguiente es F10 y la 1.0.0.**
+>
+> 1. **GTM y GA4 — hecho el 2026-10-27, guiando al cliente:**
+>    - **GA4**: cuenta propia «Apolo», propiedad «Apolo», flujo web «Apolo web», ID de medición
+>      **`G-H6S6RHHPY7`**; descargas de archivos de la medición mejorada, apagadas; retención 14
+>      meses; señales de Google apagadas; evento clave `descarga_apolo` (con código). Las siete
+>      dimensiones personalizadas de ámbito Evento (`sistema`, `arquitectura`, `formato`, `origen`,
+>      `comando`, `vista`, `idioma`), **pendientes**: el botón no salía; si no aparece, crearlas
+>      cuando lleguen datos, antes de publicar la web. **Hechas** el 2026-10-27 (en la cuenta nueva
+>      sí salía el botón). La primera propiedad (`G-P80X9XC6Z2`) se creó por error en la cuenta de
+>      otro cliente (Sierra de Montánchez): borrada (solo la propiedad).
+>    - **Search Console, hecho**: propiedad de dominio `webcafeina.com` (verificada con la
+>      verificación automática de Cloudflare: un TXT en la raíz; `apolo` es un CNAME y no admite
+>      TXT) y propiedad de prefijo `https://apolo.webcafeina.com/`, vinculada al flujo «Apolo web»
+>      de GA4 (la colección de Search Console ya estaba publicada). El sitemap, tras la 1.0.0.
+>    - **GTM**: cuenta propia «Apolo», contenedor `apolo.webcafeina.com`, **`GTM-KJ4MVVRP`**, ya
+>      guardado como variable `GTM_ID` del repositorio (con el sí del cliente). Etiqueta de Google
+>      `Google Analytics · Apolo` (Initialization - All Pages, sin consentimiento adicional);
+>      siete variables de capa de datos; activador `Eventos de Apolo` (evento personalizado con la
+>      expresión `^(descarga_apolo|copiar_comando|cambiar_vista|cambiar_idioma|clic_webcafeina)$`);
+>      etiqueta `GA4 · Eventos de Apolo` (evento `{{Event}}` con los siete parámetros). Publicado
+>      como «Apolo 1» con el ID viejo y, el mismo día, la versión con las dos etiquetas en
+>      `G-H6S6RHHPY7`, **publicada**. Se comprueba en Tiempo real de GA4 cuando la web nueva esté en el aire.
+>
+>    Lo que decía el plan: que cree la propiedad de GA4 de Apolo (flujo web para apolo.webcafeina.com), el
 >    contenedor web de GTM, y dentro la etiqueta de Google (el ID `G-…`) que se dispare con
 >    «Consent Initialization»/todas las páginas, respetando el consentimiento (`analytics_storage`);
 >    sin activar el `file_download` de la medición mejorada, o las descargas se cuentan dos veces
@@ -24,7 +48,11 @@
 >    `descarga_apolo`, `copiar_comando`, `cambiar_vista`, `cambiar_idioma` y `clic_webcafeina`.
 > 2. **Search Console**: propiedad de dominio o de prefijo para `apolo.webcafeina.com`, y el
 >    registro TXT en Cloudflare (lo pone él). El sitemap se envía después de la 1.0.0.
-> 3. **El repositorio**: su sí a `gh repo edit` (descripción en español, homepage
+> 3. **El repositorio, hecho el 2026-10-27** con su sí: descripción «Imágenes más ligeras, igual de
+>    buenas. Optimizador de imágenes gratuito y libre…», homepage https://apolo.webcafeina.com,
+>    topics sin `squoosh` y con `image-optimizer`, `image-compression`, `cli`, `mcp`, `macos`,
+>    `windows` y `linux`; la imagen social (`apolo-es.png`) la subió el cliente. Lo que decía el
+>    plan: su sí a `gh repo edit` (descripción en español, homepage
 >    https://apolo.webcafeina.com, topics sin `squoosh`: la lista está en el plan) y que suba la
 >    imagen social en Settings › Social preview: sirve `sitio/public/social/apolo-es.png` (1200×630;
 >    GitHub pide al menos 640×320 y recomienda 1280×640), o se genera una a 1280×640 si la quiere.

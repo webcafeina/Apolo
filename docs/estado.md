@@ -4,33 +4,38 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-10-30): la fase comercial casi cerrada; quedan el plugin de Claude con Smithery
-> y vigilar los envíos.** Hecho hoy, todo apuntado en `docs/lanzamiento.md`:
-> - **Firmada la CLA** de Microsoft en winget-pkgs#463314 (con el sí del cliente); espera moderador.
-> - Con la cuenta del cliente, guiado: **AlternativeTo** (en revisión; luego «Suggest alternative»),
->   **Product Hunt programado para el martes 3 de noviembre** (9:01 en España), **Glama** (nota A, la
->   insignia ya en awesome-mcp-servers#17812), **mcpservers.org**, el correo al **GitHub MCP
->   Registry**, **Uptodown** (Windows y Mac), **SaaSHub**, **Softpedia** (Windows y Linux),
->   **MajorGeeks** (correo), **MacUpdate** y la **nota de prensa** a Genbeta y Xataka.
-> - Desde la cuenta de Webcafeína: **open-source-mac-os-apps#1878**, **awesome-mac#4070**,
->   **chatmcp/mcpso#6439** (mcp.so) y **Chocolatey** (`empaquetado/chocolatey/`, subido sin Windows
->   con la imagen `chocolatey/choco`; en moderación).
-> - Descartados o aplazados: Awesome-Linux-Software (archivada), OpenAlternative (pide 50 estrellas),
->   LibHunt (sin formulario) y **Smithery** (un solo `.mcpb` por versión, sin `platform_overrides`:
->   investigado en `docs/distribucion.md`, se hará con un lanzador junto con el plugin).
+> **PARADA AQUÍ (2026-10-30, noche): v1.0.1 PUBLICADA, de seguridad; la fase comercial casi
+> cerrada.** Por la tarde:
+> - Dependabot publicó tres avisos de `zip` (uno crítico). Con el sí del cliente,
+>   `tauri-plugin-updater` 2.14.1 (`zip` 9, `minisign-verify` 0.3) y `apolo-mcpb` a `zip` 9; fuera
+>   sus excepciones de `deny.toml` y **las 6 alertas, cerradas** (`c9c2681`).
+> - Repaso de lo desactualizado: **libheif 1.23.7** (14 fallos graves, uno solo de la 1.23.6 que
+>   llevábamos) y **libpng 1.6.58** (CVE-2025-64505, 64720, 65018 y CVE-2026-22695); zlib se queda
+>   en la 1.3.1 (la 1.3.2 choca con el CMake de libjxl: trampas.md) y aom en la 3.14.1 (la que fija
+>   libavif). Más Tauri 2.12.5 y las menores de Rust y npm (`71b8203`). `make equivalencia`, todo
+>   igual byte a byte.
+> - Compilación de prueba de `Publicar` en verde con humo; **v1.0.1 publicada a las 18:46 UTC**
+>   (`3b0ca97`) con el borrador revisado: 30 sumas, 16 firmas de `latest.json`, procedencia en los
+>   30 ficheros, AVIF 5/5 igual que avifenc. Web, APT, RPM, Homebrew, PKGBUILD y registro de MCP, al
+>   día solos. **El cliente actualizó con el aviso en el Mac, Windows y Ubuntu, y Arch por
+>   `pacman`**: el actualizador nuevo, visto (falta la AppImage).
+> - **Glama**: pasos que bajan siempre la última versión y Auto-Release (se pone al día sola); nota A
+>   en las tres y las 11 herramientas.
+> - **Chocolatey**: la 1.0.1 está empaquetada, pero `choco push` da 403 mientras la 1.0.0 espera
+>   moderación; decidido esperar a que la aprueben.
+> - Pedido para la próxima: copias con nombre fijo en cada Release (`docs/siguiente.md`).
 >
-> **AL RETOMAR (la tarde del 2026-10-30), lo primero**: hay cambios **sin subir** (`git status`:
-> `docs/{estado,siguiente,sesiones,deuda,lanzamiento,distribucion}.md` y `empaquetado/chocolatey/`
-> nuevo). `make comprobar` se paró a medias a petición del cliente (estaba recompilando en frío
-> porque se había limpiado `target/debug`): **pasarlo entero**, hacer el commit en prosa, subir,
-> esperar la CI y pasar `scripts/seguridad-github.sh`. Mirar también el correo de Chocolatey con el
-> resultado de sus comprobaciones automáticas (si falla algo, se arregla y se vuelve a subir la
-> 1.0.0, como dice más abajo `docs/lanzamiento.md`).
+> **Por la mañana**, todo en `docs/lanzamiento.md`: la CLA de winget firmada; con la cuenta del
+> cliente, AlternativeTo, Product Hunt (**martes 3 de noviembre**, 9:01 en España), Glama,
+> mcpservers.org, el GitHub MCP Registry, Uptodown (Windows y Mac), SaaSHub, Softpedia, MajorGeeks,
+> MacUpdate y la prensa; desde la cuenta de Webcafeína, open-source-mac-os-apps#1878,
+> awesome-mac#4070, chatmcp/mcpso#6439 y Chocolatey. Descartados: Awesome-Linux-Software,
+> OpenAlternative (50 estrellas), LibHunt y, por ahora, **Smithery** (con el plugin).
 >
-> **Lo siguiente**: mirar cómo van los envíos (sobre todo Chocolatey, winget, los PR y Uptodown,
-> cuya ficha de Windows salía vacía al editarla en revisión); el **martes 3**, Product Hunt; y
-> después **el plugin de Claude con el lanzador de Smithery** (ADR nueva). Al empezar:
-> `docs/estado.md` y `scripts/seguridad-github.sh`.
+> **Lo siguiente**: vigilar los envíos; cuando aprueben, **Chocolatey 1.0.1**, la 1.0.1 en
+> **Uptodown y MacUpdate** (tienen la 1.0.0; Uptodown deja a sus editores subirla) y **winget** con
+> komac; el **martes 3**, Product Hunt; después, **el plugin de Claude con el lanzador de
+> Smithery** (ADR nueva). Al empezar: `docs/estado.md` y `scripts/seguridad-github.sh`.
 >
 > **(2026-10-27, noche): la 1.0.0 publicada; queda cerrar la fase comercial.** Enviados
 > (con su sí) awesome-mcp-servers#17812 y winget (microsoft/winget-pkgs#463314). El directorio de

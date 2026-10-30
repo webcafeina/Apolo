@@ -91,6 +91,12 @@ Review Comments»** de la página del paquete (los comentarios de Disqus no lleg
 **se vuelve a subir la misma versión** con el arreglo, mientras no esté aprobada. Sin noticias en una
 o dos semanas, preguntar en esa caja. Dudas: chocolatey-moderators@googlegroups.com.
 
+**La 1.0.1 (2026-10-30) no entra mientras la 1.0.0 espere**: `choco push` respondió `403
+(Forbidden)` con la misma clave que subió la 1.0.0. Decidido con el cliente: esperar a que aprueben
+la 1.0.0 y subir entonces la 1.0.1 (se rellena y empaqueta igual, con las sumas de su
+`SHA256SUMS.txt`). La otra vía era retirar la 1.0.0 desde la web («self-reject») y volver al final
+de la cola.
+
 ### Prensa (2026-10-30)
 
 Nota de prensa en español enviada por el cliente a **contacto@genbeta.com** y
@@ -126,17 +132,25 @@ Apolo con «Add Server» (el botón está en la barra de ordenar, encima de la l
 glama.ai/mcp/servers); lo aprobaron en el día, en `https://glama.ai/mcp/servers/webcafeina/Apolo`.
 Los campos de Admin › Dockerfile (abajo, con la base `debian:trixie-slim`, la única que ofrece), la
 prueba en verde, «Make Release» **desde esa prueba** en la página del Dockerfile (la pestaña Releases
-solo lista) y nota **A**. Auto-Release **apagado**: los pasos fijan la 1.0.0 y su suma, así que en
-cada versión se cambian a mano y se hace otra release. Añadida al PR la insignia (commit `92dcc68`)
+solo lista) y nota **A**. Con la 1.0.1 (2026-10-30), los pasos pasaron a **bajar siempre la última
+versión** (`releases/latest/download`) y comprobarla con el `SHA256SUMS.txt` de esa misma versión, así
+que **Auto-Release** pone a Glama al día sola en cada versión. Hecho por el cliente el mismo día:
+pasos nuevos, prueba en verde y la release **0.1.1** (la numeración es de Glama, no de Apolo; la
+primera fue la 0.1.0). Auto-Release ya estaba encendido sin tocarlo: venía así, y solo esperaba a
+una compilación válida. La ficha, con las 11 herramientas y nota A en licencia, mantenimiento y
+calidad. La suma ya no va fija: protege de una descarga
+rota, no de unos ficheros cambiados en la Release. Añadida al PR la insignia (commit `92dcc68`)
 `[![webcafeina/Apolo MCP server](https://glama.ai/mcp/servers/webcafeina/Apolo/badges/score.svg)](https://glama.ai/mcp/servers/webcafeina/Apolo)`.
 **Trampa**: la página `…/admin/dockerfile` de Glama **no admite un Dockerfile pegado**; tiene campos
 y lo genera ella: `debian:bookworm-slim` con node y `mcp-proxy`, el repositorio clonado en `/app`,
 cada paso como un `RUN` de root y `CMD ["mcp-proxy", …argumentos]`. La ficha quedó reclamada sola
 (`author:claimed`) al darla de alta con la cuenta dueña del repositorio. Los valores, probados el
-2026-10-30 con esa misma base (`initialize` + `tools/list`, 11 herramientas); en cada versión se
-cambian la URL y la suma (la del `apolo-cli-…-linux-amd64.tar.gz` en `SHA256SUMS.txt`):
+2026-10-30 con esa misma base (`initialize` + `tools/list`, 11 herramientas), y el paso de la última
+versión también en una Debian trixie limpia (instala `apolo-mcp 1.0.1`). Sin comillas dobles ni
+barras invertidas, para pegarlo en el JSON sin escapar nada:
 
-- Build steps: `["curl -fsSL -o /tmp/apolo.tar.gz https://github.com/webcafeina/Apolo/releases/download/v1.0.0/apolo-cli-1.0.0-linux-amd64.tar.gz", "echo 'f92e86f1dfd81d7cb8f83ecc0097917239f16616173eccf4f970e26f5e8c23f4  /tmp/apolo.tar.gz' | sha256sum -c -", "tar -xzf /tmp/apolo.tar.gz -C /usr/local/bin apolo apolo-mcp"]`
+- Build steps: `["set -e; cd /tmp; base=https://github.com/webcafeina/Apolo/releases/latest/download; curl -fsSL -o SHA256SUMS.txt $base/SHA256SUMS.txt; grep -E '  apolo-cli-[0-9.]+-linux-amd64[.]tar[.]gz$' SHA256SUMS.txt > suma.txt; test $(wc -l < suma.txt) -eq 1; f=$(awk '{print $2}' suma.txt); curl -fsSL -o $f $base/$f; sha256sum -c suma.txt; tar -xzf $f -C /usr/local/bin apolo apolo-mcp; rm -f $f SHA256SUMS.txt suma.txt"]`
+  (antes, con la 1.0.0: tres pasos con la URL y la suma fijas)
 - CMD arguments: `["/usr/local/bin/apolo-mcp"]`
 - Variables de entorno: `{"type":"object","properties":{},"required":[]}`; parámetros de ejemplo, `{}`.
 

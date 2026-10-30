@@ -4,6 +4,24 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **EL LUNES 2026-11-02, en este orden** (decidido con el cliente el 2026-10-30 por la noche):
+> 1. **Revisar el correo de info@webcafeina.com y el estado de cada servicio** (la lista y lo que
+>    se sabía el 30, en `docs/lanzamiento.md`, «Estado por las respuestas»), y **actuar según lo que
+>    haya**: Chocolatey 1.0.1 si aprobaron la 1.0.0 (está empaquetada); winget 1.0.1 con komac si
+>    fusionaron la 1.0.0; la 1.0.1 en Uptodown y MacUpdate si aprobaron sus fichas; responder lo que
+>    pidan los PR (awesome-mcp-servers#17812, open-source-mac-os-apps#1878) y mcp.so#6439.
+> 2. **mcprush.com**: añadió Apolo por su cuenta (https://mcprush.com/webcafeina/apolo-mcp) y
+>    ofrece reclamarla; decidir con el cliente si se reclama (mi recomendación del 30: no, por
+>    ahora) y hacerlo o dejarlo apuntado.
+> 3. **Lo que le toca al cliente**, guiado: las seis «Suggest alternative» en AlternativeTo
+>    (Squoosh, TinyPNG, ImageOptim, Caesium, XnConvert, FileOptimizer); confirmar que pulsó los
+>    correos de verificación (Chocolatey sobre todo, y MacUpdate, SaaSHub, WorkOS/Smithery); si
+>    quiere, contestar a Frank de Glama («just the MCP directory») y quitar en GitHub las
+>    aplicaciones OAuth de MCP So y OpenAlternative.
+> 4. **Seguir con lo que quede de la fase comercial**: el **plugin de Claude con el lanzador de
+>    Smithery** (ADR nueva), y lo pendiente de `docs/siguiente.md` (Alta).
+> El **martes 3**, Product Hunt a las 9:01 de España: contestar comentarios ese día.
+>
 > **PARADA AQUÍ (2026-10-30, noche): v1.0.1 PUBLICADA, de seguridad; la fase comercial casi
 > cerrada.** Por la tarde:
 > - Dependabot publicó tres avisos de `zip` (uno crítico). Con el sí del cliente,

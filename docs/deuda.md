@@ -1,6 +1,6 @@
 # Deuda y cabos sueltos
 
-Última actualización: **2026-10-22**
+Última actualización: **2026-10-30**
 
 Lo que sabemos que está a medias, mal o sin comprobar. Los bloqueantes primero. Lo saldado se tacha
 y se queda.
@@ -109,6 +109,9 @@ Lo más caro de esta lista no es lo que está mal, es lo que no sabemos si lo es
 | **`Servicio.lotes` nunca se limpia** | Baja | Cada lote deja su estado en memoria hasta que se cierra el proceso. En la ventana importa poco; un `apolo-mcp` abierto días con muchos lotes iría creciendo (poco: filas de texto) | Abierto · 2026-10-14 |
 | ~~**`publicar.yml` usa `macos-14`, que GitHub retira el 2 de noviembre de 2026**~~ | **Alta** | Hasta entonces hay apagones a propósito de 14:00 a 00:00 UTC (16:00 a 02:00 en Madrid) en los que todo trabajo con `macos-14` falla: 16–17, 19–20, 23–24, 26–27, 29–30 y 30–31 de octubre. Una etiqueta empujada en esas horas dejaría la Release sin el Mac. Fuera de ellos, más cola y fallos sueltos. Arreglo: pasar los dos trabajos del Mac a `macos-15` y revisar los artefactos como un cambio de sistema (otro Xcode y otro clang). Lo trajo el cliente el 2026-10-15 con un artículo de dev.to; decidió no tocarlo todavía | **Saldada el 2026-10-16**: los dos trabajos del Mac en `macos-15`, con `MACOSX_DEPLOYMENT_TARGET=11.0`. La primera prueba no enlazaba por la giflib de Homebrew (trampas.md); arreglado, la publicación de prueba 38893150888 sale entera, con todo en macOS mínimo 11.0 y universal |
 | **`-noasm` se ignora** | Baja | Apagar el SIMD de libwebp es cambiar un puntero global, que afecta a toda la aplicación y a los hilos que estén codificando. Se acepta la opción y se avisa | Abierto · 2026-10-06 |
+| **Chocolatey, a mano en cada versión** | Media | El paquete `apolo` (`empaquetado/chocolatey/`) se rellena con `rellenar.py` y se sube con la imagen `chocolatey/choco` y la clave de `~/.config/apolo/chocolatey.key`, a mano: ningún workflow lo hace al publicar, como sí Homebrew y el AUR. Si se olvida, Chocolatey se queda en la versión anterior | Abierto · 2026-10-30. Cuando la 1.0.0 esté aprobada, un `chocolatey.yml` con la clave como secreto |
+| **Con Chocolatey, Apolo se actualiza sola** | Baja | En Linux, el AUR deja `/usr/share/apolo/gestor` para que Apolo no se actualice por su cuenta; en Windows no hay nada igual, así que el aviso de versión nueva sale también a quien instaló con Chocolatey (o con winget), y `choco` ve una versión vieja. Además, el instalador NSIS es por usuario: con `choco install` va al perfil de quien lo ejecuta | Abierto · 2026-10-30. Dicho en la descripción del paquete. Arreglo posible: que el paquete deje un marcador y Apolo lo lea también en Windows |
+| **El MCP en Smithery y el plugin de Claude, pendientes** | Media | Smithery admite un solo `.mcpb` por versión y ejecuta su `mcp_config.command` sin `platform_overrides` (docs/distribucion.md), así que nuestros `.mcpb` por sistema no le sirven. El directorio de Claude ya solo acepta plugins | Abierto · 2026-10-30. Plan: un `.mcpb` lanzador de tipo node que use el `apolo-mcp` instalado o baje el de su sistema con su suma, junto con el plugin; con su ADR |
 
 ## De producto
 

@@ -83,6 +83,30 @@ fuera, y el choque con la GPL); Flathub mientras su política de IA siga así (s
 una persona de Webcafeína y lo declara); Debian, Ubuntu y Fedora oficiales, homebrew-core y
 MacPorts; el Docker MCP Catalog; Chip.de, Softonic y opensourcealternative.to.
 
+## Smithery por dentro (investigado el 2026-10-30)
+
+Leído en el código de su CLI (`smithery-ai/cli`, **AGPL-3.0**: se puede ejecutar, no enlazar) y de
+su SDK (`@smithery/api` 0.68.0, Apache-2.0):
+
+- **El formulario web solo publica servidores remotos** (pide la URL `https://…/mcp`). Los locales se
+  publican subiendo un `.mcpb` con la CLI (`smithery mcp publish ./x.mcpb -n espacio/servidor`) o con
+  la API: `PUT https://api.smithery.ai/servers/{espacio}/{servidor}/releases`, multipart con
+  `payload` (JSON `{"type":"stdio","runtime":"binary"|"node"|"python"|"bun","serverCard":…}`) y
+  `bundle`, y la clave en `SMITHERY_API_KEY`. Se puede hacer con `curl`, sin la CLI.
+- **Un solo bundle por versión, sin campo de sistema ni arquitectura.** Al instalarlo, la CLI lo
+  descarga, lo descomprime y ejecuta `server.mcp_config.command` tal cual: **no aplica
+  `platform_overrides`**. Nuestros `.mcpb` (uno por sistema, `type: binary`) solo funcionarían en el
+  sistema del que se suba.
+- Lo que hacen otros proyectos de Rust (patchloom#1867): un `.mcpb` de tipo **node** con un lanzador
+  `server/run.mjs` que busca el binario instalado y, si no está, recurre a otra vía. Node siempre
+  está, porque la CLI de Smithery corre con él y Claude Desktop lo trae dentro.
+- Para Apolo serían dos opciones: **un lanzador ligero** (unos KB) que use el `apolo-mcp` instalado
+  (Homebrew, APT, RPM, el instalador de Windows) o, si no lo hay, baje el de su sistema de la
+  Release y compruebe su SHA-256; o **un bundle gordo** con los cinco binarios (unos 73 MB). Ambas
+  piden un cambio en `crates/mcpb`, un paso en CI con el secreto `SMITHERY_API_KEY` y una ADR.
+- El espacio que Smithery crea al registrarse sale del correo (`info-ixqz`): renombrarlo a
+  `webcafeina` antes de publicar.
+
 ## Lo que exigiría cambios en Apolo
 
 | Cambio | Para qué | Qué supone |

@@ -18,4 +18,4 @@ apolo-servicio.workspace = true
 dirs = "6"
 serde_json.workspace = true
 # zip es MIT. Solo deflate: el .mcpb es un zip normal.
-zip = { version = "4.6", default-features = false, features = ["deflate"] }
+zip = { version = "9", default-features = false, features = ["deflate"] }

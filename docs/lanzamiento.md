@@ -64,6 +64,31 @@ nada.
 - **LibHunt**: no tiene formulario de envío; recoge solo los repositorios de las listas awesome y de
   GitHub.
 
+### Estado por las respuestas del 2026-10-30 (tarde)
+
+Leído en el correo de info@webcafeina.com:
+
+- **AlternativeTo: publicada**, https://alternativeto.net/software/apolo/ (13:45 UTC). Queda que el
+  cliente haga las seis «Suggest alternative»; ofrecen una insignia para la web, opcional.
+- **GitHub MCP Registry: aprobado** (solicitud 171949, 19:15 UTC); aparece en hasta 3 días
+  laborables, sin hacer nada más.
+- **awesome-mac#4070: fusionado** (16:17 UTC).
+- **Chocolatey 1.0.0**: pasó validación, verificación (instalación de prueba en Windows) y
+  antivirus; **«Ready for review»**, a la espera de una persona. Una nota, no requisito:
+  `packageSourceUrl` válida (lo es desde `16bedb4`).
+- **SaaSHub**: ficha en línea, https://www.saashub.com/apolo, con «Officially verified details».
+- **MajorGeeks**: recibido; «we will take a look… but it may be a bit».
+- **mcprush.com** añadió Apolo por su cuenta (https://mcprush.com/webcafeina/apolo-mcp) y ofrece
+  reclamar la ficha; recomendado no hacerlo por ahora.
+- Glama mandó la bienvenida y un correo de su fundador preguntando qué se busca (directorio).
+- Correos de verificación de cuenta de Chocolatey, MacUpdate, SaaSHub, AlternativeTo y WorkOS
+  (Smithery): confirmar que el cliente los pulsó; el de Chocolatey puede frenar la aprobación.
+- GitHub avisó de dos aplicaciones OAuth autorizadas en la cuenta webcafeina al iniciar sesión:
+  **MCP So** y **OpenAlternative** (solo `read:user` y `user:email`). Se pueden quitar en
+  github.com/settings/applications.
+- Sin respuesta: Uptodown, Softpedia, MacUpdate, mcpservers.org, mcp.so#6439,
+  open-source-mac-os-apps#1878, awesome-mcp-servers#17812 (ya `has-glama`), winget y la prensa.
+
 ### Chocolatey (2026-10-30)
 
 Paquete `apolo` en `empaquetado/chocolatey/`: `apolo.nuspec` y `tools/chocolatey{install,uninstall}.ps1`

@@ -23,9 +23,10 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     (`docs/lanzamiento.md`). Más adelante, con decisión y coste: Developer ID de Apple, Authenticode
     y la Microsoft Store, Snap, OBS, nix, el AUR cuando abra, y lo que pide estrellas (Scoop
     Extras, awesome-rust, OpenAlternative).
-  - **Vigilar los envíos**: winget-pkgs#463314, awesome-mcp-servers#17812,
-    open-source-mac-os-apps#1878, awesome-mac#4070, chatmcp/mcpso#6439, Chocolatey (moderación),
-    AlternativeTo, Uptodown (la ficha de Windows salía vacía al editarla en revisión), SaaSHub,
+  - **Vigilar los envíos** (ya hechos el 2026-10-30: awesome-mac#4070 fusionado, AlternativeTo y
+    SaaSHub publicadas, GitHub MCP Registry aprobado, Chocolatey 1.0.0 «Ready for review»):
+    winget-pkgs#463314, awesome-mcp-servers#17812, open-source-mac-os-apps#1878,
+    chatmcp/mcpso#6439, Chocolatey (moderación humana), Uptodown (la ficha de Windows salía vacía al editarla en revisión), SaaSHub,
     Softpedia, MacUpdate, MajorGeeks, mcpservers.org, el GitHub MCP Registry y la prensa. Cuando
     winget acepte, poner `Webcafeina.Apolo` en AlternativeTo y subir la 1.0.1 con komac; cuando
     AlternativeTo apruebe, las seis «Suggest alternative». **Con la 1.0.1 (2026-10-30)**: Chocolatey

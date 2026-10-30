@@ -4,6 +4,33 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-30 (tarde) · La 1.0.1, de seguridad
+
+- Subido lo de la mañana (`16bedb4`) tras `make comprobar`. La pestaña Security trajo **tres
+  avisos nuevos de `zip`** (GHSA-m665-v7pm-7grj crítico, GHSA-q7v9-x93c-xqv3, GHSA-8hxf-qr8p-62x4),
+  los mismos que `deny.toml` ya ignoraba. Con el sí del cliente: `tauri-plugin-updater` 2.14.1 y
+  `apolo-mcpb` a `zip` 9, fuera las excepciones (`c9c2681`); las 6 alertas se cerraron solas.
+- Repaso de lo desactualizado, a petición del cliente: libheif 1.23.7 (seguridad, 14 graves),
+  libpng 1.6.58 (cuatro CVE), Tauri 2.12.5 y las menores de Rust y npm (`71b8203`). zlib 1.3.2 no
+  entra (su CMake choca con el de libjxl: trampas.md, deuda) y aom no se toca (la fija libavif).
+  Las acciones de GitHub y los saltos mayores de npm (TypeScript 7, `@types/node` 26), para otra
+  tanda.
+- Verificado: `make comprobar` y `make equivalencia` (cwebp 1015, cjpeg 816, oxipng 351, avifenc
+  376, cjxl 280, qoiconv 13, ssimulacra2 56, todo igual); `Publicar` de prueba en los seis objetivos
+  con humo; la **v1.0.1** (`3b0ca97`) publicada a las 18:46 UTC con el borrador revisado (30 sumas,
+  16 firmas, procedencia 30/30, `apolo` y `apolo-mcp` 1.0.1, libpng 1.6.58 en el binario, libheif
+  1.23.7 por el submódulo de la etiqueta, una HEIC del iPhone convertida, AVIF 5/5 con avifenc); web,
+  APT, RPM, Homebrew, PKGBUILD y registro de MCP al día solos. **El cliente actualizó desde la 1.0.0
+  en el Mac, Windows y Ubuntu con el aviso, y Arch por `pacman`.**
+- Glama, a la última versión sola (pasos con `releases/latest/download` y Auto-Release); release
+  0.1.1 de Glama, nota A en las tres.
+- **No verificado**: la AppImage actualizándose; Chocolatey 1.0.1 (403 mientras la 1.0.0 espera
+  moderación).
+- Disco: llegó al 89 % con tres compilaciones en frío; limpiado a 81 % (copias viejas de
+  `target/debug/deps`, `incremental` y las compilaciones de C de días anteriores).
+
+---
+
 ## 2026-10-30 · La fase comercial: directorios, listas, MCP, prensa y Chocolatey
 
 - Al empezar: la pestaña Security sin nada nuevo y la CI de `e3abe6e` en verde. Disco del 88 % al

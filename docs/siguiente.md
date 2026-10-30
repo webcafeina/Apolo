@@ -27,8 +27,13 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     open-source-mac-os-apps#1878, awesome-mac#4070, chatmcp/mcpso#6439, Chocolatey (moderación),
     AlternativeTo, Uptodown (la ficha de Windows salía vacía al editarla en revisión), SaaSHub,
     Softpedia, MacUpdate, MajorGeeks, mcpservers.org, el GitHub MCP Registry y la prensa. Cuando
-    winget acepte, poner `Webcafeina.Apolo` en AlternativeTo; cuando AlternativeTo apruebe, las
-    seis «Suggest alternative».
+    winget acepte, poner `Webcafeina.Apolo` en AlternativeTo y subir la 1.0.1 con komac; cuando
+    AlternativeTo apruebe, las seis «Suggest alternative». **Con la 1.0.1 (2026-10-30)**: Chocolatey
+    en cuanto aprueben la 1.0.0 (está empaquetada; da 403 mientras tanto), y la 1.0.1 en Uptodown y
+    MacUpdate cuando aprueben sus fichas.
+  - **Otra tanda de mantenimiento**: las acciones de GitHub (varias versiones mayores por detrás:
+    `checkout` v7, `upload-artifact` v7, `tauri-action` 1.0…), TypeScript 7 y `@types/node` 26 en
+    npm, y zlib 1.3.2 con la próxima libjxl (deuda).
   - **Cerrar el SEO**: la primera revisión de `docs/seo.md` cuando Search Console y Bing tengan datos,
     y comprobar la indexación de las 45 páginas.
 - ~~**Entrega 8 — la 1.0**~~: **v1.0.0 publicada el 2026-10-27**, con la web nueva.
@@ -138,6 +143,13 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
+- **Copias con nombre fijo en cada Release** (pedido por el cliente el 2026-10-30, para la próxima
+  versión): además de `Apolo_1.0.1_universal.dmg` y demás, subir `Apolo_universal.dmg`,
+  `Apolo_x64-setup.exe`, `Apolo_arm64-setup.exe`, `Apolo_amd64.deb`… sin número, para que
+  `…/releases/latest/download/<nombre>` sirva siempre la última. Así los directorios que piden un
+  enlace directo (MacUpdate, Uptodown, Softpedia) no hay que tocarlos en cada versión. En
+  `publicar.yml` (paso `adjuntar`), con su suma en `SHA256SUMS.txt` y su procedencia; ojo a que
+  `latest.json` y el actualizador siguen usando los nombres con versión.
 - **En `main` para la próxima versión** (2026-10-16): `acerca_de_apolo` dice que no hace falta
   actualizar la extensión de Claude Desktop (el agente lo recomendaba al ver «paquete 0.8.0»).
 - ~~**En `main` para la próxima versión**~~ (2026-10-15), **publicado en la v0.8.2**:

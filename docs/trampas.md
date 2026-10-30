@@ -133,6 +133,15 @@ libheif aplica los giros del propio HEIF al decodificar, y el EXIF del iPhone di
 «orientación 6». Si se respeta el EXIF, la foto se gira dos veces. Al leer un HEIC, el EXIF se deja en
 1 (`entrada/heic.rs`). · 2026-10-06
 
+## «add_library cannot create imported target "ZLIB::ZLIB" because another target with the same name already exists»
+
+Sale al compilar `apolo-avifjxl` con zlib 1.3.2 en `crates/avifjxl/vendor/zlib`. Desde la 1.3.1.2,
+el CMake de zlib está reescrito y crea él mismo `ZLIB::ZLIB`, y el `third_party/CMakeLists.txt` de
+libjxl 0.12 lo vuelve a crear para que libpng use la zlib de dentro. Se evita dejando zlib en la que
+fija libjxl (1.3.1) y subiéndola solo con una libjxl que la espere, o con un `if(NOT TARGET
+ZLIB::ZLIB)` en la copia que hace `build.rs`. libpng sí se puede subir sola (1.6.58, sin tocar
+nada). · 2026-10-30
+
 ## En Windows, enlazar libheif estática pide la DLL de libde265
 
 Las cabeceras de libde265 declaran sus funciones como de DLL salvo que se defina

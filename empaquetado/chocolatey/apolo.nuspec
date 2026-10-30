@@ -1,0 +1,47 @@
+<!-- Plantilla del paquete apolo de Chocolatey. La rellena rellenar.py con la versión; las sumas van
+     en tools/chocolateyinstall.ps1. Lo de antes de la primera línea en blanco no llega al paquete. -->
+
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>apolo</id>
+    <version>{{VERSION}}</version>
+    <packageSourceUrl>https://github.com/webcafeina/Apolo/tree/main/empaquetado/chocolatey</packageSourceUrl>
+    <owners>webcafeina</owners>
+    <title>Apolo</title>
+    <authors>Webcafeína</authors>
+    <projectUrl>https://apolo.webcafeina.com/en/</projectUrl>
+    <iconUrl>https://apolo.webcafeina.com/icono.png</iconUrl>
+    <copyright>© 2026 Webcafeína</copyright>
+    <licenseUrl>https://github.com/webcafeina/Apolo/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/webcafeina/Apolo</projectSourceUrl>
+    <docsUrl>https://apolo.webcafeina.com/en/faq/</docsUrl>
+    <bugTrackerUrl>https://github.com/webcafeina/Apolo/issues</bugTrackerUrl>
+    <tags>image-optimizer image-compression image-converter webp avif jpeg-xl mozjpeg oxipng ssimulacra2 mcp foss cross-platform</tags>
+    <summary>Lighter images, just as good: a free, open-source image optimizer for WebP, AVIF, JPEG XL, JPEG and PNG.</summary>
+    <description><![CDATA[Apolo is a free, open-source image optimizer. It compresses and converts images to WebP, AVIF, JPEG XL, JPEG and PNG on your own computer: nothing is uploaded anywhere.
+
+Instead of guessing a quality number, you see what you lose before you save: a slider, side by side or a difference map, with the SSIMULACRA 2 score of every result. You can also ask for a target such as "no visible loss", and Apolo finds the lowest quality that reaches it, photo by photo.
+
+## Features
+
+- The official engines (libwebp, MozJPEG, OxiPNG, libavif and libjxl): the same file, byte for byte, as cwebp, cjpeg, oxipng, avifenc and cjxl.
+- Whole folders in parallel, to one or more formats at once. It always writes new files and never overwrites your originals.
+- Resize, crop and reduce the palette. Opens iPhone HEIC photos.
+- A command line, `apolo`, and an MCP server, `apolo-mcp`, so Claude, Cursor and other AI agents can optimize images for you.
+- In English and Spanish, with light and dark mode.
+
+## Package notes
+
+- Installs the official NSIS installer from the GitHub Release, silently, for x64 or ARM64 depending on the machine.
+- The installer is per-user: it goes into the profile of the account that runs `choco install`.
+- Apolo checks GitHub for new versions and offers to update itself; the package can lag behind until the next version is approved here.
+- Requires Windows 10 or 11 and the Microsoft Edge WebView2 Runtime (the installer downloads it if it's missing).
+]]></description>
+    <releaseNotes>https://apolo.webcafeina.com/en/whats-new/</releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

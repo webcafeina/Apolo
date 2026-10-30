@@ -4,6 +4,36 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-10-30 · La fase comercial: directorios, listas, MCP, prensa y Chocolatey
+
+- Al empezar: la pestaña Security sin nada nuevo y la CI de `e3abe6e` en verde. Disco del 88 % al
+  84 % (copias viejas de `target/debug/deps` e `incremental`).
+- **CLA de Microsoft firmada** en winget-pkgs#463314 con el sí del cliente; se quitó `Needs-CLA`.
+- **Guiados, con la cuenta del cliente**: AlternativeTo (en revisión), Product Hunt (programado para
+  el martes 3 de noviembre), Glama (Add Server, los campos del Dockerfile, «Make Release» y nota A),
+  mcpservers.org, el correo al GitHub MCP Registry, Uptodown (Windows y Mac), SaaSHub, Softpedia
+  (Windows y Linux), MajorGeeks (por correo), MacUpdate y la nota de prensa a Genbeta y Xataka.
+  Material en `capturas/cliente/lanzamiento/` (fuera de git): logos de 240, 256 y 512, capturas en
+  PNG, galería de 1270×760, imagen destacada de 1024×500 y vídeos.
+- **Desde la cuenta de Webcafeína**: open-source-mac-os-apps#1878, awesome-mac#4070 (en sus cuatro
+  README), chatmcp/mcpso#6439 y la insignia de Glama en awesome-mcp-servers#17812 (`92dcc68`).
+- **Chocolatey**: paquete nuevo en `empaquetado/chocolatey/` (plantillas y `rellenar.py`, como
+  Homebrew y AUR), empaquetado y subido **sin Windows** con la imagen `chocolatey/choco`; la clave,
+  en `~/.config/apolo/chocolatey.key`, guardada por el cliente por SSH. En moderación.
+- **Smithery, investigado a fondo** (su CLI y su SDK): un solo `.mcpb` por versión y sin
+  `platform_overrides`, así que se aplaza y se hará con un lanzador junto con el plugin
+  (`docs/distribucion.md`, deuda).
+- Verificado: el Dockerfile de Glama con `docker build` y `initialize` + `tools/list` (11
+  herramientas) sobre bookworm y trixie, con la misma base que genera Glama; las sumas de los
+  ficheros subidos a Uptodown contra `SHA256SUMS.txt`; `choco pack` sin errores; todas las URL que
+  se dieron en los formularios.
+- **No verificado**: el paquete de Chocolatey instalado en un Windows (lo prueba su verificador en
+  x64; ARM64, sin ver); la ficha de Windows de Uptodown, que salía vacía al editarla en revisión.
+- Descartados: Awesome-Linux-Software (archivada), OpenAlternative (50 estrellas) y LibHunt (sin
+  formulario).
+
+---
+
 ## 2026-10-27 (tarde y noche) · S5, copias de seguridad, el cambio de web y la 1.0.0
 
 - **S5** (`c9fa1a1`): README con lo que se busca y «Verificar la descarga», plantillas de incidencias,

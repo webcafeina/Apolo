@@ -170,6 +170,8 @@ pedirle, en [la guía](https://apolo.webcafeina.com/guias/optimizar-imagenes-con
 las once herramientas, en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que el agente pide (rutas,
 nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo.
 
+[![Apolo MCP on mcprush](https://mcprush.com/badge/apolo-mcp/score.svg)](https://mcprush.com/to/apolo-mcp?ref=badge)
+
 ## Guías
 
 Con cifras medidas por Apolo sobre 24 fotos de uso libre:

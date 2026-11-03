@@ -169,6 +169,8 @@ to ask it, in [the guide](https://apolo.webcafeina.com/en/guides/optimize-images
 the eleven tools, in [docs/mcp/catalogo.md](docs/mcp/catalogo.md) (in Spanish). What the agent asks for
 (paths, names, thumbnails) goes into its conversation, and the model provider sees it.
 
+[![Apolo MCP on mcprush](https://mcprush.com/badge/apolo-mcp/score.svg)](https://mcprush.com/to/apolo-mcp?ref=badge)
+
 ## Guides
 
 With figures measured by Apolo on 24 freely usable photos:

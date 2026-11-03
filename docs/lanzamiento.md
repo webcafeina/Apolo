@@ -103,6 +103,13 @@ Leído en el correo de info@webcafeina.com:
   (`depends_on :macos`).
 - **Product Hunt**: salió el martes 3 a las 9:01. La página da 403 a las peticiones automáticas
   (Cloudflare): la mira el cliente.
+- **Hecho por el cliente**: las seis «Suggest alternative» en AlternativeTo; los correos de
+  verificación (todos pulsados); la respuesta a Frank, de Glama («just the MCP directory», con una
+  mención a awesome-mcp-servers#17812, que también mantiene él). Las aplicaciones OAuth de MCP So y
+  OpenAlternative se quitan más adelante.
+- **mcprush: decidido reclamarla** («no sobra otro sitio más»). Para verificar la propiedad pide su
+  insignia en el README: puesta en la sección del agente de los dos README. Nada de cobrar ni de
+  alojar el servidor con ellos.
 - Sin cambios: winget#463314 (validado, espera moderador), awesome-mcp-servers#17812 (`has-glama`),
   open-source-mac-os-apps#1878, mcp.so#6439 (sin comentarios), MajorGeeks («may be a bit»),
   Uptodown, Softpedia, MacUpdate y la prensa.

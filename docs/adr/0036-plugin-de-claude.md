@@ -97,7 +97,13 @@ mismo día**: había cerrado su publicación el 31 de octubre (abajo).
     respondía con las 11 herramientas (antes de quitarlo).
   - La API de Smithery, con la clave del cliente: `/health` responde, y `/namespaces` da 401
     («Invalid API key»), como dice su aviso de cierre.
+- 2026-11-03, **el cliente en su Mac** (Apple Silicon, Apolo 1.0.0 en `/Applications`, Claude
+  Code): instalado desde el marketplace, `/mcp` da `plugin:apolo:apolo` con 11 herramientas; la
+  *skill* se cargó sola, la conversión a AVIF salió bien y el agente avisó de que el plugin era el
+  1.0.1 y la aplicación, la 1.0.0.
+- 2026-11-03, **la validación del directorio**: sin nada que bloquee; quedan para el revisor el
+  guion en Node, un falso positivo de credencial y el parecido de `apolo` con Apollo.
 - **Sin ver todavía**:
-  - el plugin en el Mac y en Windows, con las rutas reales de la aplicación y sin Node;
+  - Windows, con su ruta y sin Node;
   - Cowork;
-  - la revisión del directorio de Anthropic.
+  - el veredicto del revisor de Anthropic.

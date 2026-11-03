@@ -110,6 +110,20 @@ Leído en el correo de info@webcafeina.com:
 - **mcprush: decidido reclamarla** («no sobra otro sitio más»). Para verificar la propiedad pide su
   insignia en el README: puesta en la sección del agente de los dos README. Nada de cobrar ni de
   alojar el servidor con ellos.
+- **Smithery: cerrado.** Es de Arcade.dev y el 31 de octubre apagó cuentas, claves, API y CLI
+  (https://smithery.ai/future); la clave que creó el cliente daba 401 y se borró. Queda como
+  directorio de Arcade sin vía para añadir servidores; Arcade.dev tampoco sirve (sus *gateways* son
+  remotos, con su catálogo). ADR 0036.
+- **Plugin de Claude** (ADR 0036): el cliente lo instaló en su Mac con Claude Code desde el
+  marketplace (`/plugin marketplace add webcafeina/Apolo`, `/plugin install apolo@webcafeina`):
+  `plugin:apolo:apolo` con 11 herramientas, la *skill* se cargó sola y convirtió un PNG a AVIF
+  (2,5 MB → 360 KB, nota 90,0) sin tocar el original. **Enviado al directorio de Anthropic** desde
+  claude.ai/directory/manage («Plugin bundle», `webcafeina/Apolo`, `empaquetado/claude/apolo`,
+  rama `main`), con el *webhook* de GitHub y la publicación automática encendida (decisión del
+  cliente). La validación no bloqueó nada; quedan para el revisor: el guion en Node (siempre, con
+  el plugin en una subcarpeta), un falso positivo de «credencial» (el entorno heredado y el enlace
+  de descarga del aviso) y **el nombre `apolo`, parecido a Apollo** (un conector y dos plugins de
+  Apollo.io). Decidido dejarlo así y, si el revisor pone pegas, pasar a `apolo-image-optimizer`.
 - Sin cambios: winget#463314 (validado, espera moderador), awesome-mcp-servers#17812 (`has-glama`),
   open-source-mac-os-apps#1878, mcp.so#6439 (sin comentarios), MajorGeeks («may be a bit»),
   Uptodown, Softpedia, MacUpdate y la prensa.

@@ -4,6 +4,38 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-03 · Product Hunt, los directorios al día y Apolo como plugin de Claude
+
+- Al empezar: la pestaña Security sin nada nuevo (los 7 de Scorecard). El lunes 2 no hubo sesión;
+  su plan se hizo hoy. Product Hunt salió a las 9:01 (https://www.producthunt.com/products/apolo?launch=apolo),
+  con el primer comentario puesto y sin comentarios de otros por la mañana.
+- **Correo**: Chocolatey aprobó la 1.0.0 el 31 y **se subió la 1.0.1** (sumas comprobadas; en
+  moderación); mcpservers.org y SaaSHub, aprobadas; Glama, en la 1.0.1 sola. La prueba del tap de
+  Homebrew fallaba desde el 30 por la regla `Homebrew/OSDependsOn`: `depends_on :macos` en el tap y
+  en la plantilla (`bf23e3d`), tap en verde.
+- **Con el cliente, guiado**: las seis «Suggest alternative» de AlternativeTo, los correos de
+  verificación (todos), la respuesta a Frank de Glama (que también mantiene awesome-mcp-servers) y
+  **mcprush reclamado**: insignia en los README (`7208fba`), textos nuevos, nada de cobrar ni alojar;
+  sus 12 avisos de seguridad son de herramientas de desarrollo y pruebas, no del servidor. Las
+  aplicaciones OAuth de MCP So y OpenAlternative, para más adelante.
+- **Apolo como plugin de Claude** (ADR 0036, `e2869ce`): lanzador en Node que usa el `apolo-mcp`
+  instalado y, si no está, explica cómo instalar Apolo (sin bajar nada, decisión del cliente); el
+  plugin con su *skill* en `empaquetado/claude/apolo` y el marketplace `webcafeina` en la raíz;
+  `make plugin` en `make comprobar`; la **página de privacidad** del programa en la web, con los
+  textos aprobados por el cliente. **Smithery se quitó el mismo día** (`2ca2427`): cerró cuentas,
+  claves y API el 31 de octubre (ahora es de Arcade.dev); la clave se borró.
+- Verificado: 9 pruebas del lanzador y `claude plugin validate --strict`; con `claude -p
+  --plugin-dir` sin Apolo (explica cómo instalarlo) y con el `apolo-mcp` de la CLI 1.0.1 (responde);
+  **en el Mac del cliente** (Apolo 1.0.0): 11 herramientas, la *skill* sola y una conversión a AVIF.
+  **Enviado al directorio de Anthropic**, con *webhook* y publicación automática: la validación no
+  bloquea nada; el revisor verá el guion en Node, un falso positivo de credencial y el parecido de
+  `apolo` con Apollo (si pone pegas, `apolo-image-optimizer`).
+- Abierto: el veredicto del revisor; el plugin en Windows y sin Node; Product Hunt durante el día;
+  winget, awesome-mcp-servers#17812, open-source-mac-os-apps#1878, mcp.so#6439, Uptodown, Softpedia,
+  MacUpdate, MajorGeeks y la prensa, sin respuesta.
+
+---
+
 ## 2026-10-30 (tarde) · La 1.0.1, de seguridad
 
 - Subido lo de la mañana (`16bedb4`) tras `make comprobar`. La pestaña Security trajo **tres

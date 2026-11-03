@@ -25,9 +25,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     `readOnlyHint` o `destructiveHint`.
     **Hecho en el código el 2026-11-03** (ADR 0036): el plugin en `empaquetado/claude/apolo`, con el
     marketplace en el repositorio, un lanzador que usa el `apolo-mcp` instalado y no baja nada, y la
-    página de privacidad. **Smithery, descartado**: cerró su publicación el 31 de octubre. Queda:
-    que el cliente lo instale en su Mac con Claude Code (y, si puede, en Windows y sin Node), y el
-    envío al directorio de Anthropic, con su plan de pago.
+    página de privacidad. **Smithery, descartado**: cerró su publicación el 31 de octubre. Visto en
+    el Mac del cliente y **enviado al directorio de Anthropic** el mismo día. Queda: el veredicto del
+    revisor (si pide otro nombre, `apolo-image-optimizer`) y, si puede, verlo en Windows y sin Node.
   - ~~**Dónde más estar**~~: investigado (`docs/distribucion.md`) y los «ya» hechos el 2026-10-30
     (`docs/lanzamiento.md`). Más adelante, con decisión y coste: Developer ID de Apple, Authenticode
     y la Microsoft Store, Snap, OBS, nix, el AUR cuando abra, y lo que pide estrellas (Scoop

@@ -1,10 +1,33 @@
 # Estado
 
-Última actualización: **2026-10-30**
+Última actualización: **2026-11-03**
 
 ## Dónde se paró, y por dónde se sigue
 
-> **EL LUNES 2026-11-02, en este orden** (decidido con el cliente el 2026-10-30 por la noche):
+> **PARADA AQUÍ (2026-11-03, mediodía): el día de Product Hunt; Apolo ya es plugin de Claude y está
+> en revisión en el directorio de Anthropic.** Lo de hoy, en `docs/sesiones.md` y
+> `docs/lanzamiento.md` («Estado el 2026-11-03»):
+> - Chocolatey 1.0.1 subida (en moderación); Homebrew en verde; mcpservers.org y SaaSHub aprobadas;
+>   mcprush reclamado; lo del cliente hecho salvo quitar las aplicaciones OAuth de MCP So y
+>   OpenAlternative (más adelante).
+> - **El plugin** (ADR 0036): `empaquetado/claude/apolo`, instalable ya con
+>   `/plugin marketplace add webcafeina/Apolo` y `/plugin install apolo@webcafeina`; visto en el Mac
+>   del cliente; enviado a claude.ai/directory/manage. **Smithery, cerrado** (es de Arcade.dev).
+> - La página de privacidad, en la web (`/privacidad/`, `/en/privacy/`).
+>
+> **Lo siguiente**:
+> 1. **Product Hunt**: contestar los comentarios que pegue el cliente (hoy, martes 3).
+> 2. **El revisor de Anthropic**: mirar el estado en claude.ai/directory/manage › Submissions y el
+>    correo de info@. Si pide otro nombre, `apolo-image-optimizer` (nombre visible «Apolo Image
+>    Optimizer»; cambia la orden de instalación, los README, la web y las pruebas).
+> 3. **Vigilar los envíos** (correo de info@ y `gh pr view`): Chocolatey 1.0.1; winget#463314 (si lo
+>    fusionan, la 1.0.1 con komac); Uptodown y MacUpdate (la 1.0.1 cuando aprueben); los PR y
+>    mcp.so#6439.
+> 4. Opcional: el plugin en la VM de Windows del cliente, también sin Node. Luego, lo de
+>    `docs/siguiente.md`.
+> Al empezar: `docs/estado.md` y `scripts/seguridad-github.sh`.
+>
+> ~~**EL LUNES 2026-11-02, en este orden**~~ (hecho el martes 3: arriba) (decidido con el cliente el 2026-10-30 por la noche):
 > 1. **Revisar el correo de info@webcafeina.com y el estado de cada servicio** (la lista y lo que
 >    se sabía el 30, en `docs/lanzamiento.md`, «Estado por las respuestas»), y **actuar según lo que
 >    haya**: Chocolatey 1.0.1 si aprobaron la 1.0.0 (está empaquetada); winget 1.0.1 con komac si

@@ -21,7 +21,7 @@ cask "apolo" do
 
   # Apolo se actualiza sola desde la aplicación; Homebrew no tiene que hacerlo por ella.
   auto_updates true
-  depends_on macos: :big_sur
+  depends_on :macos
 
   app "Apolo.app"
 

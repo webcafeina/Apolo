@@ -89,6 +89,24 @@ Leído en el correo de info@webcafeina.com:
 - Sin respuesta: Uptodown, Softpedia, MacUpdate, mcpservers.org, mcp.so#6439,
   open-source-mac-os-apps#1878, awesome-mcp-servers#17812 (ya `has-glama`), winget y la prensa.
 
+### Estado el 2026-11-03 (mañana)
+
+- **Chocolatey 1.0.0: aprobada** el 31 de octubre (moderador virtualex). **La 1.0.1, subida el
+  2026-11-03** con el paquete del 30 (sumas comprobadas contra `SHA256SUMS.txt`): en moderación.
+- **mcpservers.org: aprobada** el 31, https://mcpservers.org/servers/webcafeina/apolo (ofrecen una
+  insignia para el README, opcional).
+- **SaaSHub: aprobada** el 2 de noviembre («Recently verified»); lo demás que ofrecen es de pago.
+- **Glama** publicó sola su release 1.0.1 (Auto-Release).
+- **Homebrew**: la prueba del tap falló el 30 al subir la 1.0.1, solo por estilo: la regla nueva
+  `Homebrew/OSDependsOn` da por redundante `depends_on macos: :big_sur` (Homebrew ya no admite nada
+  anterior). El cask de la 1.0.1 era correcto. Arreglado en la plantilla y en el tap
+  (`depends_on :macos`).
+- **Product Hunt**: salió el martes 3 a las 9:01. La página da 403 a las peticiones automáticas
+  (Cloudflare): la mira el cliente.
+- Sin cambios: winget#463314 (validado, espera moderador), awesome-mcp-servers#17812 (`has-glama`),
+  open-source-mac-os-apps#1878, mcp.so#6439 (sin comentarios), MajorGeeks («may be a bit»),
+  Uptodown, Softpedia, MacUpdate y la prensa.
+
 ### Chocolatey (2026-10-30)
 
 Paquete `apolo` en `empaquetado/chocolatey/`: `apolo.nuspec` y `tools/chocolatey{install,uninstall}.ps1`
@@ -107,7 +125,9 @@ docker run --rm -v "$PWD/paquete:/paquete:ro" -v "$HOME/.config/apolo/chocolatey
 La cuenta es `webcafeina` (info@webcafeina.com) y la clave de API está en
 `~/.config/apolo/chocolatey.key` (600; la guardó el cliente por SSH, **no se escribe en ningún
 sitio**). La 1.0.0 se subió el 2026-10-30: https://community.chocolatey.org/packages/apolo/1.0.0,
-en moderación. Revisan cada versión a mano (días o semanas). Sin probar en un Windows antes de
+en moderación, y se aprobó el 31. La 1.0.1 se subió el 2026-11-03 (con la 1.0.0 aún sin aprobar,
+`choco push` daba 403: hay que esperar a que aprueben una para subir la siguiente). Revisan cada
+versión a mano (días o semanas). Sin probar en un Windows antes de
 subirla: lo prueba su verificador en x64; la rama de ARM64, sin ver.
 
 Lo que dice su correo de envío: **ningún moderador lo ve hasta que pasan las comprobaciones

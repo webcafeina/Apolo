@@ -57,7 +57,7 @@ web:
 	pnpm -C web build
 	pnpm -C web test
 
-# El plugin de Claude y el lanzador que comparte con Smithery (ADR 0036). La validación del
+# El plugin de Claude y su lanzador (ADR 0036). La validación del
 # directorio la hace la CLI de Claude, que no está en CI: si está, se pasa; si no, se avisa.
 plugin:
 	node --test empaquetado/claude/lanzador.test.mjs

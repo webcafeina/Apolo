@@ -23,6 +23,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     instalado o baja el de su sistema con su suma) para Smithery, que solo admite un bundle por
     versión (`docs/distribucion.md`). Con su ADR. Las herramientas ya llevan `title` y
     `readOnlyHint` o `destructiveHint`.
+    **Hecho en el código el 2026-11-03** (ADR 0036): el plugin en `empaquetado/claude/apolo`, con el
+    marketplace en el repositorio, un lanzador que usa el `apolo-mcp` instalado y no baja nada, y la
+    página de privacidad. **Smithery, descartado**: cerró su publicación el 31 de octubre. Queda:
+    que el cliente lo instale en su Mac con Claude Code (y, si puede, en Windows y sin Node), y el
+    envío al directorio de Anthropic, con su plan de pago.
   - ~~**Dónde más estar**~~: investigado (`docs/distribucion.md`) y los «ya» hechos el 2026-10-30
     (`docs/lanzamiento.md`). Más adelante, con decisión y coste: Developer ID de Apple, Authenticode
     y la Microsoft Store, Snap, OBS, nix, el AUR cuando abra, y lo que pide estrellas (Scoop

@@ -47,7 +47,7 @@ awesome-rust) queda cerrado por ahora.
 | **awesome-tauri, awesome-rust** | No / todavía no | awesome-tauri ya no acepta aplicaciones; awesome-rust pide 50★ | — | — | — |
 | **GitHub MCP Registry** (VS Code, Copilot, JetBrains) | Sí | Correo a partnerships@github.com (cómo trata los `.mcpb`, sin confirmar) | Gratis | Mínimo | **Alto** |
 | **Glama** | Sí | Reclamar la ficha y darle el Dockerfile | Gratis | Bajo-medio | Medio (y lo pide awesome-mcp-servers) |
-| **Smithery** | Sí | `smithery mcp publish` con un `.mcpb` | Gratis | Bajo | Medio |
+| ~~**Smithery**~~ | **Ya no** (2026-11-03) | ~~`smithery mcp publish` con un `.mcpb`~~: cerró cuentas, claves, API y CLI el 31 de octubre; queda como directorio de Arcade.dev | — | — | — |
 | **mcpservers.org, mcp.so** | Sí | Formulario | Gratis (o 39 USD por ir rápido) | Bajo | Medio |
 | **PulseMCP, mcp.directory, Zed** | Solos | Recogen del registro oficial | — | Nada | Medio |
 | **Docker MCP Catalog** | No | Exige contenedor y no admite GPL | — | — | — |
@@ -84,6 +84,10 @@ una persona de Webcafeína y lo declara); Debian, Ubuntu y Fedora oficiales, hom
 MacPorts; el Docker MCP Catalog; Chip.de, Softonic y opensourcealternative.to.
 
 ## Smithery por dentro (investigado el 2026-10-30)
+
+> **Cerrado el 2026-10-31.** Smithery es de Arcade.dev y ese día apagó las cuentas, las claves de
+> API, la API, la CLI y los SDK (https://smithery.ai/future); sigue como directorio público, sin
+> decir cómo se añaden servidores. Lo de abajo queda como historia (ADR 0036).
 
 Leído en el código de su CLI (`smithery-ai/cli`, **AGPL-3.0**: se puede ejecutar, no enlazar) y de
 su SDK (`@smithery/api` 0.68.0, Apache-2.0):

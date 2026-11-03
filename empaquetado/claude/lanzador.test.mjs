@@ -1,4 +1,4 @@
-// Las pruebas del lanzador del plugin y de Smithery (ADR 0036): `make plugin`, dentro de
+// Las pruebas del lanzador del plugin de Claude (ADR 0036): `make plugin`, dentro de
 // `make comprobar`. Fuera de la carpeta del plugin, para que no viajen con él.
 
 import assert from "node:assert/strict";

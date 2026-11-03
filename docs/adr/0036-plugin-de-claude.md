@@ -1,4 +1,4 @@
-# ADR 0036 — Apolo como plugin de Claude y en Smithery
+# ADR 0036 — Apolo como plugin de Claude (y Smithery, descartado)
 
 **Fecha:** 2026-11-03 · **Estado:** aceptada · después de la 1.0.1
 
@@ -17,7 +17,8 @@ configuración por sistema, y `command` es un único valor.
 ## Decisión
 
 Con el cliente, el 2026-11-03: el plugin y Smithery a la vez, con una página de privacidad, y **sin
-bajar ningún binario**. Si Apolo no está instalado, se pide que se instale.
+bajar ningún binario**. Si Apolo no está instalado, se pide que se instale. **Smithery se descartó el
+mismo día**: había cerrado su publicación el 31 de octubre (abajo).
 
 - **Un lanzador en Node, sin dependencias** (`empaquetado/claude/apolo/servidor/apolo-mcp.mjs`):
   - busca el `apolo-mcp` instalado: la aplicación (también en `~/Applications`), Homebrew, el
@@ -38,13 +39,18 @@ bajar ningún binario**. Si Apolo no está instalado, se pide que se instale.
   `webcafeina`): `/plugin marketplace add webcafeina/Apolo` y `/plugin install apolo@webcafeina`. El
   directorio de Anthropic lo recibe desde claude.ai/directory/manage, con el plan de pago del
   cliente. La versión del plugin es la de Apolo, y una prueba vigila que coincidan.
-- **Smithery**: `armar-mcpb --lanzador` arma `Apolo-X.Y.Z-node.mcpb`, de tipo node, con el mismo
+- ~~**Smithery**: `armar-mcpb --lanzador` arma `Apolo-X.Y.Z-node.mcpb`, de tipo node, con el mismo
   guion, el manifiesto con las herramientas del servidor y ningún binario (unos 80 KB).
   `publicar.yml` lo añade a la Release, y `smithery.yml`, al publicarla, lo sube a la API de
-  Smithery (`PUT /servers/webcafeina%2Fapolo/releases`) con el secreto `SMITHERY_API_KEY`.
+  Smithery (`PUT /servers/webcafeina%2Fapolo/releases`) con el secreto `SMITHERY_API_KEY`.~~
+  **Quitado el 2026-11-03**, el mismo día (`e2869ce` lo trajo y el commit siguiente lo saca):
+  Smithery es de Arcade.dev y el 31 de octubre cerró las cuentas, las claves de API, la API, la CLI
+  y los SDK (https://smithery.ai/future). La clave recién creada daba 401. Queda como directorio
+  público, «powered by Arcade.dev», sin decir cómo se añaden los servidores. Si abre una vía, el
+  lanzador sirve igual: el paquete se rehace desde el historial.
 - **La privacidad del programa** en la web (`/privacidad/` y `/en/privacy/`):
   - la aplicación solo pregunta a GitHub por las actualizaciones, y se puede apagar;
-  - la CLI, el MCP, el plugin y el paquete de Smithery no se conectan a nada;
+  - la CLI, el MCP y el plugin no se conectan a nada;
   - lo que lee el agente lo ve el proveedor del modelo;
   - la web mide visitas solo con permiso.
   
@@ -68,15 +74,15 @@ bajar ningún binario**. Si Apolo no está instalado, se pide que se instale.
 
 ## Consecuencias
 
-- **El plugin necesita Node.js 18 o más en el `PATH`.** Smithery y Claude Desktop lo traen; la
-  instalación nativa de Claude Code, no. Sin Node, Claude dice que el servidor no arranca. Queda
+- **El plugin necesita Node.js 18 o más en el `PATH`.** La instalación nativa de Claude Code no lo
+  trae. Sin Node, Claude dice que el servidor no arranca. Queda
   en el README del plugin, en la web y en la deuda.
 - El plugin funciona en Claude Code y en Cowork cuando se ejecuta en el ordenador. En el chat de
   claude.ai, no: el servidor es local. Para Claude Desktop sigue el `.mcpb`.
 - La AppImage no deja `apolo-mcp` en una ruta fija: en Linux hace falta el `.deb`, el `.rpm`, el
   PKGBUILD o la CLI. El aviso del lanzador lo dice.
 - Una pieza más que mantener en cada versión: la versión de `plugin.json` sube con la de
-  `Cargo.toml` (lo vigila `make plugin`), y la Release lleva un fichero más, el `-node.mcpb`.
+  `Cargo.toml` (lo vigila `make plugin`).
 - En el `PATH`, el lanzador puede encontrar un `apolo-mcp` que no sea el nuestro. Es el mismo
   riesgo que cualquier orden: quien controla el `PATH` controla lo que se ejecuta.
 
@@ -85,14 +91,13 @@ bajar ningún binario**. Si Apolo no está instalado, se pide que se instale.
 - 2026-11-03, en el VPS:
   - `make plugin`: 9 pruebas del lanzador (rutas por sistema, idioma, el servidor mínimo y la
     tubería con `cat`) y `claude plugin validate --strict` del plugin y del marketplace, en verde;
-  - `cargo test -p apolo-mcpb`: el paquete del lanzador sin binario y con las herramientas del
-    servidor;
   - **con un agente** (`claude -p --plugin-dir`): sin Apolo, explica cómo instalarlo y da el enlace;
     con el `apolo-mcp` de la CLI 1.0.1 publicada, responde «Apolo 1.0.1» por el lanzador;
   - el `-node.mcpb` descomprimido, arrancado como lo arranca Smithery (`node server/apolo-mcp.mjs`),
-    responde con las 11 herramientas.
+    respondía con las 11 herramientas (antes de quitarlo).
+  - La API de Smithery, con la clave del cliente: `/health` responde, y `/namespaces` da 401
+    («Invalid API key»), como dice su aviso de cierre.
 - **Sin ver todavía**:
   - el plugin en el Mac y en Windows, con las rutas reales de la aplicación y sin Node;
   - Cowork;
-  - la subida a Smithery y su instalación;
   - la revisión del directorio de Anthropic.

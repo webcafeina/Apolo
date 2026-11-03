@@ -1,6 +1,6 @@
 # El registro oficial de MCP (ADR 0034): cuando se publica una versión, Apolo se publica (o se
 # actualiza) como io.github.webcafeina/apolo, con los cinco .mcpb de la Release y sus sumas
-# (empaquetado/mcp/servidor.py). Directorios como Smithery, Glama o PulseMCP lo recogen de ahí.
+# (empaquetado/mcp/servidor.py). Directorios como Glama o PulseMCP lo recogen de ahí.
 #
 # Al publicar y no al etiquetar, como Homebrew: hasta entonces los .mcpb no se pueden descargar.
 # Sin secretos: mcp-publisher se identifica con el OIDC de GitHub, que da el espacio

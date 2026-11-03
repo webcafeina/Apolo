@@ -1,6 +1,6 @@
-// El lanzador de apolo-mcp para el plugin de Claude y para Smithery (ADR 0036).
+// El lanzador de apolo-mcp para el plugin de Claude (ADR 0036).
 //
-// Los dos admiten una sola orden para todos los sistemas, y apolo-mcp está en un sitio distinto en
+// El plugin admite una sola orden para todos los sistemas, y apolo-mcp está en un sitio distinto en
 // cada uno: dentro de la aplicación en macOS, en %LOCALAPPDATA%\Apolo en Windows, en /usr/bin en
 // Linux. Este guion busca el que instaló Apolo y le pasa la conversación tal cual: el servidor de
 // verdad es siempre el de la aplicación, que se actualiza con ella.

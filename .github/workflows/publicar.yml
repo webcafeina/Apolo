@@ -194,26 +194,6 @@ jobs:
             done
           fi
 
-      # El de Smithery (ADR 0036): uno para todos los sistemas, de tipo node, con
-      # el lanzador del plugin de Claude y sin binario (usa el apolo-mcp de la
-      # aplicación instalada). Se arma una vez; smithery.yml lo sube al publicar.
-      - name: El .mcpb de Smithery
-        if: matrix.nombre == 'linux-amd64'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APOLO_IDIOMA: en
-        run: |
-          V=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
-          N=$(cargo run -q --release -p apolo-mcpb --target ${{ matrix.objetivo }} -- --lanzador "$V" mcpb)
-          if [ "$GITHUB_REF_TYPE" = tag ]; then
-            for intento in 1 2 3 4; do
-              gh release upload "$GITHUB_REF_NAME" "$N" --clobber && break
-              [ "$intento" = 4 ] && exit 1
-              sleep $(( intento * 15 ))
-            done
-          fi
-
       # El icono del volumen montado: el disco con el sol, como Esfinge. Tauri
       # pone el de la aplicación y no deja elegir otro, así que se cambia en el
       # .dmg ya hecho (empaquetado/macos/icono-volumen.sh). Con etiqueta, el

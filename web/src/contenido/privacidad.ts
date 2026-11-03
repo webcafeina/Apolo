@@ -1,5 +1,5 @@
-// La privacidad de Apolo, el programa (ADR 0036): la aplicación, la CLI, el servidor MCP, el plugin
-// de Claude y el paquete de Smithery. La pide el directorio de plugins de Claude. Los datos de
+// La privacidad de Apolo, el programa (ADR 0036): la aplicación, la CLI, el servidor MCP y el plugin
+// de Claude. La pide el directorio de plugins de Claude. Los datos de
 // Webcafeína como responsable y los derechos, en su política de privacidad; las cookies de esta
 // web, en la suya. Si Apolo empieza a conectarse a algo más, esta página cambia con él.
 import type { Idioma } from "../i18n/rutas";
@@ -33,10 +33,10 @@ export const PRIVACIDAD: Record<Idioma, PaginaSecciones> = {
         ],
       },
       {
-        titulo: "El plugin de Claude y Smithery",
+        titulo: "El plugin de Claude",
         parrafos: [
-          "El plugin de Claude y el paquete de Smithery solo llevan un lanzador que busca el apolo-mcp de la aplicación instalada y le pasa la conversación. No se conectan a nada ni bajan ningún programa. Si Apolo no está instalado, el agente te explica cómo instalarlo.",
-          "Instalarlos es cosa de Claude o de Smithery, que lo descargan de GitHub o de sus servidores con sus propias condiciones.",
+          "El plugin de Claude solo lleva un lanzador que busca el apolo-mcp de la aplicación instalada y le pasa la conversación. No se conecta a nada ni baja ningún programa. Si Apolo no está instalado, el agente te explica cómo instalarlo.",
+          "Instalarlo es cosa de Claude, que lo descarga de GitHub con sus propias condiciones.",
         ],
       },
       {
@@ -80,10 +80,10 @@ export const PRIVACIDAD: Record<Idioma, PaginaSecciones> = {
         ],
       },
       {
-        titulo: "The Claude plugin and Smithery",
+        titulo: "The Claude plugin",
         parrafos: [
-          "The Claude plugin and the Smithery package only hold a launcher that finds the apolo-mcp of the installed app and hands the conversation over to it. They connect to nothing and download no program. If Apolo isn't installed, the agent explains how to install it.",
-          "Installing them is up to Claude or Smithery, which download them from GitHub or their own servers under their own terms.",
+          "The Claude plugin only holds a launcher that finds the apolo-mcp of the installed app and hands the conversation over to it. It connects to nothing and downloads no program. If Apolo isn't installed, the agent explains how to install it.",
+          "Installing it is up to Claude, which downloads it from GitHub under its own terms.",
         ],
       },
       {

@@ -157,7 +157,15 @@ percibida, mide la pérdida y convierte carpetas, en tu ordenador. **Nunca sobre
 
 El servidor, `apolo-mcp`, va dentro de la aplicación y se actualiza con ella. En Apolo, la fila
 **MCP** de la barra lateral tiene lo que hay que copiar para cada agente y la extensión de Claude
-Desktop. Para Claude Code:
+Desktop. En Claude Code y Cowork, lo más cómodo es **el plugin**, que además le enseña a Claude
+cuándo usar Apolo (necesita Node.js 18 o más; está en [empaquetado/claude](empaquetado/claude/apolo)):
+
+```
+/plugin marketplace add webcafeina/Apolo
+/plugin install apolo@webcafeina
+```
+
+O a mano, en Claude Code:
 
 ```sh
 claude mcp add --scope user apolo -- "/Applications/Apolo.app/Contents/MacOS/apolo-mcp"   # macOS
@@ -168,7 +176,8 @@ claude mcp add --scope user apolo -- /usr/bin/apolo-mcp                         
 Cómo conectarlo en cada agente, en [la página de agentes](https://apolo.webcafeina.com/agentes/); qué
 pedirle, en [la guía](https://apolo.webcafeina.com/guias/optimizar-imagenes-con-un-agente-de-ia/); y
 las once herramientas, en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que el agente pide (rutas,
-nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo.
+nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo: todo, en
+[la página de privacidad](https://apolo.webcafeina.com/privacidad/).
 
 [![Apolo MCP on mcprush](https://mcprush.com/badge/apolo-mcp/score.svg)](https://mcprush.com/to/apolo-mcp?ref=badge)
 

@@ -135,7 +135,14 @@ export const AGENTES: Record<Idioma, PaginaSecciones> = {
         ],
       },
       {
-        titulo: "Claude Code",
+        titulo: "Claude Code y Cowork, con el plugin",
+        parrafos: [
+          "El plugin de Apolo conecta el servidor y le enseña a Claude cuándo usarlo. Necesita la aplicación instalada y Node.js 18 o más.",
+        ],
+        comandos: [{ nombre: "claude-plugin", lineas: ["/plugin marketplace add webcafeina/Apolo", "/plugin install apolo@webcafeina"] }],
+      },
+      {
+        titulo: "Claude Code, a mano",
         comandos: CLAUDE_CODE,
       },
       {
@@ -145,7 +152,7 @@ export const AGENTES: Record<Idioma, PaginaSecciones> = {
       {
         titulo: "Privacidad",
         parrafos: [
-          "Las imágenes se procesan en tu ordenador. Lo que el agente pide (rutas, nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo.",
+          "Las imágenes se procesan en tu ordenador. Lo que el agente pide (rutas, nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo. Todo, en la página de privacidad.",
         ],
       },
     ],
@@ -176,7 +183,14 @@ export const AGENTES: Record<Idioma, PaginaSecciones> = {
         ],
       },
       {
-        titulo: "Claude Code",
+        titulo: "Claude Code and Cowork, with the plugin",
+        parrafos: [
+          "Apolo's plugin connects the server and teaches Claude when to use it. It needs the app installed and Node.js 18 or later.",
+        ],
+        comandos: [{ nombre: "claude-plugin", lineas: ["/plugin marketplace add webcafeina/Apolo", "/plugin install apolo@webcafeina"] }],
+      },
+      {
+        titulo: "Claude Code, by hand",
         comandos: CLAUDE_CODE,
       },
       {
@@ -186,7 +200,7 @@ export const AGENTES: Record<Idioma, PaginaSecciones> = {
       {
         titulo: "Privacy",
         parrafos: [
-          "Images are processed on your computer. What the agent asks for (paths, names, thumbnails) goes into its conversation, and the model provider sees it.",
+          "Images are processed on your computer. What the agent asks for (paths, names, thumbnails) goes into its conversation, and the model provider sees it. All of it, on the privacy page.",
         ],
       },
     ],

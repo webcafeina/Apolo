@@ -1,0 +1,19 @@
+{
+  "name": "webcafeina",
+  "owner": {
+    "name": "Webcafeína",
+    "url": "https://webcafeina.com"
+  },
+  "metadata": {
+    "description": "Plugins by Webcafeína: Apolo, the image optimizer, for your AI agent."
+  },
+  "plugins": [
+    {
+      "name": "apolo",
+      "source": "./empaquetado/claude/apolo",
+      "description": "Optimize, convert and compare images on your computer with Apolo (WebP, AVIF, JPEG XL, JPEG, PNG), with the quality loss measured. Needs the free Apolo app.",
+      "category": "productivity",
+      "homepage": "https://apolo.webcafeina.com/en/agents/"
+    }
+  ]
+}

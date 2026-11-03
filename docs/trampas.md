@@ -664,3 +664,12 @@ un bucle que la use da «sin procedencia» para todos los ficheros aunque las at
 (`/etc/apt/sources.list.d/github-cli.list`, clave en `/etc/apt/keyrings/`), así que `/usr/bin/gh` es
 la 2.103.3 y se pone al día con `apt upgrade`. Fuera de un terminal, `gh attestation verify` no
 imprime nada: el resultado es el código de salida (0 bien, 1 mal). · 2026-10-27
+
+## `claude -p` con `--allowedTools` delante se come la petición
+
+`--allowedTools` y `--plugin-dir` aceptan varios valores, así que en
+`claude -p --allowedTools "mcp__x__*" "Haz esto"` la petición se toma como otra herramienta, y
+Claude responde «Input must be provided either through stdin or as a prompt argument». La petición
+va justo detrás de `-p`: `claude -p "Haz esto" --plugin-dir … --allowedTools …`. Las herramientas
+de un plugin se llaman `mcp__plugin_<plugin>_<servidor>__<herramienta>`, como
+`mcp__plugin_apolo_apolo__*`. · 2026-11-03

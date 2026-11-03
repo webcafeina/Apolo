@@ -9,6 +9,7 @@ import { COMPARATIVAS, INDICE } from "../contenido/comparativas";
 import { DESCARGAR, type PaginaDescarga, type Sistema } from "../contenido/descargar";
 import { GUIAS } from "../contenido/guias";
 import { PREGUNTAS } from "../contenido/preguntas";
+import { PRIVACIDAD } from "../contenido/privacidad";
 import { textos } from "../i18n";
 import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
 import { release } from "./version";
@@ -55,6 +56,7 @@ export function indice(site: URL): string {
         enlace("preguntas", PREGUNTAS[i].titulo, PREGUNTAS[i].descripcion),
         enlace("cli", CLI[i].titulo, CLI[i].descripcion),
         enlace("agentes", AGENTES[i].titulo, AGENTES[i].descripcion),
+        enlace("privacidad", PRIVACIDAD[i].titulo, PRIVACIDAD[i].descripcion),
         enlace("novedades", i === "en" ? "What's new" : "Novedades", i === "en" ? "What changes in each version." : "Lo que cambia en cada versión."),
       ].join("\n") + "\n",
     );
@@ -104,7 +106,7 @@ export function completo(site: URL): string {
       const p = DESCARGAR[i][s];
       partes.push(`## ${p.h1}\n\n${url(site, PAGINA_DE[s], i)}\n\n${p.entrada}\n\n${seccionesMd(p)}`);
     }
-    for (const [pagina, p] of [["cli", CLI[i]], ["agentes", AGENTES[i]]] as const) {
+    for (const [pagina, p] of [["cli", CLI[i]], ["agentes", AGENTES[i]], ["privacidad", PRIVACIDAD[i]]] as const) {
       partes.push(`## ${p.h1}\n\n${url(site, pagina, i)}\n\n${p.entrada}\n\n${seccionesMd(p)}`);
     }
     for (const x of [...GUIAS[i], ...COMPARATIVAS[i]]) {

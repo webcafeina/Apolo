@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "apolo": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servidor/apolo-mcp.mjs"]
+    }
+  }
+}

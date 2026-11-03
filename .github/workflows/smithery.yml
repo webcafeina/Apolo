@@ -1,0 +1,72 @@
+# Smithery (ADR 0036): cuando se publica una versión, sube a Smithery su .mcpb de tipo node, el del
+# lanzador (Apolo-X.Y.Z-node.mcpb, que arma publicar.yml), con la API que usa su CLI
+# (PUT /servers/{servidor}/releases, multipart con `payload` y `bundle`).
+#
+# Al publicar y no al etiquetar, como Homebrew: hasta entonces los ficheros de la Release no se
+# pueden descargar. La clave es el secreto SMITHERY_API_KEY, que nunca se escribe en ningún sitio
+# más; sin ella, no hace nada.
+name: Smithery
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión publicada, sin la v (p. ej. 1.0.2)"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smithery
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    env:
+      SERVIDOR: webcafeina%2Fapolo
+    steps:
+      - name: El paquete, con su suma
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ETIQUETA: ${{ github.event.release.tag_name }}
+          A_MANO: ${{ inputs.version }}
+        run: |
+          version="${A_MANO:-${ETIQUETA#v}}"
+          cd "$RUNNER_TEMP"
+          gh release download "v$version" -R "$REPO" --pattern SHA256SUMS.txt --pattern "Apolo-$version-node.mcpb"
+          grep " Apolo-$version-node.mcpb\$" SHA256SUMS.txt | sha256sum -c
+          echo "PAQUETE=$RUNNER_TEMP/Apolo-$version-node.mcpb" >> "$GITHUB_ENV"
+      - name: La carga, desde el manifiesto
+        # Lo mismo que saca su CLI del .mcpb: nombre, versión y herramientas.
+        run: |
+          python3 -I - "$PAQUETE" > "$RUNNER_TEMP/carga.json" <<'EOF'
+          import json, sys, zipfile
+          m = json.loads(zipfile.ZipFile(sys.argv[1]).read("manifest.json"))
+          assert m["server"]["type"] == "node", m["server"]
+          print(json.dumps({
+              "type": "stdio",
+              "runtime": "node",
+              "serverCard": {
+                  "serverInfo": {"name": m["name"], "version": m["version"]},
+                  "tools": m["tools"],
+              },
+          }))
+          EOF
+      - name: Subirlo
+        env:
+          CLAVE: ${{ secrets.SMITHERY_API_KEY }}
+        run: |
+          if [ -z "$CLAVE" ]; then
+            echo "Sin SMITHERY_API_KEY: no se publica en Smithery"
+            exit 0
+          fi
+          curl -fsS -X PUT "https://api.smithery.ai/servers/$SERVIDOR/releases" \
+            -H "Authorization: Bearer $CLAVE" \
+            -F "payload=<$RUNNER_TEMP/carga.json" \
+            -F "bundle=@$PAQUETE;type=application/zip"
+          echo

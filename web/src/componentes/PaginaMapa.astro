@@ -7,6 +7,7 @@ import { COMPARATIVAS, INDICE } from "../contenido/comparativas";
 import { DESCARGAR } from "../contenido/descargar";
 import { GUIAS } from "../contenido/guias";
 import { PREGUNTAS } from "../contenido/preguntas";
+import { PRIVACIDAD } from "../contenido/privacidad";
 import { textos } from "../i18n";
 import { type Idioma, ruta } from "../i18n/rutas";
 import Pagina from "../layouts/Pagina.astro";
@@ -66,9 +67,10 @@ const grupos: { titulo: string; enlaces: Enlace[] }[] = [
   {
     titulo: m.grupos.legal,
     enlaces: [
+      { href: ruta("privacidad", idioma), texto: t.pie.privacidad, descripcion: PRIVACIDAD[idioma].entrada },
       { href: ruta("cookies", idioma), texto: t.pie.cookies },
       { href: "https://webcafeina.com/aviso-legal/", texto: t.pie.aviso },
-      { href: "https://webcafeina.com/politica-privacidad/", texto: t.pie.privacidad },
+      { href: "https://webcafeina.com/politica-privacidad/", texto: t.pie.privacidadWebcafeina },
     ],
   },
   {

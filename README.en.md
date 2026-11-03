@@ -156,7 +156,16 @@ perceived quality, measures the loss and converts folders, on your computer. **I
 deletes.**
 
 The server, `apolo-mcp`, lives inside the app and updates with it. In Apolo, the **MCP** row in the
-sidebar has what to copy for each agent and the Claude Desktop extension. For Claude Code:
+sidebar has what to copy for each agent and the Claude Desktop extension. In Claude Code and Cowork,
+the easiest is **the plugin**, which also teaches Claude when to use Apolo (it needs Node.js 18 or
+later; it lives in [empaquetado/claude](empaquetado/claude/apolo)):
+
+```
+/plugin marketplace add webcafeina/Apolo
+/plugin install apolo@webcafeina
+```
+
+Or by hand, in Claude Code:
 
 ```sh
 claude mcp add --scope user apolo -- "/Applications/Apolo.app/Contents/MacOS/apolo-mcp"   # macOS
@@ -167,7 +176,8 @@ claude mcp add --scope user apolo -- /usr/bin/apolo-mcp                         
 How to connect it to each agent, on [the agents page](https://apolo.webcafeina.com/en/agents/); what
 to ask it, in [the guide](https://apolo.webcafeina.com/en/guides/optimize-images-with-an-ai-agent/); and
 the eleven tools, in [docs/mcp/catalogo.md](docs/mcp/catalogo.md) (in Spanish). What the agent asks for
-(paths, names, thumbnails) goes into its conversation, and the model provider sees it.
+(paths, names, thumbnails) goes into its conversation, and the model provider sees it: all of it, on
+[the privacy page](https://apolo.webcafeina.com/en/privacy/).
 
 [![Apolo MCP on mcprush](https://mcprush.com/badge/apolo-mcp/score.svg)](https://mcprush.com/to/apolo-mcp?ref=badge)
 

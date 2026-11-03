@@ -201,6 +201,7 @@ export const en: Textos = {
     agentes: "AI agents",
     aviso: "Legal notice",
     privacidad: "Privacy",
+    privacidadWebcafeina: "Webcafeína's privacy policy",
     cookies: "Cookies",
     licencia: "Apolo is free software under the GPLv3. © 2026 Webcafeína.",
     optimizadas: "The images on this site were optimized with Apolo.",

@@ -158,6 +158,57 @@ pub fn armar(version: &str, sistema: Sistema, servidor: &[u8]) -> std::io::Resul
     Ok(z.finish().map_err(std::io::Error::other)?.into_inner())
 }
 
+/// El lanzador del plugin de Claude (ADR 0036): busca el `apolo-mcp` instalado
+/// y le pasa la conversación, o explica cómo instalar Apolo si no lo encuentra.
+const LANZADOR: &str = include_str!("../../../empaquetado/claude/apolo/servidor/apolo-mcp.mjs");
+
+/// El nombre del paquete con el lanzador: `Apolo-1.0.2-node.mcpb`.
+pub fn nombre_fichero_lanzador(version: &str) -> String {
+    format!("Apolo-{version}-node.mcpb")
+}
+
+/// El manifiesto del paquete con el lanzador, para Smithery (ADR 0036): uno
+/// solo para todos los sistemas, de tipo node, porque Smithery admite un
+/// paquete por versión y no aplica `platform_overrides`. No lleva `apolo-mcp`:
+/// usa el de la aplicación instalada.
+pub fn manifiesto_lanzador(version: &str) -> Value {
+    let mut m = manifiesto(version, Sistema::de_este());
+    m["long_description"] = json!(trs!(
+        "Deja que el agente analice, optimice, compare formatos a igual calidad percibida (SSIMULACRA 2), mida la pérdida, mire las imágenes y convierta carpetas enteras con Apolo, en este ordenador. Siempre escribe ficheros nuevos: nunca sobrescribe ni borra. Necesita la aplicación Apolo, gratis (https://apolo.webcafeina.com/): este paquete solo lleva un lanzador que busca el apolo-mcp que va dentro de ella, y que se actualiza con la aplicación. Si no está instalada, el agente explica cómo instalarla.",
+        "Lets the agent analyze, optimize, compare formats at equal perceived quality (SSIMULACRA 2), measure the loss, look at images and convert whole folders with Apolo, on this computer. It always writes new files: it never overwrites or deletes. Needs the free Apolo app (https://apolo.webcafeina.com/en/): this package only holds a launcher that finds the apolo-mcp shipped inside it, which updates with the app. If it isn't installed, the agent explains how to install it."
+    ));
+    m["server"] = json!({
+        "type": "node",
+        "entry_point": "server/apolo-mcp.mjs",
+        "mcp_config": {
+            "command": "node",
+            "args": ["${__dirname}/server/apolo-mcp.mjs"]
+        }
+    });
+    m["compatibility"] = json!({
+        "platforms": ["darwin", "win32", "linux"],
+        "runtimes": { "node": ">=18.0.0" }
+    });
+    m
+}
+
+/// El paquete con el lanzador: el manifiesto, el icono y el guion, unos KB.
+pub fn armar_lanzador(version: &str) -> std::io::Result<Vec<u8>> {
+    let mut z = zip::ZipWriter::new(Cursor::new(Vec::new()));
+    let normal = SimpleFileOptions::default().unix_permissions(0o644);
+    let manifiesto = serde_json::to_vec_pretty(&manifiesto_lanzador(version))?;
+    for (nombre, datos) in [
+        ("manifest.json", &manifiesto[..]),
+        ("icon.png", ICONO),
+        ("server/apolo-mcp.mjs", LANZADOR.as_bytes()),
+    ] {
+        z.start_file(nombre, normal)
+            .map_err(std::io::Error::other)?;
+        z.write_all(datos)?;
+    }
+    Ok(z.finish().map_err(std::io::Error::other)?.into_inner())
+}
+
 /// La carpeta de descargas, o la personal si no hay.
 pub fn carpeta_descargas() -> PathBuf {
     dirs::download_dir()
@@ -239,6 +290,44 @@ mod pruebas {
                 .by_name("server/apolo-mcp.exe")
                 .is_ok()
         );
+    }
+
+    #[test]
+    fn el_paquete_del_lanzador_es_uno_para_todos_y_sin_binario() {
+        let p = armar_lanzador("1.2.3").unwrap();
+        let mut z = zip::ZipArchive::new(Cursor::new(p)).unwrap();
+        let mut nombres: Vec<String> = z.file_names().map(|n| n.unwrap().to_string()).collect();
+        nombres.sort();
+        assert_eq!(
+            nombres,
+            ["icon.png", "manifest.json", "server/apolo-mcp.mjs"]
+        );
+        let mut m = String::new();
+        z.by_name("manifest.json")
+            .unwrap()
+            .read_to_string(&mut m)
+            .unwrap();
+        let m: Value = serde_json::from_str(&m).unwrap();
+        assert_eq!(m["version"], "1.2.3");
+        assert_eq!(m["server"]["type"], "node");
+        assert_eq!(
+            m["server"]["mcp_config"]["args"],
+            json!(["${__dirname}/server/apolo-mcp.mjs"])
+        );
+        assert_eq!(
+            m["compatibility"]["platforms"],
+            json!(["darwin", "win32", "linux"])
+        );
+        // Sin el relevo del paquete con binario: aquí no hay copia propia a la que ceder.
+        assert!(m["server"]["mcp_config"].get("env").is_none());
+        assert_eq!(m["tools"], manifiesto("1.2.3", Sistema::Mac)["tools"]);
+        let mut guion = String::new();
+        z.by_name("server/apolo-mcp.mjs")
+            .unwrap()
+            .read_to_string(&mut guion)
+            .unwrap();
+        assert_eq!(guion, LANZADOR);
+        assert_eq!(nombre_fichero_lanzador("1.2.3"), "Apolo-1.2.3-node.mcpb");
     }
 
     #[test]

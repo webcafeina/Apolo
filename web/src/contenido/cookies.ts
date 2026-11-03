@@ -1,5 +1,6 @@
 // La política de cookies de esta web (ADR 0033), en los dos idiomas. El aviso
-// legal y la privacidad son los de webcafeina.com. Si el contenedor de GTM
+// legal y la política de privacidad son los de webcafeina.com; la privacidad del
+// programa, contenido/privacidad.ts. Si el contenedor de GTM
 // cambia de herramientas, esta lista tiene que cambiar con él.
 import type { Idioma } from "../i18n/rutas";
 import type { PaginaDescarga as PaginaSecciones } from "./descargar";
@@ -15,7 +16,7 @@ export const COOKIES: Record<Idioma, PaginaSecciones> = {
       {
         titulo: "Quién es el responsable",
         parrafos: [
-          "Webcafeína, que hace Apolo. Sus datos y cómo ejercer tus derechos están en su aviso legal y en su política de privacidad, enlazados al pie de cada página.",
+          "Webcafeína, que hace Apolo. Sus datos y cómo ejercer tus derechos están en su aviso legal, enlazado al pie de cada página, y en su política de privacidad, en webcafeina.com/politica-privacidad.",
         ],
       },
       {
@@ -58,7 +59,7 @@ export const COOKIES: Record<Idioma, PaginaSecciones> = {
       {
         titulo: "Who is responsible",
         parrafos: [
-          "Webcafeína, who makes Apolo. Its details and how to exercise your rights are in its legal notice and privacy policy, linked in the footer of every page.",
+          "Webcafeína, who makes Apolo. Its details and how to exercise your rights are in its legal notice, linked in the footer of every page, and in its privacy policy, at webcafeina.com/politica-privacidad.",
         ],
       },
       {

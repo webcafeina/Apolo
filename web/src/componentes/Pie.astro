@@ -1,6 +1,6 @@
 ---
-// El pie (ADR 0033): las páginas, GitHub, lo legal (de webcafeina.com, salvo
-// las cookies, que son de esta web) y el idioma.
+// El pie (ADR 0033): las páginas, GitHub, lo legal (el aviso legal, de
+// webcafeina.com; la privacidad del programa y las cookies, de esta web) y el idioma.
 import { textos } from "../i18n";
 import { type Idioma, ruta } from "../i18n/rutas";
 
@@ -26,7 +26,7 @@ const t = textos(idioma);
       <a href={ruta("mapa", idioma)}>{t.pie.mapa}</a>
       <a href="https://github.com/webcafeina/Apolo" rel="noopener">GitHub</a>
       <a href="https://webcafeina.com/aviso-legal/" rel="noopener">{t.pie.aviso}</a>
-      <a href="https://webcafeina.com/politica-privacidad/" rel="noopener">{t.pie.privacidad}</a>
+      <a href={ruta("privacidad", idioma)}>{t.pie.privacidad}</a>
       <a href={ruta("cookies", idioma)}>{t.pie.cookies}</a>
       <button type="button" class="preferencias" data-preferencias-cookies hidden>{t.cookies.preferencias}</button>
     </nav>

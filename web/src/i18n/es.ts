@@ -202,6 +202,7 @@ export const es = {
     agentes: "Agentes de IA",
     aviso: "Aviso legal",
     privacidad: "Privacidad",
+    privacidadWebcafeina: "Política de privacidad de Webcafeína",
     cookies: "Cookies",
     licencia: "Apolo es software libre con licencia GPLv3. © 2026 Webcafeína.",
     optimizadas: "Las imágenes de esta web las ha optimizado Apolo.",

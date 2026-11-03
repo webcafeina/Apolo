@@ -14,6 +14,8 @@ export const RUTAS = {
   cli: { es: "/linea-de-comandos/", en: "/en/cli/" },
   agentes: { es: "/agentes/", en: "/en/agents/" },
   cookies: { es: "/cookies/", en: "/en/cookies/" },
+  // La privacidad del programa (ADR 0036): la pide el directorio de plugins de Claude.
+  privacidad: { es: "/privacidad/", en: "/en/privacy/" },
   // Las guías y las comparativas (ADR 0034): un índice y una página por cada una.
   guias: { es: "/guias/", en: "/en/guides/" },
   guiaWebp: { es: "/guias/convertir-a-webp/", en: "/en/guides/convert-to-webp/" },

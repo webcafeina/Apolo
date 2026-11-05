@@ -128,6 +128,43 @@ Leído en el correo de info@webcafeina.com:
   open-source-mac-os-apps#1878, mcp.so#6439 (sin comentarios), MajorGeeks («may be a bit»),
   Uptodown, Softpedia, MacUpdate y la prensa.
 
+### Estado el 2026-11-05
+
+- **Chocolatey 1.0.1: aprobada** el 3 de noviembre (virtualex): `choco install apolo` da la 1.0.1.
+- **Product Hunt**: un voto y sin comentarios. El cliente lo deja como está («que tenga la
+  visibilidad que considere»). Llegaron ofertas por haber salido allí: Auspia (páginas SEO),
+  Viberank («growth insights») y Upvote Network (votos de cuentas falsas, prohibido por Product
+  Hunt); ninguna se contesta.
+- **El plugin, «En revisión»** en el directorio de Anthropic (visto por el cliente el 5); sin
+  correo todavía.
+- mcprush confirmó la reclamación; Glama abrió un *ticket* con la respuesta a Frank.
+- GitHub avisó de otra aplicación OAuth, **Arcade.dev Sign In** (`read:user`, `user:email`), de
+  cuando el cliente entró en Smithery el 3: se quita más adelante con las de MCP So y
+  OpenAlternative.
+- Sin cambios: winget#463314, awesome-mcp-servers#17812, open-source-mac-os-apps#1878,
+  mcp.so#6439, Uptodown, Softpedia, MacUpdate, MajorGeeks y la prensa.
+
+### Enlaces fijos (desde la 1.0.2)
+
+Cada Release lleva, además de los ficheros con versión, una copia sin número
+(`empaquetado/nombres-fijos.py`), así que estos enlaces dan siempre la última versión. Para los
+directorios que piden un enlace directo (MacUpdate, Uptodown, Softpedia, Glama…), en cuanto salga la
+1.0.2. La base es `https://github.com/webcafeina/Apolo/releases/latest/download/`:
+
+| Qué | Fichero |
+|---|---|
+| macOS | `Apolo_universal.dmg` |
+| Windows x64 / ARM64 | `Apolo_x64-setup.exe` / `Apolo_arm64-setup.exe` |
+| Linux .deb x64 / ARM64 | `Apolo_amd64.deb` / `Apolo_arm64.deb` |
+| Linux .rpm x64 / ARM64 | `Apolo_x86_64.rpm` / `Apolo_aarch64.rpm` |
+| AppImage x64 / ARM64 | `Apolo_amd64.AppImage` / `Apolo_aarch64.AppImage` |
+| CLI | `apolo-cli-macos-universal.tar.gz`, `apolo-cli-windows-x64.zip`, `apolo-cli-windows-arm64.zip`, `apolo-cli-linux-amd64.tar.gz`, `apolo-cli-linux-arm64.tar.gz` |
+| Claude Desktop | `Apolo-macos.mcpb`, `Apolo-windows-x64.mcpb`, `Apolo-windows-arm64.mcpb`, `Apolo-linux-amd64.mcpb`, `Apolo-linux-arm64.mcpb` |
+| Sumas | `SHA256SUMS.txt` (incluye las copias) |
+
+Las firmas `.sig`, `latest.json`, la web, APT, RPM, Homebrew, Chocolatey y el registro de MCP siguen
+con los nombres con versión.
+
 ### Chocolatey (2026-10-30)
 
 Paquete `apolo` en `empaquetado/chocolatey/`: `apolo.nuspec` y `tools/chocolatey{install,uninstall}.ps1`

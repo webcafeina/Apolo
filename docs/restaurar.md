@@ -77,6 +77,10 @@ Si algún submódulo ya no se puede bajar de su origen, se descomprime su `tar.g
 Los ficheros de `versiones/vX.Y.Z/` son los de la Release, con su `SHA256SUMS.txt`. Si la Release se
 perdió, se recrea con `gh release create vX.Y.Z <ficheros> --notes-file .github/notas/vX.Y.Z.md`.
 
+Desde la 1.0.2, la Release lleva también copias con nombre fijo (`Apolo_universal.dmg`…), que no se
+guardan: son los mismos bytes. Al recrearla, se rehacen con
+`python3 -I empaquetado/nombres-fijos.py vX.Y.Z <carpeta>` y se suben con las demás.
+
 ## Pruebas de restauración
 
 Una copia que nunca se ha restaurado no se sabe si sirve. Apuntar aquí cada prueba.

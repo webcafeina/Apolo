@@ -70,8 +70,12 @@ export function leerRelease(json: { tagName: string; publishedAt: string; assets
   const s = leerSumas(sumas);
   const ficheros: Record<string, Fichero> = {};
   const faltan: string[] = [];
+  // Solo los que llevan el número: la Release tiene además copias con nombre fijo
+  // (Apolo_universal.dmg…, empaquetado/nombres-fijos.py), que acaban igual.
+  const version = json.tagName.replace(/^v/, "");
+  const conVersion = json.assets.filter((x) => x.name.includes(version));
   for (const [clave, sistema, arquitectura, tipo, formato, final] of ESPERADOS) {
-    const a = json.assets.find((x) => x.name.endsWith(final));
+    const a = conVersion.find((x) => x.name.endsWith(final));
     const sha256 = a && s.get(a.name);
     if (!a || !sha256) {
       faltan.push(`${clave} (…${final})`);
@@ -80,7 +84,7 @@ export function leerRelease(json: { tagName: string; publishedAt: string; assets
     ficheros[clave] = { clave, sistema, arquitectura, tipo, formato, nombre: a.name, url: a.url, bytes: a.size, sha256 };
   }
   if (faltan.length) throw new Error(`La Release ${json.tagName} no tiene: ${faltan.join(", ")}`);
-  return { version: json.tagName.replace(/^v/, ""), fecha: json.publishedAt, ficheros };
+  return { version, fecha: json.publishedAt, ficheros };
 }
 
 /** Un tamaño en megas decimales, como los cuentan los sistemas: «43,7 MB». */

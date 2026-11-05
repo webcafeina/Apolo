@@ -79,8 +79,10 @@ jobs:
         run: |
           echo "Paquetes de la $ETIQUETA"
           mkdir -p web/dist/apt/pool/main web/dist/rpm web/dist/aur
-          gh release download "$ETIQUETA" -p '*.deb' -D web/dist/apt/pool/main
-          gh release download "$ETIQUETA" -p '*.rpm' -D web/dist/rpm
+          # Los de nombre con versión: la Release lleva además copias con nombre fijo
+          # (Apolo_amd64.deb…), que darían cada paquete dos veces en el repositorio.
+          gh release download "$ETIQUETA" -p "Apolo_${ETIQUETA#v}_*.deb" -D web/dist/apt/pool/main
+          gh release download "$ETIQUETA" -p "Apolo-${ETIQUETA#v}-*.rpm" -D web/dist/rpm
           ls -la web/dist/apt/pool/main web/dist/rpm
           # El PKGBUILD de apolo-bin, relleno con esta versión, para Arch mientras el AUR no
           # admite cuentas nuevas (trampas.md): `makepkg -si`.

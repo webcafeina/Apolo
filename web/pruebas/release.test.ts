@@ -21,6 +21,14 @@ describe("los ficheros de la versión", () => {
     expect(r.ficheros["mcpb-linux-arm64"].nombre).toBe(`Apolo-${r.version}-linux-arm64.mcpb`);
   });
 
+  it("enlaza los nombres con versión aunque estén también las copias con nombre fijo", () => {
+    // Las copias van delante, como si la API las diera primero.
+    const copias = json.assets.map((a: { name: string }) => ({ ...a, name: a.name.replace(/_\d+\.\d+\.\d+_/, "_") }));
+    const r = leerRelease({ ...json, assets: [...copias, ...json.assets] }, sumas);
+    expect(r.ficheros["dmg"].nombre).toBe(`Apolo_${r.version}_universal.dmg`);
+    expect(r.ficheros["exe-x64"].nombre).toBe(`Apolo_${r.version}_x64-setup.exe`);
+  });
+
   it("falla si falta uno: mejor que un enlace roto", () => {
     const sin = { ...json, assets: json.assets.filter((a: { name: string }) => !a.name.endsWith(".dmg")) };
     expect(() => leerRelease(sin, sumas)).toThrow(/dmg/);

@@ -8,10 +8,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **El lunes 2026-11-02** (pedido por el cliente): 1) el correo de info@ y el estado de cada
+- ~~**El lunes 2026-11-02** (pedido por el cliente): 1) el correo de info@ y el estado de cada
   servicio, actuando según lo que haya; 2) mcprush (¿reclamar la ficha?); 3) lo que le toca al
-  cliente (AlternativeTo, correos de verificación, Glama, OAuth); 4) el resto de la fase comercial.
-  Detalle en el primer bloque de `docs/estado.md`.
+  cliente (AlternativeTo, correos de verificación, Glama, OAuth); 4) el resto de la fase comercial.~~
+  Hecho el 2026-11-03, salvo quitar las aplicaciones OAuth (MCP So, OpenAlternative y Arcade.dev
+  Sign In), que el cliente deja para más adelante.
 - **Después de la 1.0.0: cerrar la fase comercial** (ADR 0033 y 0034), decidido con el cliente el
   2026-10-27 por la noche. La seguridad está hecha; queda:
   - ~~**mañana, con el cliente guiado**: AlternativeTo y Product Hunt~~: hechos el 2026-10-30
@@ -153,8 +154,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Media
 
-- **Copias con nombre fijo en cada Release** (pedido por el cliente el 2026-10-30, para la próxima
-  versión): además de `Apolo_1.0.1_universal.dmg` y demás, subir `Apolo_universal.dmg`,
+- ~~**Copias con nombre fijo en cada Release**~~ (pedido por el cliente el 2026-10-30, para la próxima
+  versión). **Hecho en el código el 2026-11-05**: `empaquetado/nombres-fijos.py` en el paso
+  «CLI, notas y sumas» de `publicar.yml`; la web y APT/RPM siguen con los nombres con versión, y
+  las copias de seguridad se las saltan. Se estrena con la 1.0.2: entonces, cambiar los enlaces de
+  los directorios a los de `docs/lanzamiento.md` («Enlaces fijos»). Lo que se pidió: además de `Apolo_1.0.1_universal.dmg` y demás, subir `Apolo_universal.dmg`,
   `Apolo_x64-setup.exe`, `Apolo_arm64-setup.exe`, `Apolo_amd64.deb`… sin número, para que
   `…/releases/latest/download/<nombre>` sirva siempre la última. Así los directorios que piden un
   enlace directo (MacUpdate, Uptodown, Softpedia) no hay que tocarlos en cada versión. En

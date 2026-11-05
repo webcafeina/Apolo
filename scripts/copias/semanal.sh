@@ -74,11 +74,20 @@ EN_R2="$(rc "$TEMPORAL" lsf --dirs-only "r2:$R2_BUCKET/versiones" 2>/dev/null | 
 for etiqueta in $ETIQUETAS; do
   grep -qxF "$etiqueta" <<< "$EN_R2" && continue
   mkdir -p "$TEMPORAL/$etiqueta"
+  # Sin las copias con nombre fijo (Apolo_universal.dmg…, empaquetado/nombres-fijos.py): son los
+  # mismos bytes que el fichero con versión, y doblarían lo que ocupa cada una.
   "$CURL" -fsS "https://api.github.com/repos/webcafeina/Apolo/releases/tags/$etiqueta" |
-    python3 -c 'import json, sys; [print(a["browser_download_url"]) for a in json.load(sys.stdin)["assets"]]' |
+    python3 -c 'import json, sys
+v = sys.argv[1].removeprefix("v")
+siempre = {"latest.json", "SHA256SUMS.txt", "Apolo_universal.app.tar.gz", "Apolo_universal.app.tar.gz.sig"}
+for a in json.load(sys.stdin)["assets"]:
+    if v in a["name"] or a["name"] in siempre:
+        print(a["browser_download_url"])' "$etiqueta" |
     while read -r url; do "$CURL" -fsSL --retry 3 -o "$TEMPORAL/$etiqueta/$(basename "$url")" "$url"; done
-  # Que lo bajado cuadre con su SHA256SUMS.txt antes de guardarlo.
-  (cd "$TEMPORAL/$etiqueta" && grep -v ' SHA256SUMS.txt$' SHA256SUMS.txt | sha256sum -c --quiet -)
+  # Que lo bajado cuadre con su SHA256SUMS.txt antes de guardarlo: todo, menos las copias.
+  (cd "$TEMPORAL/$etiqueta" && grep -v ' SHA256SUMS.txt$' SHA256SUMS.txt |
+    awk -v v="${etiqueta#v}" 'index($2, v) || $2 ~ /^(latest\.json|Apolo_universal\.app\.tar\.gz(\.sig)?)$/' |
+    sha256sum -c --quiet -)
   rc "$TEMPORAL/$etiqueta" copy /data "r2:$R2_BUCKET/versiones/$etiqueta"
   registro "Versión $etiqueta: $(du -sh "$TEMPORAL/$etiqueta" | cut -f1), sumas comprobadas."
   rm -rf "${TEMPORAL:?}/$etiqueta"

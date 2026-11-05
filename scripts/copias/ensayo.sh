@@ -48,6 +48,9 @@ registro "Claves ($copia): se descifran y son las del VPS."
 version="$(rc "$TEMPORAL" lsf --dirs-only "r2:$R2_BUCKET/versiones" | sort -V | tail -1 | tr -d /)"
 mkdir -p "$TEMPORAL/version"
 rc "$TEMPORAL/version" copy "r2:$R2_BUCKET/versiones/$version" /data
-(cd "$TEMPORAL/version" && grep -v ' SHA256SUMS.txt$' SHA256SUMS.txt | sha256sum -c --quiet -)
+# Las copias con nombre fijo no se guardan (semanal.sh): sus sumas se saltan.
+(cd "$TEMPORAL/version" && grep -v ' SHA256SUMS.txt$' SHA256SUMS.txt |
+  awk -v v="${version#v}" 'index($2, v) || $2 ~ /^(latest\.json|Apolo_universal\.app\.tar\.gz(\.sig)?)$/' |
+  sha256sum -c --quiet -)
 registro "Versión $version: las sumas cuadran."
 registro "Ensayo bien."

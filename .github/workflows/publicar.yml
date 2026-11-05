@@ -406,6 +406,15 @@ jobs:
           fi
           mkdir todo
           gh release download "$GITHUB_REF_NAME" -D todo --skip-existing
+          # Las copias sin número (Apolo_universal.dmg…), para que
+          # releases/latest/download/<nombre> dé siempre la última: con su suma
+          # y su procedencia, como las demás.
+          python3 -I empaquetado/nombres-fijos.py "$GITHUB_REF_NAME" todo | tee fijos.txt
+          for intento in 1 2 3 4; do
+            (cd todo && gh release upload "$GITHUB_REF_NAME" $(sed 's/.* → //' ../fijos.txt) --clobber) && break
+            [ "$intento" = 4 ] && exit 1
+            sleep $(( intento * 15 ))
+          done
           (cd todo && rm -f SHA256SUMS.txt && sha256sum * > ../SHA256SUMS.txt)
           gh release upload "$GITHUB_REF_NAME" SHA256SUMS.txt --clobber
           cp SHA256SUMS.txt todo/

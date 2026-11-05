@@ -10,10 +10,13 @@
 > Windows estricta. Borrador revisado entero; web, APT, RPM, PKGBUILD, Homebrew y registro de MCP al
 > día solos; Chocolatey 1.0.2 subida (en moderación).
 >
+> **El cliente la vio actualizar**: saltó el aviso y pasó sus Apolo a la 1.0.2 (2026-11-05).
+>
 > **Lo siguiente**:
-> 1. Que el cliente la vea actualizar (Mac, Windows, Linux).
-> 2. Los directorios con enlace directo, a los enlaces fijos (`docs/lanzamiento.md`): MacUpdate y
->    Uptodown cuando aprueben sus fichas, Softpedia; y la 1.0.2 donde haya que subirla a mano.
+> 1. ~~Que el cliente la vea actualizar~~: hecho.
+> 2. **Mañana, el cliente** (guiado): los directorios con enlace directo, a los enlaces fijos
+>    (`docs/lanzamiento.md`, «Enlaces fijos»): MacUpdate y Uptodown cuando aprueben sus fichas,
+>    Softpedia; y la 1.0.2 donde haya que subirla a mano.
 > 3. Vigilar: el revisor de Anthropic (el plugin), Chocolatey 1.0.2, winget#463314, los PR y
 >    mcp.so#6439.
 > 4. Más adelante: `tauri-action` 1.0 en una versión propia; quitar las aplicaciones OAuth (MCP So,

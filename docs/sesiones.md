@@ -26,7 +26,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   procedencia 50/50, `apolo` y `apolo-mcp` 1.0.2, AVIF 5/5 con avifenc. Web, APT (un paquete por
   arquitectura), RPM, PKGBUILD, Homebrew y registro de MCP al día solos; los enlaces fijos dan la
   1.0.2. Chocolatey 1.0.2 subida a mano.
-- Abierto: verla actualizar en las máquinas del cliente; los enlaces fijos en los directorios;
+- **El cliente vio el aviso y actualizó sus Apolo a la 1.0.2.**
+- Abierto: los enlaces fijos en los directorios (mañana, el cliente);
   `tauri-action` 1.0; el veredicto de Anthropic; las aplicaciones OAuth.
 
 ---

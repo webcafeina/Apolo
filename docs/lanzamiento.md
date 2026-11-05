@@ -145,8 +145,8 @@ Leído en el correo de info@webcafeina.com:
   mcp.so#6439, Uptodown, Softpedia, MacUpdate, MajorGeeks y la prensa.
 - **La 1.0.2, publicada** (12:47 UTC). Al día solos: la web, APT, RPM, el PKGBUILD, Homebrew y el
   registro de MCP; los enlaces fijos de abajo, ya activos. **Chocolatey 1.0.2, subida** a mano el
-  mismo día (en moderación). Pendiente: cambiar a los enlaces fijos los directorios que tienen un
-  enlace directo (MacUpdate y Uptodown cuando aprueben sus fichas, Softpedia) y subir allí la 1.0.2.
+  mismo día (en moderación). El cliente la vio actualizar en sus equipos. Pendiente (mañana, el
+  cliente): cambiar a los enlaces fijos los directorios que tienen un enlace directo (MacUpdate y Uptodown cuando aprueben sus fichas, Softpedia) y subir allí la 1.0.2.
 
 ### Enlaces fijos (desde la 1.0.2)
 

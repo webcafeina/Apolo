@@ -681,3 +681,12 @@ que empiezan por punto, sin opción para incluirlos. La web desplegada perdería
 `/.well-known/security.txt` (ADR 0034) sin que falle nada. Se queda en la v3.0.1, con un
 comentario en `web.yml` y una regla en `dependabot.yml`; si algún día hay que subir, se hace el
 artefacto a mano, como explica su README. · 2026-11-05
+
+## Dos Node en el VPS, cada uno con su pnpm
+
+nvm tiene la 22.23.1 y la 22.23.4, y la predeterminada es la 22.23.4. Desde la 7.4.2, Astro pide
+Node 22.23.4 o más («Node.js v22.23.1 is not supported by Astro!»): con un `PATH` que ponga
+delante la 22.23.1, `make web` falla. Y cada Node trae su pnpm global: la 22.23.4 venía con el 9.15.9,
+que no entiende el `pnpm-workspace.yaml` de `frontend/` («packages field missing or empty»), y se le
+instaló el 11.20.0 (el de `packageManager`) con `npm install -g pnpm@11.20.0`. La CI no lo nota:
+`setup-node` pone la última 22 y `pnpm/action-setup`, la de `packageManager`. · 2026-11-05

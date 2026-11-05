@@ -77,8 +77,11 @@ test("las descargas cuentan en la capa de datos", async ({ page }) => {
   await sinGoogle(page);
   await page.goto("/");
   await page.getByRole("button", { name: "Rechazar" }).click();
-  // Que el clic no se vaya de la página: el enlace de la tarjeta de macOS.
+  // Que el clic no se vaya de la página: el enlace de la tarjeta de macOS. Con un 204 de GitHub no
+  // basta desde Playwright 1.64, que deja la página navegando; un oyente en window, el último en
+  // oír el clic, lo cancela después de que lo apunte la web.
   await page.route(/github\.com/, (r) => r.fulfill({ status: 204 }));
+  await page.evaluate(() => addEventListener("click", (e) => e.preventDefault()));
   await page.locator('.tarjeta[data-para="macos"] a.descargar').click();
   const capa = await page.evaluate(() => JSON.stringify((window as unknown as { dataLayer: unknown[] }).dataLayer));
   expect(capa).toContain('"event":"descarga_apolo"');

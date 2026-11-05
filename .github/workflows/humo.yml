@@ -74,7 +74,7 @@ jobs:
           mcp="$LOCALAPPDATA\Apolo\apolo-mcp.exe"
           python pruebas/humo/humo.py --cli cli/x --mcp "$mcp" \
             --cwebp "$(r cwebp.exe)" --avifenc "$(r avifenc.exe)" --cjxl "$(r cjxl.exe)" \
-            --reinstalar "$(w "$inst")" --instalado "$mcp" --solo-informar-equivalencia
+            --reinstalar "$(w "$inst")" --instalado "$mcp"
 
   humo-linux:
     runs-on: ubuntu-22.04

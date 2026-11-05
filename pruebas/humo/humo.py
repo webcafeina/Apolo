@@ -13,7 +13,7 @@ Lo que nadie ha visto en un equipo: Windows x64 y Linux x64. Con los binarios ya
   instalador otra vez encima: su gancho tiene que cerrarlo y el instalador terminar bien.
 
     python humo.py --cli DIR [--mcp RUTA ...] [--cwebp RUTA] [--avifenc RUTA] [--cjxl RUTA]
-                   [--reinstalar INSTALADOR --instalado RUTA] [--solo-informar-equivalencia]
+                   [--reinstalar INSTALADOR --instalado RUTA]
 
 Sale con 1 si algo falla. Solo usa la biblioteca estándar.
 """
@@ -75,14 +75,17 @@ def preparar(cli, entorno):
     return base
 
 
-def equivalencia(cli, base, entorno, oficiales, solo_informar):
+def equivalencia(cli, base, entorno, oficiales):
     print("Equivalencia con las herramientas oficiales, en una ruta con tildes:")
     casos = {
-        "cwebp": ("webp", ["", "-q 50", "-lossless", "-m 6 -q 80"], ["foto.png", "foto.jpg"]),
-        "avifenc": ("avif", ["", "-q 40 -s 9", "-l -s 9"], ["foto.png", "foto.jpg"]),
-        "cjxl": ("jxl", ["", "-d 1 -e 7", "-q 90"], ["foto.png"]),
+        "cwebp": ("webp", ["", "-q 50", "-lossless", "-m 6 -q 80", "-q 90 -sharp_yuv", "-near_lossless 60"],
+                  ["foto.png", "foto.jpg"]),
+        # Con 4:4:4 y 10 bits, además de lo de siempre: son caminos distintos de libaom y libyuv.
+        "avifenc": ("avif", ["", "-q 40 -s 9", "-l -s 9", "-q 80 -s 6", "-y 444 -q 60 -s 8", "-d 10 -q 50 -s 8"],
+                    ["foto.png", "foto.jpg"]),
+        "cjxl": ("jxl", ["", "-d 1 -e 7", "-q 90", "-d 0 -e 3", "-d 2 -e 5"], ["foto.png"]),
         # Un JPEG, cjxl lo recomprime sin pérdida por defecto; con pérdida hay que apagarlo.
-        "cjxl-jpeg": ("jxl", ["", "--lossless_jpeg=0 -d 1"], ["foto.jpg"]),
+        "cjxl-jpeg": ("jxl", ["", "--lossless_jpeg=0 -d 1", "--lossless_jpeg=0 -q 85 -e 5"], ["foto.jpg"]),
     }
     if oficiales.get("cjxl"):
         oficiales["cjxl-jpeg"] = oficiales["cjxl"]
@@ -115,11 +118,8 @@ def equivalencia(cli, base, entorno, oficiales, solo_informar):
                     distintos += 1
                     print(f"    distinto: {herramienta} {o or '(por defecto)'} {e}")
         msg = f"{herramienta}: {iguales} iguales, {distintos} distintos"
-        if distintos and not solo_informar:
+        if distintos:
             mal(msg)
-        elif distintos:
-            avisos.append(msg)
-            print(f"  ! {msg}")
         else:
             bien(msg)
 
@@ -289,7 +289,6 @@ def main():
     a.add_argument("--cjxl")
     a.add_argument("--reinstalar")
     a.add_argument("--instalado")
-    a.add_argument("--solo-informar-equivalencia", action="store_true")
     o = a.parse_args()
     # Absolutas: las órdenes corren dentro de la carpeta de trabajo.
     o.cli = o.cli.resolve()
@@ -300,8 +299,7 @@ def main():
     entorno = dict(os.environ)
     base = preparar(o.cli, entorno)
     print(f"Carpeta de trabajo: {base}")
-    equivalencia(o.cli, base, entorno, {"cwebp": o.cwebp, "avifenc": o.avifenc, "cjxl": o.cjxl},
-                 o.solo_informar_equivalencia)
+    equivalencia(o.cli, base, entorno, {"cwebp": o.cwebp, "avifenc": o.avifenc, "cjxl": o.cjxl})
     if os.name == "nt":
         exes = [o.cli / "apolo.exe", o.cli / "apolo-mcp.exe", *o.mcp]
         if o.instalado:

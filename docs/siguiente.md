@@ -189,9 +189,12 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     pérdida), en `optimizar_imagen`, `comparar_formatos`, `empezar_lote` y `guardar_preset`. Regenerar
     el catálogo y añadirlo a la evaluación de la 7c.
 
-- **Comprobar AVIF y JPEG XL en Windows** contra los binarios oficiales (deuda): en CI, con el
+- ~~**Comprobar AVIF y JPEG XL en Windows** contra los binarios oficiales (deuda): en CI, con el
   `windows-artifacts.zip` de libavif y el `jxl-x64-windows-static.zip` de libjxl. AVIF en Mac ya
-  está (16 de 16, 2026-10-08).
+  está (16 de 16, 2026-10-08).~~ Ya lo hacía `humo.yml` desde el 2026-10-19 (en la 1.0.1, avifenc
+  6/6 y cjxl 5/5), pero solo informaba. **El 2026-11-05** pasa a fallar si hay una diferencia, y con
+  más casos: 4:4:4 y 10 bits en AVIF, sin pérdida y otro esfuerzo en JPEG XL, `-sharp_yuv` y
+  `-near_lossless` en WebP (32 de 32 iguales en el VPS con la CLI 1.0.1).
 - ~~**Entrega 6 — Métricas.**~~ Hecha como v0.7.0 (ver Cerrado).
 - ~~**Entrega 8 — 1.0.** DMG, NSIS, `.deb` y AppImage; README con la tabla de descargas.~~ Definida
   el 2026-10-19 en modo plan: ver Alta y el [ADR 0024](adr/0024-la-1-0.md).

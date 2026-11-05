@@ -1,7 +1,7 @@
 {
   "name": "apolo",
   "displayName": "Apolo",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Optimize, convert and compare images on your own computer with Apolo: WebP, AVIF, JPEG XL, JPEG and PNG, with the quality loss measured (SSIMULACRA 2). It always writes new files and never overwrites or deletes your originals. Needs the free Apolo app.",
   "author": {
     "name": "Webcafeína",

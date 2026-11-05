@@ -673,3 +673,11 @@ Claude responde «Input must be provided either through stdin or as a prompt arg
 va justo detrás de `-p`: `claude -p "Haz esto" --plugin-dir … --allowedTools …`. Las herramientas
 de un plugin se llaman `mcp__plugin_<plugin>_<servidor>__<herramienta>`, como
 `mcp__plugin_apolo_apolo__*`. · 2026-11-03
+
+## `upload-pages-artifact` 4 se deja `.well-known/`
+
+Desde la v4, `actions/upload-pages-artifact` no mete en el artefacto los ficheros ni las carpetas
+que empiezan por punto, sin opción para incluirlos. La web desplegada perdería
+`/.well-known/security.txt` (ADR 0034) sin que falle nada. Se queda en la v3.0.1, con un
+comentario en `web.yml` y una regla en `dependabot.yml`; si algún día hay que subir, se hace el
+artefacto a mano, como explica su README. · 2026-11-05

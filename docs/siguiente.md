@@ -42,9 +42,14 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     AlternativeTo apruebe, las seis «Suggest alternative». **Con la 1.0.1 (2026-10-30)**: Chocolatey
     en cuanto aprueben la 1.0.0 (está empaquetada; da 403 mientras tanto), y la 1.0.1 en Uptodown y
     MacUpdate cuando aprueben sus fichas.
-  - **Otra tanda de mantenimiento**: las acciones de GitHub (varias versiones mayores por detrás:
+  - ~~**Otra tanda de mantenimiento**: las acciones de GitHub (varias versiones mayores por detrás:
     `checkout` v7, `upload-artifact` v7, `tauri-action` 1.0…), TypeScript 7 y `@types/node` 26 en
-    npm, y zlib 1.3.2 con la próxima libjxl (deuda).
+    npm, y zlib 1.3.2 con la próxima libjxl (deuda).~~ **Hecha en la 1.0.2 (2026-11-05)**, salvo:
+    `tauri-action` 1.0 (renombra el `.app.tar.gz` del actualizador, cambia las URL de
+    `latest.json` y reescribe las notas: **una versión para ella, con su compilación de prueba**);
+    `upload-pages-artifact` en la v3 a propósito; TypeScript 7 y `@types/node` 26, no
+    (@astrojs/check solo admite TS 6; Node 22); zlib 1.3.2, cuando salga una libjxl nueva (la
+    0.12.0 sigue siendo la última).
   - **Cerrar el SEO**: la primera revisión de `docs/seo.md` cuando Search Console y Bing tengan datos,
     y comprobar la indexación de las 45 páginas.
 - ~~**Entrega 8 — la 1.0**~~: **v1.0.0 publicada el 2026-10-27**, con la web nueva.
@@ -157,8 +162,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 - ~~**Copias con nombre fijo en cada Release**~~ (pedido por el cliente el 2026-10-30, para la próxima
   versión). **Hecho en el código el 2026-11-05**: `empaquetado/nombres-fijos.py` en el paso
   «CLI, notas y sumas» de `publicar.yml`; la web y APT/RPM siguen con los nombres con versión, y
-  las copias de seguridad se las saltan. Se estrena con la 1.0.2: entonces, cambiar los enlaces de
-  los directorios a los de `docs/lanzamiento.md` («Enlaces fijos»). Lo que se pidió: además de `Apolo_1.0.1_universal.dmg` y demás, subir `Apolo_universal.dmg`,
+  las copias de seguridad se las saltan. Estrenado con la 1.0.2 el 2026-11-05 (19 copias, enlaces
+  comprobados). Queda cambiar los enlaces de los directorios a los de `docs/lanzamiento.md`
+  («Enlaces fijos»). Lo que se pidió: además de `Apolo_1.0.1_universal.dmg` y demás, subir `Apolo_universal.dmg`,
   `Apolo_x64-setup.exe`, `Apolo_arm64-setup.exe`, `Apolo_amd64.deb`… sin número, para que
   `…/releases/latest/download/<nombre>` sirva siempre la última. Así los directorios que piden un
   enlace directo (MacUpdate, Uptodown, Softpedia) no hay que tocarlos en cada versión. En

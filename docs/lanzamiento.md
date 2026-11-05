@@ -143,11 +143,16 @@ Leído en el correo de info@webcafeina.com:
   OpenAlternative.
 - Sin cambios: winget#463314, awesome-mcp-servers#17812, open-source-mac-os-apps#1878,
   mcp.so#6439, Uptodown, Softpedia, MacUpdate, MajorGeeks y la prensa.
+- **La 1.0.2, publicada** (12:47 UTC). Al día solos: la web, APT, RPM, el PKGBUILD, Homebrew y el
+  registro de MCP; los enlaces fijos de abajo, ya activos. **Chocolatey 1.0.2, subida** a mano el
+  mismo día (en moderación). Pendiente: cambiar a los enlaces fijos los directorios que tienen un
+  enlace directo (MacUpdate y Uptodown cuando aprueben sus fichas, Softpedia) y subir allí la 1.0.2.
 
 ### Enlaces fijos (desde la 1.0.2)
 
 Cada Release lleva, además de los ficheros con versión, una copia sin número
-(`empaquetado/nombres-fijos.py`), así que estos enlaces dan siempre la última versión. Para los
+(`empaquetado/nombres-fijos.py`), así que estos enlaces dan siempre la última versión. Comprobados
+con la 1.0.2 el 2026-11-05: las 19 copias iguales a su original y los enlaces dando la 1.0.2. Para los
 directorios que piden un enlace directo (MacUpdate, Uptodown, Softpedia, Glama…), en cuanto salga la
 1.0.2. La base es `https://github.com/webcafeina/Apolo/releases/latest/download/`:
 

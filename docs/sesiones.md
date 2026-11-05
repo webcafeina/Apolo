@@ -4,6 +4,33 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-05 · La 1.0.2, de mantenimiento
+
+- Al empezar: Security sin nada nuevo. Chocolatey aprobó la 1.0.1; Product Hunt, un voto y sin
+  comentarios (el cliente lo deja así); el plugin, «En revisión» en Anthropic. Una aplicación OAuth
+  más en GitHub, Arcade.dev Sign In, para quitar con las otras.
+- **Copias con nombre fijo** en cada Release (`e911396`): `empaquetado/nombres-fijos.py` en
+  `publicar.yml`; la web, APT/RPM y las copias de seguridad siguen con los nombres con versión.
+- **Mantenimiento**: las acciones a sus últimas versiones (`9c82fd2`), menos `upload-pages-artifact`
+  (la v4 deja fuera `.well-known/`: trampas.md) y `tauri-action` (la 1.0 cambia mucho: otra versión);
+  npm al día con TypeScript 6 (`9cf8e94`; la 7 no la admite @astrojs/check); 13 menores de Rust
+  (`dcdd4a6`). En Windows, la equivalencia con avifenc, cjxl y cwebp, que ya existía pero solo
+  informaba, ahora falla si hay una diferencia, con 32 casos (`26c9671`).
+- Tropiezos: Astro 7.4.2+ pide Node 22.23.4 y el `PATH` del VPS ponía la 22.23.1; la 22.23.4 traía
+  pnpm 9 (trampas.md). Playwright 1.64 dejaba navegando el clic de descarga en una prueba de la web
+  (`a5315f5`).
+- Verificado: `make comprobar` y `make equivalencia` (todo igual: cwebp 1015, cjpeg 816, oxipng
+  351, avifenc 376, cjxl 280, qoiconv 13, ssimulacra2 56); compilación de prueba de `Publicar`
+  (42017441393) con los seis humos (Windows 32/32); **la 1.0.2** (`6d6f442`, publicada a las 12:47
+  UTC) con el borrador revisado: 50 ficheros, 49 sumas, **19 copias idénticas**, 16 firmas,
+  procedencia 50/50, `apolo` y `apolo-mcp` 1.0.2, AVIF 5/5 con avifenc. Web, APT (un paquete por
+  arquitectura), RPM, PKGBUILD, Homebrew y registro de MCP al día solos; los enlaces fijos dan la
+  1.0.2. Chocolatey 1.0.2 subida a mano.
+- Abierto: verla actualizar en las máquinas del cliente; los enlaces fijos en los directorios;
+  `tauri-action` 1.0; el veredicto de Anthropic; las aplicaciones OAuth.
+
+---
+
 ## 2026-11-03 · Product Hunt, los directorios al día y Apolo como plugin de Claude
 
 - Al empezar: la pestaña Security sin nada nuevo (los 7 de Scorecard). El lunes 2 no hubo sesión;

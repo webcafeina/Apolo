@@ -1,10 +1,27 @@
 # Estado
 
-Última actualización: **2026-11-03**
+Última actualización: **2026-11-05**
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-11-03, mediodía): el día de Product Hunt; Apolo ya es plugin de Claude y está
+> **PARADA AQUÍ (2026-11-05, mediodía): v1.0.2 PUBLICADA, de mantenimiento.** Detalle en
+> `docs/sesiones.md`. Copias con nombre fijo en cada Release (`releases/latest/download/Apolo_universal.dmg`…),
+> acciones, npm y Rust al día (menos `tauri-action` 1.0, que va en otra versión), la equivalencia de
+> Windows estricta. Borrador revisado entero; web, APT, RPM, PKGBUILD, Homebrew y registro de MCP al
+> día solos; Chocolatey 1.0.2 subida (en moderación).
+>
+> **Lo siguiente**:
+> 1. Que el cliente la vea actualizar (Mac, Windows, Linux).
+> 2. Los directorios con enlace directo, a los enlaces fijos (`docs/lanzamiento.md`): MacUpdate y
+>    Uptodown cuando aprueben sus fichas, Softpedia; y la 1.0.2 donde haya que subirla a mano.
+> 3. Vigilar: el revisor de Anthropic (el plugin), Chocolatey 1.0.2, winget#463314, los PR y
+>    mcp.so#6439.
+> 4. Más adelante: `tauri-action` 1.0 en una versión propia; quitar las aplicaciones OAuth (MCP So,
+>    OpenAlternative, Arcade.dev Sign In); el plugin en Windows sin Node.
+> En el VPS, Node 22.23.4 (`~/.nvm/versions/node/v22.23.4/bin`) con pnpm 11.20.0 (trampas.md).
+> Al empezar: `docs/estado.md` y `scripts/seguridad-github.sh`.
+>
+> **(2026-11-03, mediodía): el día de Product Hunt; Apolo ya es plugin de Claude y está
 > en revisión en el directorio de Anthropic.** Lo de hoy, en `docs/sesiones.md` y
 > `docs/lanzamiento.md` («Estado el 2026-11-03»):
 > - Chocolatey 1.0.1 subida (en moderación); Homebrew en verde; mcpservers.org y SaaSHub aprobadas;

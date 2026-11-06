@@ -18,6 +18,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - Después, en el menú del móvil: los cuatro epígrafes (Descargar, Usar, Aprender y Novedades) iguales y
   mayores, las entradas más pequeñas, y ESP / ENG en una pastilla. En Preguntas, «¿Quién hace Apolo?»
   dice que lo desarrolla Álvaro Cabezas Campos, con enlace a su LinkedIn.
+- Con el menú más bajo, el final del aviso de cookies asomaba por debajo: se oculta mientras el menú está
+  abierto. Ese despliegue se atascó en Pages (trampas.md) y hubo que lanzar otro a mano.
 - LinkedIn de Webcafeína, programado por Metricool para las 15:00: Nacho lo conectó a la marca.
 - Verificado: `make comprobar`, las pruebas de navegador (axe incluido) y la web real con Chromium,
   en 1280 y 390 px.

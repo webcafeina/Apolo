@@ -717,3 +717,10 @@ da las cookies por elegidas en su `beforeEach` (`cookiesElegidas`), y un `pnpm b
 identificador de GTM, así que el aviso no existe y tampoco sale en las capturas. Lo que deba convivir con
 el aviso se prueba en `consentimiento.spec.ts`, y lo que se enseñe al cliente se mira también en la web
 real sin haber aceptado. El aviso está en `z-index: 60` y la cabecera en 40; con un menú abierto, 70. (2026-11-06)
+
+## Pages se queda en `syncing_files` y relanzar da «Multiple artifacts named "github-pages"»
+
+`deploy-pages` espera 10 minutos en `Current status: syncing_files` y acaba en `Timeout reached, aborting!`,
+con githubstatus en verde y sin que cambie nada en la web. Con `gh run rerun --failed`, el único trabajo de
+`web.yml` compila y sube otro paquete al lado del primero, y falla en un minuto por tener dos con el mismo
+nombre. Se arregla con una ejecución nueva: `gh workflow run web.yml --ref main`. (2026-11-06)

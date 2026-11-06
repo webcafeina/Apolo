@@ -25,7 +25,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   en 1280 y 390 px.
 - A las 15:00 salieron Instagram, Facebook y LinkedIn de Webcafeína (el cliente lo confirmó), y a las
   15:05 el reintento publicó el último retoque, comprobado en la web real. Se quitó `web/public/redes/`.
-- **No verificado**: en un móvil de verdad, con su letra (las medidas son con la del VPS, más ancha).
+- Lámina 7 de las cuentas de Álvaro, sin nombrar a GitHub, a petición suya: solo esa, en sus tres versiones.
+- **No verificado**: en un móvil de verdad, con su letra (las medidas son con la del VPS, más ancha); que
+  Álvaro haya subido las suyas.
 
 ---
 

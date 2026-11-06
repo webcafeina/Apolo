@@ -172,7 +172,10 @@ carpeta por cuenta y red.
 | LinkedIn de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `-5058331842053520994`); Nacho lo conectó a la marca y no lo sube a mano | [Publicado](https://linkedin.com/feed/update/urn:li:ugcPost:7524472650795044867) |
 | Instagram, Facebook y LinkedIn de Álvaro | A mano, él, esa tarde (`alvaro/textos.md`) | Pendiente |
 
-Facebook y LinkedIn llevan «Pulsa para ver más» en vez de «Desliza»; las de Álvaro van en singular. El
+En las de Álvaro, la lámina 7 dice «Solo se conecta para ver si hay versión nueva», sin nombrar a GitHub:
+lo pidió el cliente después de salir las de Webcafeína, que llevan la frase anterior y se quedan así (la
+fuente, `fuente/carrusel.html`, ya tiene la nueva). Facebook y LinkedIn llevan «Pulsa para ver más» en vez
+de «Desliza»; las de Álvaro van en singular. El
 enlace mide con `utm_campaign=carrusel-apolo`. Las láminas estuvieron en `web/public/redes/` porque
 Metricool pide una URL pública; se quitaron una vez publicadas, porque guarda su copia. YouTube,
 conectado a la marca, solo admite vídeo: se dejó fuera.

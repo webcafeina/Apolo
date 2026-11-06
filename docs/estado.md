@@ -8,6 +8,11 @@
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
 >
+> **El lunes 2026-11-09, lo primero**: la CI de la última subida y `scripts/seguridad-github.sh`, que se
+> cerró sin verlas; preguntar a Álvaro si subió sus publicaciones (`capturas/cliente/redes/alvaro/`, con la
+> lámina 7 ya cambiada) y si ve @claude en la página del repositorio. Luego, lo recomendado: revisar el SEO
+> con los datos de Search Console.
+>
 > **Cerrado esa misma tarde**: ~~el último retoque de la web~~, publicado a las 15:05 por el reintento
 > (`b08a26d` se atascó dos veces en Pages; trampas.md) y comprobado en la web real; ~~la CI de la última
 > subida~~, en verde; Security, los mismos 7 avisos de Scorecard. Disco al 89 %, sobre todo por otros

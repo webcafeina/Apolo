@@ -57,6 +57,15 @@ test("ESP / ENG: el activo en negrita, y lleva a la misma página en el otro idi
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 });
 
+test("las preguntas enlazan a quien desarrolla Apolo, y los datos estructurados van sin marcas", async ({ page }) => {
+  for (const ruta of [RUTAS.preguntas.es, RUTAS.preguntas.en]) {
+    await page.goto(ruta);
+    const a = page.locator('a[href*="linkedin.com/in/"]');
+    await expect(a).toHaveText("Álvaro Cabezas Campos");
+    expect(await page.locator('script[type="application/ld+json"]').allTextContents()).toEqual(expect.arrayContaining([expect.stringContaining("Álvaro Cabezas Campos")]));
+  }
+});
+
 test("la 404, en los dos idiomas y sin indexar", async ({ page }) => {
   const r = await page.goto("/no-existe/");
   expect(r?.status()).toBe(404);
@@ -127,6 +136,11 @@ test("en el móvil, el idioma está en el menú: el activo marcado, y lleva a la
   await page.goto("/descargar/mac/");
   await page.locator(".menu-movil summary").click();
   await expect(page.locator('.idioma-movil a[hreflang="es"]')).toHaveAttribute("aria-current", "page");
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme });
+    const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).include(".panel-movil").analyze();
+    expect(violations.map((v) => v.id)).toEqual([]);
+  }
   await page.locator('.idioma-movil a[hreflang="en"]').click();
   await expect(page).toHaveURL(/\/en\/download\/mac\/$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "en");

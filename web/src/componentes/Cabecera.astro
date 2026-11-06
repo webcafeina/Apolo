@@ -62,12 +62,10 @@ const GRUPOS = [
             ))
           }
           <div class="grupo"><a class="suelto" href={n.novedades.href}>{n.novedades.texto}</a></div>
-          <div class="grupo idioma-movil">
-            <p>{t.idioma.etiqueta}</p>
-            <div>
-              <a href={ruta(pagina, "es")} lang="es" hreflang="es" aria-current={idioma === "es" ? "page" : undefined}>{t.idioma.es}</a>
-              <a href={ruta(pagina, "en")} lang="en" hreflang="en" aria-current={idioma === "en" ? "page" : undefined}>{t.idioma.en}</a>
-            </div>
+          <div class="idioma-movil" role="group" aria-label={t.idioma.etiqueta}>
+            <a href={ruta(pagina, "es")} lang="es" hreflang="es" aria-label={t.idioma.es} aria-current={idioma === "es" ? "page" : undefined}>ESP</a>
+            <span aria-hidden="true">/</span>
+            <a href={ruta(pagina, "en")} lang="en" hreflang="en" aria-label={t.idioma.en} aria-current={idioma === "en" ? "page" : undefined}>ENG</a>
           </div>
         </nav>
       </details>
@@ -213,28 +211,37 @@ const GRUPOS = [
     display: grid;
     gap: 2px;
   }
-  .grupo p {
-    margin: 0 0 4px;
-    font-size: 13px;
+  .grupo p,
+  .grupo a.suelto {
+    margin: 0 0 2px;
+    padding: 0;
+    font-size: 20px;
     font-weight: 800;
-    letter-spacing: 0.02em;
-    color: var(--apagado);
+    color: var(--tinta);
   }
   .grupo a {
-    padding: 10px 0;
-    font-size: 18px;
-    color: var(--tinta);
+    padding: 8px 0;
+    font-size: 16px;
+    color: var(--cuerpo);
     text-decoration: none;
   }
-  .grupo a.suelto {
-    font-weight: 700;
-  }
-  .idioma-movil div {
+  /* El idioma, como en el ordenador: una pastilla, para que no parezca una entrada más del menú. */
+  .idioma-movil {
+    justify-self: start;
     display: flex;
-    gap: 24px;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    background: var(--suave);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--apagado);
   }
   .idioma-movil a {
+    padding: 8px 4px;
     color: var(--apagado);
+    text-decoration: none;
   }
   .idioma-movil a[aria-current="page"] {
     color: var(--tinta);

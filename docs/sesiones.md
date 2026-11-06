@@ -15,6 +15,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **Fallo que solo se vio en la web real**: la primera vez, el aviso de cookies tapaba medio menú del
   móvil, y como el menú cabía en la pantalla ni se podía desplazar. Con un menú abierto, la cabecera
   pasa ahora por encima (trampas.md). Hay prueba de primera visita, y se comprobó que falla sin el arreglo.
+- Después, en el menú del móvil: los cuatro epígrafes (Descargar, Usar, Aprender y Novedades) iguales y
+  mayores, las entradas más pequeñas, y ESP / ENG en una pastilla. En Preguntas, «¿Quién hace Apolo?»
+  dice que lo desarrolla Álvaro Cabezas Campos, con enlace a su LinkedIn.
 - LinkedIn de Webcafeína, programado por Metricool para las 15:00: Nacho lo conectó a la marca.
 - Verificado: `make comprobar`, las pruebas de navegador (axe incluido) y la web real con Chromium,
   en 1280 y 390 px.

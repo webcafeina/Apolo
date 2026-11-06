@@ -25,7 +25,20 @@ const datos = {
       c.lista.map((q) => (
         <details>
           <summary>{q.p}</summary>
-          {q.r.map((r) => <p>{r}</p>)}
+          {
+            q.r.map((r) => {
+              const e = q.enlace;
+              if (!e || !r.includes(e.texto)) return <p>{r}</p>;
+              const [antes, despues] = r.split(e.texto);
+              return (
+                <p>
+                  {antes}
+                  <a href={e.href} rel="noopener">{e.texto}</a>
+                  {despues}
+                </p>
+              );
+            })
+          }
         </details>
       ))
     }

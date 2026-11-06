@@ -5,7 +5,11 @@ import type { Idioma } from "../i18n/rutas";
 export interface Pregunta {
   p: string;
   r: string[];
+  /** Si está, ese trozo del texto de la respuesta se enseña como enlace. */
+  enlace?: { texto: string; href: string };
 }
+
+const ALVARO = { texto: "Álvaro Cabezas Campos", href: "https://es.linkedin.com/in/%C3%A1lvaro-cabezas-campos-6336b3207" };
 
 export const PREGUNTAS: Record<Idioma, { titulo: string; descripcion: string; etiqueta: string; h1: string; entrada: string; lista: Pregunta[] }> = {
   es: {
@@ -78,7 +82,8 @@ export const PREGUNTAS: Record<Idioma, { titulo: string; descripcion: string; et
       },
       {
         p: "¿Quién hace Apolo?",
-        r: ["Webcafeína, un estudio de diseño y desarrollo web."],
+        r: ["Webcafeína, un estudio de diseño y desarrollo web. Está desarrollado por Álvaro Cabezas Campos."],
+        enlace: ALVARO,
       },
     ],
   },
@@ -150,7 +155,8 @@ export const PREGUNTAS: Record<Idioma, { titulo: string; descripcion: string; et
       },
       {
         p: "Who makes Apolo?",
-        r: ["Webcafeína, a web design and development studio."],
+        r: ["Webcafeína, a web design and development studio. It is developed by Álvaro Cabezas Campos."],
+        enlace: ALVARO,
       },
     ],
   },

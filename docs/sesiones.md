@@ -4,6 +4,24 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-06 (tarde) · La navegación de la web
+
+- El cliente vio que páginas interesantes casi solo salían en el pie, y que en el móvil no había menú.
+  Eligió las tres mejoras: un **bloque de seis tarjetas** en la portada, **menús** Descargar, Usar y
+  Aprender (con `<details>`, sin JavaScript para abrir) y **pie por columnas**. La lista de enlaces es
+  una sola, `web/src/i18n/navegacion.ts`.
+- Decidido con el cliente en la galería: «Descargar» en infinitivo, como Usar y Aprender, y **en el
+  móvil conviven el botón amarillo y la hamburguesa, con el idioma dentro del menú**.
+- **Fallo que solo se vio en la web real**: la primera vez, el aviso de cookies tapaba medio menú del
+  móvil, y como el menú cabía en la pantalla ni se podía desplazar. Con un menú abierto, la cabecera
+  pasa ahora por encima (trampas.md). Hay prueba de primera visita, y se comprobó que falla sin el arreglo.
+- LinkedIn de Webcafeína, programado por Metricool para las 15:00: Nacho lo conectó a la marca.
+- Verificado: `make comprobar`, las pruebas de navegador (axe incluido) y la web real con Chromium,
+  en 1280 y 390 px.
+- **No verificado**: en un móvil de verdad, con su letra (las medidas son con la del VPS, más ancha).
+
+---
+
 ## 2026-11-06 · Sin firma de Claude, y el carrusel de Apolo en redes
 
 - Al empezar: Security sin nada nuevo. Uptodown rechazó la ficha de Windows sin decir el motivo

@@ -169,7 +169,7 @@ carpeta por cuenta y red.
 |---|---|---|
 | Instagram de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `-8570310223213277228`) | Programado |
 | Facebook de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `4836457296518856725`) | Programado |
-| LinkedIn de Webcafeína | A mano, Nacho (no conectado a Metricool) | Pasado a Nacho |
+| LinkedIn de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `-5058331842053520994`); Nacho lo conectó a la marca y no lo sube a mano | Programado |
 | Instagram, Facebook y LinkedIn de Álvaro | A mano, él, esa tarde (`alvaro/textos.md`) | Pendiente |
 
 Facebook y LinkedIn llevan «Pulsa para ver más» en vez de «Desliza»; las de Álvaro van en singular. El

@@ -708,3 +708,12 @@ sirve 4 horas, aunque el fichero ya esté (`cf-cache-status: HIT`, `cache-contro
 con las láminas de Facebook, y con `robots.txt` se ve lo mismo en su versión vieja. Para comprobar un
 despliegue o darle una URL a un servicio, una consulta nueva (`?v=2`) se salta esa caché. Y conviene
 no pedir nada hasta que `web.yml` haya terminado. · 2026-11-06
+
+## El menú del móvil, tapado en la web real, con las pruebas en verde
+
+En producción, la primera vez, el aviso de cookies tapa la mitad de abajo del menú del móvil y no deja
+pulsar lo que hay debajo; en local se ve perfecto y las 68 pruebas pasan. Dos motivos: `paginas.spec.ts`
+da las cookies por elegidas en su `beforeEach` (`cookiesElegidas`), y un `pnpm build` a mano no lleva el
+identificador de GTM, así que el aviso no existe y tampoco sale en las capturas. Lo que deba convivir con
+el aviso se prueba en `consentimiento.spec.ts`, y lo que se enseñe al cliente se mira también en la web
+real sin haber aceptado. El aviso está en `z-index: 60` y la cabecera en 40; con un menú abierto, 70. (2026-11-06)

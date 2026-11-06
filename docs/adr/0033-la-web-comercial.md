@@ -104,6 +104,9 @@ y un agente de diseño. El plan está en `~/.claude/plans/buenos-d-as-vamos-a-vi
 - Se pierde la búsqueda «alternativa a Squoosh» y la etiqueta `squoosh` del repositorio.
 - Los cambios de la app (frase, `.dmg`, descripciones de los paquetes) llegan con la 1.0.0.
 - `make comprobar` gana la compilación y las pruebas de la web (fase 3).
+- **2026-11-06, la navegación**: la cabecera pasa de anclas de la portada («En tu sistema», «Qué hace»)
+  a menús que llevan a las páginas (Descargar, Usar, Aprender y Novedades), con menú en el móvil y el
+  pie por columnas. Las secciones y sus anclas siguen en la portada.
 
 ## Verificación
 

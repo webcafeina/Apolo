@@ -4,16 +4,22 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-11-06, mediodía): el carrusel de Apolo en redes, programado, y el historial sin
+> **PARADA AQUÍ (2026-11-06, tarde): la navegación de la web, subida.** Bloque «Más de Apolo» en la
+> portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
+> (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
+>
+> **(2026-11-06, mediodía): el carrusel de Apolo en redes, programado, y el historial sin
 > la firma de Claude (ADR 0037).** Detalle en `docs/sesiones.md` y `docs/lanzamiento.md` («Carrusel»).
-> - **Webcafeína**: Instagram y Facebook, programados en Metricool para hoy a las 15:00; LinkedIn, a
->   mano por Nacho. **Álvaro** sube los suyos esta tarde, desde `capturas/cliente/redes/alvaro/`.
+> - **Webcafeína**: Instagram, Facebook y LinkedIn (Nacho lo conectó a la marca), programados en
+>   Metricool para hoy a las 15:00. **Álvaro** sube los suyos esta tarde, desde
+>   `capturas/cliente/redes/alvaro/`.
 > - **Sin firma**: 255 commits de `main`, las 36 etiquetas y el tap reescritos, y ni commits ni PR la
 >   llevan en adelante (memoria). Releases, enlaces fijos, actualizador y procedencia, comprobados.
 >
 > **Lo siguiente**:
-> 1. **Comprobar** que Instagram y Facebook salieron a las 15:00 (`getScheduledPosts` ya no los lista;
->    que el cliente lo confirme) y si `web/public/redes/` se puede quitar: Metricool guardó su copia.
+> 1. **Comprobar** que Instagram, Facebook y LinkedIn salieron a las 15:00 (`getScheduledPosts` ya no
+>    los lista; que el cliente lo confirme, y en LinkedIn es la primera vez por Metricool: las 10
+>    láminas, en orden) y si `web/public/redes/` se puede quitar: Metricool guardó su copia.
 > 2. **@claude sigue en la lista de colaboradores** al cerrar (`contributors_list`), con `main` limpio.
 >    Volver a mirarlo: si en unos días sigue, pedir a GitHub Support que la recalcule.
 > 3. **El cliente, pendiente**: «Check for new commits» en el envío del plugin a Anthropic (han

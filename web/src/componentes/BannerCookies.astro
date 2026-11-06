@@ -57,6 +57,10 @@ const hay = Boolean(import.meta.env.PUBLIC_GTM_ID);
     font-size: 14px;
     box-shadow: 0 0 0 1px var(--filete), 0 24px 60px -18px rgb(0 0 0 / 0.45);
   }
+  /* Mientras el menú del móvil está abierto, fuera: si no, asoma por debajo. */
+  :global(body:has(.menu-movil[open])) .aviso {
+    visibility: hidden;
+  }
   .aviso[hidden] {
     display: none;
   }

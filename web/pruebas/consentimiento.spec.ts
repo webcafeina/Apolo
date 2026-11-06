@@ -18,6 +18,7 @@ test("la primera vez, en el móvil: el aviso no tapa el menú, y vuelve al cerra
   const aviso = page.locator("[data-cookies]");
   await expect(aviso).toBeVisible();
   await page.locator(".menu-movil summary").click();
+  await expect(aviso).toBeHidden();
   await page.locator(".panel-movil .suelto").scrollIntoViewIfNeeded();
   await page.locator(".panel-movil .suelto").click({ trial: true });
   const ingles = page.locator('.idioma-movil a[hreflang="en"]');

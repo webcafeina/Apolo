@@ -1,10 +1,32 @@
 # Estado
 
-Última actualización: **2026-11-05**
+Última actualización: **2026-11-06**
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-11-05, mediodía): v1.0.2 PUBLICADA, de mantenimiento.** Detalle en
+> **PARADA AQUÍ (2026-11-06, mediodía): el carrusel de Apolo en redes, programado, y el historial sin
+> la firma de Claude (ADR 0037).** Detalle en `docs/sesiones.md` y `docs/lanzamiento.md` («Carrusel»).
+> - **Webcafeína**: Instagram y Facebook, programados en Metricool para hoy a las 15:00; LinkedIn, a
+>   mano por Nacho. **Álvaro** sube los suyos esta tarde, desde `capturas/cliente/redes/alvaro/`.
+> - **Sin firma**: 255 commits de `main`, las 36 etiquetas y el tap reescritos, y ni commits ni PR la
+>   llevan en adelante (memoria). Releases, enlaces fijos, actualizador y procedencia, comprobados.
+>
+> **Lo siguiente**:
+> 1. **Comprobar** que Instagram y Facebook salieron a las 15:00 (`getScheduledPosts` ya no los lista;
+>    que el cliente lo confirme) y si `web/public/redes/` se puede quitar: Metricool guardó su copia.
+> 2. **@claude sigue en la lista de colaboradores** al cerrar (`contributors_list`), con `main` limpio.
+>    Volver a mirarlo: si en unos días sigue, pedir a GitHub Support que la recalcule.
+> 3. **El cliente, pendiente**: «Check for new commits» en el envío del plugin a Anthropic (han
+>    cambiado los hashes); preguntar a Uptodown por qué rechazó la ficha de Windows (mensaje en la
+>    conversación, y resumido en `lanzamiento.md`); MacUpdate cuando vuelva su web; enlace de Apolo en
+>    las biografías de Instagram.
+> 4. Vigilar: el revisor de Anthropic, Chocolatey 1.0.2, winget#463314, los PR y mcp.so#6439.
+> 5. Después: revisar el SEO con datos de Search Console (lo recomendado), `tauri-action` 1.0 en una
+>    versión propia, el plugin en Windows sin Node, y quitar las aplicaciones OAuth.
+> En el VPS, Node 22.23.4 con pnpm 11.20.0 (trampas.md). Commits sin firma. Al empezar: `docs/estado.md`
+> y `scripts/seguridad-github.sh`.
+>
+> **(2026-11-05, mediodía): v1.0.2 PUBLICADA, de mantenimiento.** Detalle en
 > `docs/sesiones.md`. Copias con nombre fijo en cada Release (`releases/latest/download/Apolo_universal.dmg`…),
 > acciones, npm y Rust al día (menos `tauri-action` 1.0, que va en otra versión), la equivalencia de
 > Windows estricta. Borrador revisado entero; web, APT, RPM, PKGBUILD, Homebrew y registro de MCP al

@@ -4,7 +4,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
-## 2026-11-06 · Sin firma de Claude, y una publicación en redes (en marcha)
+## 2026-11-06 · Sin firma de Claude, y el carrusel de Apolo en redes
 
 - Al empezar: Security sin nada nuevo. Uptodown rechazó la ficha de Windows sin decir el motivo
   (`docs/lanzamiento.md`); MacUpdate, con su web caída; Softpedia, sin publicar.
@@ -12,7 +12,16 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   (Instagram, Facebook y LinkedIn), en blanco y dorado claro. Detalle en
   `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`.
 - **El historial, sin la firma de Claude** (ADR 0037): 253 commits y las 36 etiquetas reescritas, y los
-  hashes de los documentos cambiados.
+  hashes de los documentos cambiados. Comprobado antes de subir (mismos árboles, autor y fechas) y
+  después: CI en verde, Security sin nada nuevo, 36 Releases, enlaces fijos, `latest.json` y
+  procedencia bien. **@claude seguía en la lista de colaboradores** al cerrar.
+- **El carrusel**: una sola publicación de 10 láminas (el máximo de Instagram por Metricool), en
+  cuaderno, blanco y dorado, con el logo normal, y todos los enfoques juntos. Decidido con el cliente,
+  lámina a lámina: «sencillo, privado y gratis» (no «soberano»), sin insistir en la web ni en comprimir,
+  y en singular en las cuentas de Álvaro. Instagram y Facebook de Webcafeína programados para las 15:00
+  (con su mención); LinkedIn, a mano por Nacho; Álvaro sube los suyos. Galería borrada al cerrar, a
+  petición del cliente; las fuentes y las láminas siguen en `capturas/cliente/redes/`.
+- **No verificado**: que las publicaciones salieran bien a las 15:00; que @claude desaparezca.
 
 ---
 

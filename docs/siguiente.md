@@ -8,6 +8,10 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
+- **Tras el carrusel en redes (2026-11-06)**: confirmar que salió, quitar `web/public/redes/` si ya no
+  hace falta, y mirar si @claude ha desaparecido de colaboradores (si no, soporte de GitHub). Detalle
+  en el primer bloque de `docs/estado.md`.
+
 - ~~**El lunes 2026-11-02** (pedido por el cliente): 1) el correo de info@ y el estado de cada
   servicio, actuando según lo que haya; 2) mcprush (¿reclamar la ficha?); 3) lo que le toca al
   cliente (AlternativeTo, correos de verificación, Glama, OAuth); 4) el resto de la fase comercial.~~

@@ -700,3 +700,11 @@ demás flujos: GitHub no crea eventos si se suben más de 3 etiquetas a la vez, 
 con 36 publicaciones sobre las Releases. Con `git-filter-repo`, `--refs a --refs b` no reescribe nada y no
 da error: se ve en que `commit-map` queda vacío. Se usa en un clon recién hecho, sin `--refs`. Y
 `refs/pull/*` no se pueden tocar: siguen apuntando al historial viejo. · 2026-11-06
+
+## Cloudflare guarda los 404 cuatro horas
+
+Si se pide una dirección de la web antes de que acabe de desplegarse, Cloudflare guarda el 404 y lo
+sirve 4 horas, aunque el fichero ya esté (`cf-cache-status: HIT`, `cache-control: max-age=14400`). Pasó
+con las láminas de Facebook, y con `robots.txt` se ve lo mismo en su versión vieja. Para comprobar un
+despliegue o darle una URL a un servicio, una consulta nueva (`?v=2`) se salta esa caché. Y conviene
+no pedir nada hasta que `web.yml` haya terminado. · 2026-11-06

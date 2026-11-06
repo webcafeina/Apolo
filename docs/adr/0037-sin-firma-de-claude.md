@@ -44,3 +44,9 @@ La línea está en los mensajes de los commits, así que solo sale reescribiendo
   firmas. El tap, 17 commits con el mismo árbol.
 - Copia previa en `~/.cache/apolo-revision/antes-de-reescribir/` y en R2
   (`antes-de-reescribir-2026-11-06/`), como bundles verificados.
+- 2026-11-06, después de subir: `main` y las etiquetas, en GitHub con los hashes nuevos; CI en verde;
+  36 Releases, la 1.0.2 con sus 50 ficheros; enlace fijo, `latest.json` y `gh attestation verify`, bien;
+  la API de colaboradores, solo `webcafeina`.
+- **Sin confirmar**: la lista de colaboradores de la web (`contributors_list`) seguía mostrando a
+  @claude al cerrar la sesión. Si sigue en unos días, se pide a GitHub Support que la recalcule.
+- **Sin ver**: que el envío al directorio de Anthropic siga bien con el commit nuevo (lo mira el cliente).

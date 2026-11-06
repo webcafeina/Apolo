@@ -159,6 +159,27 @@ Leído en el correo de info@webcafeina.com:
   SaaSHub, mcpservers.org y mcprush enlazan a la web o al repositorio; Glama ya usa la última;
   Softpedia y MajorGeeks solo si los publican.
 
+### Carrusel de Apolo (2026-11-06)
+
+Una publicación de 10 láminas, sin vídeo. Fuentes y láminas (sin subir a git) en
+`capturas/cliente/redes/`: `fuente/carrusel.html`, `fuente/versiones.py` y `fuente/render.mjs`, y una
+carpeta por cuenta y red.
+
+| Dónde | Cómo | Estado |
+|---|---|---|
+| Instagram de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `-8570310223213277228`) | Programado |
+| Facebook de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `4836457296518856725`) | Programado |
+| LinkedIn de Webcafeína | A mano, Nacho (no conectado a Metricool) | Pasado a Nacho |
+| Instagram, Facebook y LinkedIn de Álvaro | A mano, él, esa tarde (`alvaro/textos.md`) | Pendiente |
+
+Facebook y LinkedIn llevan «Pulsa para ver más» en vez de «Desliza»; las de Álvaro van en singular. El
+enlace mide con `utm_campaign=carrusel-apolo`. Las láminas están en `web/public/redes/` porque
+Metricool pide una URL pública; se pueden quitar una vez publicadas, porque guarda su copia. YouTube,
+conectado a la marca, solo admite vídeo: se dejó fuera.
+
+**A Uptodown** (rechazo sin motivo): preguntar qué falló en concreto y si se puede reenviar con la 1.0.2,
+diciendo que el instalador no está firmado por si es eso. El cliente busca dónde enviarlo en su consola.
+
 ### Enlaces fijos (desde la 1.0.2)
 
 Cada Release lleva, además de los ficheros con versión, una copia sin número

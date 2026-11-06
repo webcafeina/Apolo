@@ -69,14 +69,14 @@
 > cerrada.** Por la tarde:
 > - Dependabot publicó tres avisos de `zip` (uno crítico). Con el sí del cliente,
 >   `tauri-plugin-updater` 2.14.1 (`zip` 9, `minisign-verify` 0.3) y `apolo-mcpb` a `zip` 9; fuera
->   sus excepciones de `deny.toml` y **las 6 alertas, cerradas** (`c9c2681`).
+>   sus excepciones de `deny.toml` y **las 6 alertas, cerradas** (`d8a79d0`).
 > - Repaso de lo desactualizado: **libheif 1.23.7** (14 fallos graves, uno solo de la 1.23.6 que
 >   llevábamos) y **libpng 1.6.58** (CVE-2025-64505, 64720, 65018 y CVE-2026-22695); zlib se queda
 >   en la 1.3.1 (la 1.3.2 choca con el CMake de libjxl: trampas.md) y aom en la 3.14.1 (la que fija
->   libavif). Más Tauri 2.12.5 y las menores de Rust y npm (`71b8203`). `make equivalencia`, todo
+>   libavif). Más Tauri 2.12.5 y las menores de Rust y npm (`59c9d05`). `make equivalencia`, todo
 >   igual byte a byte.
 > - Compilación de prueba de `Publicar` en verde con humo; **v1.0.1 publicada a las 18:46 UTC**
->   (`3b0ca97`) con el borrador revisado: 30 sumas, 16 firmas de `latest.json`, procedencia en los
+>   (`b88847e`) con el borrador revisado: 30 sumas, 16 firmas de `latest.json`, procedencia en los
 >   30 ficheros, AVIF 5/5 igual que avifenc. Web, APT, RPM, Homebrew, PKGBUILD y registro de MCP, al
 >   día solos. **El cliente actualizó con el aviso en el Mac, Windows y Ubuntu, y Arch por
 >   `pacman`**: el actualizador nuevo, visto (falta la AppImage).
@@ -114,7 +114,7 @@
 > **(2026-10-27, noche): v1.0.0 PUBLICADA (18:05 UTC), con la web nueva.** `Publicar` 40546962088
 > en verde a la primera (humo incluido). Borrador revisado: 31 ficheros, 30 sumas, 9 firmas,
 > `latest.json` 1.0.0 con 16 plataformas y las 16 firmas válidas, **procedencia verificada en los 22
-> ficheros** (`publicar.yml@refs/tags/v1.0.0`, commit `1c4ec98`), CLI y `apolo-mcp` 1.0.0, los cinco
+> ficheros** (`publicar.yml@refs/tags/v1.0.0`, commit `13e5cfc`), CLI y `apolo-mcp` 1.0.0, los cinco
 > `.mcpb` 1.0.0 sin Squoosh, Windows sin DLL de Visual C++ y manifiesto ARM64 idéntico al de la
 > 0.18.3, AVIF 3/3 igual que avifenc 1.4.2, `.deb` y lanzador con la frase nueva, `.dmg` con el fondo
 > nuevo. Al publicar: **la web nueva en el aire** (27 rutas bien, cabeceras, CSP, APT, RPM y PKGBUILD
@@ -129,11 +129,11 @@
 > primera revisión de `docs/seo.md`.
 >
 > **(2026-10-27, tarde): S5, copias de seguridad y el cambio de web hechos; lo siguiente, la 1.0.0.**
-> - S5 (`c9fa1a1`): README con lo que se busca y «Verificar la descarga», plantillas de
+> - S5 (`503198d`): README con lo que se busca y «Verificar la descarga», plantillas de
 >   incidencias, Discussions (activado por el cliente), `mcp.yml` para el registro oficial de MCP al
 >   publicar, `docs/lanzamiento.md` (envíos del día de la 1.0.0) y `docs/seo.md`. Bing Webmaster
 >   Tools, dado de alta por el cliente. GA4 ya trae el canal «AI Assistant».
-> - **Copias de seguridad** (`6c695e0`, ADR 0035, `docs/restaurar.md`): claves cifradas en R2 y en
+> - **Copias de seguridad** (`802ef32`, ADR 0035, `docs/restaurar.md`): claves cifradas en R2 y en
 >   el Mac del cliente (la frase, en su Coda; probada por él), copia semanal los domingos a las
 >   04:00 y ensayo de restauración el día 1 a las 05:00, con aviso de healthchecks.io.
 > - Dependabot: cerrados también el #6 (`zip` 9) y la alerta de `glib` (código sin usar).
@@ -162,7 +162,7 @@
 > `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (arriba el de ahora; el de la fase comercial,
 > como anexo). Decidido con el cliente: Cloudflare delante de Pages, sección de guías, comparativas
 > que nombran a otras herramientas (Squoosh incluido, **solo ahí**) y **todo antes de la 1.0.0**.
-> - **S1, repositorio y CI** (`337a5d4`): acciones fijadas por commit, permisos mínimos,
+> - **S1, repositorio y CI** (`cedb9cb`): acciones fijadas por commit, permisos mínimos,
 >   `persist-credentials: false`, `make seguridad` (zizmor y `cargo deny`, dentro de
 >   `make comprobar` y de CI; excepciones en `.github/zizmor.yml` y `deny.toml`), Dependabot,
 >   Scorecard, procedencia firmada de la Release (`attest-build-provenance`, **se verá por primera vez
@@ -172,16 +172,16 @@
 >   vulnerabilidades, actualizaciones de seguridad de Dependabot y CodeQL. **Dependabot**: cerrados
 >   los PR #1–#5 y #7–#10 hasta después de la 1.0.0 (con su sí); **el #6 (`zip` 9) sigue abierto**
 >   para revisarlo aparte (quitaría tres excepciones de `deny.toml`).
-> - **S2, la web** (`e348d2f` y Cloudflare, hecho por el cliente guiado): proxy de Cloudflare en
+> - **S2, la web** (`336911c` y Cloudflare, hecho por el cliente guiado): proxy de Cloudflare en
 >   `apolo` con tres reglas solo para ese nombre (SSL Estricto, sin caché en `/apt` `/rpm` `/aur`,
 >   siete cabeceras de seguridad), comprobado con `curl` (cabeceras, repositorios, `apt`, GPTBot y
 >   ClaudeBot); CSP con hashes de Astro (`security.csp`); notas saneadas; `security.txt`;
 >   «Comprobar la descarga» en cada página de descarga. **El 20 de diciembre de 2026, comprobar que
 >   GitHub renovó su certificado con el proxy delante** (trampas.md).
-> - **S3, SEO técnico** (`e9cb296`): grafo JSON-LD en cada página, `lastmod`, `llms.txt` y
+> - **S3, SEO técnico** (`bfe87f5`): grafo JSON-LD en cada página, `lastmod`, `llms.txt` y
 >   `llms-full.txt`, rastreadores de IA en `robots.txt`, IndexNow en el borrador de `web.yml`,
 >   título de la portada con lo que se busca, `.mcpb` apuntando a la web.
-> - **S4, contenido** (`4f07203` y `7198500`): seis guías y cuatro comparativas en es y en, con
+> - **S4, contenido** (`aa3635b` y `2b001c2`): seis guías y cuatro comparativas en es y en, con
 >   cifras medidas por Apolo (`sitio/herramientas/medidas.mjs` → `src/datos/medidas.json`); el
 >   cliente pidió más diseño y se rehicieron con cifras, barras, capturas y tarjetas. Galería:
 >   https://claude.ai/artifact/WZ1BcoNiDeTPjYDBcNK88R (capturas en el scratchpad,
@@ -197,13 +197,13 @@
 > bloque de abajo.
 >
 > **(2026-10-26, noche): la web nueva, revisada por el cliente en la galería; mañana,
-> guiado paso a paso, lo que necesita de él.** Todo subido: `42f3d11` (el aviso de cookies, tarjeta
+> guiado paso a paso, lo que necesita de él.** Todo subido: `f704677` (el aviso de cookies, tarjeta
 > de 360 px abajo a la izquierda en pantallas de 1000 px o más, para no tapar el botón de descarga)
-> y `f9e5edb` (el aviso con texto genérico, «Esta web usa cookies», a petición del cliente: no
+> y `9dbdadf` (el aviso con texto genérico, «Esta web usa cookies», a petición del cliente: no
 > quiere que diga para qué se mide; el detalle se queda en la política). `make comprobar` y
-> `make web-e2e` en verde en local; `Comprobar` de CI en verde con `42f3d11` (comprobar, e2e con
+> `make web-e2e` en verde en local; `Comprobar` de CI en verde con `f704677` (comprobar, e2e con
 > `web-e2e` por primera vez en CI, y equivalencia). **Comprobar al empezar** cómo acabó el último
-> `Comprobar` de `main` (`gh run list --workflow comprobar.yml --limit 1`): las de `f9e5edb` y de
+> `Comprobar` de `main` (`gh run list --workflow comprobar.yml --limit 1`): las de `9dbdadf` y de
 > los documentos se cancelan al subir el siguiente commit, y la última prueba todo junto. La galería de revisión (artefacto) se borró al cerrar, a
 > petición del cliente; sus capturas y su página siguen en el scratchpad de la sesión
 > (`revision/`), por si hace falta rehacerla. **Lo siguiente, mañana, guiando al cliente paso a paso** (lo pidió así):
@@ -319,7 +319,7 @@
 > nuevo, la bienvenida de Windows). **Lo siguiente**: la prueba guiada final y la 1.0.0.
 >
 > **(2026-10-24, noche): v0.18.2 etiquetada, sin publicar.** El
-> cliente la pidió como versión, para verla actualizando. Etiqueta `v0.18.2` en `bac46b0`
+> cliente la pidió como versión, para verla actualizando. Etiqueta `v0.18.2` en `bf7f06b`
 > (Comprobar en verde); `Publicar` **40118422741** lanzado y sin esperar: al cerrar iban bien Linux,
 > Windows x64, las CLI y la CLI de macOS, y seguían compilando `macos-universal` y `windows-arm64`.
 > **Es la primera compilación de macOS con el cambio de `ventana_macos.rs`**: Comprobar solo compila
@@ -372,7 +372,7 @@
 >
 > **(2026-10-24): v0.18.0 hecha y con la galería aprobada.** El cliente vio la galería
 > (https://claude.ai/artifact/74j6quMT3n3XCiUHpM3VrC): «todo perfecto». Al sacarla se arreglaron
-> dos cosas (`63b1741`): los botones de la ventanita salían planos (las reglas de la barra los
+> dos cosas (`9881eac`): los botones de la ventanita salían planos (las reglas de la barra los
 > alcanzaban) y en Lotes se abría cortada (trampas.md). ADR 0032, matices en la 0020 y la 0023.
 > Todo subido, `make comprobar` y e2e (147) en verde. **Lo siguiente**: que el cliente pruebe la
 > compilación de prueba en sus máquinas (Mac, Windows ARM, Ubuntu, Kubuntu o Fedora KDE): la barra,
@@ -384,7 +384,7 @@
 > **(2026-10-23, tarde): v0.18.0 hecha en el código hasta la fase 4 de 5.** Plan aprobado por el cliente en
 > `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (léelo: tiene todas sus decisiones). Hecho
 > y con `make comprobar` y el e2e entero (147) en verde, en dos commits **sin subir todavía**
-> (`f5cb51c` núcleo, MCP y CLI; `d14b49a` interfaz):
+> (`8a09658` núcleo, MCP y CLI; `d3a9b2e` interfaz):
 > - núcleo: `Medida` (medidas, `LadoMayor`, `Porcentaje`) en `Redimension`, guardada plana con
 >   `modo` (los presets de antes se leen igual); `Proceso::efectivo` y `salida::efectivo` (una
 >   redimensión o un recorte que no cambian nada ya no cuestan la orden equivalente); `lote::ejecutar`
@@ -410,7 +410,7 @@
 > **(2026-10-23): v0.17.0 publicada (11:26 UTC), KDE con Breeze** (ADR 0031). El
 > cliente la vio «perfecto» en **Kubuntu ARM** (compilación de prueba 39919081725, tras arreglar el
 > icono de la barra lateral, Diferencias y el grupo de modos) y en **Fedora KDE ARM** (el rpm de la
-> misma). De Fedora salieron dos cosas, arregladas en `9dbc508`: Agentes de IA en KDE va en
+> misma). De Fedora salieron dos cosas, arregladas en `d3fbcc9`: Agentes de IA en KDE va en
 > tarjetas (no en el formulario de Ajustes) y, en todo Linux, un nombre de archivo largo se corta
 > en la cabecera del Estudio (trampas.md). También arregla tres iconos de Yaru rotos desde la
 > v0.15.0. `Publicar` 39941359700 en verde a la primera, humo incluido. Borrador revisado: 31
@@ -427,7 +427,7 @@
 > pendiente de verla en Kubuntu.** El cliente eligió sobre la galería
 > (https://claude.ai/artifact/AGwN7QZdye1UBGJa8bKkDR) la **barra de Apolo también en KDE** (sin la de
 > KWin, con el marco de Breeze: `MARCO_KDE`, radio 5) y el **botón principal relleno de oro**.
-> Hecho (`70066a4`, `72d5d14`, subidos; `make comprobar`, e2e 121 y `Comprobar` de CI en verde):
+> Hecho (`fc1cfc5`, `efc93e1`, subidos; `make comprobar`, e2e 121 y `Comprobar` de CI en verde):
 > `escritorio()` en `ventana_linux.rs` (`gnome`/`kde`/`otro`) → `data-escritorio`; paletas
 > `kde_claro`/`kde_oscuro` (10 en total); `sistema-kde.css`; `iconos-breeze.ts` (LGPL-3.0,
 > generados con `~/.cache/apolo-revision/breeze.py` desde `~/.cache/kde-ref/`); `kde.spec.ts`;
@@ -471,7 +471,7 @@
 > el aviso en el Mac (el interruptor con su burbuja), en Windows (el editor) y en Ubuntu; luego la
 > prueba guiada final y la 1.0.0.
 >
-> **Los huecos al repintar en la máquina virtual de Linux no son nuestros** (`7659847`): salen
+> **Los huecos al repintar en la máquina virtual de Linux no son nuestros** (`6908b55`): salen
 > también con la primera compilación de prueba (gris oscuro) y sin marco, y no los quitan ni CPU,
 > ni sin composición, ni sin DMA-BUF. El marco se queda; fuera el pintado por CPU; en trampas.md,
 > deuda.md y la ADR 0029. Falta verlo en un Linux de verdad.

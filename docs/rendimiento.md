@@ -24,7 +24,7 @@ BANCO_LOTE=16 scripts/banco.sh      # un lote corto
 ## Antes y después
 
 Con una foto de 24 MP, o 200 en los lotes. «Antes» es la v0.10.2; «ahora», la v0.11.0
-(`092d54f`, 2026-10-20).
+(`ee1e05d`, 2026-10-20).
 
 | Caso | Antes | Ahora |
 |---|---:|---:|

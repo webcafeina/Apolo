@@ -4,24 +4,36 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-06 · Sin firma de Claude, y una publicación en redes (en marcha)
+
+- Al empezar: Security sin nada nuevo. Uptodown rechazó la ficha de Windows sin decir el motivo
+  (`docs/lanzamiento.md`); MacUpdate, con su web caída; Softpedia, sin publicar.
+- **Plan aprobado** para una sola publicación en carrusel: Webcafeína (Instagram y LinkedIn) y Álvaro
+  (Instagram, Facebook y LinkedIn), en blanco y dorado claro. Detalle en
+  `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`.
+- **El historial, sin la firma de Claude** (ADR 0037): 253 commits y las 36 etiquetas reescritas, y los
+  hashes de los documentos cambiados.
+
+---
+
 ## 2026-11-05 · La 1.0.2, de mantenimiento
 
 - Al empezar: Security sin nada nuevo. Chocolatey aprobó la 1.0.1; Product Hunt, un voto y sin
   comentarios (el cliente lo deja así); el plugin, «En revisión» en Anthropic. Una aplicación OAuth
   más en GitHub, Arcade.dev Sign In, para quitar con las otras.
-- **Copias con nombre fijo** en cada Release (`e911396`): `empaquetado/nombres-fijos.py` en
+- **Copias con nombre fijo** en cada Release (`5438b8b`): `empaquetado/nombres-fijos.py` en
   `publicar.yml`; la web, APT/RPM y las copias de seguridad siguen con los nombres con versión.
-- **Mantenimiento**: las acciones a sus últimas versiones (`9c82fd2`), menos `upload-pages-artifact`
+- **Mantenimiento**: las acciones a sus últimas versiones (`5bc8426`), menos `upload-pages-artifact`
   (la v4 deja fuera `.well-known/`: trampas.md) y `tauri-action` (la 1.0 cambia mucho: otra versión);
-  npm al día con TypeScript 6 (`9cf8e94`; la 7 no la admite @astrojs/check); 13 menores de Rust
-  (`dcdd4a6`). En Windows, la equivalencia con avifenc, cjxl y cwebp, que ya existía pero solo
-  informaba, ahora falla si hay una diferencia, con 32 casos (`26c9671`).
+  npm al día con TypeScript 6 (`02d1d8a`; la 7 no la admite @astrojs/check); 13 menores de Rust
+  (`5f375a3`). En Windows, la equivalencia con avifenc, cjxl y cwebp, que ya existía pero solo
+  informaba, ahora falla si hay una diferencia, con 32 casos (`2dec05b`).
 - Tropiezos: Astro 7.4.2+ pide Node 22.23.4 y el `PATH` del VPS ponía la 22.23.1; la 22.23.4 traía
   pnpm 9 (trampas.md). Playwright 1.64 dejaba navegando el clic de descarga en una prueba de la web
-  (`a5315f5`).
+  (`50d9c75`).
 - Verificado: `make comprobar` y `make equivalencia` (todo igual: cwebp 1015, cjpeg 816, oxipng
   351, avifenc 376, cjxl 280, qoiconv 13, ssimulacra2 56); compilación de prueba de `Publicar`
-  (42017441393) con los seis humos (Windows 32/32); **la 1.0.2** (`6d6f442`, publicada a las 12:47
+  (42017441393) con los seis humos (Windows 32/32); **la 1.0.2** (`7af918f`, publicada a las 12:47
   UTC) con el borrador revisado: 50 ficheros, 49 sumas, **19 copias idénticas**, 16 firmas,
   procedencia 50/50, `apolo` y `apolo-mcp` 1.0.2, AVIF 5/5 con avifenc. Web, APT (un paquete por
   arquitectura), RPM, PKGBUILD, Homebrew y registro de MCP al día solos; los enlaces fijos dan la
@@ -40,17 +52,17 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **Correo**: Chocolatey aprobó la 1.0.0 el 31 y **se subió la 1.0.1** (sumas comprobadas; en
   moderación); mcpservers.org y SaaSHub, aprobadas; Glama, en la 1.0.1 sola. La prueba del tap de
   Homebrew fallaba desde el 30 por la regla `Homebrew/OSDependsOn`: `depends_on :macos` en el tap y
-  en la plantilla (`bf23e3d`), tap en verde.
+  en la plantilla (`fd26700`), tap en verde.
 - **Con el cliente, guiado**: las seis «Suggest alternative» de AlternativeTo, los correos de
   verificación (todos), la respuesta a Frank de Glama (que también mantiene awesome-mcp-servers) y
-  **mcprush reclamado**: insignia en los README (`7208fba`), textos nuevos, nada de cobrar ni alojar;
+  **mcprush reclamado**: insignia en los README (`323b710`), textos nuevos, nada de cobrar ni alojar;
   sus 12 avisos de seguridad son de herramientas de desarrollo y pruebas, no del servidor. Las
   aplicaciones OAuth de MCP So y OpenAlternative, para más adelante.
-- **Apolo como plugin de Claude** (ADR 0036, `e2869ce`): lanzador en Node que usa el `apolo-mcp`
+- **Apolo como plugin de Claude** (ADR 0036, `aca11f6`): lanzador en Node que usa el `apolo-mcp`
   instalado y, si no está, explica cómo instalar Apolo (sin bajar nada, decisión del cliente); el
   plugin con su *skill* en `empaquetado/claude/apolo` y el marketplace `webcafeina` en la raíz;
   `make plugin` en `make comprobar`; la **página de privacidad** del programa en la web, con los
-  textos aprobados por el cliente. **Smithery se quitó el mismo día** (`2ca2427`): cerró cuentas,
+  textos aprobados por el cliente. **Smithery se quitó el mismo día** (`5bf4e9a`): cerró cuentas,
   claves y API el 31 de octubre (ahora es de Arcade.dev); la clave se borró.
 - Verificado: 9 pruebas del lanzador y `claude plugin validate --strict`; con `claude -p
   --plugin-dir` sin Apolo (explica cómo instalarlo) y con el `apolo-mcp` de la CLI 1.0.1 (responde);
@@ -66,18 +78,18 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ## 2026-10-30 (tarde) · La 1.0.1, de seguridad
 
-- Subido lo de la mañana (`16bedb4`) tras `make comprobar`. La pestaña Security trajo **tres
+- Subido lo de la mañana (`d5a13ec`) tras `make comprobar`. La pestaña Security trajo **tres
   avisos nuevos de `zip`** (GHSA-m665-v7pm-7grj crítico, GHSA-q7v9-x93c-xqv3, GHSA-8hxf-qr8p-62x4),
   los mismos que `deny.toml` ya ignoraba. Con el sí del cliente: `tauri-plugin-updater` 2.14.1 y
-  `apolo-mcpb` a `zip` 9, fuera las excepciones (`c9c2681`); las 6 alertas se cerraron solas.
+  `apolo-mcpb` a `zip` 9, fuera las excepciones (`d8a79d0`); las 6 alertas se cerraron solas.
 - Repaso de lo desactualizado, a petición del cliente: libheif 1.23.7 (seguridad, 14 graves),
-  libpng 1.6.58 (cuatro CVE), Tauri 2.12.5 y las menores de Rust y npm (`71b8203`). zlib 1.3.2 no
+  libpng 1.6.58 (cuatro CVE), Tauri 2.12.5 y las menores de Rust y npm (`59c9d05`). zlib 1.3.2 no
   entra (su CMake choca con el de libjxl: trampas.md, deuda) y aom no se toca (la fija libavif).
   Las acciones de GitHub y los saltos mayores de npm (TypeScript 7, `@types/node` 26), para otra
   tanda.
 - Verificado: `make comprobar` y `make equivalencia` (cwebp 1015, cjpeg 816, oxipng 351, avifenc
   376, cjxl 280, qoiconv 13, ssimulacra2 56, todo igual); `Publicar` de prueba en los seis objetivos
-  con humo; la **v1.0.1** (`3b0ca97`) publicada a las 18:46 UTC con el borrador revisado (30 sumas,
+  con humo; la **v1.0.1** (`b88847e`) publicada a las 18:46 UTC con el borrador revisado (30 sumas,
   16 firmas, procedencia 30/30, `apolo` y `apolo-mcp` 1.0.1, libpng 1.6.58 en el binario, libheif
   1.23.7 por el submódulo de la etiqueta, una HEIC del iPhone convertida, AVIF 5/5 con avifenc); web,
   APT, RPM, Homebrew, PKGBUILD y registro de MCP al día solos. **El cliente actualizó desde la 1.0.0
@@ -93,7 +105,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ## 2026-10-30 · La fase comercial: directorios, listas, MCP, prensa y Chocolatey
 
-- Al empezar: la pestaña Security sin nada nuevo y la CI de `e3abe6e` en verde. Disco del 88 % al
+- Al empezar: la pestaña Security sin nada nuevo y la CI de `da78fc4` en verde. Disco del 88 % al
   84 % (copias viejas de `target/debug/deps` e `incremental`).
 - **CLA de Microsoft firmada** en winget-pkgs#463314 con el sí del cliente; se quitó `Needs-CLA`.
 - **Guiados, con la cuenta del cliente**: AlternativeTo (en revisión), Product Hunt (programado para
@@ -123,12 +135,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ## 2026-10-27 (tarde y noche) · S5, copias de seguridad, el cambio de web y la 1.0.0
 
-- **S5** (`c9fa1a1`): README con lo que se busca y «Verificar la descarga», plantillas de incidencias,
+- **S5** (`503198d`): README con lo que se busca y «Verificar la descarga», plantillas de incidencias,
   Discussions, `mcp.yml` para el registro oficial de MCP y `docs/lanzamiento.md` y `docs/seo.md`.
   El cliente dio de alta Bing Webmaster Tools; GA4 ya trae el canal «AI Assistant».
 - **Copias de seguridad** (ADR 0035): claves cifradas en R2 y en el Mac del cliente (frase en su
   Coda, probada por él), copia semanal y ensayo mensual, con healthchecks.io.
-- **El cambio de web** (`52f7097`): `sitio/` → `web/`, la web vieja fuera y `web.yml` solo al
+- **El cambio de web** (`9de0fa6`): `sitio/` → `web/`, la web vieja fuera y `web.yml` solo al
   publicar hasta la 1.0.0.
 - **v1.0.0 publicada (18:05 UTC)**: Publicar en verde a la primera; borrador revisado entero, con la
   procedencia de los 22 ficheros verificada; al publicar, la web nueva en el aire (comprobada en un
@@ -175,15 +187,15 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 ## 2026-10-26 (noche) · La web nueva, revisada por el cliente: el aviso de cookies
 
 - **El aviso tapaba el botón de descarga** en portátiles: en pantallas de 1000 px o más pasa a ser
-  una tarjeta de 360 px abajo a la izquierda (`42f3d11`). A 1280×800 queda a 40 px del botón;
+  una tarjeta de 360 px abajo a la izquierda (`f704677`). A 1280×800 queda a 40 px del botón;
   medido con Playwright, también en 1366×680, 1440×760 y 1920×950.
 - **Galería de revisión** para el cliente (artefacto, borrado al cerrar): portada en Mac, Windows
   y KDE, descargas, páginas, aviso y móvil. Su única pega: el aviso no debe decir para qué se mide
   («¿Medimos las visitas?»). Ahora es genérico: «Esta web usa cookies», cookies propias necesarias
-  y de terceros con fines analíticos (`f9e5edb`, es y en).
+  y de terceros con fines analíticos (`9dbdadf`, es y en).
 - Verificado: `make comprobar` y `make web-e2e` (34) en local; `Comprobar` de CI en verde con
-  `42f3d11`, con `web-e2e` por primera vez en CI. El de `e1a6005` se canceló al subir otro commit
-  (la concurrencia de `comprobar.yml`). El de `f9e5edb`, en marcha al cerrar.
+  `f704677`, con `web-e2e` por primera vez en CI. El de `8669c4d` se canceló al subir otro commit
+  (la concurrencia de `comprobar.yml`). El de `9dbdadf`, en marcha al cerrar.
 - Abierto: GTM con GA4, Search Console y `gh repo edit`, mañana con el cliente guiado paso a paso;
   luego F10 y la 1.0.0 (estado.md).
 
@@ -204,11 +216,11 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ## 2026-10-26 (mediodía) · La web nueva: portada, páginas, SEO, cookies y README
 
-- **F3** (`8da6391`): Astro en `sitio/`, `css_web()` en crates/tema, `release.ts`, `plataforma.ts`,
+- **F3** (`85c3822`): Astro en `sitio/`, `css_web()` en crates/tema, `release.ts`, `plataforma.ts`,
   `make web` en `make comprobar`. Una lección: un commit con heredoc partió la cadena de órdenes y la
   segunda línea se ejecutó con clippy fallido (no subió nada); el mensaje va ahora a un fichero
   (memoria `comprobar-antes-de-subir`).
-- **F4** (`c469810`): la portada con el estilo de Apple y «las dos»; galería para el cliente (artefacto, borrado al cerrar). El cliente: «Adelante, se revisará cuando
+- **F4** (`56957fb`): la portada con el estilo de Apple y «las dos»; galería para el cliente (artefacto, borrado al cerrar). El cliente: «Adelante, se revisará cuando
   esté terminada».
 - **F5 a F9, sin subir** (estado.md dice qué falta): capturas y vídeos definitivos en marcha,
   páginas, SEO, GTM con el aviso propio, iconos e imagen social, README nuevo, pruebas de navegador
@@ -321,7 +333,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 - Capturas nuevas («redimensionar», «recorte», «lotes con tamaño») en los cinco aspectos y galería
   (https://claude.ai/artifact/74j6quMT3n3XCiUHpM3VrC): el cliente, «todo perfecto».
-- Arreglado al revisarlas (`63b1741`): los botones de la ventanita, planos por las reglas de la barra;
+- Arreglado al revisarlas (`9881eac`): los botones de la ventanita, planos por las reglas de la barra;
   en Lotes, la ventanita se abría hacia arriba y quedaba cortada (el foco desplazaba el contenido;
   trampas.md).
 - ADR 0032, matices en la 0020 y la 0023, su línea en decisiones.md.
@@ -346,8 +358,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   tamaños habituales); nunca agranda por defecto; el lado mayor y el porcentaje se guardan como tales;
   un preset no guarda el recorte y, sin tamaño, conserva el de la barra; los lotes nunca recortan;
   «Tamaño» en Lotes; `apolo lote --lado-mayor/--porcentaje`; galería de capturas antes de compilar.
-- Hecho en `f5cb51c` (núcleo, MCP, CLI; con el arreglo de la redimensión que no hace nada, que
-  marcaba como procesada y quitaba la orden equivalente) y `d14b49a` (la barra, la ventanita, Lotes y
+- Hecho en `8a09658` (núcleo, MCP, CLI; con el arreglo de la redimensión que no hace nada, que
+  marcaba como procesada y quitaba la orden equivalente) y `d3a9b2e` (la barra, la ventanita, Lotes y
   el aspecto de los cinco sistemas, con iconos de Fluent, Yaru y Breeze).
 - Verificado: `make comprobar` y e2e entero (147) en verde. Sin subir.
 - Abierto: la galería, la ADR 0032, subir, la compilación de prueba y la v0.18.0 (estado.md).
@@ -362,7 +374,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   al juntar trazados, que rompía también tres iconos de Yaru desde la v0.15.0 (trampas.md);
   regenerados. Con la 39919081725, «perfecto».
 - Fedora KDE ARM con el rpm de la 39919081725: «todo perfecto», con dos apuntes arreglados en
-  `9dbc508`: Agentes de IA en tarjetas en KDE y el nombre de archivo largo que no se cortaba en la
+  `d3fbcc9`: Agentes de IA en tarjetas en KDE y el nombre de archivo largo que no se cortaba en la
   cabecera del Estudio en Linux (`max-width` en `.titulos`; trampas.md). Pruebas nuevas en
   `linux.spec.ts` y `kde.spec.ts`.
 - Verificado: `make comprobar`, e2e 129, `Comprobar` y `Publicar` 39941359700 en verde (humo de
@@ -421,8 +433,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   cliente vio bien la sombra y las esquinas, pero con **huecos al repintar**. Descartados uno a
   uno: pintado por CPU, sin composición, sin DMA-BUF, sin marco y la primera compilación (también
   salen, en gris oscuro): son de la gráfica virtual (trampas.md, deuda.md). Fuera el pintado por
-  CPU (`7659847`).
-- El cliente pidió publicar: versión 0.15.0 (`c142c8d`), notas bilingües, `make comprobar` y CI en
+  CPU (`6908b55`).
+- El cliente pidió publicar: versión 0.15.0 (`7f0b841`), notas bilingües, `make comprobar` y CI en
   verde, etiqueta `v0.15.0`. Se paró con `publicar.yml` 39778214906 en marcha y se siguió por la
   tarde: en verde a la primera; borrador revisado como siempre (bajado a `~/.cache`: en `/tmp` no
   cabe por la cuota) y **v0.15.0 publicada a las 14:59 UTC**, con el tap de Homebrew al día.
@@ -446,8 +458,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   controles (brillo, abombado y la burbuja al pulsar). «Está perfecto como está ahora».
 - Verificado: `make comprobar`, e2e (91), capturas; clippy de `ventana_macos.rs` para Apple silicon.
 - **No verificado**: nada en un Mac (deuda.md).
-- Subido (`44daf82`). El cliente prefirió publicar la v0.14.0 directamente y actualizar su Mac desde
-  el aviso: cancelada la compilación de prueba; versión y notas (`9f31c7b`), CI en verde, etiqueta.
+- Subido (`8d3de36`). El cliente prefirió publicar la v0.14.0 directamente y actualizar su Mac desde
+  el aviso: cancelada la compilación de prueba; versión y notas (`e0bf134`), CI en verde, etiqueta.
   En `publicar.yml` 39628230375, tres trabajos fallaron por un 503 de googlesource.com al clonar
   aom y libyuv (trampa); relanzados, salieron bien. Borrador revisado entero y **publicada la
   v0.14.0** a las 18:40 UTC; el tap se actualizó solo.
@@ -484,10 +496,10 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   la web iguales que antes; `ventana_windows.rs` compila para Windows y pasa clippy.
 - **No verificado**: nada en un Windows de verdad (deuda.md).
 - La carpeta temporal se llenó (EDQUOT) con la compilación de prueba para Windows (trampa).
-- Subido (`d8a0f3e`), CI y la compilación de prueba en verde; el humo abrió la ventana en Windows
+- Subido (`d05e7a9`), CI y la compilación de prueba en verde; el humo abrió la ventana en Windows
   x64. **Prueba en la máquina virtual Windows 11 ARM del cliente, bien**; pidió que el panel se
   animara al plegarse (hecho, 200 ms). Mica se queda con su tinte normal. El oscuro, sin ver.
-- «Adelante, publica»: v0.13.0 con notas bilingües (`cbf32ef`), CI en verde, etiqueta empujada.
+- «Adelante, publica»: v0.13.0 con notas bilingües (`60fbf1d`), CI en verde, etiqueta empujada.
   Por la tarde: el `.dmg` falló por `bundle_dmg.sh` y salió a la segunda; borrador revisado entero
   (sumas, firmas, `latest.json`, versiones, `.mcpb`, manifiesto ARM64, sin DLL de Visual C++,
   AVIF 3/3) y **publicada la v0.13.0** a las 13:56 UTC; el tap de Homebrew se actualizó solo.

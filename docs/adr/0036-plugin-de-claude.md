@@ -43,7 +43,7 @@ mismo día**: había cerrado su publicación el 31 de octubre (abajo).
   guion, el manifiesto con las herramientas del servidor y ningún binario (unos 80 KB).
   `publicar.yml` lo añade a la Release, y `smithery.yml`, al publicarla, lo sube a la API de
   Smithery (`PUT /servers/webcafeina%2Fapolo/releases`) con el secreto `SMITHERY_API_KEY`.~~
-  **Quitado el 2026-11-03**, el mismo día (`e2869ce` lo trajo y el commit siguiente lo saca):
+  **Quitado el 2026-11-03**, el mismo día (`aca11f6` lo trajo y el commit siguiente lo saca):
   Smithery es de Arcade.dev y el 31 de octubre cerró las cuentas, las claves de API, la API, la CLI
   y los SDK (https://smithery.ai/future). La clave recién creada daba 401. Queda como directorio
   público, «powered by Arcade.dev», sin decir cómo se añaden los servidores. Si abre una vía, el

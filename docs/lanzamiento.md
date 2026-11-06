@@ -75,7 +75,7 @@ Leído en el correo de info@webcafeina.com:
 - **awesome-mac#4070: fusionado** (16:17 UTC).
 - **Chocolatey 1.0.0**: pasó validación, verificación (instalación de prueba en Windows) y
   antivirus; **«Ready for review»**, a la espera de una persona. Una nota, no requisito:
-  `packageSourceUrl` válida (lo es desde `16bedb4`).
+  `packageSourceUrl` válida (lo es desde `d5a13ec`).
 - **SaaSHub**: ficha en línea, https://www.saashub.com/apolo, con «Officially verified details».
 - **MajorGeeks**: recibido; «we will take a look… but it may be a bit».
 - **mcprush.com** añadió Apolo por su cuenta (https://mcprush.com/webcafeina/apolo-mcp) y ofrece

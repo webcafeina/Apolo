@@ -690,3 +690,13 @@ delante la 22.23.1, `make web` falla. Y cada Node trae su pnpm global: la 22.23.
 que no entiende el `pnpm-workspace.yaml` de `frontend/` («packages field missing or empty»), y se le
 instaló el 11.20.0 (el de `packageManager`) con `npm install -g pnpm@11.20.0`. La CI no lo nota:
 `setup-node` pone la última 22 y `pnpm/action-setup`, la de `packageManager`. · 2026-11-05
+
+## Reescribir el historial de Apolo: la regla de `main` y las etiquetas
+
+«main protegida» impide forzar y no tiene excepciones, ni para quien administra: hay que desactivarla
+un momento (`gh api -X PUT repos/webcafeina/Apolo/rulesets/<id> -f enforcement=disabled`) y volver a
+activarla. Las etiquetas `v*` sí dejan a los administradores. Antes de forzar, apagar Publicar y los
+demás flujos: GitHub no crea eventos si se suben más de 3 etiquetas a la vez, pero no conviene jugársela
+con 36 publicaciones sobre las Releases. Con `git-filter-repo`, `--refs a --refs b` no reescribe nada y no
+da error: se ve en que `commit-map` queda vacío. Se usa en un clon recién hecho, sin `--refs`. Y
+`refs/pull/*` no se pueden tocar: siguen apuntando al historial viejo. · 2026-11-06

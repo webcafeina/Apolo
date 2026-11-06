@@ -72,6 +72,66 @@ test("sitemap y robots", async ({ request }) => {
   expect(robots).toContain("Sitemap: https://apolo.webcafeina.com/sitemap.xml");
 });
 
+test("las tarjetas de la portada llevan a sus páginas", async ({ page }) => {
+  await page.goto("/");
+  const seis = page.locator("#mas-de-apolo .tarjeta-enlace");
+  await expect(seis).toHaveCount(6);
+  for (const ruta of [RUTAS.agentes.es, RUTAS.cli.es, RUTAS.guias.es, RUTAS.comparativas.es, RUTAS.preguntas.es, RUTAS.novedades.es]) {
+    await expect(page.locator(`#mas-de-apolo a[href="${ruta}"]`)).toBeVisible();
+  }
+});
+
+test("los menús de la cabecera abren, se cierran solos y llevan a su página", async ({ page }) => {
+  await page.goto("/");
+  const [descargas, usar] = [page.locator(".desplegable").nth(0), page.locator(".desplegable").nth(1)];
+  await descargas.locator("summary").click();
+  await expect(descargas.locator(".panel a").first()).toBeVisible();
+  await usar.locator("summary").click();
+  await expect(descargas.locator(".panel a").first()).toBeHidden();
+  await page.keyboard.press("Escape");
+  await expect(usar.locator(".panel a").first()).toBeHidden();
+  await usar.locator("summary").click();
+  await usar.locator(`.panel a[href="${RUTAS.cli.es}"]`).click();
+  await expect(page).toHaveURL(new RegExp(`${RUTAS.cli.es}$`));
+});
+
+test("en el móvil hay menú, y lleva a las páginas", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto("/en/");
+  await expect(page.locator(".nav")).toBeHidden();
+  await page.locator(".menu-movil summary").click();
+  await page.locator(`.panel-movil a[href="${RUTAS.comparativas.en}"]`).click();
+  await expect(page).toHaveURL(new RegExp(`${RUTAS.comparativas.en}$`));
+});
+
+test("en el móvil caben el logo, el botón de descargar y el menú, sin solaparse ni salirse", async ({ page }) => {
+  for (const [ruta, width] of [["/", 320], ["/", 375], ["/", 390], ["/", 820], ["/en/", 320], ["/en/", 390]] as const) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto(ruta);
+    const boton = page.locator(".boton-cabecera");
+    const menu = page.locator(".menu-movil summary");
+    await expect(page.locator(".logo span")).toBeVisible();
+    await expect(boton).toBeVisible();
+    await expect(menu).toBeVisible();
+    await expect(page.locator(".idioma")).toBeHidden();
+    const [l, b, m] = await Promise.all([page.locator(".logo").boundingBox(), boton.boundingBox(), menu.boundingBox()]);
+    expect(l!.x + l!.width).toBeLessThanOrEqual(b!.x);
+    expect(b!.x + b!.width).toBeLessThanOrEqual(m!.x);
+    expect(m!.x + m!.width).toBeLessThanOrEqual(width);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  }
+});
+
+test("en el móvil, el idioma está en el menú: el activo marcado, y lleva a la misma página en el otro", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto("/descargar/mac/");
+  await page.locator(".menu-movil summary").click();
+  await expect(page.locator('.idioma-movil a[hreflang="es"]')).toHaveAttribute("aria-current", "page");
+  await page.locator('.idioma-movil a[hreflang="en"]').click();
+  await expect(page).toHaveURL(/\/en\/download\/mac\/$/);
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+});
+
 test("copiar una orden", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/descargar/linux/");

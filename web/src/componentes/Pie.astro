@@ -1,7 +1,8 @@
 ---
-// El pie (ADR 0033): las páginas, GitHub, lo legal (el aviso legal, de
-// webcafeina.com; la privacidad del programa y las cookies, de esta web) y el idioma.
+// El pie (ADR 0033), por columnas: descargas, usar, aprender y Apolo, con lo legal (el aviso legal, de
+// webcafeina.com; la privacidad del programa y las cookies, de esta web).
 import { textos } from "../i18n";
+import { navegacion } from "../i18n/navegacion";
 import { type Idioma, ruta } from "../i18n/rutas";
 
 interface Props {
@@ -9,58 +10,85 @@ interface Props {
 }
 const { idioma } = Astro.props;
 const t = textos(idioma);
+const n = navegacion(idioma);
+const COLUMNAS = [
+  n.descargas,
+  { titulo: n.usar.titulo, enlaces: [...n.usar.enlaces, n.novedades] },
+  n.aprender,
+];
 ---
 
 <footer class="pie">
   <div class="envoltura">
-    <nav class="enlaces" aria-label="Apolo">
-      <a href={ruta("descargarMac", idioma)}>Mac</a>
-      <a href={ruta("descargarWindows", idioma)}>Windows</a>
-      <a href={ruta("descargarLinux", idioma)}>Linux</a>
-      <a href={ruta("preguntas", idioma)}>{t.pie.preguntas}</a>
-      <a href={ruta("novedades", idioma)}>{t.pie.novedades}</a>
-      <a href={ruta("cli", idioma)}>{t.pie.cli}</a>
-      <a href={ruta("agentes", idioma)}>{t.pie.agentes}</a>
-      <a href={ruta("guias", idioma)}>{t.pie.guias}</a>
-      <a href={ruta("comparativas", idioma)}>{t.pie.comparativas}</a>
-      <a href={ruta("mapa", idioma)}>{t.pie.mapa}</a>
-      <a href="https://github.com/webcafeina/Apolo" rel="noopener">GitHub</a>
-      <a href="https://webcafeina.com/aviso-legal/" rel="noopener">{t.pie.aviso}</a>
-      <a href={ruta("privacidad", idioma)}>{t.pie.privacidad}</a>
-      <a href={ruta("cookies", idioma)}>{t.pie.cookies}</a>
-      <button type="button" class="preferencias" data-preferencias-cookies hidden>{t.cookies.preferencias}</button>
-    </nav>
-    <p>{t.pie.licencia}</p>
-    <p>{t.pie.optimizadas}</p>
+    <div class="columnas">
+      {
+        COLUMNAS.map((c) => (
+          <nav aria-label={c.titulo}>
+            <p class="titulo">{c.titulo}</p>
+            {c.enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}
+          </nav>
+        ))
+      }
+      <nav aria-label={t.nav.apolo}>
+        <p class="titulo">{t.nav.apolo}</p>
+        <a href="https://github.com/webcafeina/Apolo" rel="noopener">GitHub</a>
+        <a href={ruta("mapa", idioma)}>{t.pie.mapa}</a>
+        <a href="https://webcafeina.com/aviso-legal/" rel="noopener">{t.pie.aviso}</a>
+        <a href={ruta("privacidad", idioma)}>{t.pie.privacidad}</a>
+        <a href={ruta("cookies", idioma)}>{t.pie.cookies}</a>
+        <button type="button" class="preferencias" data-preferencias-cookies hidden>{t.cookies.preferencias}</button>
+      </nav>
+    </div>
+    <div class="firma">
+      <p>{t.pie.licencia}</p>
+      <p>{t.pie.optimizadas}</p>
+    </div>
   </div>
 </footer>
 
 <style>
   .pie {
     border-top: 1px solid var(--filete);
-    padding-block: 36px calc(48px + env(safe-area-inset-bottom, 0px));
+    padding-block: 48px calc(48px + env(safe-area-inset-bottom, 0px));
     font-size: 13px;
     color: var(--apagado);
   }
   .envoltura {
     display: grid;
-    gap: 14px;
+    gap: 32px;
   }
-  .enlaces {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 22px;
+  .columnas {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px 24px;
   }
-  .enlaces a {
+  nav {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .titulo {
+    margin: 0 0 2px;
+    font-weight: 800;
+    color: var(--tinta);
+  }
+  nav a {
     color: var(--cuerpo);
     text-decoration: none;
+  }
+  nav a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   .preferencias {
     border: 0;
     background: none;
     padding: 0;
     color: var(--cuerpo);
-    font-size: 13px;
+    font-size: 15px;
+    text-align: left;
     text-decoration: underline;
     text-underline-offset: 3px;
     cursor: pointer;
@@ -68,8 +96,16 @@ const t = textos(idioma);
   .preferencias[hidden] {
     display: none;
   }
-  .enlaces a:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
+  .firma {
+    display: grid;
+    gap: 6px;
+  }
+  .firma p {
+    margin: 0;
+  }
+  @media (max-width: 720px) {
+    .columnas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 </style>

@@ -1,7 +1,9 @@
 ---
 // La cabecera (ADR 0033): la marca, las secciones, ESP / ENG con el activo en
-// negrita (lleva a la misma página en el otro idioma) y Descargar.
+// negrita (lleva a la misma página en el otro idioma) y Descargar. Hasta 820 px,
+// las secciones y el idioma pasan al menú; el botón de Descargar se queda fuera.
 import { textos } from "../i18n";
+import { navegacion } from "../i18n/navegacion";
 import { type Idioma, type Pagina, ruta } from "../i18n/rutas";
 
 interface Props {
@@ -10,9 +12,16 @@ interface Props {
 }
 const { idioma, pagina } = Astro.props;
 const t = textos(idioma);
+const n = navegacion(idioma);
 const inicio = ruta("inicio", idioma);
 const ancla = (id: string) => (pagina === "inicio" ? `#${id}` : `${inicio}#${id}`);
 const descargas = idioma === "es" ? "descargas" : "downloads";
+const todas = { href: ancla(descargas), texto: t.nav.todas };
+const GRUPOS = [
+  { titulo: n.descargas.titulo, enlaces: [...n.descargas.enlaces, todas] },
+  n.usar,
+  n.aprender,
+];
 ---
 
 <header class="cabecera">
@@ -22,11 +31,15 @@ const descargas = idioma === "es" ? "descargas" : "downloads";
       <span>Apolo</span>
     </a>
     <nav class="nav" aria-label={t.nav.etiqueta}>
-      <a href={ancla(idioma === "es" ? "sistema" : "system")}>{t.nav.sistema}</a>
-      <a href={ancla(idioma === "es" ? "que-hace" : "what-it-does")}>{t.nav.queHace}</a>
-      <a href={ancla(descargas)}>{t.nav.descargar}</a>
-      <a href={ruta("guias", idioma)}>{t.nav.guias}</a>
-      <a href={ruta("preguntas", idioma)}>{t.nav.preguntas}</a>
+      {
+        GRUPOS.map((g) => (
+          <details class="desplegable" data-menu>
+            <summary>{g.titulo}</summary>
+            <div class="panel">{g.enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}</div>
+          </details>
+        ))
+      }
+      <a href={n.novedades.href}>{n.novedades.texto}</a>
     </nav>
     <div class="derecha">
       <nav class="idioma" aria-label={t.idioma.etiqueta}>
@@ -35,6 +48,29 @@ const descargas = idioma === "es" ? "descargas" : "downloads";
         <a href={ruta(pagina, "en")} lang="en" hreflang="en" aria-label={t.idioma.en} aria-current={idioma === "en" ? "page" : undefined}>ENG</a>
       </nav>
       <a class="boton boton-cabecera" href={ancla(descargas)}>{t.nav.descargar}</a>
+      <details class="menu-movil" data-menu>
+        <summary aria-label={t.nav.menu}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+        </summary>
+        <nav class="panel-movil" aria-label={t.nav.menu}>
+          {
+            GRUPOS.map((g) => (
+              <div class="grupo">
+                <p>{g.titulo}</p>
+                {g.enlaces.map((e) => <a href={e.href}>{e.texto}</a>)}
+              </div>
+            ))
+          }
+          <div class="grupo"><a class="suelto" href={n.novedades.href}>{n.novedades.texto}</a></div>
+          <div class="grupo idioma-movil">
+            <p>{t.idioma.etiqueta}</p>
+            <div>
+              <a href={ruta(pagina, "es")} lang="es" hreflang="es" aria-current={idioma === "es" ? "page" : undefined}>{t.idioma.es}</a>
+              <a href={ruta(pagina, "en")} lang="en" hreflang="en" aria-current={idioma === "en" ? "page" : undefined}>{t.idioma.en}</a>
+            </div>
+          </div>
+        </nav>
+      </details>
     </div>
   </div>
 </header>
@@ -77,12 +113,127 @@ const descargas = idioma === "es" ? "descargas" : "downloads";
     gap: 24px;
     font-size: 14px;
   }
-  .nav a {
+  .nav {
+    align-items: center;
+  }
+  .nav a,
+  .nav summary {
     color: var(--cuerpo);
     text-decoration: none;
   }
-  .nav a:hover {
+  .nav a:hover,
+  .nav summary:hover,
+  .desplegable[open] summary {
     color: var(--tinta);
+  }
+  summary {
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .desplegable {
+    position: relative;
+  }
+  .desplegable summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .desplegable summary::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    border-right: 1.6px solid currentColor;
+    border-bottom: 1.6px solid currentColor;
+    transform: rotate(45deg);
+  }
+  .desplegable[open] summary::after {
+    margin-top: 3px;
+    transform: rotate(225deg);
+  }
+  .panel {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: -14px;
+    min-width: 210px;
+    display: grid;
+    gap: 2px;
+    padding: 8px;
+    border: 1px solid var(--filete);
+    border-radius: 14px;
+    background: var(--lienzo);
+    box-shadow: 0 14px 40px rgb(0 0 0 / 0.14);
+  }
+  .panel a {
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--tinta);
+  }
+  .panel a:hover {
+    background: var(--suave);
+  }
+  .menu-movil {
+    display: none;
+  }
+  .menu-movil summary {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--tinta);
+  }
+  .menu-movil[open] summary {
+    background: var(--suave);
+  }
+  .panel-movil {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100dvh - var(--alto-cabecera));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: grid;
+    gap: 22px;
+    padding: 22px max(20px, env(safe-area-inset-right, 0px)) 28px max(20px, env(safe-area-inset-left, 0px));
+    border-bottom: 1px solid var(--filete);
+    background: var(--lienzo);
+    box-shadow: 0 18px 40px rgb(0 0 0 / 0.14);
+  }
+  .grupo {
+    display: grid;
+    gap: 2px;
+  }
+  .grupo p {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--apagado);
+  }
+  .grupo a {
+    padding: 10px 0;
+    font-size: 18px;
+    color: var(--tinta);
+    text-decoration: none;
+  }
+  .grupo a.suelto {
+    font-weight: 700;
+  }
+  .idioma-movil div {
+    display: flex;
+    gap: 24px;
+  }
+  .idioma-movil a {
+    color: var(--apagado);
+  }
+  .idioma-movil a[aria-current="page"] {
+    color: var(--tinta);
+    font-weight: 800;
   }
   .derecha {
     margin-left: auto;
@@ -116,10 +267,14 @@ const descargas = idioma === "es" ? "descargas" : "downloads";
     .nav {
       display: none;
     }
-  }
-  @media (max-width: 420px) {
-    .boton-cabecera {
+    .menu-movil {
+      display: block;
+    }
+    .idioma {
       display: none;
+    }
+    .derecha {
+      gap: 12px;
     }
   }
 </style>

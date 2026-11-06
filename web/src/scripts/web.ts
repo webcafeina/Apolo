@@ -61,6 +61,21 @@ function elegir(g: HTMLElement, valor: string) {
   marcar();
 }
 
+// Los menús de la cabecera son <details>: abren sin JavaScript. Esto los cierra al pulsar fuera o un
+// enlace de dentro (que puede ser un ancla de esta misma página), al abrir otro y con Esc.
+const menus = () => document.querySelectorAll<HTMLDetailsElement>("details[data-menu][open]");
+document.addEventListener("click", (ev) => {
+  const t = ev.target as Element;
+  for (const m of menus()) if (!m.contains(t) || t.closest("a")) m.open = false;
+});
+document.addEventListener("keydown", (ev) => {
+  if (ev.key !== "Escape") return;
+  for (const m of menus()) {
+    m.open = false;
+    m.querySelector("summary")?.focus();
+  }
+});
+
 document.addEventListener("click", (ev) => {
   const b = (ev.target as Element).closest<HTMLButtonElement>("[data-elige] [data-valor]");
   if (b) elegir(b.closest<HTMLElement>("[data-elige]")!, b.dataset.valor!);

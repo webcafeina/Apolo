@@ -8,7 +8,7 @@ export const es = {
       "Optimizador de imágenes gratis para Mac, Windows y Linux: comprime y convierte a WebP, AVIF, JPEG XL, JPEG y PNG sin subir tus fotos, viendo lo que pierdes antes de guardar.",
     saltar: "Ir al contenido",
   },
-  nav: { etiqueta: "Secciones", sistema: "En tu sistema", queHace: "Qué hace", descargar: "Descargar", preguntas: "Preguntas", guias: "Guías" },
+  nav: { etiqueta: "Secciones", descargar: "Descargar", usar: "Usar", aprender: "Aprender", apolo: "Apolo", menu: "Menú", todas: "Todas las descargas" },
   heroe: {
     etiqueta: "Gratis · macOS, Windows y Linux · Software libre",
     titulo: "Imágenes más ligeras, igual de buenas.",
@@ -191,6 +191,18 @@ export const es = {
     analitica: "Analítica",
     analiticaTexto: "nos ayudan a entender cómo se usa la web.",
     preferencias: "Preferencias de cookies",
+  },
+  masDeApolo: {
+    etiqueta: "Más de Apolo",
+    titulo: "Y todo lo demás, a un clic.",
+    tarjetas: {
+      agentes: { titulo: "Agentes de IA", texto: "Optimiza imágenes pidiéndoselo a tu agente, en tu ordenador y a la vista." },
+      cli: { titulo: "Línea de comandos", texto: "Las mismas opciones que cwebp, cjpeg, avifenc y cjxl, para tus scripts." },
+      guias: { titulo: "Guías", texto: "Qué formato elegir, cómo comprimir sin perder calidad o cómo pasar HEIC a JPEG, con cifras medidas." },
+      comparativas: { titulo: "Comparativas", texto: "Apolo frente a otras herramientas, con los datos a la vista." },
+      preguntas: { titulo: "Preguntas frecuentes", texto: "¿Es gratis? ¿Sube mis imágenes? ¿Por qué avisa el sistema al abrirlo?" },
+      novedades: { titulo: "Novedades", texto: "Lo que trae cada versión. La última es la {version}." },
+    },
   },
   pie: {
     preguntas: "Preguntas frecuentes",

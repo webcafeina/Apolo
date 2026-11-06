@@ -86,6 +86,11 @@ const GRUPOS = [
     -webkit-backdrop-filter: saturate(1.8) blur(20px);
     border-bottom: 1px solid color-mix(in srgb, var(--filete) 70%, transparent);
   }
+  /* Con un menú abierto, por encima del aviso de cookies (z-index 60), que si no tapa medio menú en el
+     móvil la primera vez. Al cerrarlo, el aviso vuelve a verse. */
+  .cabecera:has(details[data-menu][open]) {
+    z-index: 70;
+  }
   .envoltura {
     display: flex;
     align-items: center;

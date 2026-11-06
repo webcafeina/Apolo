@@ -11,6 +11,25 @@ test("la primera vez: el aviso, todo denegado y GTM sin cargar", async ({ page }
   expect(pedidas).toEqual([]);
 });
 
+test("la primera vez, en el móvil: el aviso no tapa el menú, y vuelve al cerrarlo", async ({ page }) => {
+  await sinGoogle(page);
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto("/");
+  const aviso = page.locator("[data-cookies]");
+  await expect(aviso).toBeVisible();
+  await page.locator(".menu-movil summary").click();
+  await page.locator(".panel-movil .suelto").scrollIntoViewIfNeeded();
+  await page.locator(".panel-movil .suelto").click({ trial: true });
+  const ingles = page.locator('.idioma-movil a[hreflang="en"]');
+  await ingles.click({ trial: true });
+  await page.keyboard.press("Escape");
+  await expect(aviso).toBeVisible();
+  await page.getByRole("button", { name: "Rechazar" }).click({ trial: true });
+  await page.locator(".menu-movil summary").click();
+  await ingles.click();
+  await expect(page).toHaveURL(/\/en\/$/);
+});
+
 test("aceptar: concede la analítica, carga GTM y no vuelve a preguntar", async ({ page }) => {
   const pedidas = await sinGoogle(page);
   await page.goto("/");

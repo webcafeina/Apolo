@@ -27,7 +27,6 @@ Allow: /
 Disallow: /apt/
 Disallow: /rpm/
 Disallow: /aur/
-Disallow: /redes/
 
 Sitemap: ${new URL("/sitemap.xml", site).href}
 `,

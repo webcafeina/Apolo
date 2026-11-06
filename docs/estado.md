@@ -8,17 +8,10 @@
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
 >
-> **Al retomar, lo primero**:
-> 1. **El último retoque de la web puede no estar publicado.** `b08a26d` (ocultar el aviso de cookies con
->    el menú del móvil abierto) está en `main`, pero Pages se atascó dos veces en `syncing_files`
->    (trampas.md). Un proceso aparte, `~/.local/state/apolo/reintentar-web.sh`, lo reintenta desde las
->    15:00 del 2026-11-06, hasta 4 veces: ver `~/.local/state/apolo/despliegue-web.log`. Si dice «NO
->    PUBLICADO», `gh workflow run web.yml --ref main`. Comprobar en la web real, en 390 px y sin haber
->    aceptado cookies: al abrir el menú, `[data-cookies]` no se ve. Lo demás de la navegación, publicado
->    y comprobado.
-> 2. **La CI de esta última subida** y `scripts/seguridad-github.sh`: se cerró sin verlas. La anterior,
->    `b08a26d`, pasó entera; Security, los mismos 7 avisos de Scorecard.
-> 3. **Disco al 89 %**: `target/debug/incremental` y las copias viejas de `deps` y `examples`.
+> **Cerrado esa misma tarde**: ~~el último retoque de la web~~, publicado a las 15:05 por el reintento
+> (`b08a26d` se atascó dos veces en Pages; trampas.md) y comprobado en la web real; ~~la CI de la última
+> subida~~, en verde; Security, los mismos 7 avisos de Scorecard. Disco al 89 %, sobre todo por otros
+> proyectos: los `target` de Apolo pesan 13 GB y borrar `incremental` libera menos de 1.
 >
 > **(2026-11-06, mediodía): el carrusel de Apolo en redes, programado, y el historial sin
 > la firma de Claude (ADR 0037).** Detalle en `docs/sesiones.md` y `docs/lanzamiento.md` («Carrusel»).
@@ -29,12 +22,11 @@
 >   llevan en adelante (memoria). Releases, enlaces fijos, actualizador y procedencia, comprobados.
 >
 > **Lo siguiente**:
-> 1. **Comprobar** que Instagram, Facebook y LinkedIn salieron a las 15:00 (`getScheduledPosts` ya no
->    los lista; que el cliente lo confirme, y en LinkedIn es la primera vez por Metricool: las 10
->    láminas, en orden) y si `web/public/redes/` se puede quitar: Metricool guardó su copia.
-> 2. **@claude sigue en la lista de colaboradores** al cerrar (`contributors_list`), con `main` limpio.
->    Volver a mirarlo: si en unos días sigue, pedir a GitHub Support que la recalcule.
-> 3. **El cliente, pendiente**: «Check for new commits» en el envío del plugin a Anthropic (han
+> 1. ~~Comprobar que Instagram, Facebook y LinkedIn salieron a las 15:00~~: publicadas, y el cliente lo
+>    confirmó. ~~Quitar `web/public/redes/`~~: quitada, Metricool guardó su copia.
+> 2. **@claude**: la API (`repos/…/contributors`) ya solo lista a `webcafeina`. Falta verlo en la página
+>    del repositorio; si sigue ahí en unos días, pedir a GitHub Support que la recalcule.
+> 3. **El cliente, pendiente**: subir sus publicaciones; «Check for new commits» en el envío del plugin a Anthropic (han
 >    cambiado los hashes); preguntar a Uptodown por qué rechazó la ficha de Windows (mensaje en la
 >    conversación, y resumido en `lanzamiento.md`); MacUpdate cuando vuelva su web; enlace de Apolo en
 >    las biografías de Instagram.

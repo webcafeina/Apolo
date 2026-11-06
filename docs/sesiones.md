@@ -23,8 +23,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - LinkedIn de Webcafeína, programado por Metricool para las 15:00: Nacho lo conectó a la marca.
 - Verificado: `make comprobar`, las pruebas de navegador (axe incluido) y la web real con Chromium,
   en 1280 y 390 px.
-- **No verificado**: en un móvil de verdad, con su letra (las medidas son con la del VPS, más ancha); que
-  el retoque del aviso llegara a publicarse, ni la CI de la última subida (estado.md).
+- A las 15:00 salieron Instagram, Facebook y LinkedIn de Webcafeína (el cliente lo confirmó), y a las
+  15:05 el reintento publicó el último retoque, comprobado en la web real. Se quitó `web/public/redes/`.
+- **No verificado**: en un móvil de verdad, con su letra (las medidas son con la del VPS, más ancha).
 
 ---
 

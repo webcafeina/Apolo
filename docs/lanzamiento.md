@@ -167,14 +167,14 @@ carpeta por cuenta y red.
 
 | Dónde | Cómo | Estado |
 |---|---|---|
-| Instagram de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `-8570310223213277228`) | Programado |
-| Facebook de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `4836457296518856725`) | Programado |
-| LinkedIn de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `-5058331842053520994`); Nacho lo conectó a la marca y no lo sube a mano | Programado |
+| Instagram de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `-8570310223213277228`) | [Publicado](https://www.instagram.com/p/DfZyHtDiBNo/) |
+| Facebook de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `4836457296518856725`) | [Publicado](https://facebook.com/461319086038143/posts/1559391429564231) |
+| LinkedIn de Webcafeína | Metricool, 2026-11-06 15:00 (uuid `-5058331842053520994`); Nacho lo conectó a la marca y no lo sube a mano | [Publicado](https://linkedin.com/feed/update/urn:li:ugcPost:7524472650795044867) |
 | Instagram, Facebook y LinkedIn de Álvaro | A mano, él, esa tarde (`alvaro/textos.md`) | Pendiente |
 
 Facebook y LinkedIn llevan «Pulsa para ver más» en vez de «Desliza»; las de Álvaro van en singular. El
-enlace mide con `utm_campaign=carrusel-apolo`. Las láminas están en `web/public/redes/` porque
-Metricool pide una URL pública; se pueden quitar una vez publicadas, porque guarda su copia. YouTube,
+enlace mide con `utm_campaign=carrusel-apolo`. Las láminas estuvieron en `web/public/redes/` porque
+Metricool pide una URL pública; se quitaron una vez publicadas, porque guarda su copia. YouTube,
 conectado a la marca, solo admite vídeo: se dejó fuera.
 
 **A Uptodown** (rechazo sin motivo): preguntar qué falló en concreto y si se puede reenviar con la 1.0.2,

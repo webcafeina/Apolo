@@ -148,6 +148,17 @@ Leído en el correo de info@webcafeina.com:
   mismo día (en moderación). El cliente la vio actualizar en sus equipos. Pendiente (mañana, el
   cliente): cambiar a los enlaces fijos los directorios que tienen un enlace directo (MacUpdate y Uptodown cuando aprueben sus fichas, Softpedia) y subir allí la 1.0.2.
 
+### Estado el 2026-11-06
+
+- **Uptodown, la ficha de Windows: rechazada** con «We're sorry, but your app doesn't meet the
+  minimum quality standards to be published on Uptodown», sin más motivo. La de Mac sigue en
+  revisión. El cliente les pregunta el motivo concreto (quizá el instalador sin firmar: sin
+  confirmar); no reenviar hasta saberlo, y entonces con la versión última.
+- **Chocolatey 1.0.2**: pasó verificación y antivirus, «Ready for review». Glama, en la 1.0.2 sola.
+- **Los enlaces fijos, casi sin nada que cambiar**: Uptodown lleva ficheros subidos; AlternativeTo,
+  SaaSHub, mcpservers.org y mcprush enlazan a la web o al repositorio; Glama ya usa la última;
+  Softpedia y MajorGeeks solo si los publican.
+
 ### Enlaces fijos (desde la 1.0.2)
 
 Cada Release lleva, además de los ficheros con versión, una copia sin número

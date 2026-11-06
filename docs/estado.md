@@ -8,6 +8,18 @@
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
 >
+> **Al retomar, lo primero**:
+> 1. **El último retoque de la web puede no estar publicado.** `b08a26d` (ocultar el aviso de cookies con
+>    el menú del móvil abierto) está en `main`, pero Pages se atascó dos veces en `syncing_files`
+>    (trampas.md). Un proceso aparte, `~/.local/state/apolo/reintentar-web.sh`, lo reintenta desde las
+>    15:00 del 2026-11-06, hasta 4 veces: ver `~/.local/state/apolo/despliegue-web.log`. Si dice «NO
+>    PUBLICADO», `gh workflow run web.yml --ref main`. Comprobar en la web real, en 390 px y sin haber
+>    aceptado cookies: al abrir el menú, `[data-cookies]` no se ve. Lo demás de la navegación, publicado
+>    y comprobado.
+> 2. **La CI de esta última subida** y `scripts/seguridad-github.sh`: se cerró sin verlas. La anterior,
+>    `b08a26d`, pasó entera; Security, los mismos 7 avisos de Scorecard.
+> 3. **Disco al 89 %**: `target/debug/incremental` y las copias viejas de `deps` y `examples`.
+>
 > **(2026-11-06, mediodía): el carrusel de Apolo en redes, programado, y el historial sin
 > la firma de Claude (ADR 0037).** Detalle en `docs/sesiones.md` y `docs/lanzamiento.md` («Carrusel»).
 > - **Webcafeína**: Instagram, Facebook y LinkedIn (Nacho lo conectó a la marca), programados en

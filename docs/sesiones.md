@@ -23,7 +23,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - LinkedIn de Webcafeína, programado por Metricool para las 15:00: Nacho lo conectó a la marca.
 - Verificado: `make comprobar`, las pruebas de navegador (axe incluido) y la web real con Chromium,
   en 1280 y 390 px.
-- **No verificado**: en un móvil de verdad, con su letra (las medidas son con la del VPS, más ancha).
+- **No verificado**: en un móvil de verdad, con su letra (las medidas son con la del VPS, más ancha); que
+  el retoque del aviso llegara a publicarse, ni la CI de la última subida (estado.md).
 
 ---
 

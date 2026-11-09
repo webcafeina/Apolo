@@ -229,3 +229,30 @@ pub fn simplificar_abierto(p: &[Pt], tol: f64) -> Vec<Pt> {
     dp(p, tol, &mut out);
     out
 }
+
+/// Suavizado de Taubin (λ|μ) sobre un lazo cerrado: quita el serrado de la cuadrícula sin encoger la forma.
+/// Los puntos donde el contorno gira mucho (esquinas) no se mueven.
+pub fn suavizar(p: &[Pt], pasadas: usize) -> Vec<Pt> {
+    let n = p.len();
+    if n < 8 || pasadas == 0 { return p.to_vec(); }
+    // Esquinas: giro de más de 35° entre los vecinos a 2 puntos.
+    let fijo: Vec<bool> = (0..n).map(|i| {
+        let (a, b, c) = (p[(i + n - 2) % n], p[i], p[(i + 2) % n]);
+        let (u, v) = ((b.0 - a.0, b.1 - a.1), (c.0 - b.0, c.1 - b.1));
+        let (lu, lv) = ((u.0 * u.0 + u.1 * u.1).sqrt(), (v.0 * v.0 + v.1 * v.1).sqrt());
+        if lu < 1e-9 || lv < 1e-9 { return true; }
+        ((u.0 * v.0 + u.1 * v.1) / (lu * lv)).clamp(-1.0, 1.0).acos().to_degrees() > 35.0
+    }).collect();
+    let mut q = p.to_vec();
+    for _ in 0..pasadas {
+        for k in [0.5, -0.53] {
+            let r = q.clone();
+            for i in 0..n {
+                if fijo[i] { continue; }
+                let (a, c) = (r[(i + n - 1) % n], r[(i + 1) % n]);
+                q[i] = (r[i].0 + k * ((a.0 + c.0) / 2.0 - r[i].0), r[i].1 + k * ((a.1 + c.1) / 2.0 - r[i].1));
+            }
+        }
+    }
+    q
+}

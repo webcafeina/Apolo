@@ -269,20 +269,55 @@ fn apolo_poli(im: &Rgba, g: Grupo) -> Result<String, String> {
 }
 
 fn apolo_con(im: &Rgba, g: Grupo, poligono: bool) -> Result<String, String> {
-    use std::fmt::Write;
     if es_pixel_art(im) {
         return vtracer_pixel(im, g);
     }
     let duro = paleta::sin_suavizado(im);
     let (_, pal) = paleta_de(im, g)?;
-    let mezcla = subpixel::mezclas(im, &pal, 2);
+    let mut mezcla = subpixel::mezclas(im, &pal, 2);
+    let degradados = poligono && g != Grupo::Fotos && std::env::var("APOLO_DEGRADADOS").map(|v| v != "0").unwrap_or(true);
+    let rellenos: Vec<Option<crate::degradado::Relleno>> = if degradados { crate::degradado::fusionar(im, &mut mezcla, pal.len()) } else { (0..pal.len()).map(|_| None).collect() };
     let mut area = vec![0f64; pal.len()];
     for m in &mezcla {
         area[m.a as usize] += m.t as f64;
         area[m.b as usize] += 1.0 - m.t as f64;
     }
-    let mut orden: Vec<usize> = (0..pal.len()).filter(|&k| area[k] > 0.5).collect();
-    orden.sort_by(|a, b| area[*b].total_cmp(&area[*a]).then(a.cmp(b)));
+    let mut por_area: Vec<usize> = (0..pal.len()).filter(|&k| area[k] > 0.5).collect();
+    por_area.sort_by(|a, b| area[*b].total_cmp(&area[*a]).then(a.cmp(b)));
+    // La otra opción: arriba los colores que forman islas cerradas dentro de otros (estrellas, ojos,
+    // letras), que así se dibujan una vez, como figura, y no como agujero en todas las capas de debajo.
+    // Ninguna gana siempre: se pintan las dos y se queda la que más se parece al original.
+    let islas = islas_por_color(&mezcla, im.ancho as usize, im.alto as usize, pal.len());
+    let mut por_islas = por_area.clone();
+    por_islas.sort_by(|a, b| islas[*a].cmp(&islas[*b]).then(area[*b].total_cmp(&area[*a])).then(a.cmp(b)));
+    let modo = std::env::var("APOLO_ORDEN").unwrap_or_default();
+    let candidatos: Vec<&Vec<usize>> = match modo.as_str() {
+        "area" => vec![&por_area],
+        "islas" => vec![&por_islas],
+        _ if por_islas == por_area => vec![&por_area],
+        _ => vec![&por_area, &por_islas],
+    };
+    let varios = candidatos.len() > 1;
+    let mut mejor: Option<(f64, String)> = None;
+    for orden in candidatos {
+        let svg = pintar(im, g, poligono, duro, &pal, &mezcla, orden, &rellenos)?;
+        let e = if varios { error_cuadratico(im, &svg) } else { 0.0 };
+        if mejor.as_ref().map(|m| e < m.0).unwrap_or(true) { mejor = Some((e, svg)); }
+    }
+    mejor.map(|m| m.1).ok_or_else(|| "sin capas".to_string())
+}
+
+/// Error cuadrático medio entre el original y el SVG rasterizado.
+fn error_cuadratico(im: &Rgba, svg: &str) -> f64 {
+    match imagen::rasterizar(svg.as_bytes(), im.ancho, im.alto, true) {
+        Ok(r) => im.px.iter().zip(&r.px).map(|(a, b)| (*a as f64 - *b as f64).powi(2)).sum::<f64>() / im.px.len() as f64,
+        Err(_) => f64::MAX,
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn pintar(im: &Rgba, g: Grupo, poligono: bool, duro: bool, pal: &[[u8; 3]], mezcla: &[subpixel::Mezcla], orden: &[usize], rellenos: &[Option<crate::degradado::Relleno>]) -> Result<String, String> {
+    use std::fmt::Write;
     let var = |n: &str, d: f64| std::env::var(n).ok().and_then(|v| v.parse::<f64>().ok()).unwrap_or(d);
     let o = ajuste::Opciones {
         tol: if duro { var("APOLO_TOL_DURO", 0.75) } else { var("APOLO_TOL", 0.35) },
@@ -295,6 +330,27 @@ fn apolo_con(im: &Rgba, g: Grupo, poligono: bool) -> Result<String, String> {
     let mut s = format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">"#);
     if let Some(&fondo) = orden.first() {
         let _ = write!(s, r#"<rect width="{w}" height="{h}" fill="{}"/>"#, hex(pal[fondo]));
+    }
+    // Degradados: por cada color, los píxeles de su interior (sin mezcla), y si cambian suavemente, un
+    // degradado en vez del color plano (degradado.rs).
+    let mut relleno: Vec<String> = pal.iter().map(|c| hex(*c)).collect();
+    {
+        let mut defs = String::new();
+        for (k, r) in rellenos.iter().enumerate() {
+            if let Some(r) = r {
+                let id = format!("d{k}");
+                defs.push_str(&crate::degradado::defs(&id, r));
+                relleno[k] = format!("url(#{id})");
+            }
+        }
+        if !defs.is_empty() {
+            // El fondo también puede ser un degradado: se reescribe su rect.
+            if let Some(&fondo) = orden.first() {
+                s = s.replacen(&format!(r#"fill="{}"/>"#, hex(pal[fondo])), &format!(r#"fill="{}"/>"#, relleno[fondo]), 1);
+            }
+            let ini = s.find('>').map(|x| x + 1).unwrap_or(0);
+            s.insert_str(ini, &format!("<defs>{defs}</defs>"));
+        }
     }
     for (r, &k) in orden.iter().enumerate().skip(1) {
         let mut dentro = vec![false; pal.len()];
@@ -316,14 +372,14 @@ fn apolo_con(im: &Rgba, g: Grupo, poligono: bool) -> Result<String, String> {
                     let b = v(x0, y0 + 1.0) * (1.0 - tx) + v(x0 + 1.0, y0 + 1.0) * tx;
                     a * (1.0 - ty) + b * ty
                 };
-                crate::poli::ajustar(&lazo, var("APOLO_TOL_POLI", if duro { 0.5 } else { 0.3 }), var("APOLO_TOL_CURVA", 0.3), &muestra)
+                crate::poli::ajustar(&lazo, var("APOLO_TOL_POLI", if duro { 0.5 } else { 0.3 }), var("APOLO_TOL_CURVA", 0.15), &muestra, (w, h), g != Grupo::Fotos)
             } else {
                 ajuste::ajustar(&lazo, o)
             };
             if let Some(f) = f { ajuste::d(&f, &mut d); }
         }
         if !d.is_empty() {
-            let _ = write!(s, r#"<path fill="{}" fill-rule="evenodd" d="{d}"/>"#, hex(pal[k]));
+            let _ = write!(s, r#"<path fill="{}" fill-rule="evenodd" d="{d}"/>"#, relleno[k]);
         }
     }
     s.push_str("</svg>");
@@ -333,4 +389,31 @@ fn apolo_con(im: &Rgba, g: Grupo, poligono: bool) -> Result<String, String> {
 fn area_lazo(p: &[(f64, f64)]) -> f64 {
     let n = p.len();
     (0..n).map(|i| { let (a, b) = (p[i], p[(i + 1) % n]); a.0 * b.1 - b.0 * a.1 }).sum::<f64>() / 2.0
+}
+
+/// Cuántas islas tiene cada color: componentes conexas (de 4 px o más) que no tocan el borde de la imagen.
+fn islas_por_color(m: &[subpixel::Mezcla], w: usize, h: usize, n: usize) -> Vec<usize> {
+    let etiqueta: Vec<u16> = m.iter().map(|x| if x.t >= 0.5 { x.a } else { x.b }).collect();
+    let mut visto = vec![false; w * h];
+    let mut islas = vec![0usize; n];
+    let mut pila = Vec::new();
+    for ini in 0..w * h {
+        if visto[ini] { continue; }
+        let c = etiqueta[ini];
+        let (mut tam, mut borde) = (0usize, false);
+        visto[ini] = true;
+        pila.push(ini);
+        while let Some(i) = pila.pop() {
+            tam += 1;
+            let (x, y) = (i % w, i / w);
+            if x == 0 || y == 0 || x == w - 1 || y == h - 1 { borde = true; }
+            let mut mira = |j: usize| { if !visto[j] && etiqueta[j] == c { visto[j] = true; pila.push(j); } };
+            if x > 0 { mira(i - 1); }
+            if x + 1 < w { mira(i + 1); }
+            if y > 0 { mira(i - w); }
+            if y + 1 < h { mira(i + w); }
+        }
+        if !borde && tam >= 4 { islas[c as usize] += 1; }
+    }
+    islas
 }

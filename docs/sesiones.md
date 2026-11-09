@@ -20,6 +20,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - Después de subir: elipses (Halíř y Flusser), puntas finas validadas con el suavizado y la comprobación en
   Chromium (diferencia de hasta 3 puntos con resvg). 80,7 frente a 83,1. Las estrellas pequeñas siguen
   siendo lo que más falta (ADR 0038). `apolo medir | head` cierra con pánico: a deuda.md.
+- **El cliente decide (2026-11-09)**: fase 2 adelante, mejorar antes el motor y mantener su suscripción a
+  Vectorizer.ai (es personal). Motor: ajuste por síntesis, orden de capas por imagen, contorno suavizado
+  (Taubin) y degradados con fusión de colores: **81,9 frente a 83,1**, 7 de 18 (ADR 0038).
 - **Tres avisos nuevos de RustSec en `rmcp` 3.5.1** (cliente OAuth y transportes HTTP; Apolo no los
   compila): `rmcp` sube a 3.9.0, con las pruebas del MCP y el catálogo iguales (ADR 0023).
 - **No verificado**: los SVG en Illustrator o Inkscape; imágenes grandes; transparencias.

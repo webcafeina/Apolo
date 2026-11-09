@@ -7,11 +7,13 @@
 
 mod ajuste;
 mod corpus;
+mod degradado;
 mod imagen;
 mod informe;
 mod motores;
 mod paleta;
 mod poli;
+mod sintesis;
 mod potrace;
 mod subpixel;
 

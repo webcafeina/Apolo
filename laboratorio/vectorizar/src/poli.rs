@@ -47,7 +47,26 @@ enum Parte {
 }
 
 /// `cob(x, y)`: la cobertura de la capa en ese punto (0 fuera, 1 dentro), para validar las puntas.
-pub fn ajustar(lazo: &[P], tol_poli: f64, tol_curva: f64, cob: &dyn Fn(f64, f64) -> f32) -> Option<Forma> {
+pub fn ajustar(lazo: &[P], tol_poli: f64, tol_curva: f64, cob: &dyn Fn(f64, f64) -> f32, tam: (u32, u32), sintesis: bool) -> Option<Forma> {
+    let pasadas = std::env::var("APOLO_SUAVIZAR").ok().and_then(|v| v.parse().ok()).unwrap_or(5);
+    let suave = crate::subpixel::suavizar(lazo, pasadas);
+    let f = ajustar_sin_sintesis(&suave, tol_poli, tol_curva, cob)?;
+    if !sintesis || std::env::var("APOLO_SINTESIS").map(|v| v == "0").unwrap_or(false) { return Some(f); }
+    // Un polígono de solo rectas se refina por síntesis (sintesis.rs).
+    if let Forma::Tramos(t) = &f {
+        if t.iter().all(|s| matches!(s, Tramo::Linea(..))) {
+            let mut v: Vec<P> = t.iter().map(|s| match *s { Tramo::Linea(a, _) => a, _ => unreachable!() }).collect();
+            let obs = |i: i64, j: i64| cob(i as f64 + 0.5, j as f64 + 0.5) as f64;
+            if crate::sintesis::refinar(&mut v, &obs, tam.0, tam.1) {
+                let k = v.len();
+                return Some(Forma::Tramos((0..k).map(|i| Tramo::Linea(v[i], v[(i + 1) % k])).collect()));
+            }
+        }
+    }
+    Some(f)
+}
+
+fn ajustar_sin_sintesis(lazo: &[P], tol_poli: f64, tol_curva: f64, cob: &dyn Fn(f64, f64) -> f32) -> Option<Forma> {
     let n = lazo.len();
     if n < 3 || ajuste::area(lazo).abs() < 0.8 { return None; }
     // Un círculo entero, si lo es (error ≤ 0,35 px).
@@ -271,7 +290,7 @@ mod pruebas {
         for i in 0..20 { l.push((20.0, i as f64)); }
         for i in 0..20 { l.push((20.0 - i as f64, 20.0)); }
         for i in 0..20 { l.push((0.0, 20.0 - i as f64)); }
-        let f = ajustar(&l, 0.2, 0.3, &|_, _| 0.0);
+        let f = ajustar(&l, 0.2, 0.3, &|_, _| 0.0, (100, 100), false);
         match f {
             Some(Forma::Tramos(t)) => { let mut s = String::new(); ajuste::d(&Forma::Tramos(t), &mut s); println!("{s}"); }
             Some(Forma::Circulo { .. }) => panic!("círculo"),

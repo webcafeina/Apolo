@@ -38,7 +38,17 @@ Motores: VTracer 1.0 (MIT o Apache-2.0) con sus presets; Potrace 1.16 (GPL-2.0-o
 4. **Círculos y elipses de verdad** cuando el contorno lo es (elipse: Halíř y Flusser, 1998, con una
    comprobación geométrica de 0,35 px); formas de menos de 10 px, como polígono.
 5. **Pixel art** (pocos colores, sin suavizado y en bloques) se traza a píxeles.
-6. **Puntas finas**: una punta roma entre dos rectas se prolonga hasta su cruce si está cerca (3 px) o,
+6. **Ajuste por síntesis** (`sintesis.rs`): los polígonos pequeños (hasta 64 px y 40 vértices) se pintan
+   con 6 × 6 submuestras por píxel y se mueven sus vértices hasta que coinciden con la cobertura del
+   original; recupera puntas que el contorno al 50 % se come.
+7. **El orden de las capas, por imagen**: por área, o con los colores que forman islas (estrellas, ojos)
+   arriba; se pintan los dos y se queda el de menor error. Ninguno gana siempre.
+8. **Contorno suavizado** (Taubin, 5 pasadas, sin mover las esquinas) y curvas a 0,15 px: quita el serrado
+   de la cuadrícula; un 25-30 % menos de nodos a igual nota.
+9. **Degradados** (`degradado.rs`): si una región cambia suavemente, se rellena con un degradado lineal o
+   radial de 5 paradas, y los colores de la paleta que lo continúan se funden en él. Vectorizer.ai no lo
+   hace: aplana a escalones.
+10. **Puntas finas**: una punta roma entre dos rectas se prolonga hasta su cruce si está cerca (3 px) o,
    hasta 12 px, si los píxeles del tramo que se añade están a medio cubrir (hay un rasgo de menos de un
    píxel que el contorno al 50 % se comió).
 
@@ -60,11 +70,14 @@ Con las 18 imágenes que se le pasaron a Vectorizer.ai (sin fotos), al cierre de
 |---|---|---|---|
 | SVG original | 97,5 | 57 | — |
 | Vectorizer.ai | 83,1 | 555 | 18,6 KB |
-| **apolo-poli** | **80,7** | 520 | **8,8 KB** |
+| **apolo-poli** | **81,9** | 503 | **7,8 KB** |
 | VTracer | 47,7 | 255 | 7,0 KB |
 
-- **Ganamos o empatamos en 6 de 18**: Japón (93,7 con 5 nodos), los dos pixel art (100), la Unión Jack sin
-  suavizar, la cara de OpenMoji y la paleta de pintor. En pixel art, Vectorizer.ai suaviza los píxeles.
+- **Ganamos o empatamos en 7 de 18**: Japón (93,7 con 5 nodos), los dos pixel art (100), la Unión Jack sin
+  suavizar, la cara y el gato de OpenMoji y la paleta de pintor. (Antes de síntesis, orden por imagen,
+  suavizado y degradados: 80,7 y 6 de 18.)
+- **Degradados**: la cara de Noto, de −2,9 a 55,4 de nota y de 2.064 a 764 nodos; las ilustraciones, de
+  68,9 a 73,0 de media. En pixel art, Vectorizer.ai suaviza los píxeles.
 - **Perdemos sobre todo en**: las estrellas pequeñas (Estados Unidos, 61 frente a 77), Brasil y Corea, las
   ilustraciones de Noto con degradados y la pluma.
 - **Fotos**: nadie las vectoriza bien (notas negativas, también Vectorizer.ai). Avisar al usuario.
@@ -72,7 +85,10 @@ Con las 18 imágenes que se le pasaron a Vectorizer.ai (sin fotos), al cierre de
 
 - **Relleno de huecos** («gap filler» de Vectorizer.ai): no hace falta. Nuestras capas se apilan y cada
   una cubre también las de encima, así que entre dos colores no queda rendija.
-- **Las estrellas pequeñas** siguen siendo la pérdida mayor. Prolongar las puntas validándolas con el
+- **Coste**: la síntesis y pintar dos órdenes multiplican el tiempo: la bandera de Estados Unidos tarda
+  30 s y las fotos hasta 27 s. Para la fase 2 hay que acelerarlo (las fotos, sin síntesis ni dos órdenes;
+  la síntesis, con cobertura incremental).
+- **Las estrellas pequeñas** siguen siendo la pérdida mayor, aunque menos (Estados Unidos, 73,2 frente a 77). Prolongar las puntas validándolas con el
   suavizado ayudó poco (61,5 → 64,0 en Estados Unidos); ajustar las rectas solo con puntos «fiables»,
   nada (se deshizo). Lo que falta es mirar la forma entera: el borde de dos brazos y la cabeza de una
   estrella es una sola recta, y las cinco puntas son simétricas. Es lo que Vectorizer.ai llama detectar

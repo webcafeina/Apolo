@@ -1,0 +1,19 @@
+[package]
+name = "banco-vectorizar"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+publish = false
+description = "Banco de pruebas para vectorizar imágenes en Apolo (fase 1): no forma parte de la aplicación."
+
+# Proyecto aparte, fuera del workspace de Apolo: ni `make comprobar` ni la CI lo compilan.
+[workspace]
+
+[dependencies]
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
+imagequant = "4.4.1"
+resvg = "0.49"
+vtracer = "=1.0.0-alpha.4"
+
+[build-dependencies]
+cc = "1"

@@ -8,6 +8,22 @@
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
 >
+> **2026-11-09, tarde: vectorizar, fase 1 en marcha (ADR 0038).** Banco en `laboratorio/vectorizar/`
+> (fuera de la CI): `cargo run --release` y la galería en `salida/` (artefacto
+> claude.ai/artifact/3eqqWdYEAiGoFWnaKzuewQ). Nuestro motor `apolo-poli`, 80,6 de nota frente a 83,1 de
+> Vectorizer.ai con la mitad de peso. Los SVG de Vectorizer.ai (suscripción del cliente, un mes, solo para
+> comparar) en `capturas/vectorizar/vectorizer-ai/`. **Lo siguiente**: elipses y rectángulos como figuras,
+> estrellas pequeñas, relleno de huecos; luego decidir la fase 2 con el cliente.
+>
+> **2026-11-09**: CI y Security bien; las publicaciones de Álvaro, subidas. **El directorio de Anthropic
+> rechazó el plugin** («Needs changes»): solo acepta servidores MCP locales de «Verified organizations», y
+> esa verificación no está documentada (ni el chatbot de soporte la conoce). Se pregunta a
+> directory@anthropic.com cómo verificar Webcafeína (enviado por el cliente). Un MCP remoto no vale:
+> las imágenes saldrían del ordenador. Mientras, el plugin funciona desde nuestro marketplace; no pulsar
+> «Check for new commits», que repite el rechazo. @claude sigue en la página del repositorio: borradas
+> las 5 ramas viejas de Dependabot (llevaban la firma, como los 14 `refs/pull`, que solo borra GitHub);
+> si sigue el 10, soporte de GitHub.
+>
 > **El lunes 2026-11-09, lo primero**: la CI de la última subida y `scripts/seguridad-github.sh`, que se
 > cerró sin verlas; preguntar a Álvaro si subió sus publicaciones (`capturas/cliente/redes/alvaro/`, con la
 > lámina 7 ya cambiada) y si ve @claude en la página del repositorio. Luego, lo recomendado: revisar el SEO

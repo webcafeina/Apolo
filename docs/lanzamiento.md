@@ -135,6 +135,10 @@ Leído en el correo de info@webcafeina.com:
   visibilidad que considere»). Llegaron ofertas por haber salido allí: Auspia (páginas SEO),
   Viberank («growth insights») y Upvote Network (votos de cuentas falsas, prohibido por Product
   Hunt); ninguna se contesta.
+- **2026-11-09, el plugin rechazado** en el directorio: «Local MCP servers accepted only from Verified
+  organizations». Sin documentar; pregunta enviada a directory@anthropic.com (texto en la conversación del
+  9). Si no se puede verificar, nos quedamos con el marketplace propio (quitar el MCP dejaría un plugin que
+  solo sirve en Claude Code).
 - **El plugin, «En revisión»** en el directorio de Anthropic (visto por el cliente el 5); sin
   correo todavía.
 - mcprush confirmó la reclamación; Glama abrió un *ticket* con la respuesta a Frank.

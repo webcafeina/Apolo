@@ -724,3 +724,23 @@ real sin haber aceptado. El aviso está en `z-index: 60` y la cabecera en 40; co
 con githubstatus en verde y sin que cambie nada en la web. Con `gh run rerun --failed`, el único trabajo de
 `web.yml` compila y sube otro paquete al lado del primero, y falla en un minuto por tener dos con el mismo
 nombre. Se arregla con una ejecución nueva: `gh workflow run web.yml --ref main`. (2026-11-06)
+
+## Un círculo SVG con dos medios arcos sale deformado
+
+`M x+r y A r r 0 1 0 x−r y A r r 0 1 0 x+r y Z` parece un círculo y en resvg sale con un píxel de más
+por arriba: entre puntos exactamente opuestos el arco es ambiguo, y con el redondeo a dos decimales el
+visor lo resuelve a su manera. En el banco de vectorizar hundía una cara de 83 a 34 de nota. Se escribe
+con **cuatro cuartos de arco** (`A r r 0 0 1` a cada punto cardinal). (2026-11-09)
+
+## Un dibujo suavizado en blanco y negro tiene «pocos colores»
+
+Para saber si una imagen no tiene suavizado no vale contar colores: un icono en blanco y negro suavizado
+tiene menos de 64 grises distintos y pasa por imagen dura (en el banco de vectorizar, tolerancias el doble
+de gruesas y 6 puntos menos). Lo que dice si hay suavizado es la **proporción de píxeles con un color
+intermedio**, lejos de todos los de su paleta (`paleta::sin_suavizado`). (2026-11-09)
+
+## En zsh, `env $v orden` no separa las variables
+
+Con `v="A=1 B=2"`, `env $v orden` pasa **una** variable `A` con el valor `1 B=2`: zsh no parte las
+variables sin comillas como bash. Se usa `env ${=v} orden`. Costó un barrido de parámetros entero con los
+valores por defecto sin saberlo. (2026-11-09)

@@ -1,6 +1,8 @@
 [workspace]
 resolver = "3"
 members = ["crates/heic", "crates/avifjxl", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "crates/mcp", "crates/mcpb", "src-tauri"]
+# El banco de pruebas de vectorizar (fase 1) es un proyecto aparte: ni la CI ni `make comprobar` lo compilan.
+exclude = ["laboratorio"]
 
 [workspace.package]
 version = "1.0.2"

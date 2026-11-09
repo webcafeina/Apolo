@@ -1,0 +1,3 @@
+# Comparte la carpeta target del repositorio, en su propio subdirectorio.
+[build]
+target-dir = "../../target/laboratorio"

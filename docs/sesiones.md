@@ -4,6 +4,25 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-09 · Vectorizar: investigación y banco de pruebas
+
+- Al empezar: CI del viernes en verde, Security sin nada nuevo; las publicaciones de Álvaro, subidas;
+  @claude sigue en la página del repositorio (borradas las 5 ramas viejas de Dependabot; si sigue, soporte).
+- **Anthropic rechazó el plugin**: «Local MCP servers accepted only from Verified organizations», sin
+  documentar. Pregunta enviada a directory@anthropic.com. Disco: del 89 al 85 % (fotogramas de los vídeos
+  de la web, la Release 1.0.2 bajada y compilaciones viejas).
+- **Vectorizar** (plan aprobado; ADR 0038): investigación pública de Vectorizer.ai (web, API, opciones) y
+  de lo libre (VTracer, Potrace, resvg, PolyFit…); laboratorio con 53 imágenes libres y 10 motores; el
+  cliente subió 20 imágenes a Vectorizer.ai y bajó sus SVG. Nuestro motor pasó de 71,6 a 80,6 de nota
+  (Vectorizer.ai, 83,1) a fuerza de hipótesis medidas: mezcla de colores en el borde, contorno por debajo
+  del píxel, polígono primero, círculos con cuatro arcos (trampas.md) y suavizado por proporción de
+  colores intermedios (trampas.md).
+- **Tres avisos nuevos de RustSec en `rmcp` 3.5.1** (cliente OAuth y transportes HTTP; Apolo no los
+  compila): `rmcp` sube a 3.9.0, con las pruebas del MCP y el catálogo iguales (ADR 0023).
+- **No verificado**: los SVG en Illustrator o Inkscape; imágenes grandes; transparencias.
+
+---
+
 ## 2026-11-06 (tarde) · La navegación de la web
 
 - El cliente vio que páginas interesantes casi solo salían en el pie, y que en el móvil no había menú.

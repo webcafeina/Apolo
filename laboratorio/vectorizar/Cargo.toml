@@ -12,6 +12,7 @@ description = "Banco de pruebas para vectorizar imágenes en Apolo (fase 1): no 
 [dependencies]
 image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
 imagequant = "4.4.1"
+nalgebra = "0.33"
 resvg = "0.49"
 vtracer = "=1.0.0-alpha.4"
 

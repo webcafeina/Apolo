@@ -17,6 +17,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   (Vectorizer.ai, 83,1) a fuerza de hipótesis medidas: mezcla de colores en el borde, contorno por debajo
   del píxel, polígono primero, círculos con cuatro arcos (trampas.md) y suavizado por proporción de
   colores intermedios (trampas.md).
+- Después de subir: elipses (Halíř y Flusser), puntas finas validadas con el suavizado y la comprobación en
+  Chromium (diferencia de hasta 3 puntos con resvg). 80,7 frente a 83,1. Las estrellas pequeñas siguen
+  siendo lo que más falta (ADR 0038). `apolo medir | head` cierra con pánico: a deuda.md.
 - **Tres avisos nuevos de RustSec en `rmcp` 3.5.1** (cliente OAuth y transportes HTTP; Apolo no los
   compila): `rmcp` sube a 3.9.0, con las pruebas del MCP y el catálogo iguales (ADR 0023).
 - **No verificado**: los SVG en Illustrator o Inkscape; imágenes grandes; transparencias.

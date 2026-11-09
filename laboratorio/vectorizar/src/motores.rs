@@ -304,7 +304,19 @@ fn apolo_con(im: &Rgba, g: Grupo, poligono: bool) -> Result<String, String> {
         for lazo in subpixel::contornos(&cob, w as usize, h as usize) {
             if area_lazo(&lazo).abs() < minima { continue; }
             let f = if poligono {
-                crate::poli::ajustar(&lazo, var("APOLO_TOL_POLI", if duro { 0.5 } else { 0.3 }), var("APOLO_TOL_CURVA", 0.3))
+                let muestra = |x: f64, y: f64| -> f32 {
+                    // Bilineal sobre los centros de los píxeles; fuera de la imagen, 0.
+                    let (fx, fy) = (x - 0.5, y - 0.5);
+                    let (x0, y0) = (fx.floor(), fy.floor());
+                    let (tx, ty) = ((fx - x0) as f32, (fy - y0) as f32);
+                    let v = |i: f64, j: f64| -> f32 {
+                        if i < 0.0 || j < 0.0 || i >= w as f64 || j >= h as f64 { 0.0 } else { cob[j as usize * w as usize + i as usize] }
+                    };
+                    let a = v(x0, y0) * (1.0 - tx) + v(x0 + 1.0, y0) * tx;
+                    let b = v(x0, y0 + 1.0) * (1.0 - tx) + v(x0 + 1.0, y0 + 1.0) * tx;
+                    a * (1.0 - ty) + b * ty
+                };
+                crate::poli::ajustar(&lazo, var("APOLO_TOL_POLI", if duro { 0.5 } else { 0.3 }), var("APOLO_TOL_CURVA", 0.3), &muestra)
             } else {
                 ajuste::ajustar(&lazo, o)
             };

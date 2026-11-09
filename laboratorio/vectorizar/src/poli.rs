@@ -46,12 +46,17 @@ enum Parte {
     Curva { idx: Vec<usize> },
 }
 
-pub fn ajustar(lazo: &[P], tol_poli: f64, tol_curva: f64) -> Option<Forma> {
+/// `cob(x, y)`: la cobertura de la capa en ese punto (0 fuera, 1 dentro), para validar las puntas.
+pub fn ajustar(lazo: &[P], tol_poli: f64, tol_curva: f64, cob: &dyn Fn(f64, f64) -> f32) -> Option<Forma> {
     let n = lazo.len();
     if n < 3 || ajuste::area(lazo).abs() < 0.8 { return None; }
     // Un círculo entero, si lo es (error ≤ 0,35 px).
     if let Some((cc, r)) = ajuste::circulo(lazo) {
         if r >= 1.5 { return Some(Forma::Circulo { c: cc, r }); }
+    }
+    // Una elipse entera, si lo es.
+    if let Some((cc, rx, ry, ang)) = ajuste::elipse(lazo) {
+        return Some(Forma::Elipse { c: cc, rx, ry, ang });
     }
     // Formas pequeñas (menos de 10 px): el polígono afinado tal cual.
     let (mut x0, mut y0, mut x1, mut y1) = (f64::MAX, f64::MAX, f64::MIN, f64::MIN);
@@ -115,6 +120,15 @@ pub fn ajustar(lazo: &[P], tol_poli: f64, tol_curva: f64) -> Option<Forma> {
                 let pts = trozo(*a, *b);
                 let (pa, pb) = (pts[0], pts[pts.len() - 1]);
                 let interior: Vec<P> = pts.iter().copied().filter(|q| dist(*q, pa) >= 1.0 && dist(*q, pb) >= 1.0).collect();
+                // Solo los puntos fiables: a 1,5 px a cada lado, uno claramente dentro y otro fuera. Donde
+                // la forma mide menos de un píxel (el brazo de una estrella), el contorno al 50 % va por el
+                // centro y no por el borde; esos puntos torcerían la recta.
+                let nrm = { let d = norm(sub(pb, pa)); (-d.1, d.0) };
+                let fiables: Vec<P> = interior.iter().copied().filter(|q| {
+                    let (c1, c2) = (cob(q.0 + 1.5 * nrm.0, q.1 + 1.5 * nrm.1), cob(q.0 - 1.5 * nrm.0, q.1 - 1.5 * nrm.1));
+                    c1.max(c2) > 0.9 && c1.min(c2) < 0.1
+                }).collect();
+                let _ = fiables; // probado el 2026-11-09: no mejora (ADR 0038); se deja la recta con todo el interior
                 let base: &[P] = if interior.len() >= 3 { &interior } else { &pts };
                 let (cc, d) = ajuste::recta(base);
                 let pr = |q: P| add(cc, mul(d, dot(sub(q, cc), d)));
@@ -157,7 +171,7 @@ pub fn ajustar(lazo: &[P], tol_poli: f64, tol_curva: f64) -> Option<Forma> {
             }
         }
     }
-    afilar(&mut tramos, &mut es_recta);
+    afilar(&mut tramos, &mut es_recta, cob);
     if tramos.len() < 2 { return None; }
     Some(Forma::Tramos(tramos))
 }
@@ -177,7 +191,25 @@ fn mover_fin(t: &mut Tramo, q: P) {
     }
 }
 
-fn afilar(t: &mut Vec<Tramo>, recta: &mut Vec<bool>) {
+/// ¿Hay un rasgo fino entre `a` y `b`? Los píxeles a medio cubrir (ni dentro ni fuera) dicen que el
+/// contorno al 50 % se ha comido algo de menos de un píxel de ancho, como el brazo de una estrella.
+fn rasgo_fino(a: P, b: P, cob: &dyn Fn(f64, f64) -> f32) -> bool {
+    let l = dist(a, b);
+    let pasos = (l / 0.5).ceil().max(2.0) as usize;
+    let mut suma = 0.0;
+    let mut n = 0;
+    for k in 1..pasos {
+        let t = k as f64 / pasos as f64;
+        if t > 0.9 { break; }
+        let q = add(a, mul(sub(b, a), t));
+        let c = cob(q.0, q.1) as f64;
+        suma += c.min(1.0 - c);
+        n += 1;
+    }
+    n > 0 && suma / n as f64 > 0.15
+}
+
+fn afilar(t: &mut Vec<Tramo>, recta: &mut Vec<bool>, cob: &dyn Fn(f64, f64) -> f32) {
     // 1. Rachas cortas (1 o 2 lados de < 3 px en total) entre dos rectas que se cruzan cerca: al cruce.
     let mut cambiado = true;
     while cambiado && t.len() > 3 {
@@ -195,7 +227,8 @@ fn afilar(t: &mut Vec<Tramo>, recta: &mut Vec<bool>) {
                 let (Tramo::Linea(a0, a1), Tramo::Linea(b0, b1)) = (t[i], t[j]) else { continue };
                 if let Some(x) = ajuste::cruce(a0, a1, b0, b1) {
                     let centro = mul(add(ini(&t[medio[0]]), fin(&t[*medio.last().unwrap()])), 0.5);
-                    if dist(x, centro) < 3.0 {
+                    let d = dist(x, centro);
+                    if d < 3.0 || (d < 12.0 && rasgo_fino(centro, x, cob)) {
                         mover_fin(&mut t[i], x);
                         mover_ini(&mut t[j], x);
                         let mut quitar = medio.clone();
@@ -238,10 +271,11 @@ mod pruebas {
         for i in 0..20 { l.push((20.0, i as f64)); }
         for i in 0..20 { l.push((20.0 - i as f64, 20.0)); }
         for i in 0..20 { l.push((0.0, 20.0 - i as f64)); }
-        let f = ajustar(&l, 0.2, 0.3);
+        let f = ajustar(&l, 0.2, 0.3, &|_, _| 0.0);
         match f {
             Some(Forma::Tramos(t)) => { let mut s = String::new(); ajuste::d(&Forma::Tramos(t), &mut s); println!("{s}"); }
             Some(Forma::Circulo { .. }) => panic!("círculo"),
+            Some(Forma::Elipse { .. }) => panic!("elipse"),
             None => panic!("nada"),
         }
     }

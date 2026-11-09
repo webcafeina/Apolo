@@ -11,9 +11,10 @@
 > **2026-11-09, tarde: vectorizar, fase 1 en marcha (ADR 0038).** Banco en `laboratorio/vectorizar/`
 > (fuera de la CI): `cargo run --release` y la galería en `salida/` (artefacto
 > claude.ai/artifact/3eqqWdYEAiGoFWnaKzuewQ). Nuestro motor `apolo-poli`, 80,6 de nota frente a 83,1 de
-> Vectorizer.ai con la mitad de peso. Los SVG de Vectorizer.ai (suscripción del cliente, un mes, solo para
-> comparar) en `capturas/vectorizar/vectorizer-ai/`. **Lo siguiente**: elipses y rectángulos como figuras,
-> estrellas pequeñas, relleno de huecos; luego decidir la fase 2 con el cliente.
+> Vectorizer.ai con la mitad de peso (80,7 tras elipses y puntas finas). Los SVG de Vectorizer.ai
+> (suscripción del cliente, un mes, solo para comparar) en `capturas/vectorizar/vectorizer-ai/`.
+> **Lo siguiente**: que el cliente vea la galería y decida la fase 2 (llevarlo a Apolo) y si se sigue
+> mejorando el motor (simetrías para las estrellas, degradados).
 >
 > **2026-11-09**: CI y Security bien; las publicaciones de Álvaro, subidas. **El directorio de Anthropic
 > rechazó el plugin** («Needs changes»): solo acepta servidores MCP locales de «Verified organizations», y

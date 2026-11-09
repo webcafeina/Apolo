@@ -35,8 +35,12 @@ Motores: VTracer 1.0 (MIT o Apache-2.0) con sus presets; Potrace 1.16 (GPL-2.0-o
 3. **Polígono primero** (al estilo de PolyFit, Dominici y otros, 2020): el contorno se afina a polígono;
    los lados largos con una esquina en un extremo son rectas, y la esquina va al cruce de las rectas; las
    rachas de lados cortos son Bézier si ahorran nodos; las puntas romas entre dos rectas se afilan.
-4. **Círculos de verdad** cuando el contorno lo es; formas de menos de 10 px, como polígono.
+4. **Círculos y elipses de verdad** cuando el contorno lo es (elipse: Halíř y Flusser, 1998, con una
+   comprobación geométrica de 0,35 px); formas de menos de 10 px, como polígono.
 5. **Pixel art** (pocos colores, sin suavizado y en bloques) se traza a píxeles.
+6. **Puntas finas**: una punta roma entre dos rectas se prolonga hasta su cruce si está cerca (3 px) o,
+   hasta 12 px, si los píxeles del tramo que se añade están a medio cubrir (hay un rasgo de menos de un
+   píxel que el contorno al 50 % se comió).
 
 ## Alternativas descartadas
 
@@ -56,7 +60,7 @@ Con las 18 imágenes que se le pasaron a Vectorizer.ai (sin fotos), al cierre de
 |---|---|---|---|
 | SVG original | 97,5 | 57 | — |
 | Vectorizer.ai | 83,1 | 555 | 18,6 KB |
-| **apolo-poli** | **80,6** | 528 | **8,8 KB** |
+| **apolo-poli** | **80,7** | 520 | **8,8 KB** |
 | VTracer | 47,7 | 255 | 7,0 KB |
 
 - **Ganamos o empatamos en 6 de 18**: Japón (93,7 con 5 nodos), los dos pixel art (100), la Unión Jack sin
@@ -66,9 +70,18 @@ Con las 18 imágenes que se le pasaron a Vectorizer.ai (sin fotos), al cierre de
 - **Fotos**: nadie las vectoriza bien (notas negativas, también Vectorizer.ai). Avisar al usuario.
 - **Vectorizer.ai tampoco pasa de 83 de media**: el techo realista con esta medida está entre 85 y 90.
 
-Lo siguiente (fase 1, sigue abierta): elipses y rectángulos como figuras; las estrellas pequeñas; el
-relleno de huecos; y después, decidir con el cliente la fase 2 (núcleo, CLI, MCP e interfaz, y PDF, EPS
-y DXF) y si hace falta IA.
+- **Relleno de huecos** («gap filler» de Vectorizer.ai): no hace falta. Nuestras capas se apilan y cada
+  una cubre también las de encima, así que entre dos colores no queda rendija.
+- **Las estrellas pequeñas** siguen siendo la pérdida mayor. Prolongar las puntas validándolas con el
+  suavizado ayudó poco (61,5 → 64,0 en Estados Unidos); ajustar las rectas solo con puntos «fiables»,
+  nada (se deshizo). Lo que falta es mirar la forma entera: el borde de dos brazos y la cabeza de una
+  estrella es una sola recta, y las cinco puntas son simétricas. Es lo que Vectorizer.ai llama detectar
+  simetrías y optimizar el «grafo vectorial»: la siguiente pieza grande, si se sigue.
+- **Rectángulos**: un rectángulo ya sale como 4 rectas con esquinas exactas; escribirlo como `<rect>` no
+  cambia la imagen. Se deja para la salida definitiva (fase 2), por si se edita.
+
+Lo siguiente: decidir con el cliente la fase 2 (núcleo, CLI, MCP e interfaz, y PDF, EPS y DXF), si se
+sigue mejorando el motor (simetrías, degradados) y si hace falta IA.
 
 ## Verificación
 
@@ -79,6 +92,9 @@ y DXF) y si hace falta IA.
   (tolerancia 0,3); el polígono de un cuadrado sale con sus 4 esquinas.
 - **Comprobado a mano**, mirando los píxeles: las puntas de las estrellas, los halos, la cara de OpenMoji
   y la Unión Jack.
-- **No verificado**: que los SVG se vean igual en Illustrator, Inkscape o los navegadores (solo resvg);
+- **En un navegador** (Chromium, con Playwright), seis casos: los SVG se ven bien (círculos, elipses y
+  huecos). La nota cambia hasta 3 puntos según el visor (Chromium y resvg suavizan distinto: entre ellos
+  dan de 81 a 89); como los SVG de Vectorizer.ai se miden igual, la comparación es justa.
+- **No verificado**: que los SVG se vean igual en Illustrator o Inkscape;
   la velocidad en imágenes grandes (las de 512 px tardan menos de 1 s); el comportamiento con
   transparencias (todo se aplana sobre blanco).

@@ -34,6 +34,8 @@ impl Tramo {
 
 pub enum Forma {
     Circulo { c: P, r: f64 },
+    /// Elipse de semiejes `rx`, `ry`, girada `ang` radianes.
+    Elipse { c: P, rx: f64, ry: f64, ang: f64 },
     Tramos(Vec<Tramo>),
 }
 
@@ -394,6 +396,16 @@ pub fn d(f: &Forma, out: &mut String) {
             }
             out.push('Z');
         }
+        Forma::Elipse { c, rx, ry, ang } => {
+            let (s, co) = ang.sin_cos();
+            let pto = |u: f64, v: f64| (c.0 + u * co - v * s, c.1 + u * s + v * co);
+            let pts = [pto(*rx, 0.0), pto(0.0, *ry), pto(-rx, 0.0), pto(0.0, -ry), pto(*rx, 0.0)];
+            let _ = write!(out, "M{} {}", r2(pts[0].0), r2(pts[0].1));
+            for q in &pts[1..] {
+                let _ = write!(out, "A{} {} {} 0 1 {} {}", r2(*rx), r2(*ry), r2(ang.to_degrees()), r2(q.0), r2(q.1));
+            }
+            out.push('Z');
+        }
         Forma::Tramos(t) => {
             let p0 = t[0].ini();
             let _ = write!(out, "M{} {}", r2(p0.0), r2(p0.1));
@@ -456,5 +468,77 @@ mod pruebas {
         let d = desvio(&out, c, r);
         println!("tramos {} desvío {d:.3}", out.len());
         assert!(d < 0.4, "desvío {d}");
+    }
+}
+
+/// Elipse por mínimos cuadrados (Halíř y Flusser, 1998, la versión estable del método de Fitzgibbon).
+/// `None` si no es una elipse o algún punto se aparta más de 0,35 px.
+pub fn elipse(p: &[P]) -> Option<(P, f64, f64, f64)> {
+    use nalgebra::{Matrix3, Vector3};
+    let n = p.len() as f64;
+    if p.len() < 8 { return None; }
+    let (mx, my) = (p.iter().map(|q| q.0).sum::<f64>() / n, p.iter().map(|q| q.1).sum::<f64>() / n);
+    let s = p.iter().map(|q| ((q.0 - mx).powi(2) + (q.1 - my).powi(2)).sqrt()).sum::<f64>() / n;
+    if s < 1e-6 { return None; }
+    let (mut s1, mut s2, mut s3) = (Matrix3::<f64>::zeros(), Matrix3::<f64>::zeros(), Matrix3::<f64>::zeros());
+    for q in p {
+        let (x, y) = ((q.0 - mx) / s, (q.1 - my) / s);
+        let d1 = Vector3::new(x * x, x * y, y * y);
+        let d2 = Vector3::new(x, y, 1.0);
+        s1 += d1 * d1.transpose();
+        s2 += d1 * d2.transpose();
+        s3 += d2 * d2.transpose();
+    }
+    let t = -s3.try_inverse()? * s2.transpose();
+    let m = s1 + s2 * t;
+    let m = Matrix3::new(m[(2, 0)] / 2.0, m[(2, 1)] / 2.0, m[(2, 2)] / 2.0, -m[(1, 0)], -m[(1, 1)], -m[(1, 2)], m[(0, 0)] / 2.0, m[(0, 1)] / 2.0, m[(0, 2)] / 2.0);
+    let mut mejor: Option<Vector3<f64>> = None;
+    for l in m.complex_eigenvalues().iter() {
+        if l.im.abs() > 1e-9 { continue; }
+        let a = m - Matrix3::identity() * l.re;
+        // vector del núcleo: el producto vectorial de dos filas independientes
+        let filas = [a.row(0).transpose(), a.row(1).transpose(), a.row(2).transpose()];
+        let mut v = filas[0].cross(&filas[1]);
+        if v.norm() < 1e-12 { v = filas[0].cross(&filas[2]); }
+        if v.norm() < 1e-12 { v = filas[1].cross(&filas[2]); }
+        if 4.0 * v[0] * v[2] - v[1] * v[1] > 0.0 { mejor = Some(v); }
+    }
+    let a1 = mejor?;
+    let a2 = t * a1;
+    let (a, b, c, d, e, f) = (a1[0], a1[1], a1[2], a2[0], a2[1], a2[2]);
+    let den = b * b - 4.0 * a * c;
+    if den >= 0.0 { return None; }
+    let (x0, y0) = ((2.0 * c * d - b * e) / den, (2.0 * a * e - b * d) / den);
+    let num = 2.0 * (a * e * e + c * d * d - b * d * e + den * f);
+    let raiz = ((a - c).powi(2) + b * b).sqrt();
+    let rx = -(num * ((a + c) + raiz)).sqrt() / den;
+    let ry = -(num * ((a + c) - raiz)).sqrt() / den;
+    let ang = if b.abs() < 1e-12 { if a < c { 0.0 } else { std::f64::consts::FRAC_PI_2 } } else { 0.5 * (-b).atan2(c - a) };
+    if !(rx.is_finite() && ry.is_finite()) { return None; }
+    let (cx, cy, rx, ry) = (x0 * s + mx, y0 * s + my, rx * s, ry * s);
+    if rx.min(ry) < 1.5 { return None; }
+    // Comprobación geométrica: cada punto, a menos de 0,35 px de la elipse.
+    let (sn, cs) = ang.sin_cos();
+    let muestras: Vec<P> = (0..1440).map(|k| { let u = k as f64 * std::f64::consts::TAU / 1440.0; let (x, y) = (rx * u.cos(), ry * u.sin()); (cx + x * cs - y * sn, cy + x * sn + y * cs) }).collect();
+    for q in p {
+        let dmin = muestras.iter().map(|m| dist(*m, *q)).fold(f64::MAX, f64::min);
+        if dmin > 0.35 { return None; }
+    }
+    Some(((cx, cy), rx, ry, ang))
+}
+
+#[cfg(test)]
+mod pruebas_elipse {
+    use super::*;
+    #[test]
+    fn elipse_girada() {
+        let (cx, cy, rx, ry, ang) = (100.0, 80.0, 40.0, 15.0, 0.6f64);
+        let (s, c) = ang.sin_cos();
+        let p: Vec<P> = (0..200).map(|k| { let u = k as f64 * std::f64::consts::TAU / 200.0; let (x, y) = (rx * u.cos(), ry * u.sin()); (cx + x * c - y * s, cy + x * s + y * c) }).collect();
+        let ((x, y), a, b, g) = elipse(&p).expect("elipse");
+        println!("{x:.3} {y:.3} {a:.3} {b:.3} {g:.3}");
+        assert!((x - cx).abs() < 0.01 && (y - cy).abs() < 0.01 && (a - rx).abs() < 0.01 && (b - ry).abs() < 0.01);
+        let cuadrado: Vec<P> = (0..80).map(|i| match i / 20 { 0 => (i as f64, 0.0), 1 => (20.0, (i - 20) as f64), 2 => (20.0 - (i - 40) as f64, 20.0), _ => (0.0, 20.0 - (i - 60) as f64) }).collect();
+        assert!(elipse(&cuadrado).is_none());
     }
 }

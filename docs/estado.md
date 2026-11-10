@@ -4,6 +4,22 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-10, noche): la 1.1.0, en BORRADOR y revisada; falta publicarla con el sí del cliente.**
+> Hechos los pasos 1 a 5 de «El día de la 1.1.0» (más abajo): `web-1.1.0` fusionada (`bf71a19`), versión y capturas
+> (`fe3b7bd` «Versión 1.1.0: vectorizar»), CI en verde, etiqueta `v1.1.0` y `publicar.yml` (run 42866701463: 10
+> compilaciones, adjuntar y 6 humos en verde). El run `Web` del push (42863771592) **se canceló a propósito** para que
+> la web no anunciara la 1.1.0 sin instaladores. **Borrador revisado entero**: 50 ficheros, 49/49 sumas, 19 copias con
+> nombre fijo idénticas, `latest.json` 1.1.0 con 16 plataformas y **16/16 firmas válidas**, procedencia 50/50,
+> `apolo` y `apolo-mcp` dicen 1.1.0, y `apolo vectorizar` del sol da los mismos bytes que cita la web (7.772 / 3.828 /
+> 9.837 / 37.972; nota 71,3). Las notas no mencionan los cuadros ni los iconos nuevos (se propuso dejarlos fuera;
+> el cliente no ha dicho nada). **Al retomar**: `scripts/seguridad-github.sh`; si el cliente da el sí,
+> `gh release edit v1.1.0 -R webcafeina/Apolo --draft=false` (despliega la web por `release: published` y avisa a
+> los Apolo instalados). Después: vigilar el run `Web` y mirar la web (guía de vectorizar, 1.1.0, descargas), APT,
+> RPM, PKGBUILD, Homebrew, registro MCP y enlaces fijos en 1.1.0; `scripts/seguridad-github.sh`; paso 7
+> (`docs/distribucion.md`: Chocolatey a mano, winget…) y paso 6, la prueba del cliente. La galería de iconos
+> (claude.ai/artifact/TXPZw3Q2Cixdndaa8dxS7f) **se borró** a petición del cliente. Disco del VPS al 92 %:
+> `make limpiar` antes de lo largo.
+
 > **PARADA AQUÍ (2026-11-10, tarde).** Antes de la 1.1.0, las dos mejoras que se eligieron de la deuda, en `main`:
 > **el fondo de cuadros** en Vectorizar (el original y el dibujo con su transparencia; la nota, sobre blanco) y
 > **los iconos de cada sistema** para la sección y el modo «Contornos», elegidos por el cliente en una galería

@@ -4,6 +4,21 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-10 (noche) · La 1.1.0, en borrador
+
+- El cliente preguntó si los cuadros merecían ir también en el Estudio: ya los tenía (el comparador es el mismo).
+- «Adelante» con la 1.1.0: fusionada `web-1.1.0` (`bf71a19`); versión a 1.1.0, `make cli`, medidas, capturas de
+  la web en los cuatro aspectos y las del README de nuevo (`fe3b7bd`); `make comprobar` y CI en verde. El run `Web`
+  del push se canceló para que la web no anunciara la versión antes que los instaladores (la web en línea siguió
+  sin vectorizar: la guía, 404).
+- Etiqueta `v1.1.0` → `publicar.yml` (run 42866701463), todo en verde. Borrador revisado como el de la 1.0.2:
+  sumas, copias con nombre fijo, firmas del actualizador comprobadas con la clave pública de la aplicación,
+  `gh attestation verify` de los 50, versión de los binarios y el sol vectorizado con el binario de la Release.
+- Disco al 93–95 %: `make limpiar` (4,2 GB) y `scripts/limpiar.py` (7,3 GB); queda al 91–92 %.
+- **Sin publicar**: el cliente lo deja para mañana. La galería de iconos, borrada a petición suya.
+
+---
+
 ## 2026-11-10 (tarde) · Vectorizar: el fondo de cuadros y los iconos de cada sistema
 
 - El cliente preguntó qué deuda quedaba antes de publicar y eligió las dos que se le recomendaron.

@@ -21,8 +21,12 @@
 > transparentes). Hito 6, **MCP**: `vectorizar_imagen`, la duodécima
 > (catálogo regenerado; humo espera 12). Hito 7, **la pantalla «Vectorizar»** (`frontend/src/vectorizar/`), con
 > el modo «Contornos» y sus pruebas e2e; vista en el navegador con el aspecto de cada sistema, **no en la
-> ventana de verdad**. **Lo siguiente**: el hito 8 (la web: guía «Vectorizar una imagen», tarjeta en la
-> portada, `llms.txt`, y «doce herramientas») y el 9 (README, notas y la 1.1.0 cuando lo diga el cliente),
+> ventana de verdad**. Hito 8, **la web, preparada en la rama `web-1.1.0`** (`0b63002`, subida sin publicar): guía «Vectorizar una
+> imagen» (es/en) con cifras de `medidas.mjs` (el sol plano: 71,3, PNG de 20 KB → SVG de 8 KB), tarjeta en la
+> portada, sección en la CLI, preguntas, `llms.txt`, «doce herramientas» y **todas las capturas de nuevo** (la
+> barra lateral tiene la fila Vectorizar). **El día de la 1.1.0**: fusionar `web-1.1.0` en `main`, volver a
+> pasar `node web/herramientas/medidas.mjs` (que ponga 1.1.0) y, si la interfaz ha cambiado, `make
+> capturas-web`. **Lo siguiente**: el hito 9 (README, notas y la 1.1.0 cuando lo diga el cliente),
 > **Decidido con el cliente (2026-11-10)**: la prueba en sus máquinas (la pantalla en su Mac y en una VM;
 > los ficheros en Illustrator o Inkscape y el DXF en su programa de corte) **se hace al publicar la 1.1.0**, y la
 > web de vectorizar **sale con la 1.1.0**: se prepara en la rama `web-1.1.0` (subir `web/` a `main` la publica) y

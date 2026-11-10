@@ -23,8 +23,10 @@
 > el modo «Contornos» y sus pruebas e2e; vista en el navegador con el aspecto de cada sistema, **no en la
 > ventana de verdad**. **Lo siguiente**: el hito 8 (la web: guía «Vectorizar una imagen», tarjeta en la
 > portada, `llms.txt`, y «doce herramientas») y el 9 (README, notas y la 1.1.0 cuando lo diga el cliente),
-> con la prueba en sus máquinas antes de publicar (la pantalla en su Mac y en una VM; los ficheros en
-> Illustrator o Inkscape y el DXF en su programa de corte). README y web cuentan aún once herramientas. El DXF, validado con ezdxf (sin errores en 240 ficheros; también en la CI).
+> **Decidido con el cliente (2026-11-10)**: la prueba en sus máquinas (la pantalla en su Mac y en una VM;
+> los ficheros en Illustrator o Inkscape y el DXF en su programa de corte) **se hace al publicar la 1.1.0**, y la
+> web de vectorizar **sale con la 1.1.0**: se prepara en la rama `web-1.1.0` (subir `web/` a `main` la publica) y
+> se fusiona ese día. README y web cuentan aún once herramientas. El DXF, validado con ezdxf (sin errores en 240 ficheros; también en la CI).
 > **Pendiente del cliente**, antes de la 1.1.0: abrir SVG/PDF/EPS en Illustrator o Inkscape y el DXF en su programa
 > de corte o CAD (deuda.md). El EPS se comprueba en la CI frente al PDF, los dos pintados por Ghostscript (aquí no hay). Fotos: deuda (notas
 > bajas y SVG de 6 a 9 MB).

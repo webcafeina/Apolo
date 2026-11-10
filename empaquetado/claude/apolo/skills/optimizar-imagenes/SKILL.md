@@ -1,6 +1,6 @@
 ---
 name: optimizar-imagenes
-description: Optimize, compress, convert or resize images on the user's computer with Apolo (WebP, AVIF, JPEG XL, JPEG, PNG, QOI; it also reads HEIC), and measure the quality loss with SSIMULACRA 2. Use it whenever the user asks to make images lighter, convert them to another format, prepare them for a website, compare formats or check how much quality was lost, for one file or whole folders.
+description: Optimize, compress, convert or resize images on the user's computer with Apolo (WebP, AVIF, JPEG XL, JPEG, PNG, QOI; it also reads HEIC), measure the quality loss with SSIMULACRA 2, and vectorize logos, icons or drawings to SVG, PDF, EPS or DXF. Use it whenever the user asks to make images lighter, convert them to another format, prepare them for a website, compare formats, check how much quality was lost, or turn a bitmap into vector graphics (SVG, a cut file for vinyl or laser), for one file or whole folders.
 ---
 
 # Optimizing images with Apolo
@@ -25,6 +25,9 @@ the server's own instructions explain each tool. These are the habits that work 
 - **Originals are safe.** Apolo always writes new files (`-2`, `-3`… if the name exists) and never
   overwrites or deletes. If the user wants the original replaced, warn that it can't be undone,
   ask for confirmation and suggest keeping a copy before doing it with other tools.
+- **To vectorize** a logo, an icon or a drawing (PNG or JPG to SVG, PDF, EPS or DXF), `vectorizar_imagen`.
+  For cutting vinyl or laser, `estilo` `trazar_bordes` and, in DXF, `nivel_dxf`. Photos come out as a poster
+  of flat colors: say so before vectorizing one.
 - **If Apolo isn't installed**, the server only offers `instalar_apolo`: call it and pass on the
   link to the user instead of trying something else.
 

@@ -24,6 +24,7 @@ export const RUTAS = {
   guiaWeb: { es: "/guias/optimizar-imagenes-para-la-web/", en: "/en/guides/optimize-images-for-the-web/" },
   guiaAgente: { es: "/guias/optimizar-imagenes-con-un-agente-de-ia/", en: "/en/guides/optimize-images-with-an-ai-agent/" },
   guiaHeic: { es: "/guias/heic-a-jpg/", en: "/en/guides/heic-to-jpg/" },
+  guiaVectorizar: { es: "/guias/vectorizar-una-imagen/", en: "/en/guides/vectorize-an-image/" },
   comparativas: { es: "/comparativas/", en: "/en/compare/" },
   frenteSquoosh: { es: "/comparativas/apolo-frente-a-squoosh/", en: "/en/compare/apolo-vs-squoosh/" },
   frenteTinypng: { es: "/comparativas/apolo-frente-a-tinypng/", en: "/en/compare/apolo-vs-tinypng/" },

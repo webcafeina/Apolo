@@ -11,6 +11,10 @@ const graficoPng = menos(M.graficos.png, M.graficos.original);
 const graficoWebp = menos(M.graficos.webpSinPerdida, M.graficos.original);
 const heic = (f: "jpeg" | "webp" | "avif") => menos(M.heic[f], M.heic.original);
 const FECHA = "2026-10-27";
+// Vectorizar (ADR 0039): el sol de Apolo en colores planos, medido por medidas.mjs.
+const V = M.vector;
+const FECHA_VECTOR = "2026-11-10";
+const decimal = (n: number, idioma: Idioma) => n.toLocaleString(idioma === "es" ? "es-ES" : "en-US", { maximumFractionDigits: 1 });
 
 export const GUIAS: Record<Idioma, Articulo[]> = {
   es: [
@@ -269,7 +273,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
         {
           titulo: "Qué es",
           parrafos: [
-            "MCP es la forma en que los agentes de IA usan herramientas de tu ordenador. Apolo trae un servidor MCP con once herramientas: analizar, optimizar, comparar formatos, medir la calidad, mirar una imagen, convertir carpetas en lotes y guardar presets. Las imágenes se procesan en tu ordenador con los mismos motores que la aplicación.",
+            "MCP es la forma en que los agentes de IA usan herramientas de tu ordenador. Apolo trae un servidor MCP con doce herramientas: analizar, optimizar, comparar formatos, medir la calidad, mirar una imagen, convertir carpetas en lotes, vectorizar y guardar presets. Las imágenes se procesan en tu ordenador con los mismos motores que la aplicación.",
           ],
           captura: "agentes",
         },
@@ -349,6 +353,81 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           parrafos: [
             "En el iPhone, Ajustes › Cámara › Formatos › «Más compatible» guarda las fotos nuevas en JPG. Pesan más, y las que ya tienes siguen en HEIC.",
           ],
+        },
+      ],
+    },
+    {
+      pagina: "guiaVectorizar",
+      destacado: { valor: decimal(V.nota, "es"), texto: "de nota con el sol de Apolo, en un SVG que se amplía sin perder nitidez" },
+      publicado: FECHA_VECTOR,
+      revisado: FECHA_VECTOR,
+      titulo: "Vectorizar una imagen: de PNG a SVG, PDF o DXF, gratis · Apolo",
+      descripcion:
+        "Pasa un logotipo, un icono o un dibujo de PNG o JPG a vectorial (SVG, PDF, EPS o DXF) en tu ordenador, viendo el resultado y su nota. También para cortar vinilo o láser.",
+      etiqueta: "Guía",
+      h1: "Vectorizar una imagen.",
+      entrada: "Un logotipo que solo tienes en PNG, un icono o un dibujo, convertidos en formas que se amplían sin perder nitidez. En tu ordenador, sin subir nada.",
+      resumen: "De PNG o JPG a SVG, PDF, EPS o DXF: con la aplicación, la terminal o un agente de IA, y para cortar vinilo o láser.",
+      relacionadas: ["guiaWeb", "guiaAgente", "guiaSinPerder"],
+      secciones: [
+        {
+          titulo: "Qué es vectorizar",
+          parrafos: [
+            "Un PNG o un JPG es un mapa de bits: una cuadrícula de píxeles, y al ampliarlo se ven los cuadros. Un dibujo vectorial guarda formas (rectas, curvas, círculos) y se ve nítido a cualquier tamaño, en una tarjeta o en una lona, y se puede editar en Illustrator, Inkscape o Figma.",
+            "Vectorizar es pasar de lo primero a lo segundo. Va bien con logotipos, iconos, ilustraciones, dibujos en blanco y negro y pixel art. Con una foto sale un póster de colores planos, que suele pesar más que la foto.",
+          ],
+          cifras: [
+            { valor: decimal(V.nota, "es"), texto: "de nota SSIMULACRA 2 con el sol de Apolo, de 512 px" },
+            { valor: `${V.formas} formas`, texto: `con ${V.nodos} nodos y ${V.colores} colores` },
+            { valor: peso(V.svg, "es"), texto: `en SVG, frente a ${peso(V.original, "es")} del PNG` },
+          ],
+        },
+        {
+          titulo: "Con la aplicación",
+          pasos: [
+            "Abre Apolo y entra en Vectorizar, en la barra lateral.",
+            "Arrastra la imagen o pulsa «Abrir una imagen…». Apolo detecta si es un logotipo, una ilustración, pixel art o una foto.",
+            "Compara el original con el dibujo con el deslizador, lado a lado o con el mapa de diferencias; «Contornos» enseña los trazados y sus nodos.",
+            "Ajusta el detalle, limita los colores o activa «Buscar una nota», y Apolo busca el dibujo más ligero que llega a ella.",
+            "Elige el formato y pulsa Exportar. Lo transparente se queda transparente.",
+          ],
+          captura: "vectorizar",
+        },
+        {
+          titulo: "Cuatro formatos, el mismo dibujo",
+          tabla: {
+            cabeza: ["Formato", "Para qué", "El sol de Apolo"],
+            filas: [
+              ["SVG", "La web, Figma, Illustrator, Inkscape", peso(V.svg, "es")],
+              ["PDF", "Imprenta y documentos", peso(V.pdf, "es")],
+              ["EPS", "Imprenta y programas de diseño antiguos", peso(V.eps, "es")],
+              ["DXF", "CAD y máquinas de corte", peso(V.dxf, "es")],
+            ],
+            nota: "Los cuatro se pintan por su cuenta y se comparan con el SVG en cada versión de Apolo.",
+          },
+        },
+        {
+          titulo: "Para cortar vinilo o láser",
+          parrafos: [
+            "En Exportar, el estilo «Trazar bordes» deja cada borde una sola vez, sin rellenos: lo que necesita un plotter de corte o una máquina láser. «Trazar formas» da el contorno de cada forma por separado, para cortar cada color en su vinilo.",
+            "Hay programas de corte que no leen curvas: el DXF se puede pedir solo con rectas, con rectas y arcos, o con curvas libres.",
+          ],
+        },
+        {
+          titulo: "Desde la terminal",
+          comandos: [
+            { titulo: "Un logotipo a SVG, junto al original", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar logo.png"] },
+            { titulo: "A PDF, con cuatro colores planos", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar logo.png -o logo.pdf --colores 4"] },
+            { titulo: "Una carpeta de iconos a DXF, para cortar", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar iconos/ --formato dxf --estilo trazar-bordes --dxf arcos"] },
+            { titulo: "El dibujo más ligero que da una nota de 80", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar dibujo.png --objetivo 80"] },
+          ],
+          enlaces: [{ texto: "Todo lo que hace la línea de comandos", pagina: "cli" }],
+        },
+        {
+          titulo: "Con un agente de IA",
+          parrafos: ["Con el servidor MCP de Apolo, Claude, Cursor o VS Code vectorizan por ti: basta con pedirlo con la ruta del fichero."],
+          peticiones: ["Vectoriza ~/Escritorio/logo.png a SVG", "Pasa los iconos de ~/Proyecto/iconos a DXF para cortarlos en vinilo"],
+          enlaces: [{ texto: "Cómo conectarlo en cada agente", pagina: "agentes" }],
         },
       ],
     },
@@ -609,7 +688,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
         {
           titulo: "What it is",
           parrafos: [
-            "MCP is how AI agents use tools on your computer. Apolo ships an MCP server with eleven tools: analyze, optimize, compare formats, measure quality, look at an image, convert folders in batches and save presets. Images are processed on your computer with the same engines as the app.",
+            "MCP is how AI agents use tools on your computer. Apolo ships an MCP server with twelve tools: analyze, optimize, compare formats, measure quality, look at an image, convert folders in batches, vectorize and save presets. Images are processed on your computer with the same engines as the app.",
           ],
           captura: "agentes",
         },
@@ -689,6 +768,81 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
           parrafos: [
             "On the iPhone, Settings › Camera › Formats › “Most Compatible” saves new photos as JPG. They weigh more, and the ones you already have stay HEIC.",
           ],
+        },
+      ],
+    },
+    {
+      pagina: "guiaVectorizar",
+      destacado: { valor: decimal(V.nota, "en"), texto: "score with the Apolo sun, in an SVG that scales without losing sharpness" },
+      publicado: FECHA_VECTOR,
+      revisado: FECHA_VECTOR,
+      titulo: "Vectorize an image: PNG to SVG, PDF or DXF, for free · Apolo",
+      descripcion:
+        "Turn a logo, an icon or a drawing from PNG or JPG into vector form (SVG, PDF, EPS or DXF) on your computer, seeing the result and its score. Also for cutting vinyl or laser.",
+      etiqueta: "Guide",
+      h1: "Vectorize an image.",
+      entrada: "A logo you only have as a PNG, an icon or a drawing, turned into shapes that scale without losing sharpness. On your computer, without uploading anything.",
+      resumen: "From PNG or JPG to SVG, PDF, EPS or DXF: with the app, the terminal or an AI agent, and for cutting vinyl or laser.",
+      relacionadas: ["guiaWeb", "guiaAgente", "guiaSinPerder"],
+      secciones: [
+        {
+          titulo: "What vectorizing is",
+          parrafos: [
+            "A PNG or a JPG is a bitmap: a grid of pixels, and when you enlarge it you see the squares. A vector drawing stores shapes (lines, curves, circles) and stays sharp at any size, on a business card or a banner, and you can edit it in Illustrator, Inkscape or Figma.",
+            "Vectorizing goes from the first to the second. It works well with logos, icons, illustrations, black and white drawings and pixel art. A photo comes out as a poster of flat colors, which usually weighs more than the photo.",
+          ],
+          cifras: [
+            { valor: decimal(V.nota, "en"), texto: "SSIMULACRA 2 score with the Apolo sun, at 512 px" },
+            { valor: `${V.formas} shapes`, texto: `with ${V.nodos} nodes and ${V.colores} colors` },
+            { valor: peso(V.svg, "en"), texto: `as SVG, against ${peso(V.original, "en")} for the PNG` },
+          ],
+        },
+        {
+          titulo: "With the app",
+          pasos: [
+            "Open Apolo and go to Vectorize, in the sidebar.",
+            "Drag the image in or click “Open an image…”. Apolo detects whether it's a logo, an illustration, pixel art or a photo.",
+            "Compare the original with the drawing with the slider, side by side or with the map of differences; “Outlines” shows the paths and their nodes.",
+            "Adjust the detail, limit the colors or turn on “Aim for a score”, and Apolo searches for the lightest drawing that reaches it.",
+            "Choose the format and click Export. Transparency stays transparent.",
+          ],
+          captura: "vectorizar",
+        },
+        {
+          titulo: "Four formats, the same drawing",
+          tabla: {
+            cabeza: ["Format", "What for", "The Apolo sun"],
+            filas: [
+              ["SVG", "The web, Figma, Illustrator, Inkscape", peso(V.svg, "en")],
+              ["PDF", "Print and documents", peso(V.pdf, "en")],
+              ["EPS", "Print and older design programs", peso(V.eps, "en")],
+              ["DXF", "CAD and cutting machines", peso(V.dxf, "en")],
+            ],
+            nota: "In every version of Apolo, the four are drawn on their own and compared with the SVG.",
+          },
+        },
+        {
+          titulo: "For cutting vinyl or laser",
+          parrafos: [
+            "In Export, the “Stroke edges” style leaves each edge only once, with no fills: what a cutting plotter or a laser machine needs. “Stroke shapes” gives the outline of each shape separately, to cut each color in its own vinyl.",
+            "Some cutting programs don't read curves: the DXF can be asked for with lines only, with lines and arcs, or with free curves.",
+          ],
+        },
+        {
+          titulo: "From the terminal",
+          comandos: [
+            { titulo: "A logo to SVG, next to the original", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar logo.png"] },
+            { titulo: "To PDF, with four flat colors", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar logo.png -o logo.pdf --colores 4"] },
+            { titulo: "A folder of icons to DXF, for cutting", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar icons/ --formato dxf --estilo trazar-bordes --dxf arcos"] },
+            { titulo: "The lightest drawing that gives a score of 80", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar drawing.png --objetivo 80"] },
+          ],
+          enlaces: [{ texto: "Everything the command line does", pagina: "cli" }],
+        },
+        {
+          titulo: "With an AI agent",
+          parrafos: ["With Apolo's MCP server, Claude, Cursor or VS Code vectorize for you: just ask with the path of the file."],
+          peticiones: ["Vectorize ~/Desktop/logo.png to SVG", "Turn the icons in ~/Project/icons into DXF to cut them in vinyl"],
+          enlaces: [{ texto: "How to connect it to each agent", pagina: "agentes" }],
         },
       ],
     },

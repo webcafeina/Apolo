@@ -196,7 +196,7 @@ capturas-web:
 	  for idioma in es en; do \
 	    env $$e CAPTURAS=1 CAPTURAS_IDIOMA=$$idioma CAPTURAS_FONDO=transparente CAPTURAS_ESCALA=2 \
 	      CAPTURAS_FOTO=$(KODAK)/kodim23.png CAPTURAS_LOTE=$(CURDIR)/target/capturas-lote/fotos APOLO_DEV_RUTA_MCP="$$mcp" \
-	      pnpm -C frontend exec playwright test capturas -g ' (estudio|medidas y diferencias|lotes|agentes)$$' || exit 1; \
+	      pnpm -C frontend exec playwright test capturas -g ' (estudio|medidas y diferencias|lotes|agentes|vectorizar)$$' || exit 1; \
 	  done; \
 	done
 	node web/herramientas/capturas.mjs

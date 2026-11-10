@@ -41,6 +41,7 @@ export const PREGUNTAS: Record<Idioma, { titulo: string; descripcion: string; et
         r: [
           "Escribe WebP, AVIF, JPEG XL, JPEG (con MozJPEG), PNG (con OxiPNG) y QOI.",
           "Lee esos mismos y además HEIC (las fotos del iPhone), TIFF, GIF, BMP y PNM.",
+          "Y vectoriza: pasa un logotipo, un icono o un dibujo a SVG, PDF, EPS o DXF.",
         ],
       },
       {
@@ -116,6 +117,7 @@ export const PREGUNTAS: Record<Idioma, { titulo: string; descripcion: string; et
         r: [
           "It writes WebP, AVIF, JPEG XL, JPEG (with MozJPEG), PNG (with OxiPNG) and QOI.",
           "It reads those, plus HEIC (iPhone photos), TIFF, GIF, BMP and PNM.",
+          "And it vectorizes: it turns a logo, an icon or a drawing into SVG, PDF, EPS or DXF.",
         ],
       },
       {

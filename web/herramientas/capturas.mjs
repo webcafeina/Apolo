@@ -21,7 +21,7 @@ const NOTA = "90";
 // Cada vista de la web, y la carpeta de capturas.spec.ts de la que sale.
 const VISTAS = { macos: "macos-vidrio", windows: "windows-vidrio", gnome: "linux-propia", kde: "linux-kde-propia" };
 // Cada pantalla de la web, y la captura de la que sale.
-const PANTALLAS = { estudio: "estudio", diferencias: "mapa", lotes: "lotes-resumen", agentes: "agentes" };
+const PANTALLAS = { estudio: "estudio", diferencias: "mapa", lotes: "lotes-resumen", agentes: "agentes", vectorizar: "vectorizar" };
 const TEMAS = ["claro", "oscuro"];
 const ANCHOS = [1280, 2560];
 

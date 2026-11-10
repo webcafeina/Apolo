@@ -40,7 +40,7 @@ const APOLO = {
     "WebP, AVIF, JPEG XL, JPEG (MozJPEG), PNG (OxiPNG) y QOI",
     "Sí, en paralelo y con subcarpetas",
     "Sí, con las opciones de cwebp, cjpeg, oxipng, avifenc y cjxl",
-    "Sí, once herramientas",
+    "Sí, doce herramientas",
     "Sí: SSIMULACRA 2, PSNR y SSIM, y calidad por nota",
   ],
   en: [
@@ -51,7 +51,7 @@ const APOLO = {
     "WebP, AVIF, JPEG XL, JPEG (MozJPEG), PNG (OxiPNG) and QOI",
     "Yes, in parallel and with subfolders",
     "Yes, with the options of cwebp, cjpeg, oxipng, avifenc and cjxl",
-    "Yes, eleven tools",
+    "Yes, twelve tools",
     "Yes: SSIMULACRA 2, PSNR and SSIM, and quality by score",
   ],
 };

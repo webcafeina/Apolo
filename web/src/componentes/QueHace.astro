@@ -1,6 +1,6 @@
 ---
 // Qué hace Apolo (ADR 0033): seis puntos, cada uno con un dato de verdad (una
-// orden, una nota, una extensión).
+// orden, una nota, una extensión), y la novedad, vectorizar (ADR 0039), a lo ancho debajo.
 import { textos } from "../i18n";
 import type { Idioma } from "../i18n/rutas";
 
@@ -17,6 +17,8 @@ const ICONOS = [
   '<path d="M4 18l5-6 4 3 7-9"/>',
   '<path d="M4 6h6l2 2h8v10H4z"/>',
   '<path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/>',
+  // Una curva de Bézier con sus nodos y un tirador, como el icono de la sección en Apolo.
+  '<path d="M4 19C6 9 11 6 20 6"/><rect x="2.5" y="17.5" width="3" height="3" rx=".6"/><rect x="18.5" y="4.5" width="3" height="3" rx=".6"/><path d="M4 19l4-8"/><circle cx="8" cy="11" r="1.2"/>',
 ];
 ---
 
@@ -75,6 +77,12 @@ const ICONOS = [
     padding: 28px;
     border-radius: var(--radio);
     background: var(--lienzo);
+  }
+  /* La novedad (vectorizar), sola en su fila y de todo el ancho, con el filete de oro: con tres columnas, una
+     séptima tarjeta suelta dejaba la rejilla coja. */
+  .punto:nth-child(7) {
+    grid-column: 1 / -1;
+    box-shadow: inset 0 0 0 1.5px var(--oro-trazo);
   }
   .icono {
     width: 42px;

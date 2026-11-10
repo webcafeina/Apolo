@@ -221,6 +221,21 @@ test("novedad", async ({ page }, info) => {
   });
 });
 
+// Vectorizar (ADR 0039): el sol de Apolo en colores planos, con las esquinas transparentes.
+test("vectorizar", async ({ page }, info) => {
+  await page.goto(raiz());
+  await page.getByRole("button", { name: n("Vectorizar") }).click();
+  const elegir = page.waitForEvent("filechooser");
+  await page.getByTestId("zona-vector").getByRole("button", { name: n("Abrir una imagen…") }).click();
+  await (await elegir).setFiles(join(import.meta.dirname, "../../pruebas/vector/apolo-plano.png"));
+  await page.getByTestId("nota-vector").waitFor();
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${CARPETA}/vectorizar-${info.project.name}.png` });
+  await page.getByRole("radio", { name: n("Contornos") }).click();
+  await page.waitForTimeout(1200);
+  await page.screenshot({ path: `${CARPETA}/vectorizar-contornos-${info.project.name}.png` });
+});
+
 test("lotes", async ({ page }, info) => {
   await page.goto(raiz());
   await page.getByRole("button", { name: n("Lotes") }).click();

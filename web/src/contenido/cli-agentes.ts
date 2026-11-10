@@ -48,6 +48,15 @@ export const CLI: Record<Idioma, PaginaSecciones> = {
         ],
       },
       {
+        titulo: "Vectorizar",
+        parrafos: ["De PNG o JPG a SVG, PDF, EPS o DXF: el formato sale de la extensión. Con varias imágenes o una carpeta, van a una carpeta, como los lotes."],
+        comandos: [
+          { titulo: "Un logotipo a SVG, junto al original", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar logo.png"] },
+          { titulo: "Iconos a DXF, para cortar vinilo", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar iconos/ --formato dxf --estilo trazar-bordes"] },
+        ],
+        enlaces: [{ texto: "Vectorizar una imagen", pagina: "guiaVectorizar" }],
+      },
+      {
         titulo: "Medir la pérdida",
         parrafos: ["SSIMULACRA 2, PSNR y SSIM de un resultado frente a su original. Con 90 o más no se distingue; con 70, es alta calidad; con 50, se nota."],
         comandos: [{ nombre: "apolo-medir", lineas: ["apolo medir foto.png foto.webp"] }],
@@ -94,6 +103,15 @@ export const CLI: Record<Idioma, PaginaSecciones> = {
           { titulo: "At 1920 px on the longest side, only the lightest format per photo", nombre: "apolo-lote", lineas: ["apolo lote photos/ --formato webp,avif,jpeg --mas-ligero --lado-mayor 1920"] },
           { titulo: "With a preset saved in the app", nombre: "apolo-lote", lineas: ['apolo lote photos/ --preset "For the web"'] },
         ],
+      },
+      {
+        titulo: "Vectorize",
+        parrafos: ["From PNG or JPG to SVG, PDF, EPS or DXF: the format comes from the extension. With several images or a folder, they go to a folder, like batches."],
+        comandos: [
+          { titulo: "A logo to SVG, next to the original", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar logo.png"] },
+          { titulo: "Icons to DXF, to cut vinyl", nombre: "apolo-vectorizar", lineas: ["apolo vectorizar icons/ --formato dxf --estilo trazar-bordes"] },
+        ],
+        enlaces: [{ texto: "Vectorize an image", pagina: "guiaVectorizar" }],
       },
       {
         titulo: "Measure the loss",

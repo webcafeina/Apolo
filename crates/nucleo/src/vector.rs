@@ -141,6 +141,8 @@ pub struct Vectorizado {
     /// La imagen que recibió el motor (enderezada, reducida y aplanada sobre blanco), RGBA del mismo tamaño:
     /// la referencia de las medidas.
     pub referencia: Vec<u8>,
+    /// Si la imagen tiene transparencia, la que recibió el motor con ella (RGBA sin aplanar), para enseñarla.
+    pub original_alfa: Option<Vec<u8>>,
     /// El tipo que se usó (resuelto si era automático).
     pub tipo: TipoImagen,
     /// El detalle con el que se hizo.
@@ -219,6 +221,7 @@ pub fn vectorizar_rgba(
             documento: doc,
             vista,
             referencia: Vec::new(),
+            original_alfa: None,
             tipo,
             detalle,
             nota,
@@ -308,7 +311,13 @@ pub fn vectorizar_rgba(
         }
     };
     v.referencia = im.px.clone();
+    v.original_alfa = im.con_alfa();
     Ok(v)
+}
+
+/// La vista previa sobre transparente (para enseñarla; la nota se mide sobre blanco).
+pub fn vista_transparente(doc: &Documento) -> Resultado<Vec<u8>> {
+    apolo_vector::vista::rasterizar_transparente(doc).map_err(Error::Configuracion)
 }
 
 /// Los contornos y los nodos sobre el dibujo apagado, RGBA del tamaño del documento.

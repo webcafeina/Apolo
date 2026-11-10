@@ -40,6 +40,26 @@ test("vectorizar un logotipo enseña el dibujo, su nota y lo que tiene", async (
   expect(await colores(page)).toBeGreaterThan(5);
 });
 
+test("lo transparente se ve sobre cuadros a los dos lados del deslizador", async ({ page }) => {
+  await abrir(page);
+  // Cuántos píxeles de cada mitad del lienzo (el original a la izquierda, el dibujo a la derecha) son del
+  // color oscuro del damero: si el dibujo se pintase sobre blanco, la mitad derecha no tendría ninguno.
+  const [izquierda, derecha] = await page.getByTestId("lienzo").locator("visible=true").first().evaluate((c: HTMLCanvasElement) => {
+    const muestra = document.createElement("canvas").getContext("2d")!;
+    muestra.fillStyle = getComputedStyle(c).getPropertyValue("--damero-b");
+    muestra.fillRect(0, 0, 1, 1);
+    const [r, g, b] = muestra.getImageData(0, 0, 1, 1).data;
+    const d = c.getContext("2d")!.getImageData(0, 0, c.width, c.height).data;
+    const cuenta = [0, 0];
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i] === r && d[i + 1] === g && d[i + 2] === b) cuenta[(i / 4) % c.width < c.width / 2 ? 0 : 1]++;
+    }
+    return cuenta;
+  });
+  expect(izquierda).toBeGreaterThan(1000);
+  expect(derecha).toBeGreaterThan(1000);
+});
+
 test("limitar los colores vuelve a vectorizar y apaga los degradados", async ({ page }) => {
   await abrir(page);
   const antes = await page.getByTestId("estadisticas-vector").textContent();

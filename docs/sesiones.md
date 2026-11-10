@@ -4,6 +4,25 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-10 (tarde) · Vectorizar: el fondo de cuadros y los iconos de cada sistema
+
+- El cliente preguntó qué deuda quedaba antes de publicar y eligió las dos que se le recomendaron.
+- **Iconos**: galería con los candidatos de cada juego, con su licencia
+  (claude.ai/artifact/TXPZw3Q2Cixdndaa8dxS7f); el cliente eligió lo recomendado: Fluent `bezier_curve_square` y
+  `draw_shape` (solo existen a 20 px: `Icono` usa el de 20 escalado si falta el de 16), Yaru
+  `x-office-drawing-symbolic` (Contornos sigue con el propio) y Breeze `draw-bezier-curves` y `snap-nodes-path`.
+  Visto a 3× y 4×: el de Yaru salía como un rectángulo vacío porque, al juntar sus tres trazos, tras `z` una `m`
+  minúscula es relativa (y tras una `M` mayúscula, los pares siguientes también son absolutos). En Ubuntu se
+  parece al del Estudio (deuda.md, en la fila tachada).
+- **Fondo de cuadros**: con transparencia, el servicio da el original con su alfa (`Rgba::con_alfa`, que deshace
+  el aplanado) y el dibujo pintado sobre transparente (`vista::rasterizar_transparente`); el comparador ya
+  ponía su damero. La nota, el mapa y las diferencias siguen sobre blanco. Pruebas en el servicio y en
+  `vectorizar.spec.ts`, que con lo de antes falla (0 píxeles de damero en el lado del dibujo). Visto con el
+  aspecto propio, Windows, Ubuntu y KDE.
+- Deuda: tachadas las dos filas.
+
+---
+
 ## 2026-11-10 · Vectorizar, fase 2: el crate, la rapidez y los cuatro formatos
 
 - Al empezar: Security sin nada nuevo (los 7 avisos de Scorecard de siempre); disco al 90 %. @claude ya no

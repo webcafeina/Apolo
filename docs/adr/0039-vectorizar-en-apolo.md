@@ -83,8 +83,10 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
 
 - **La pantalla «Vectorizar»** (hito 7, 2026-11-10; `frontend/src/vectorizar/`): una sección propia en la barra
   lateral, entre Lotes y Presets, que no se desmonta al cambiar de sección (como el Estudio). Abrir o soltar
-  una imagen; el comparador de siempre con **lo que recibió el motor** a la izquierda (enderezado, reducido y
-  sobre blanco: así los dos lados miden lo mismo) y el dibujo pintado a la derecha, en deslizador, lado a lado,
+  una imagen; el comparador de siempre con **lo que recibió el motor** a la izquierda (enderezado y reducido)
+  y el dibujo pintado a la derecha. Con transparencia, los dos lados la conservan y el comparador pone detrás
+  su damero (`Rgba::con_alfa`, `vista::rasterizar_transparente`); la nota, el mapa y las diferencias se miden
+  sobre blanco, como siempre. Se ve en deslizador, lado a lado,
   diferencias y un modo nuevo, **«Contornos»**: los trazados en magenta y los nodos en azul sobre el dibujo
   apagado, pintado en Rust (`svg::contornos`), así que el zoom y el arrastre son los del comparador. Panel en
   tres grupos plegables (Dibujo, Avanzado, Exportar); cambiar algo de exportar no vuelve a vectorizar.
@@ -176,3 +178,7 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   modos no se escondían nunca en macOS, tampoco en el Estudio (trampas.md). **No visto en la ventana de verdad** (solo en el
   navegador): el diálogo de guardar, soltar desde el Finder y el protocolo `apolo://` de los píxeles nuevos.
   Nada de los hitos 8 y 9 (web, publicación).
+- Fondo de cuadros (2026-11-10, tarde): prueba del servicio (con transparencia, la esquina sale con alfa 0 y el
+  cuadrado con su color en los dos lados; opaca, todo con alfa 255) y e2e (píxeles del damero a los dos lados
+  del deslizador; con el dibujo sobre blanco da 0 y falla). Visto en capturas con cada aspecto. **No visto en la
+  ventana de verdad**.

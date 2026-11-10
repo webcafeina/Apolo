@@ -4,6 +4,12 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-10, tarde).** Antes de la 1.1.0, las dos mejoras que se eligieron de la deuda, en `main`:
+> **el fondo de cuadros** en Vectorizar (el original y el dibujo con su transparencia; la nota, sobre blanco) y
+> **los iconos de cada sistema** para la sección y el modo «Contornos», elegidos por el cliente en una galería
+> (claude.ai/artifact/TXPZw3Q2Cixdndaa8dxS7f). Detalle en `docs/sesiones.md`. **La interfaz ha cambiado**: el día
+> de la 1.1.0, tras fusionar, toca el paso 3 entero (capturas de la web y del README de nuevo).
+
 > **PARADA AQUÍ (2026-11-06, tarde): la navegación de la web, subida.** Bloque «Más de Apolo» en la
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
@@ -37,7 +43,7 @@
 > **El día de la 1.1.0** (cuando lo diga el cliente), en este orden: 1) `git merge web-1.1.0` en `main`; 2) la
 > versión a 1.1.0 en `Cargo.toml` y en `empaquetado/claude/apolo/.claude-plugin/plugin.json`, y `cargo update
 > -w` (como el commit de la 1.0.2, `7af918f`); 3) `make cli` y `node web/herramientas/medidas.mjs` (que ponga
-> 1.1.0); si la interfaz ha cambiado desde el 2026-11-10, también `make capturas-web` y `node
+> 1.1.0); como la interfaz cambió la tarde del 2026-11-10 (cuadros e iconos), también `make capturas-web` y `node
 > web/herramientas/readme.mjs`; 4) `make comprobar`, commit «Versión 1.1.0: vectorizar», subir y CI en verde;
 > 5) etiqueta `v1.1.0` y `publicar.yml`; `scripts/seguridad-github.sh`; 6) **la prueba del cliente**: la pantalla
 > en su Mac y en una VM, los ficheros en Illustrator o Inkscape y el DXF en su programa de corte; 7) lo de cada

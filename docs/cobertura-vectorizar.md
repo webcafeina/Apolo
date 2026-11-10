@@ -29,7 +29,7 @@ interfaz, MCP y prueba).
 | Formato | svg, pdf, eps, dxf; por defecto, el de la extensión de `-o`, o svg | `FormatoVector` | `-f`, `--formato` | ✓ Exportar | `formato` | cli, formatos, mcp, e2e |
 | Imágenes grandes | Más de 2 Mpx: se reducen antes (y se avisa) | `MAX_PIXELES` | (siempre) | aviso | (siempre) | núcleo |
 | Orientación EXIF | Se endereza antes de vectorizar | `preparar` | (siempre) | (siempre) | (siempre) | — |
-| Transparencia | Lo transparente no se dibuja: sin fondo, y los agujeros quedan agujeros | `Rgba::alfa` | (siempre) | «con transparencia» | (siempre) | núcleo, `crates/vector/tests/transparencia.rs`, e2e |
+| Transparencia | Lo transparente no se dibuja: sin fondo, y los agujeros quedan agujeros; en la pantalla, sobre cuadros | `Rgba::alfa` | (siempre) | «con transparencia», damero | (siempre) | núcleo, `crates/vector/tests/transparencia.rs`, servicio, e2e |
 
 ## Dibujo
 

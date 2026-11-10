@@ -41,6 +41,27 @@ impl Rgba {
         self.alfa.as_ref().map_or(255, |a| a[i])
     }
 
+    /// La imagen con su transparencia, para enseñarla (el color de cada píxel a medias, sin el blanco del
+    /// aplanado). `None` si es opaca.
+    pub fn con_alfa(&self) -> Option<Vec<u8>> {
+        let alfa = self.alfa.as_ref()?;
+        let mut out = Vec::with_capacity(self.px.len());
+        for (p, &a) in self.px.as_chunks::<4>().0.iter().zip(alfa) {
+            if a == 0 {
+                out.extend([0, 0, 0, 0]);
+                continue;
+            }
+            let t = a as f32 / 255.0;
+            let c = |v: u8| {
+                ((v as f32 - 255.0 * (1.0 - t)) / t)
+                    .round()
+                    .clamp(0.0, 255.0) as u8
+            };
+            out.extend([c(p[0]), c(p[1]), c(p[2]), a]);
+        }
+        Some(out)
+    }
+
     /// Si hay algo transparente del todo: entonces lo transparente es un «color» más, que no se dibuja.
     pub fn con_transparencia(&self) -> bool {
         self.alfa.as_ref().is_some_and(|a| a.contains(&0))

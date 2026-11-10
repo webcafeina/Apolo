@@ -183,7 +183,8 @@ export function Icono({ nombre, lado = 16 }: { nombre: keyof typeof DIBUJOS | st
   }
   const fluent = document.documentElement.dataset.sistema === "windows" ? ICONOS_FLUENT[nombre] : undefined;
   if (fluent) {
-    const caja = lado < 18 ? 16 : 20;
+    // Sin el de 16 (algunos de Fluent solo vienen a 20), el de 20, escalado.
+    const caja = lado < 18 && fluent[16] ? 16 : 20;
     return (
       <svg className="icono" width={lado} height={lado} viewBox={`0 0 ${caja} ${caja}`} fill="currentColor" aria-hidden="true">
         <path d={fluent[caja]} />

@@ -123,17 +123,27 @@ impl Servicio {
         self.generacion_vector(id).fetch_add(1, Ordering::SeqCst);
     }
 
-    /// La vista previa del último dibujo.
+    /// La vista previa del último dibujo. Con transparencia, sobre transparente: el comparador pone detrás su
+    /// fondo de cuadros (la nota se sigue midiendo sobre blanco).
     pub fn pixeles_vector(&self, id: u64) -> R<(u32, u32, Vec<u8>)> {
         let h = self.hecho(id)?;
-        Ok((h.documento.ancho, h.documento.alto, h.vista.clone()))
+        let px = if h.original_alfa.is_some() {
+            apolo_nucleo::vector::vista_transparente(&h.documento)?
+        } else {
+            h.vista.clone()
+        };
+        Ok((h.documento.ancho, h.documento.alto, px))
     }
 
-    /// Lo que recibió el motor (enderezado, reducido y sobre blanco), del tamaño de la vista previa: el otro
-    /// lado del comparador.
+    /// Lo que recibió el motor (enderezado y reducido; con su transparencia, si la tiene), del tamaño de la vista
+    /// previa: el otro lado del comparador.
     pub fn pixeles_referencia_vector(&self, id: u64) -> R<(u32, u32, Vec<u8>)> {
         let h = self.hecho(id)?;
-        Ok((h.documento.ancho, h.documento.alto, h.referencia.clone()))
+        let px = h
+            .original_alfa
+            .clone()
+            .unwrap_or_else(|| h.referencia.clone());
+        Ok((h.documento.ancho, h.documento.alto, px))
     }
 
     /// Los contornos y los nodos del último dibujo, sobre el dibujo apagado (el modo «Contornos»).
@@ -228,17 +238,14 @@ pub fn nombre_vector(nombre: &str, formato: FormatoVector) -> String {
 mod pruebas {
     use super::*;
 
-    fn png() -> Vec<u8> {
+    /// Un cuadrado azul sobre `fondo`.
+    fn png_con(fondo: [u8; 4]) -> Vec<u8> {
         let lado = 64u32;
         let mut px = Vec::new();
         for y in 0..lado {
             for x in 0..lado {
                 let dentro = (16..48).contains(&x) && (16..48).contains(&y);
-                px.extend(if dentro {
-                    [20, 90, 200, 255]
-                } else {
-                    [255, 255, 255, 255]
-                });
+                px.extend(if dentro { [20, 90, 200, 255] } else { fondo });
             }
         }
         let mut out = Vec::new();
@@ -249,6 +256,10 @@ mod pruebas {
             e.write_header().unwrap().write_image_data(&px).unwrap();
         }
         out
+    }
+
+    fn png() -> Vec<u8> {
+        png_con([255, 255, 255, 255])
     }
 
     fn servicio() -> (Servicio, u64) {
@@ -281,6 +292,36 @@ mod pruebas {
         );
         s.cerrar(id);
         assert!(s.pixeles_vector(id).is_err());
+    }
+
+    #[test]
+    fn con_transparencia_el_comparador_la_ve() {
+        // Lo transparente sigue transparente en los dos lados del comparador (que pone detrás sus cuadros), y
+        // la nota se mide igual que siempre, sobre blanco.
+        let (s, _) = servicio();
+        let id = s
+            .abrir_bytes("transparente.png", png_con([0, 0, 0, 0]))
+            .unwrap()
+            .id;
+        let v = s.vectorizar(id, &AjusteVector::default(), 1).unwrap();
+        assert!(v.nota.unwrap() > 85.0, "{v:?}");
+        let alfa = |px: &[u8], x: usize, y: usize| px[(y * 64 + x) * 4 + 3];
+        let (_, _, dibujo) = s.pixeles_vector(id).unwrap();
+        let (_, _, original) = s.pixeles_referencia_vector(id).unwrap();
+        for px in [&dibujo, &original] {
+            assert_eq!(alfa(px, 2, 2), 0, "la esquina, transparente");
+            assert_eq!(alfa(px, 32, 32), 255, "el cuadrado, opaco");
+            assert_eq!(&px[(32 * 64 + 32) * 4..][..3], &[20, 90, 200], "su color");
+        }
+        // Opaca, nada cambia.
+        let id = s.abrir_bytes("opaco.png", png()).unwrap().id;
+        s.vectorizar(id, &AjusteVector::default(), 1).unwrap();
+        for (_, _, px) in [
+            s.pixeles_vector(id).unwrap(),
+            s.pixeles_referencia_vector(id).unwrap(),
+        ] {
+            assert!(px.as_chunks::<4>().0.iter().all(|p| p[3] == 255));
+        }
     }
 
     #[test]

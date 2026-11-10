@@ -15,6 +15,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "250f629c0161ad8107cf89319e990051fae62832fd343083bea452d93e2205fd"
 
 [[package]]
+name = "apolo-vector"
+version = "1.0.2"
+dependencies = [
+ "imagequant",
+ "resvg",
+]
+
+[[package]]
 name = "approx"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -45,6 +53,7 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 name = "banco-vectorizar"
 version = "0.1.0"
 dependencies = [
+ "apolo-vector",
  "cc",
  "image",
  "imagequant",

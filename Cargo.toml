@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/heic", "crates/avifjxl", "crates/nucleo", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "crates/mcp", "crates/mcpb", "src-tauri"]
+members = ["crates/heic", "crates/avifjxl", "crates/nucleo", "crates/vector", "crates/tema", "crates/cli", "crates/servicio", "crates/dev", "crates/mcp", "crates/mcpb", "src-tauri"]
 # El banco de pruebas de vectorizar (fase 1) es un proyecto aparte: ni la CI ni `make comprobar` lo compilan.
 exclude = ["laboratorio"]
 
@@ -13,6 +13,7 @@ authors = ["Webcafeína <info@webcafeina.com>"]
 
 [workspace.dependencies]
 apolo-nucleo = { path = "crates/nucleo" }
+apolo-vector = { path = "crates/vector" }
 apolo-heic = { path = "crates/heic" }
 apolo-avifjxl = { path = "crates/avifjxl" }
 apolo-tema = { path = "crates/tema" }

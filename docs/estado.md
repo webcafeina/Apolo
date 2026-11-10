@@ -8,6 +8,17 @@
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
 >
+> **PARADA AQUÍ (2026-11-09, mediodía): vectorizar, fase 2, hito 1 de 9 hecho (ADR 0039).** **Sin subir**: el hito 1 está
+> en el árbol de trabajo (se paró `make comprobar` al cerrar). Al retomar: `make comprobar`, commit con el
+> mensaje de `git log` del plan («Vectorizar, fase 2: el motor como crate (hito 1, ADR 0039)»), subir, CI y
+> `scripts/seguridad-github.sh`. El motor ya es
+> el crate `crates/vector` y el banco lo mide igual que al del laboratorio (81,9). Plan aprobado:
+> `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (pantalla propia, modo por nota, SVG/PDF/EPS/DXF,
+> 1.1.0 con todo). **Lo siguiente, el hito 2 (rapidez)**: en la bandera de EE. UU. se van ~10 s en
+> `motor::pintar` por cada orden de capas (lo demás, milisegundos): medir dentro de `pintar` qué parte
+> (contornos, `poli::ajustar`, síntesis o elipses) y bajarlo a menos de 2 s; banco con
+> `APOLO_MOTORES=apolo-crate` (31 s el corpus). Después, los hitos 3 a 9 del plan.
+>
 > **2026-11-09, tarde: vectorizar, fase 1 en marcha (ADR 0038).** Banco en `laboratorio/vectorizar/`
 > (fuera de la CI): `cargo run --release` y la galería en `salida/` (artefacto
 > claude.ai/artifact/3eqqWdYEAiGoFWnaKzuewQ). Nuestro motor `apolo-poli`, 80,6 de nota frente a 83,1 de

@@ -10,6 +10,8 @@ description = "Banco de pruebas para vectorizar imágenes en Apolo (fase 1): no 
 [workspace]
 
 [dependencies]
+# El motor de la aplicación (fase 2): el banco lo mide igual que a los demás.
+apolo-vector = { path = "../../crates/vector" }
 image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
 imagequant = "4.4.1"
 nalgebra = "0.33"

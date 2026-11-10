@@ -44,6 +44,7 @@ Tauri 2 + Rust, con la interfaz en React + Vite + TypeScript ([ADR 0001](docs/ad
 | Carpeta | Qué es |
 |---|---|
 | `crates/nucleo` | Todo el trabajo con imágenes: decodificar, codificar, procesar, medir. Sin interfaz |
+| `crates/vector` | Vectorizar: de un mapa de bits a SVG, PDF, EPS y DXF (ADR 0038 y 0039). El banco que lo mide, en `laboratorio/vectorizar/` |
 | `crates/heic` | Leer HEIC: libheif y libde265 compiladas dentro, con enlaces escritos a mano |
 | `crates/avifjxl` | avifenc, avifdec, cjxl y djxl compilados dentro (libavif, aom, libjxl en submódulos), llamados por su `main` |
 | `crates/servicio` | El Estudio sin ventana: lo usan la aplicación y el servidor de desarrollo |

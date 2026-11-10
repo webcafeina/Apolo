@@ -23,6 +23,10 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **El cliente decide (2026-11-09)**: fase 2 adelante, mejorar antes el motor y mantener su suscripción a
   Vectorizer.ai (es personal). Motor: ajuste por síntesis, orden de capas por imagen, contorno suavizado
   (Taubin) y degradados con fusión de colores: **81,9 frente a 83,1**, 7 de 18 (ADR 0038).
+- **Fase 2 (plan aprobado; ADR 0039)**: hito 1, el motor como crate `crates/vector`, igual de bueno que en el
+  laboratorio (81,9); fotos detectadas por colores distintos por píxel (de 23 min a 7 s); pixel art con
+  trazado propio; sin Potrace, VTracer ni nalgebra. En el banco, `APOLO_MOTORES` y `APOLO_TIPOS`. Lo lento
+  es `motor::pintar` (10 s por orden en EE. UU.): hito 2.
 - **Tres avisos nuevos de RustSec en `rmcp` 3.5.1** (cliente OAuth y transportes HTTP; Apolo no los
   compila): `rmcp` sube a 3.9.0, con las pruebas del MCP y el catálogo iguales (ADR 0023).
 - **No verificado**: los SVG en Illustrator o Inkscape; imágenes grandes; transparencias.

@@ -23,6 +23,7 @@ impl Motor {
 pub const MOTORES: &[Motor] = &[
     Motor { id: "apolo", descripcion: "Nuestro motor: detecta pixel art (lo traza a píxeles) e imágenes sin suavizado; si no, contorno por debajo del píxel, esquinas exactas (los lados rectos se prolongan hasta cruzarse), rectas y Bézier con error de 0,35 px y círculos de verdad.", grupos: &[], correr: apolo },
     Motor { id: "apolo-poli", descripcion: "Nuestro motor, versión polígono primero: el contorno por debajo del píxel se afina a polígono; los lados largos pasan a rectas exactas con la esquina en su cruce, las rachas de lados cortos a Bézier si ahorran nodos, y las puntas romas entre rectas se afilan.", grupos: &[], correr: apolo_poli },
+    Motor { id: "apolo-crate", descripcion: "El motor de la aplicación (crates/vector), en automático: lo que vectorizará Apolo.", grupos: &[], correr: apolo_crate },
     Motor { id: "vtracer", descripcion: "VTracer 1.0 con sus opciones por defecto: agrupa colores, apila capas y ajusta Bézier.", grupos: &[], correr: vtracer_defecto },
     Motor { id: "vtracer-poster", descripcion: "VTracer con su preset «poster», pensado para colores planos.", grupos: &[], correr: vtracer_poster },
     Motor { id: "vtracer-mosaico", descripcion: "VTracer en mosaico (cada borde se ajusta una vez y lo comparten las dos regiones) y simplificación de 1 px.", grupos: &[], correr: vtracer_mosaico },
@@ -416,4 +417,9 @@ fn islas_por_color(m: &[subpixel::Mezcla], w: usize, h: usize, n: usize) -> Vec<
         if !borde && tam >= 4 { islas[c as usize] += 1; }
     }
     islas
+}
+
+fn apolo_crate(im: &Rgba, _: Grupo) -> Result<String, String> {
+    let doc = apolo_vector::vectorizar(&apolo_vector::Rgba::nueva(im.ancho, im.alto, im.px.clone()), &apolo_vector::OpcionesVector::default())?;
+    Ok(apolo_vector::svg::escribir(&doc))
 }

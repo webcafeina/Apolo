@@ -38,7 +38,7 @@ comprobar: interfaz rust web plugin seguridad
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
-RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-avifjxl -p apolo-nucleo -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev -p apolo-mcp -p apolo-mcpb)
+RUST_PAQUETES := $(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && echo --workspace || echo -p apolo-heic -p apolo-avifjxl -p apolo-nucleo -p apolo-vector -p apolo-tema -p apolo-cli -p apolo-servicio -p apolo-dev -p apolo-mcp -p apolo-mcpb)
 
 rust:
 	cargo fmt --all --check

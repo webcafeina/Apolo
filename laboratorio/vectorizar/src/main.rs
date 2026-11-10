@@ -115,7 +115,9 @@ fn correr_caso(c: &Caso, apolo: &Path, salida: &Path, vectorizer: &Path) -> Vec<
             filas.push(medir_svg(apolo, &dir, "referencia", &svg, &original, 0, c));
         }
     }
-    for m in motores::MOTORES.iter().filter(|m| m.aplica(c.grupo)) {
+    // APOLO_MOTORES=a,b: solo esos motores (además de la referencia y Vectorizer.ai).
+    let solo: Option<Vec<String>> = std::env::var("APOLO_MOTORES").ok().map(|v| v.split(',').map(str::to_string).collect());
+    for m in motores::MOTORES.iter().filter(|m| m.aplica(c.grupo)).filter(|m| solo.as_ref().map(|s| s.iter().any(|x| x == m.id)).unwrap_or(true)) {
         let t = Instant::now();
         let r = (m.correr)(&original, c.grupo);
         let ms = t.elapsed().as_millis();
@@ -143,6 +145,15 @@ fn main() {
         std::process::exit(1);
     }
     std::fs::create_dir_all(&salida).expect("salida");
+    if std::env::var("APOLO_TIPOS").is_ok() {
+        for c in corpus::casos(&raiz).into_iter().filter(|c| c.id.contains(&filtro)) {
+            if let Ok((o, _)) = preparar(&c) {
+                let im = apolo_vector::Rgba::nueva(o.ancho, o.alto, o.px.clone());
+                println!("{:24} {:14} → {:?}", c.id, format!("{:?}", c.grupo), apolo_vector::tipo_efectivo(&im, apolo_vector::TipoImagen::Auto));
+            }
+        }
+        return;
+    }
     let casos: Vec<Caso> = corpus::casos(&raiz).into_iter().filter(|c| c.id.contains(&filtro)).collect();
     let filas = Mutex::new(Vec::new());
     let siguiente = Mutex::new(0usize);

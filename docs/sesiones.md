@@ -4,7 +4,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
-## 2026-11-10 · Vectorizar, fase 2: el crate subido y la rapidez
+## 2026-11-10 · Vectorizar, fase 2: el crate, la rapidez y los cuatro formatos
 
 - Al empezar: Security sin nada nuevo (los 7 avisos de Scorecard de siempre); disco al 90 %. @claude ya no
   sale en Contributors ni en la API, pero sí en el recuadro de la portada del repositorio (caché de GitHub).
@@ -19,7 +19,17 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   cambiaba la nota en centésimas por el redondeo de la posición de las submuestras: corregido, ahora igual
   bit a bit (prueba `barrido_igual_que_submuestras`). docs/rendimiento.md.
 - **Visto de paso**: las fotos vectorizadas pesan 6–9 MB y dan notas muy bajas: a deuda.md.
-- **No verificado**: los tiempos en un Mac.
+- **@claude en la portada**: soporte (cuenta gratuita) remitió a la comunidad; según sus hilos, se renombró
+  `main` a `main-temp` y vuelta (con permiso del cliente y revisando antes lo que depende de la rama). Se fue de
+  la portada. Volver al nombre lanzó Comprobar y Scorecard por push; Scorecard falló por carrera y se relanzó a
+  mano (trampas.md). Comprobado después: Pages, reglas, webhook, web, APT y actualizador, como antes.
+- **Hito 3, formatos**: SVG, PDF 1.4, EPS 3 y DXF R2007 (tres niveles) desde el `Documento`, con tres estilos.
+  PDF y EPS, del mismo contenido. Prueba que rasteriza cada formato y lo compara con el SVG (PDF con
+  pdftoppm, EPS con Ghostscript en la CI, DXF con un lector propio). Visto a ojo «trazar bordes»: el contorno
+  de la cara salía blanco sobre blanco y se trazaba el marco de la imagen: ahora negro y sin marco.
+- **ezdxf** (bloqueado al principio por el control de permisos; el cliente lo autorizó): los 240 DXF del banco,
+  sin un error ni un arreglo; queda como prueba (`dxf_valido_para_ezdxf`, con `uvx`, también en la CI).
+- **No verificado**: los tiempos en un Mac; el EPS aquí; el DXF y los demás en programas de verdad.
 
 ---
 

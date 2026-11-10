@@ -154,6 +154,10 @@ fn main() {
         }
         return;
     }
+    if std::env::var("APOLO_FORMATOS").is_ok() {
+        formatos(&raiz, &salida, &filtro);
+        return;
+    }
     let casos: Vec<Caso> = corpus::casos(&raiz).into_iter().filter(|c| c.id.contains(&filtro)).collect();
     let filas = Mutex::new(Vec::new());
     let siguiente = Mutex::new(0usize);
@@ -185,5 +189,53 @@ fn main() {
     eprintln!("{} casos, {} filas, {} errores, {:.0} s → {}", casos.len(), filas.len(), errores, t.elapsed().as_secs_f64(), salida.display());
     for f in filas.iter().filter(|f| f.error.is_some()) {
         eprintln!("  error {} {}: {}", f.caso, f.motor, f.error.as_deref().unwrap_or(""));
+    }
+}
+
+/// APOLO_FORMATOS=1: cada imagen en los cuatro formatos (`salida/formatos/`), con su peso y su tiempo, y el PDF
+/// rasterizado con pdftoppm comparado con el SVG (diferencia media por canal, de 0 a 255).
+fn formatos(raiz: &Path, salida: &Path, filtro: &str) {
+    use apolo_vector::{Estilo, FormatoVector, NivelDxf, OpcionesExportar, exportar};
+    let dir = salida.join("formatos");
+    std::fs::create_dir_all(&dir).expect("formatos");
+    println!("{:24} {:>9} {:>9} {:>9} {:>9} {:>9} {:>9} {:>6} {:>8}", "caso", "svg", "pdf", "eps", "dxf", "dxf-arcos", "dxf-rect", "ms", "pdf≠svg");
+    for c in corpus::casos(raiz).into_iter().filter(|c| c.id.contains(filtro)) {
+        let Ok((o, _)) = preparar(&c) else { continue };
+        let im = apolo_vector::Rgba::nueva(o.ancho, o.alto, o.px.clone());
+        let Ok(doc) = apolo_vector::vectorizar(&im, &Default::default()) else { continue };
+        let t = Instant::now();
+        let mut pesos = Vec::new();
+        for (nombre, f, op) in [
+            ("svg", FormatoVector::Svg, OpcionesExportar::default()),
+            ("pdf", FormatoVector::Pdf, OpcionesExportar::default()),
+            ("eps", FormatoVector::Eps, OpcionesExportar::default()),
+            ("dxf", FormatoVector::Dxf, OpcionesExportar::default()),
+            ("arcos.dxf", FormatoVector::Dxf, OpcionesExportar { nivel_dxf: NivelDxf::Arcos, ..Default::default() }),
+            ("rectas.dxf", FormatoVector::Dxf, OpcionesExportar { nivel_dxf: NivelDxf::Rectas, ..Default::default() }),
+            ("bordes.svg", FormatoVector::Svg, OpcionesExportar { estilo: Estilo::TrazarBordes, ..Default::default() }),
+            ("bordes.dxf", FormatoVector::Dxf, OpcionesExportar { estilo: Estilo::TrazarBordes, ..Default::default() }),
+            ("bordes.rectas.dxf", FormatoVector::Dxf, OpcionesExportar { estilo: Estilo::TrazarBordes, nivel_dxf: NivelDxf::Rectas, ..Default::default() }),
+        ] {
+            let b = exportar(&doc, f, &op);
+            pesos.push(b.len());
+            std::fs::write(dir.join(format!("{}.{nombre}", c.id)), &b).expect("escribir");
+        }
+        let ms = t.elapsed().as_millis();
+        // Los bordes, a doble tamaño, para mirarlos.
+        if let Ok(b) = std::fs::read(dir.join(format!("{}.bordes.svg", c.id))) {
+            if let Ok(r) = imagen::rasterizar(&b, o.ancho * 2, o.alto * 2, true) {
+                let _ = r.guardar_png(&dir.join(format!("{}.bordes.png", c.id)));
+            }
+        }
+        let pdf = dir.join(format!("{}.pdf", c.id));
+        let png = dir.join(format!("{}-pdf", c.id));
+        let dif = std::process::Command::new("pdftoppm").args(["-r", "72", "-singlefile", "-png"]).arg(&pdf).arg(&png).status().ok().filter(|s| s.success()).and_then(|_| {
+            let a = imagen::rasterizar(&std::fs::read(dir.join(format!("{}.svg", c.id))).ok()?, o.ancho, o.alto, true).ok()?;
+            let b = imagen::foto(&dir.join(format!("{}-pdf.png", c.id)), u32::MAX).ok()?;
+            let n = a.px.len().min(b.px.len());
+            Some(a.px[..n].iter().zip(&b.px[..n]).enumerate().filter(|(i, _)| i % 4 != 3).map(|(_, (x, y))| (*x as i32 - *y as i32).unsigned_abs() as f64).sum::<f64>() / (n as f64 * 0.75))
+        });
+        let kb = |b: usize| format!("{:.1}K", b as f64 / 1024.0);
+        println!("{:24} {:>9} {:>9} {:>9} {:>9} {:>9} {:>9} {:>6} {:>8}", c.id, kb(pesos[0]), kb(pesos[1]), kb(pesos[2]), kb(pesos[3]), kb(pesos[4]), kb(pesos[5]), ms, dif.map(|d| format!("{d:.2}")).unwrap_or("-".into()));
     }
 }

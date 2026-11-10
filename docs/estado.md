@@ -8,16 +8,20 @@
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
 >
-> **PARADA AQUÍ (2026-11-10): vectorizar, fase 2, hitos 1 y 2 de 9 hechos (ADR 0039).** El hito 1 (el motor
-> como crate `crates/vector`) subido en `2e11240`. El hito 2 (rapidez): la síntesis por filas y con el error
-> guardado, y las capas en paralelo con rayon; la bandera de EE. UU., de 20 s a 1,1 s, y la foto más lenta,
-> 3,9 s, con el resultado igual bit a bit (docs/rendimiento.md). Plan aprobado:
-> `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md` (pantalla propia, modo por nota, SVG/PDF/EPS/DXF,
-> 1.1.0 con todo). **Lo siguiente, el hito 3**: los escritores de PDF, EPS y DXF (tres niveles) y los estilos
-> (rellenar, trazar formas, trazar bordes) sobre el `Documento`. Antes, si se quiere, las fotos (deuda: notas
-> bajas y SVG de 6 a 9 MB). @claude ya no sale en la página Contributors, pero sí en el recuadro de la portada
-> (caché): se mira tras la subida del hito 1 y, si sigue, el mensaje a soporte de GitHub (texto en la sesión
-> del 2026-11-10 en `docs/sesiones.md`).
+> **PARADA AQUÍ (2026-11-10): vectorizar, fase 2, hitos 1 a 3 de 9 hechos (ADR 0039).** Hito 1 (el motor como
+> crate) en `2e11240`; hito 2 (rapidez: 20 s → 1,1 s, igual bit a bit; docs/rendimiento.md) en `e25ec92`; hito
+> 3, **SVG, PDF, EPS y DXF** (tres niveles) con tres estilos (rellenar, trazar formas, trazar bordes) en
+> `crates/vector/src/` (`exportar`, `pintura`, `pdf`, `eps`, `dxf`, `trazado`), comprobados rasterizando cada
+> uno frente al SVG (`tests/formatos.rs`). Plan aprobado: `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`.
+> **Lo siguiente, el hito 4**: núcleo y servicio (`apolo_nucleo::vector`, modo por nota sobre «detalle», vista
+> previa por `apolo://`). El DXF, validado con ezdxf (sin errores en 240 ficheros; también en la CI).
+> **Pendiente del cliente**, antes de la 1.1.0: abrir SVG/PDF/EPS en Illustrator o Inkscape y el DXF en su programa
+> de corte o CAD (deuda.md). El EPS solo se comprueba en la CI (aquí no hay Ghostscript). Fotos: deuda (notas
+> bajas y SVG de 6 a 9 MB).
+>
+> **@claude en la portada, resuelto (2026-11-10).** Ya no salía en Contributors ni en la API, pero sí en el
+> recuadro de la portada (caché). Soporte de GitHub (cuenta gratuita) solo remitió a la comunidad; se renombró
+> `main` a `main-temp` y vuelta, el arreglo de sus hilos (trampas.md), y el cliente confirmó que ya no sale.
 >
 > **2026-11-09, tarde: vectorizar, fase 1 en marcha (ADR 0038).** Banco en `laboratorio/vectorizar/`
 > (fuera de la CI): `cargo run --release` y la galería en `salida/` (artefacto

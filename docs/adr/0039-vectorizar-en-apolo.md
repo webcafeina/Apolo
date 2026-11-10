@@ -27,6 +27,24 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
 - **Pixel art con un trazado propio** sobre la cuadrícula, en vez de VTracer. **Sin Potrace ni VTracer en la
   aplicación**: solo el banco los usa. La elipse, con un 3 × 3 propio en vez de nalgebra.
 - Dependencia nueva: **resvg** 0.49 (Apache-2.0 o MIT; sus transitivas, permisivas: revisadas en el banco).
+- **Los cuatro formatos, con escritores propios** (hito 3, 2026-11-10; `exportar(&Documento, FormatoVector,
+  &OpcionesExportar)`):
+  - **PDF 1.4 y EPS 3 salen del mismo contenido** (`pintura.rs`): los operadores de PDF, que el EPS define con
+    los mismos nombres en un diccionario propio (`ApoloDict`, para no pisar los del programa que lo
+    incruste). El eje Y se da la vuelta con una transformación, así que las coordenadas son las del SVG. Los
+    degradados, como sombreados nativos (tipos 2 y 3, con funciones cosidas para más de dos paradas). El PDF
+    va comprimido con Deflate (`miniz_oxide`, la del núcleo). Un píxel, un punto.
+  - **DXF R2007** con la estructura que pide AutoCAD desde R2000 (las nueve tablas, bloques de modelo y papel,
+    diccionario raíz, grupos y diseños; identificadores y dueños). Una capa de DXF por color, con su color
+    real (código 420) y el ACI más parecido. Sin rellenos ni degradados: contornos, y cada capa con el color
+    medio. **Tres niveles**: solo rectas (polilíneas, curvas aplanadas a 0,05 px), rectas y arcos (polilíneas
+    con abombamiento, curvas aproximadas por arcos a 0,05 px, y círculos) y rectas, arcos y splines
+    (círculos, elipses y una spline de grado 3 por forma, cada Bézier entre nudos triples).
+  - **Tres estilos**: rellenar; trazar formas (el contorno de cada forma, del color de su capa); y **trazar
+    bordes**, para cortar: las capas están apiladas, así que donde dos colores se tocan pasan varios
+    contornos casi por el mismo sitio, y se quita cada tramo cuyos puntos caen todos a menos de 0,75 px de
+    otro ya dibujado (de arriba abajo). También los tramos del marco de la imagen (sería cortar el borde de
+    la hoja). En negro por defecto: el color de la capa de encima puede ser el del fondo y no se vería.
 
 ## Alternativas descartadas
 
@@ -56,4 +74,16 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   de EE. UU., byte a byte igual que antes del cambio. Prueba `barrido_igual_que_submuestras`: el barrido por
   filas cuenta lo mismo que la prueba de punto en polígono, píxel a píxel. Tiempos solo en el VPS (4
   núcleos), no en un Mac.
-- **No verificado aún**: nada de los hitos 3 a 9 (formatos, núcleo, CLI, MCP, pantalla, web).
+- Hito 3 (2026-11-10), `crates/vector/tests/formatos.rs`: cada formato rasterizado por su cuenta y comparado
+  con el SVG de resvg, en los tres estilos. **PDF** con `pdftoppm`: diferencia media de 0,4 a 2,1 (de 255).
+  **DXF**, los tres niveles, con un lector de la prueba que aplica el significado del estándar (abombamiento,
+  de Boor, eje y razón de la elipse): 0,1 a 0,4. Identificadores únicos, dueños existentes y `$HANDSEED`
+  mayor que todos; la tabla xref del PDF, a byte. En el banco (`APOLO_FORMATOS=1`), el PDF de las 53 imágenes
+  frente al SVG: de 0,05 a 1,8, salvo el pixel art pequeño (unos 5: Poppler pinta gris donde dos cuadrados
+  se tocan por la esquina, trampas.md). «Trazar bordes», mirado a ojo en tres imágenes.
+- **No verificado**: el **EPS**, porque aquí no hay Ghostscript (la prueba lo hace en la CI, con
+  `APOLO_FORMATOS_ESTRICTO=1`); el **DXF en un programa de CAD o de corte de verdad** (sí con ezdxf 1.4.2, con
+  permiso del cliente: lectura, auditoría y recuperación sin un error ni un arreglo en los 240 DXF del banco
+  —tres niveles y dos estilos— y en la prueba `dxf_valido_para_ezdxf`, que la CI pasa con `uvx`; falta
+  abrirlo en AutoCAD, LibreCAD o el programa de corte del cliente); los cuatro
+  formatos en **Illustrator e Inkscape**. Y nada de los hitos 4 a 9 (núcleo, CLI, MCP, pantalla, web).

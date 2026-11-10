@@ -11,22 +11,30 @@
 //! 4. **Degradados** donde el color cambia suavemente (`degradado`).
 //! 5. **Pixel art** trazado a píxeles (`pixelart`).
 //!
-//! El resultado es un [`Documento`], del que salen el SVG (`svg`) y la vista previa (`vista`).
+//! El resultado es un [`Documento`], del que salen SVG, PDF, EPS y DXF ([`exportar`], con tres estilos: rellenar,
+//! trazar formas y trazar bordes) y la vista previa (`vista`).
 
 mod ajuste;
 mod degradado;
+mod dxf;
+mod eps;
+pub mod exportar;
 mod geometria;
 mod imagen;
 mod modelo;
 mod motor;
 mod paleta;
+mod pdf;
+mod pintura;
 mod pixelart;
 mod poli;
 mod sintesis;
 mod subpixel;
 pub mod svg;
+mod trazado;
 pub mod vista;
 
+pub use exportar::{Estilo, FormatoVector, NivelDxf, OpcionesExportar, exportar};
 pub use imagen::Rgba;
 pub use modelo::{Capa, Documento, Forma, Relleno, Tramo};
 pub use motor::{OpcionesVector, TipoImagen, tipo_efectivo, vectorizar};

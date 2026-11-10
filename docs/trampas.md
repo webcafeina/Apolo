@@ -744,3 +744,27 @@ intermedio**, lejos de todos los de su paleta (`paleta::sin_suavizado`). (2026-1
 Con `v="A=1 B=2"`, `env $v orden` pasa **una** variable `A` con el valor `1 B=2`: zsh no parte las
 variables sin comillas como bash. Se usa `env ${=v} orden`. Costó un barrido de parámetros entero con los
 valores por defecto sin saberlo. (2026-11-09)
+
+## @claude sigue en el recuadro de colaboradores de la portada, con la API ya limpia
+
+Tras reescribir el historial (ADR 0037), la página Contributors y `gh api repos/webcafeina/Apolo/contributors`
+ya solo daban `webcafeina`, pero el recuadro de la portada seguía con `claude` cuatro días después y con
+commits nuevos. Es una caché aparte; soporte de GitHub, con la cuenta gratuita, solo remite a la comunidad.
+Lo que se hizo, según los hilos de la comunidad (#191565, #197389): **renombrar la rama por defecto y
+devolverle el nombre** (`gh api -X POST repos/webcafeina/Apolo/branches/main/rename -f new_name=main-temp` y
+luego al revés, esperando a que `default_branch` cambie). Dos cosas que hay que saber:
+
+- **La regla de despliegue del entorno `github-pages` no se actualiza**: sigue diciendo `main`. Por eso hay
+  que volver al nombre original; con otro nombre, la web dejaría de poder desplegarse.
+- **Volver al nombre dispara un push a `main`**: se relanzan Comprobar y Scorecard, y **Scorecard falla**
+  («Only the default branch main-temp is supported»), porque el aviso llega con el nombre provisional. Un
+  reintento repite el aviso y vuelve a fallar: `gh workflow run scorecard.yml --ref main`.
+
+(2026-11-10)
+
+## `pdftoppm` pinta gris donde dos cuadrados se tocan por la esquina
+
+Al comparar el PDF de vectorizar con el SVG, el pixel art pequeño daba una diferencia de 5 (el resto, menos de
+2): Poppler (Splash) engorda un poco los rellenos para que no queden rendijas, y en el píxel de al lado de una
+esquina compartida pinta gris. No es el PDF: el resto de la imagen coincide píxel a píxel. Para comparar formatos,
+mejor dibujos sin esquinas tocándose (`crates/vector/tests/formatos.rs`). (2026-11-10)

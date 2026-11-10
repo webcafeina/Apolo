@@ -14,3 +14,5 @@ imagequant = "4.4.1"
 resvg = "0.49"
 # Las formas de cada capa y los dos órdenes de capas, en paralelo (MIT o Apache-2.0; ya venía con imagequant).
 rayon = "1.12"
+# El contenido del PDF, comprimido con Deflate (MIT, Zlib o Apache-2.0; la misma que usa el núcleo).
+miniz_oxide = "0.9"

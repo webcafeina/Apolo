@@ -4,6 +4,7 @@
 //! opuestos son ambiguos en SVG y el visor puede deformarlos (docs/trampas.md). Cada capa es un `path`
 //! con `fill-rule="evenodd"`: una figura dentro de otra es un hueco.
 
+use crate::exportar::{Estilo, OpcionesExportar};
 use crate::modelo::{Documento, Forma, Relleno, Tramo};
 use std::fmt::Write;
 
@@ -120,26 +121,83 @@ fn relleno(r: &Relleno, n: &mut usize, defs: &mut String) -> String {
     }
 }
 
-/// El SVG del documento, con su tamaño en píxeles y su `viewBox`.
+/// El SVG del documento, relleno, con su tamaño en píxeles y su `viewBox`.
 pub fn escribir(doc: &Documento) -> String {
+    escribir_con(doc, &OpcionesExportar::default())
+}
+
+/// Tramos abiertos (sin `Z`), para los bordes.
+fn d_abierto(t: &[Tramo], out: &mut String) {
+    let mut cerrado = String::new();
+    d(&Forma::Tramos(t.to_vec()), &mut cerrado);
+    out.push_str(cerrado.trim_end_matches('Z'));
+}
+
+/// El SVG con el estilo pedido.
+pub fn escribir_con(doc: &Documento, o: &OpcionesExportar) -> String {
     let (w, h) = (doc.ancho, doc.alto);
     let mut defs = String::new();
     let mut n = 0;
     let mut cuerpo = String::new();
-    if let Some(f) = &doc.fondo {
-        let fill = relleno(f, &mut n, &mut defs);
-        let _ = write!(cuerpo, r#"<rect width="{w}" height="{h}" fill="{fill}"/>"#);
-    }
-    for c in &doc.capas {
-        let fill = relleno(&c.relleno, &mut n, &mut defs);
-        let mut dd = String::new();
-        for f in &c.formas {
-            d(f, &mut dd);
+    let trazo = |c: [u8; 3]| {
+        format!(
+            r#"fill="none" stroke="{}" stroke-width="{}" stroke-linejoin="round" stroke-linecap="round""#,
+            hex(o.color_trazo.unwrap_or(c)),
+            r2(o.grosor)
+        )
+    };
+    match o.estilo {
+        Estilo::Rellenar => {
+            if let Some(f) = &doc.fondo {
+                let fill = relleno(f, &mut n, &mut defs);
+                let _ = write!(cuerpo, r#"<rect width="{w}" height="{h}" fill="{fill}"/>"#);
+            }
+            for c in &doc.capas {
+                let fill = relleno(&c.relleno, &mut n, &mut defs);
+                let mut dd = String::new();
+                for f in &c.formas {
+                    d(f, &mut dd);
+                }
+                let _ = write!(
+                    cuerpo,
+                    r#"<path fill="{fill}" fill-rule="evenodd" d="{dd}"/>"#
+                );
+            }
         }
-        let _ = write!(
-            cuerpo,
-            r#"<path fill="{fill}" fill-rule="evenodd" d="{dd}"/>"#
-        );
+        Estilo::TrazarFormas => {
+            for c in &doc.capas {
+                let mut dd = String::new();
+                for f in &c.formas {
+                    d(f, &mut dd);
+                }
+                let _ = write!(
+                    cuerpo,
+                    r#"<path {} d="{dd}"/>"#,
+                    trazo(crate::trazado::color_de(&c.relleno))
+                );
+            }
+        }
+        Estilo::TrazarBordes => {
+            // Un trazado por color, con todos sus bordes.
+            let mut por_color: Vec<([u8; 3], String)> = Vec::new();
+            for b in crate::trazado::bordes(doc) {
+                let i = match por_color.iter().position(|x| x.0 == b.color) {
+                    Some(i) => i,
+                    None => {
+                        por_color.push((b.color, String::new()));
+                        por_color.len() - 1
+                    }
+                };
+                if b.cerrado {
+                    d(&Forma::Tramos(b.tramos), &mut por_color[i].1);
+                } else {
+                    d_abierto(&b.tramos, &mut por_color[i].1);
+                }
+            }
+            for (c, dd) in por_color {
+                let _ = write!(cuerpo, r#"<path {} d="{dd}"/>"#, trazo(c));
+            }
+        }
     }
     let defs = if defs.is_empty() {
         String::new()

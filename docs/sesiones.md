@@ -50,6 +50,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   preguntó por «Abrir otra…» en macOS: su margen es el del Estudio (falsa alarma mía), pero a 900 px la barra
   de estado no cabía y las consultas `@container` de macOS no se cumplían nunca, también en el Estudio
   (trampas.md). El logo de pruebas, en `pruebas/vector/` (en `corpus/` cambiaba la cuenta de Lotes).
+- **Degradados** (el cliente eligió arreglarlo antes de la web): el icono de Apolo daba 11,9 (fondo en dos
+  franjas, sol en anillos). Arreglado el fondo (degradado sobre la unión con un vecino): 55,7, sin cambiar las
+  otras 53 del banco; el icono entra al banco. Separar por zonas, probado y descartado (peor nota). El sol, a la
+  deuda. El cliente decide que la prueba en sus máquinas y la web vayan con la 1.1.0 (rama `web-1.1.0`), y
+  para la web, «un ejemplo que no dé problemas»: el sol en colores planos (`pruebas/vector/apolo-plano`, 80,3
+  sobre blanco, 71,3 con transparencia; también en el banco).
 - **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad; la herramienta con un
   agente de verdad; la pantalla en la ventana de verdad.
 

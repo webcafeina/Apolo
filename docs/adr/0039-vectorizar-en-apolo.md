@@ -93,11 +93,23 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   Las órdenes de la ventana (`vectorizar`, `medir_vector`, `exportar_vector`, `nombre_salida_vector`) y sus
   iguales en `apolo-dev`.
 
+- **Degradados partidos por la paleta** (2026-11-10, al preparar la web con el icono de Apolo: nota 11,9). Un
+  degradado suave se parte en la paleta en varios colores (el fondo gris del icono, en dos), y cada trozo por
+  separado parece plano (menos de 4 niveles de variación), así que nunca se buscaba su degradado y salía en
+  franjas. Ahora, si una región parece plana, se ajusta el degradado **a ella junto con cada color vecino** y se
+  acepta si explica la unión con menos de 5 niveles de error medio (un borde nítido entre dos colores, con una
+  rampa, da mucho más). El icono, de 11,9 a 55,7 (y de 99 a 16 KB en PDF); las 53 imágenes de antes, idénticas.
+  El icono entra en el banco (`apolo-icono`).
+
 ## Alternativas descartadas
 
 - **SVG como un formato más del Estudio**: el cliente prefirió una pantalla propia, y además tocaba todo el
   camino de los formatos de mapa de bits.
 - **Copiar los motores libres** (VTracer, Potrace): 47,7 y 68,7 de nota frente a 81,9.
+- **Separar por zonas un color que aparece en sitios distintos**, para que cada zona busque su degradado (el
+  mismo naranja es un anillo del sol y un trozo de cada rayo del icono). Probado el 2026-11-10: el sol se veía
+  más continuo, pero la nota bajaba (el icono, de 55,7 a 51,5; el cohete de los emojis, de 61,2 a 51,0), y con
+  solo las zonas grandes no cambiaba nada. Descartado; los anillos del sol, a la deuda.
 
 ## Consecuencias
 

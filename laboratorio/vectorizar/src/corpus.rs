@@ -73,6 +73,10 @@ pub fn casos(raiz: &std::path::Path) -> Vec<Caso> {
         svg(&mut v, format!("bandera-{b}-128"), Grupo::Logotipos, f(&format!("banderas/{b}.svg")), 128, true);
     }
     svg(&mut v, "bandera-gb-dentada".into(), Grupo::Logotipos, f("banderas/gb.svg"), 512, false);
+    // El icono de Apolo (nuestro): degradados lineales y radiales en un icono, lo que más cuesta (2026-11-10).
+    svg(&mut v, "apolo-icono".into(), Grupo::Ilustraciones, raiz.join("../../frontend/src/marca/icono.svg"), 512, true);
+    // Y su versión en colores planos (pruebas/vector/apolo-plano.svg): la de la web.
+    svg(&mut v, "apolo-plano".into(), Grupo::Logotipos, raiz.join("../../pruebas/vector/apolo-plano.svg"), 512, true);
     for e in ["1f600", "1f34e", "1f680", "1f308", "1f981", "1f33b", "1f355", "1f3a8"] {
         svg(&mut v, format!("noto-{e}"), Grupo::Ilustraciones, f(&format!("noto/emoji_u{e}.svg")), 512, true);
     }

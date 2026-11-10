@@ -261,9 +261,30 @@ impl Relleno {
     }
 }
 
+/// El error medio (raíz del cuadrático, en niveles de 0 a 255) del relleno sobre esos píxeles, muestreado.
+fn error_medio(im: &Rgba, r: &Relleno, pix: &[(u32, u32)]) -> f64 {
+    let paso = (pix.len() / 2000).max(1);
+    let (mut e, mut m) = (0.0, 0usize);
+    for &(x, y) in pix.iter().step_by(paso) {
+        let p = r.color_en(x as f64 + 0.5, y as f64 + 0.5);
+        let c = im.color(x, y);
+        e += (0..3).map(|ch| (p[ch] - c[ch] as f64).powi(2)).sum::<f64>() / 3.0;
+        m += 1;
+    }
+    (e / m.max(1) as f64).sqrt()
+}
+
+/// Por debajo de este error medio, un degradado explica la unión de dos colores vecinos: los dos son trozos
+/// del mismo degradado. Un borde nítido entre dos colores distintos, explicado con una rampa, da mucho más.
+const UNION_MAXIMA: f64 = 5.0;
+
 /// Fusiona en un degradado los colores de la paleta que lo continúan: si los píxeles de otro color
 /// encajan en el degradado de una región (error medio de menos de 9 niveles), pasan a esa región. Cambia
 /// `mezcla` y devuelve el relleno de cada color (degradado o nada).
+///
+/// Un degradado suave se parte en la paleta en varios colores (el fondo gris del icono de Apolo, en dos; un
+/// sol radial, en anillos), y cada trozo por separado parece plano: entonces se prueba a ajustarlo junto con
+/// cada color vecino, y si el degradado explica la unión casi sin error (`UNION_MAXIMA`), se parte de ahí.
 pub fn fusionar(
     im: &Rgba,
     mezcla: &mut [crate::subpixel::Mezcla],
@@ -282,6 +303,14 @@ pub fn fusionar(
     };
     let mut rell: Vec<Option<Relleno>> = (0..n).map(|_| None).collect();
     let mut pix = interiores(mezcla);
+    // Vecinos: cuántos píxeles de borde mezclan cada par de colores.
+    let mut vecinos = vec![vec![0usize; n]; n];
+    for x in mezcla.iter() {
+        if x.a != x.b {
+            vecinos[x.a as usize][x.b as usize] += 1;
+            vecinos[x.b as usize][x.a as usize] += 1;
+        }
+    }
     let mut orden: Vec<usize> = (0..n).collect();
     orden.sort_by(|a, b| pix[*b].len().cmp(&pix[*a].len()));
     let mut fusionado = vec![false; n];
@@ -289,7 +318,47 @@ pub fn fusionar(
         if fusionado[k] || Some(k) == transparente {
             continue;
         }
-        let Some(mut r) = ajustar(im, &pix[k]) else {
+        let r = match ajustar(im, &pix[k]) {
+            Some(r) => Some(r),
+            None => {
+                // Plano por sí solo: ¿es un trozo de un degradado junto con algún vecino? Los vecinos, de más
+                // a menos borde compartido.
+                let mut cand: Vec<usize> = (0..n)
+                    .filter(|&j| {
+                        j != k
+                            && !fusionado[j]
+                            && Some(j) != transparente
+                            && rell[j].is_none()
+                            && vecinos[k][j] >= 8
+                            && pix[j].len() >= 20
+                    })
+                    .collect();
+                cand.sort_by(|a, b| vecinos[k][*b].cmp(&vecinos[k][*a]));
+                let mut hallado = None;
+                for j in cand {
+                    let mut union = pix[k].clone();
+                    union.extend_from_slice(&pix[j]);
+                    if let Some(r) = ajustar(im, &union)
+                        && error_medio(im, &r, &union) < UNION_MAXIMA
+                    {
+                        for x in mezcla.iter_mut() {
+                            if x.a as usize == j {
+                                x.a = k as u16;
+                            }
+                            if x.b as usize == j {
+                                x.b = k as u16;
+                            }
+                        }
+                        fusionado[j] = true;
+                        pix = interiores(mezcla);
+                        hallado = Some(r);
+                        break;
+                    }
+                }
+                hallado
+            }
+        };
+        let Some(mut r) = r else {
             continue;
         };
         loop {

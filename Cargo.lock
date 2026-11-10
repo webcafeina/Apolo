@@ -136,6 +136,7 @@ dependencies = [
  "apolo-nucleo",
  "clap",
  "embed-resource",
+ "png",
 ]
 
 [[package]]

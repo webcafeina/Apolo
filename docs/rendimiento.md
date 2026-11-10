@@ -92,3 +92,21 @@ Objetivos del plan: menos de 2 s para 512 px y menos de 10 s para una foto de 1.
 - **En paralelo con rayon**: las capas, las formas de cada capa y los dos órdenes de capas que se comparan.
   Las fotos ganan sobre todo por las capas (24, y en cada una los contornos son lo caro).
 
+### El modo por nota (hito 5, 2026-11-10)
+
+`apolo vectorizar --objetivo N --detalle 0`, con la CLI en release, de una en una, en el mismo VPS. Parte en dos
+el detalle (hasta nueve pruebas, cada una vectoriza y mide con SSIMULACRA 2):
+
+| Imagen | Objetivo 70 | Objetivo 80 |
+|---|---|---|
+| Corazón (tabler), 512 px | 0,18 s (detalle 26) | 0,19 s (detalle 44) |
+| Ancla (silueta) | 0,75 s (26) | 0,74 s (63) |
+| Taza (openmoji) | 0,80 s (58) | 0,91 s (no llega: 73,8) |
+| Cohete (openmoji) | 1,2 s (43) | 1,2 s (no llega: 75,2) |
+| León (noto) | 1,9 s (39) | 2,1 s (no llega: 79,7) |
+| Bandera de Corea | 2,6 s (12) | 2,9 s (38) |
+| Bandera de EE. UU. | 0,73 s (0, a la primera) | 6,9 s (no llega: 76,9) |
+
+**Más detalle no siempre da más nota** (la bandera de EE. UU.: 76,9 con el detalle 0 y 74,2 con el 100), así
+que de lo probado se queda el dibujo más ligero que llega, y si ninguno llega, el de mejor nota.
+

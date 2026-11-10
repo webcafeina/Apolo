@@ -33,7 +33,7 @@ pub struct OpcionesVector {
     pub detalle: u8,
     /// Las formas de menos área (en píxeles cuadrados) se descartan.
     pub area_minima: f64,
-    /// Degradados donde el color cambia suavemente.
+    /// Degradados donde el color cambia suavemente. Con `colores` o `paleta`, no: colores planos.
     pub degradados: bool,
 }
 
@@ -156,7 +156,11 @@ pub fn vectorizar(im: &Rgba, o: &OpcionesVector) -> Result<Documento, String> {
     let duro = paleta::sin_suavizado(im);
     let pal = paleta_de(im, tipo, o)?;
     let mut mezcla = subpixel::mezclas(im, &pal, 2);
-    let rellenos: Vec<Option<Relleno>> = if o.degradados && !foto {
+    // Con los colores limitados (un máximo o una paleta fija) no hay degradados: quien los limita quiere
+    // colores planos (imprimir, vinilo), y un degradado se saltaría el límite (con dos colores, el azul de un
+    // cuadrado y el rojo de un círculo acababan en un degradado de azul a rojo).
+    let limitados = o.colores.is_some() || !o.paleta.is_empty();
+    let rellenos: Vec<Option<Relleno>> = if o.degradados && !foto && !limitados {
         degradado::fusionar(im, &mut mezcla, pal.len())
     } else {
         (0..pal.len()).map(|_| None).collect()

@@ -59,6 +59,13 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   El «detalle» mueve las tolerancias y el área mínima, **no el número de colores** (el plan lo preveía): la
   paleta cambia el dibujo entero y se deja como opción aparte.
 
+- **La CLI** (hito 5, 2026-11-10): `apolo vectorizar ENTRADAS… [-o SALIDA]`. Una imagen deja el dibujo al lado
+  sin pisar (o en `-o`, y el formato sale de la extensión); varias o carpetas, a una carpeta con las
+  subcarpetas, como los lotes («iconos-svg»). Cada opción, en `docs/cobertura-vectorizar.md`. Dos cosas que
+  salieron al probarla con imágenes reales: **más detalle no siempre da más nota** (la búsqueda se queda con el
+  más ligero que llega, o el de mejor nota; no con el detalle más bajo) y **con los colores limitados no hay
+  degradados** (con dos colores, un cuadrado azul y un círculo rojo acababan en un degradado de azul a rojo).
+
 ## Alternativas descartadas
 
 - **SVG como un formato más del Estudio**: el cliente prefirió una pantalla propia, y además tocaba todo el
@@ -106,6 +113,9 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
 - Hito 4: pruebas del núcleo (un círculo; por nota, que llega con nueve pruebas como mucho; una imagen de
   1.600 × 1.600 se reduce a menos de 2 Mpx; cancelar; colores; el ajuste en JSON) y del servicio (vectorizar,
   medir, exportar a los cuatro formatos, reexportar con otro estilo sin vectorizar, una generación vieja se
-  cancela, nombres). La ruta `apolo://` de la ventana solo la compila la CI (aquí falta webkit). **No
-  medido**: lo que tarda el modo por nota con imágenes de verdad (llegará con la CLI). Nada de los hitos 5 a
-  9 (CLI, MCP, pantalla, web).
+  cancela, nombres). La ruta `apolo://` de la ventana, compilada en la CI.
+- Hito 5: `crates/cli/tests/vectorizar.rs` (al lado sin pisar; formato por extensión, los cuatro; carpetas
+  con subcarpetas; colores, paleta, estilo, grosor, color de trazo, pixel art, detalle; por nota; errores de
+  opciones con salida 2 y una imagen rota con salida 1; ayuda en inglés). El modo por nota, medido en
+  imágenes del banco (docs/rendimiento.md): de 0,2 a 3 s, 6,9 s si el objetivo no se alcanza. Nada de los
+  hitos 6 a 9 (MCP, pantalla, web).

@@ -51,7 +51,7 @@ Tauri 2 + Rust, con la interfaz en React + Vite + TypeScript ([ADR 0001](docs/ad
 | `crates/dev` | `apolo-dev`: el Estudio por HTTP, para probar la interfaz en un navegador |
 | `crates/tema` | La paleta, el cálculo de contraste y el generador de los `tokens.css` de la interfaz y de la web |
 | `crates/mcp` | `apolo-mcp`: Apolo para agentes de IA (Claude, Cursor…) por MCP, con once herramientas ([ADR 0023](docs/adr/0023-mcp.md)) |
-| `crates/cli` | El binario `apolo`, para scripts. `apolo webp`, `jpeg` y `png` aceptan las opciones de `cwebp`, `cjpeg` y `oxipng`; `apolo avif` y `jxl` son `avifenc` y `cjxl`; `apolo medir` da la nota SSIMULACRA 2 |
+| `crates/cli` | El binario `apolo`, para scripts. `apolo webp`, `jpeg` y `png` aceptan las opciones de `cwebp`, `cjpeg` y `oxipng`; `apolo avif` y `jxl` son `avifenc` y `cjxl`; `apolo medir` da la nota SSIMULACRA 2; `apolo vectorizar` pasa a SVG, PDF, EPS o DXF |
 | `src-tauri` | La aplicación de ventana: órdenes de Tauri sobre el núcleo |
 | `frontend` | La interfaz. Los textos, en `src/i18n/es.json`, nunca escritos a mano en un componente |
 | `web` | La web, apolo.webcafeina.com: Astro, con guías y comparativas ([ADR 0033](docs/adr/0033-la-web-comercial.md) y [0034](docs/adr/0034-seguridad-y-posicionamiento.md)). Se despliega al publicar una versión |
@@ -92,7 +92,8 @@ Tres caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, y lo h
 - **Cada opción de `cwebp`, `cjpeg`, `oxipng`, `avifenc` y `cjxl`** está en
   [docs/cobertura-cwebp.md](docs/cobertura-cwebp.md), [docs/cobertura-cjpeg-oxipng.md](docs/cobertura-cjpeg-oxipng.md)
   y [docs/cobertura-avifenc-cjxl.md](docs/cobertura-avifenc-cjxl.md): dónde vive en el núcleo, en la
-  CLI y en la interfaz, y qué prueba la vigila. Una opción nueva no está hecha hasta que su fila
+  CLI y en la interfaz, y qué prueba la vigila. Las de vectorizar, en
+  [docs/cobertura-vectorizar.md](docs/cobertura-vectorizar.md). Una opción nueva no está hecha hasta que su fila
   está completa.
 - Licencia GPLv3 ([ADR 0006](docs/adr/0006-gplv3-y-repositorio-publico.md)): **ninguna dependencia
   nueva sin mirar su licencia**. AGPL no (por eso no `dssim`); propietarias no.

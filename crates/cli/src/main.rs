@@ -4,7 +4,7 @@
 //! `apolo png`, `apolo qoi`, `apolo avif` y `apolo jxl` aceptan las opciones de
 //! cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl tal cual y dan el mismo
 //! fichero (ADR 0002, 0020 y 0021), más las propias de Apolo con el prefijo
-//! `-apolo_`.
+//! `-apolo_`. `apolo vectorizar` pasa una imagen a SVG, PDF, EPS o DXF (ADR 0039).
 
 use std::ffi::OsString;
 use std::path::PathBuf;
@@ -20,6 +20,7 @@ mod jpeg;
 mod lote;
 mod png;
 mod qoi;
+mod vectorizar;
 mod webp;
 
 // Los textos de la ayuda van con `trs!` y no con `///`: clap los lee al
@@ -247,6 +248,182 @@ Examples:
     },
 
     #[command(
+        about = trs!(
+            "Vectoriza: de un mapa de bits a SVG, PDF, EPS o DXF",
+            "Vectorizes: from a bitmap to SVG, PDF, EPS or DXF"
+        ),
+        long_about = trs!(
+            "Vectoriza: de un mapa de bits a SVG, PDF, EPS o DXF
+
+Una imagen deja el dibujo al lado (logo.png → logo.svg), sin pisar nada;
+con -o, donde se diga, y el formato sale de la extensión. Varias imágenes
+o carpetas van a una carpeta, con las subcarpetas repetidas.
+
+Ejemplos:
+  apolo vectorizar logo.png
+  apolo vectorizar logo.png -o logo.pdf --colores 4
+  apolo vectorizar iconos/ --formato dxf --estilo trazar-bordes
+  apolo vectorizar dibujo.png --objetivo 80",
+            "Vectorizes: from a bitmap to SVG, PDF, EPS or DXF
+
+One image leaves the drawing next to it (logo.png → logo.svg), without
+overwriting anything; with -o, wherever it says, and the format comes from
+the extension. Several images or folders go to a folder, with the
+subfolders repeated.
+
+Examples:
+  apolo vectorizar logo.png
+  apolo vectorizar logo.png -o logo.pdf --colores 4
+  apolo vectorizar icons/ --formato dxf --estilo trazar-bordes
+  apolo vectorizar drawing.png --objetivo 80"
+        )
+    )]
+    Vectorizar {
+        #[arg(
+            required = true,
+            value_name = trs!("ENTRADAS", "INPUTS"),
+            help = trs!("Imágenes o carpetas", "Images or folders")
+        )]
+        entradas: Vec<PathBuf>,
+        #[arg(
+            short = 'o',
+            long,
+            value_name = trs!("SALIDA", "OUTPUT"),
+            help = trs!(
+                "Un fichero (.svg, .pdf, .eps o .dxf) o, con varias imágenes, una carpeta",
+                "A file (.svg, .pdf, .eps or .dxf) or, with several images, a folder"
+            )
+        )]
+        salida: Option<PathBuf>,
+        #[arg(
+            short,
+            long,
+            value_name = trs!("FORMATO", "FORMAT"),
+            value_parser = vectorizar::FORMATOS,
+            help = trs!(
+                "svg, pdf, eps o dxf (por defecto, el de la extensión de -o, o svg)",
+                "svg, pdf, eps or dxf (by default, the one of -o’s extension, or svg)"
+            )
+        )]
+        formato: Option<String>,
+        #[arg(
+            short,
+            long,
+            default_value = "auto",
+            value_parser = vectorizar::TIPOS,
+            help = trs!(
+                "Qué es: auto lo detecta (pixel art, foto o ilustración)",
+                "What it is: auto detects it (pixel art, photo or illustration)"
+            )
+        )]
+        tipo: String,
+        #[arg(
+            short,
+            long,
+            value_name = "N",
+            help = trs!(
+                "Colores como mucho, de 2 a 256, todos planos (por defecto, los que tenga)",
+                "Colors at most, 2 to 256, all flat (by default, the ones it has)"
+            )
+        )]
+        colores: Option<u32>,
+        #[arg(
+            long,
+            value_name = "#RRGGBB,…",
+            help = trs!(
+                "Paleta fija: cada píxel va al color más cercano de esta lista (sin degradados)",
+                "Fixed palette: each pixel goes to the closest color in this list (no gradients)"
+            )
+        )]
+        paleta: Option<String>,
+        #[arg(
+            short,
+            long,
+            value_name = "0-100",
+            default_value_t = 75,
+            value_parser = clap::value_parser!(u8).range(0..=100),
+            help = trs!(
+                "Cuánto se ciñe al original: más, más fiel y más nodos; menos, más ligero. Con --objetivo, el mínimo",
+                "How closely it follows the original: more, more faithful and more nodes; less, lighter. With --objetivo, the minimum"
+            )
+        )]
+        detalle: u8,
+        #[arg(
+            long,
+            value_name = trs!("NOTA", "SCORE"),
+            help = trs!(
+                "Buscar el dibujo más ligero que da esta nota SSIMULACRA 2 (desde --detalle)",
+                "Find the lightest drawing that gives this SSIMULACRA 2 score (from --detalle)"
+            )
+        )]
+        objetivo: Option<f32>,
+        #[arg(
+            long,
+            help = trs!(
+                "Sin degradados: solo colores planos",
+                "No gradients: flat colors only"
+            )
+        )]
+        sin_degradados: bool,
+        #[arg(
+            long,
+            value_name = "PX²",
+            help = trs!(
+                "Descartar las formas de menos área, en píxeles cuadrados (por defecto, 0,8)",
+                "Drop shapes with less area, in square pixels (by default, 0.8)"
+            )
+        )]
+        area_minima: Option<f64>,
+        #[arg(
+            short,
+            long,
+            default_value = "rellenar",
+            value_parser = vectorizar::ESTILOS,
+            help = trs!(
+                "rellenar, trazar-formas (el contorno de cada forma) o trazar-bordes (cada borde una vez, para cortar)",
+                "rellenar (fill), trazar-formas (each shape’s outline) or trazar-bordes (each edge once, for cutting)"
+            )
+        )]
+        estilo: String,
+        #[arg(
+            short,
+            long,
+            value_name = "PX",
+            default_value_t = 1.0,
+            help = trs!(
+                "Grosor del trazo, en píxeles (en los estilos de trazar)",
+                "Stroke width, in pixels (in the stroke styles)"
+            )
+        )]
+        grosor: f64,
+        #[arg(
+            long,
+            value_name = "#RRGGBB",
+            help = trs!(
+                "Color del trazo (por defecto, el de cada forma; en trazar-bordes, negro)",
+                "Stroke color (by default, each shape’s; in trazar-bordes, black)"
+            )
+        )]
+        color_trazo: Option<String>,
+        #[arg(
+            long,
+            default_value = "splines",
+            value_parser = vectorizar::NIVELES_DXF,
+            help = trs!(
+                "Qué usa el DXF: rectas (solo), arcos (rectas y arcos) o splines (también curvas libres y elipses)",
+                "What the DXF uses: rectas (lines only), arcos (lines and arcs) or splines (also free curves and ellipses)"
+            )
+        )]
+        dxf: String,
+        #[arg(
+            short,
+            long,
+            help = trs!("Sin detalle de cada imagen", "No per-image details")
+        )]
+        quiet: bool,
+    },
+
+    #[command(
         disable_help_flag = true,
         about = trs!(
             "Codifica a AVIF: es avifenc de libavif 1.4.2 (apolo avif --help)",
@@ -465,6 +642,39 @@ fn main() -> ExitCode {
             porcentaje,
             hilos,
             herramienta,
+            silencio: quiet,
+        }),
+        Some(Accion::Vectorizar {
+            entradas,
+            salida,
+            formato,
+            tipo,
+            colores,
+            paleta,
+            detalle,
+            objetivo,
+            sin_degradados,
+            area_minima,
+            estilo,
+            grosor,
+            color_trazo,
+            dxf,
+            quiet,
+        }) => vectorizar::ejecutar(vectorizar::Peticion {
+            entradas,
+            salida,
+            formato,
+            tipo,
+            colores,
+            paleta,
+            detalle,
+            objetivo,
+            sin_degradados,
+            area_minima,
+            estilo,
+            grosor,
+            color_trazo,
+            dxf,
             silencio: quiet,
         }),
         Some(Accion::Jpeg { args }) => jpeg::ejecutar(&args),

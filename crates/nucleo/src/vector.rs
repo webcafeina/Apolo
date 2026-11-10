@@ -4,8 +4,10 @@
 //! Lo que sí lo es, la **vista previa** (el dibujo rasterizado con resvg), sirve para el comparador y para
 //! medir con la SSIMULACRA 2 de siempre, frente al original aplanado sobre blanco (como lo ve el motor).
 //!
-//! **Modo por nota**: con un objetivo, se busca el **detalle más bajo** (el dibujo más ligero) cuya vista
-//! previa llega a esa nota, partiendo en dos el intervalo 0–100, como [`crate::salida`] con la calidad.
+//! **Modo por nota**: con un objetivo, se parte en dos el intervalo del detalle (de un mínimo a 100), como
+//! [`crate::salida`] con la calidad, y de lo probado se queda el dibujo **más ligero** (menos nodos) que llega
+//! a la nota; si ninguno llega, el de mejor nota. Más detalle no siempre da más nota, así que no basta con el
+//! detalle más bajo que llega.
 
 use serde::{Deserialize, Serialize};
 
@@ -26,7 +28,7 @@ pub const MAX_PIXELES: u64 = 2_000_000;
 #[serde(default)]
 pub struct AjusteVector {
     pub tipo: TipoImagen,
-    /// Colores como mucho (`None`: los que tenga).
+    /// Colores como mucho (`None`: los que tenga). Con un máximo o una paleta, sin degradados.
     pub colores: Option<u32>,
     /// Paleta fija, en `#rrggbb`.
     pub paleta: Vec<String>,
@@ -123,7 +125,7 @@ impl AjusteVector {
 /// Lo que encontró la búsqueda de una nota.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize)]
 pub struct HalladoVector {
-    /// El detalle más bajo que llega (o 100, si ni así).
+    /// El detalle del dibujo elegido: el más ligero que llega o, si ninguno llega, el de mejor nota.
     pub detalle: u8,
     pub nota: f64,
     pub alcanzada: bool,
@@ -273,14 +275,33 @@ pub fn vectorizar_rgba(
                     bajo = medio;
                 }
             }
-            let nota = nota_de(alto, &mut probadas)?;
+            nota_de(alto, &mut probadas)?;
+            // Más detalle no siempre da más nota (en la bandera de EE. UU., el detalle 0 da 76,9 y el 100,
+            // 74,2): de lo probado, el más ligero (menos nodos) que llega; si ninguno llega, el de mejor nota.
             let pruebas = probadas.len() as u32;
-            let i = probadas.iter().position(|v| v.detalle == alto).unwrap();
+            let nota_v = |v: &Vectorizado| v.nota.unwrap_or(f64::NEG_INFINITY);
+            let llegan = probadas.iter().any(|v| nota_v(v) >= objetivo);
+            let i = (0..probadas.len())
+                .filter(|&i| !llegan || nota_v(&probadas[i]) >= objetivo)
+                .min_by(|&i, &j| {
+                    let (a, b) = (&probadas[i], &probadas[j]);
+                    if llegan {
+                        a.estadisticas
+                            .nodos
+                            .cmp(&b.estadisticas.nodos)
+                            .then(a.detalle.cmp(&b.detalle))
+                    } else {
+                        nota_v(b)
+                            .total_cmp(&nota_v(a))
+                            .then(a.detalle.cmp(&b.detalle))
+                    }
+                })
+                .unwrap();
             let mut v = probadas.swap_remove(i);
             v.hallado = Some(HalladoVector {
-                detalle: alto,
-                nota,
-                alcanzada: nota >= objetivo,
+                detalle: v.detalle,
+                nota: nota_v(&v),
+                alcanzada: llegan,
                 pruebas,
             });
             v

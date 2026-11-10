@@ -19,3 +19,7 @@ clap = { version = "4", features = ["derive"] }
 [build-dependencies]
 # MIT. Ya lo trae tauri-build; aquí, para el manifiesto de Windows (build.rs).
 embed-resource = "3"
+
+[dev-dependencies]
+# Las imágenes de las pruebas de vectorizar.
+png = "0.18"

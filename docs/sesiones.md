@@ -34,8 +34,13 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **Hito 4, núcleo y servicio**: `apolo_nucleo::vector` (modo por nota sobre el detalle, reducción a 2 Mpx,
   enderezar) y el servicio (último dibujo, cancelar, medir, exportar sin revectorizar, `apolo://vector`).
   Deuda nueva: la transparencia se pierde (fondo blanco).
-- **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad; la ruta `apolo://` de la
-  ventana (solo la CI la compila); lo que tarda el modo por nota con imágenes reales.
+- **Disco al 97 %**: borradas 1.273 copias viejas de `target/debug/deps`, `incremental` y las fotos del banco en
+  cuatro formatos: al 90 % (deuda.md).
+- **Hito 5, CLI**: `apolo vectorizar` con todas las opciones y `docs/cobertura-vectorizar.md`. Probándola con
+  imágenes del banco: más detalle no siempre da más nota (la búsqueda elige el más ligero que llega, o el de
+  mejor nota) y con colores limitados ya no hay degradados (azul y rojo separados se fundían en uno).
+- El cliente quiere la **transparencia** antes de la pantalla (hito 7).
+- **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad.
 
 ---
 

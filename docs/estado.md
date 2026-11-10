@@ -10,8 +10,8 @@
 >
 > **PARADA AQUÍ (2026-11-10, mediodía; se sigue por la tarde).** Vectorizar, fase 2, **los nueve hitos hechos o
 > preparados**: del 1 al 7 en `main` (CI en verde hasta `30fd4fc`); la web (8) y la versión (9) en la rama
-> `web-1.1.0` (`df26308`), sin publicar. **Al retomar**: la CI de `71cba68` (`make limpiar`) y de los documentos que van detrás (estos,
-> documento), que se dejaron corriendo, y `scripts/seguridad-github.sh`. Después, lo que diga el cliente: la 1.1.0
+> `web-1.1.0` (`df26308`), sin publicar. **Al retomar**: la CI de `71cba68` (`make limpiar`) y de los documentos que van
+> detrás (`f395a0c` y el siguiente), que se dejaron corriendo, y `scripts/seguridad-github.sh`. Después, lo que diga el cliente: la 1.1.0
 > sigue los pasos de más abajo («El día de la 1.1.0»).
 >
 > **2026-11-10, mañana: vectorizar, fase 2, hitos 1 a 5 de 9 hechos (ADR 0039).** Hito 1 (el motor como

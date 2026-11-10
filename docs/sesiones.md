@@ -61,6 +61,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   navegador. Las cifras de siempre, idénticas al volver a medir.
 - **Disco**: otra vez al 96 % por las compilaciones del día; las copias viejas de `target/debug` (1.096) y
   `incremental`: al 91 %. Propuesto al cliente un `make limpiar`.
+- **`make limpiar`** (el cliente dijo sí): `scripts/limpiar.py`, con `--ver`; liberó 3,6 GB.
+- **Hito 9, preparado** en `web-1.1.0`: notas de la 1.1.0, README con capturas nuevas y la skill del plugin.
+  Los pasos del día de publicar, en estado.md.
 - **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad; la herramienta con un
   agente de verdad; la pantalla en la ventana de verdad.
 

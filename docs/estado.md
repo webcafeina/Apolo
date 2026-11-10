@@ -8,7 +8,13 @@
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
 >
-> **PARADA AQUÍ (2026-11-10): vectorizar, fase 2, hitos 1 a 5 de 9 hechos (ADR 0039).** Hito 1 (el motor como
+> **PARADA AQUÍ (2026-11-10, mediodía; se sigue por la tarde).** Vectorizar, fase 2, **los nueve hitos hechos o
+> preparados**: del 1 al 7 en `main` (CI en verde hasta `30fd4fc`); la web (8) y la versión (9) en la rama
+> `web-1.1.0` (`df26308`), sin publicar. **Al retomar**: la CI de `71cba68` (`make limpiar`) y de los documentos que van detrás (estos,
+> documento), que se dejaron corriendo, y `scripts/seguridad-github.sh`. Después, lo que diga el cliente: la 1.1.0
+> sigue los pasos de más abajo («El día de la 1.1.0»).
+>
+> **2026-11-10, mañana: vectorizar, fase 2, hitos 1 a 5 de 9 hechos (ADR 0039).** Hito 1 (el motor como
 > crate) en `2e11240`; hito 2 (rapidez: 20 s → 1,1 s, igual bit a bit; docs/rendimiento.md) en `e25ec92`; hito
 > 3, **SVG, PDF, EPS y DXF** (tres niveles) con tres estilos (rellenar, trazar formas, trazar bordes) en
 > `crates/vector/src/` (`exportar`, `pintura`, `pdf`, `eps`, `dxf`, `trazado`), comprobados rasterizando cada
@@ -24,9 +30,18 @@
 > ventana de verdad**. Hito 8, **la web, preparada en la rama `web-1.1.0`** (`0b63002`, subida sin publicar): guía «Vectorizar una
 > imagen» (es/en) con cifras de `medidas.mjs` (el sol plano: 71,3, PNG de 20 KB → SVG de 8 KB), tarjeta en la
 > portada, sección en la CLI, preguntas, `llms.txt`, «doce herramientas» y **todas las capturas de nuevo** (la
-> barra lateral tiene la fila Vectorizar). **El día de la 1.1.0**: fusionar `web-1.1.0` en `main`, volver a
-> pasar `node web/herramientas/medidas.mjs` (que ponga 1.1.0) y, si la interfaz ha cambiado, `make
-> capturas-web`. **Lo siguiente**: el hito 9 (README, notas y la 1.1.0 cuando lo diga el cliente),
+> barra lateral tiene la fila Vectorizar). Hito 9, **la versión, preparada** en la misma rama (`df26308`): notas
+> `.github/notas/v1.1.0.md` (es/en), README con sus capturas nuevas y la skill del plugin (todo eso anuncia la
+> versión: las notas despliegan la web y el plugin se instala desde `main`).
+>
+> **El día de la 1.1.0** (cuando lo diga el cliente), en este orden: 1) `git merge web-1.1.0` en `main`; 2) la
+> versión a 1.1.0 en `Cargo.toml` y en `empaquetado/claude/apolo/.claude-plugin/plugin.json`, y `cargo update
+> -w` (como el commit de la 1.0.2, `7af918f`); 3) `make cli` y `node web/herramientas/medidas.mjs` (que ponga
+> 1.1.0); si la interfaz ha cambiado desde el 2026-11-10, también `make capturas-web` y `node
+> web/herramientas/readme.mjs`; 4) `make comprobar`, commit «Versión 1.1.0: vectorizar», subir y CI en verde;
+> 5) etiqueta `v1.1.0` y `publicar.yml`; `scripts/seguridad-github.sh`; 6) **la prueba del cliente**: la pantalla
+> en su Mac y en una VM, los ficheros en Illustrator o Inkscape y el DXF en su programa de corte; 7) lo de cada
+> versión en `docs/distribucion.md` (Chocolatey, winget…).
 > **Decidido con el cliente (2026-11-10)**: la prueba en sus máquinas (la pantalla en su Mac y en una VM;
 > los ficheros en Illustrator o Inkscape y el DXF en su programa de corte) **se hace al publicar la 1.1.0**, y la
 > web de vectorizar **sale con la 1.1.0**: se prepara en la rama `web-1.1.0` (subir `web/` a `main` la publica) y

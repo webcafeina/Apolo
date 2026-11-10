@@ -35,6 +35,7 @@ static TABLA: &[(&str, &str)] = &[
     ("Listar los presets", "List the presets"),
     ("Acerca de Apolo", "About Apolo"),
     ("Guardar un preset", "Save a preset"),
+    ("Vectorizar una imagen", "Vectorize an image"),
     // ─── Herramientas ───
     (
         r#"Qué es una imagen (formato, medidas, peso, transparencia, metadatos, orientación EXIF) o qué imágenes hay en una carpeta. Úsala primero si no sabes qué es. No mide la calidad: para eso, medir_calidad. Ejemplo: {"ruta": "~/Fotos/playa.heic"}"#,
@@ -270,6 +271,66 @@ static TABLA: &[(&str, &str)] = &[
     (
         "El nombre del preset nuevo. No puede existir ya.",
         "The name of the new preset. It can't exist already.",
+    ),
+    // ─── vectorizar_imagen (ADR 0039) ───
+    (
+        r#"Vectoriza: pasa un logotipo, icono, ilustración o dibujo a SVG, PDF, EPS o DXF, y lo guarda como un fichero NUEVO (junto a la original, o en salida). Detecta el tipo de imagen, mide la vista previa con SSIMULACRA 2 y, con nota_objetivo, busca el dibujo más ligero que llega. Lo transparente se queda transparente. Para cortar vinilo o láser, estilo trazar_bordes y, en DXF, nivel_dxf. Con fotos da un póster de colores planos. Ejemplos: {"ruta": "~/logo.png"} · {"ruta": "~/logo.png", "salida": "~/logo.pdf", "colores": 3} · {"ruta": "~/icono.png", "formato": "dxf", "estilo": "trazar_bordes", "nivel_dxf": "arcos"}"#,
+        r#"Vectorizes: turns a logo, icon, illustration or drawing into SVG, PDF, EPS or DXF, and saves it as a NEW file (next to the original, or in salida). It detects the kind of image, measures the preview with SSIMULACRA 2 and, with nota_objetivo, searches for the lightest drawing that gets there. Transparency stays transparent. To cut vinyl or laser, estilo trazar_bordes and, in DXF, nivel_dxf. With photos it gives a poster of flat colors. Examples: {"ruta": "~/logo.png"} · {"ruta": "~/logo.png", "salida": "~/logo.pdf", "colores": 3} · {"ruta": "~/icon.png", "formato": "dxf", "estilo": "trazar_bordes", "nivel_dxf": "arcos"}"#,
+    ),
+    (r#"Cómo se dibuja."#, r#"How it is drawn."#),
+    (r#"Formato del dibujo."#, r#"Format of the drawing."#),
+    (
+        r#"Qué entidades usa el DXF."#,
+        r#"Which entities the DXF uses."#,
+    ),
+    (r#"Qué es la imagen."#, r#"What the image is."#),
+    (
+        r#"Color del trazo en #rrggbb (por defecto, el de cada forma; en trazar_bordes, negro)."#,
+        r#"Stroke color in #rrggbb (by default, each shape's; in trazar_bordes, black)."#,
+    ),
+    (
+        r#"Colores como mucho, de 2 a 256, todos planos (sin degradados)."#,
+        r#"Colors at most, 2 to 256, all flat (no gradients)."#,
+    ),
+    (
+        r#"false: solo colores planos (por defecto, degradados donde el color cambia suave)."#,
+        r#"false: flat colors only (by default, gradients where the color changes smoothly)."#,
+    ),
+    (
+        r#"Detalle de 0 a 100 (75): más, más fiel y más pesado. Con nota_objetivo, el mínimo."#,
+        r#"Detail from 0 to 100 (75): more is more faithful and heavier. With nota_objetivo, the minimum."#,
+    ),
+    (
+        r#"rellenar (por defecto), trazar_formas (el contorno de cada forma) o trazar_bordes (cada borde una vez, para cortar vinilo o láser)."#,
+        r#"rellenar (fill, by default), trazar_formas (each shape's outline) or trazar_bordes (each edge once, to cut vinyl or laser)."#,
+    ),
+    (
+        r#"svg (por defecto), pdf, eps o dxf. Si salida es un fichero, el de su extensión."#,
+        r#"svg (by default), pdf, eps or dxf. If salida is a file, the one of its extension."#,
+    ),
+    (
+        r#"Grosor del trazo en píxeles (1), en los estilos de trazar."#,
+        r#"Stroke width in pixels (1), in the stroke styles."#,
+    ),
+    (
+        r#"Para DXF: rectas (solo), arcos (rectas y arcos) o splines (por defecto: también curvas libres y elipses). Hay programas de corte que no leen splines."#,
+        r#"For DXF: rectas (lines only), arcos (lines and arcs) or splines (by default: also free curves and ellipses). Some cutting programs don't read splines."#,
+    ),
+    (
+        r#"Buscar el dibujo más ligero que da esta nota SSIMULACRA 2 (hasta 9 pruebas). Muchos dibujos no pasan de 75–85."#,
+        r#"Search for the lightest drawing that gives this SSIMULACRA 2 score (up to 9 trials). Many drawings don't go beyond 75–85."#,
+    ),
+    (
+        r#"Paleta fija en #rrggbb: cada píxel va al color más cercano (sin degradados)."#,
+        r#"Fixed palette in #rrggbb: each pixel goes to the closest color (no gradients)."#,
+    ),
+    (
+        r#"Dónde dejarlo: una carpeta, o un fichero .svg, .pdf, .eps o .dxf. Por defecto, junto a la original. Nunca se sobrescribe nada."#,
+        r#"Where to put it: a folder, or a .svg, .pdf, .eps or .dxf file. By default, next to the original. Nothing is ever overwritten."#,
+    ),
+    (
+        r#"auto (por defecto: detecta pixel art, foto o ilustración), logotipo, ilustracion, byn (blanco y negro), pixel_art o foto."#,
+        r#"auto (by default: detects pixel art, photo or illustration), logotipo (logo), ilustracion (illustration), byn (black and white), pixel_art or foto (photo)."#,
     ),
 ];
 

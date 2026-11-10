@@ -39,8 +39,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **Hito 5, CLI**: `apolo vectorizar` con todas las opciones y `docs/cobertura-vectorizar.md`. Probándola con
   imágenes del banco: más detalle no siempre da más nota (la búsqueda elige el más ligero que llega, o el de
   mejor nota) y con colores limitados ya no hay degradados (azul y rojo separados se fundían en uno).
-- El cliente quiere la **transparencia** antes de la pantalla (hito 7).
-- **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad.
+- **Transparencia** (el cliente la pidió antes de la pantalla): lo transparente es un «color» que va abajo y no
+  se dibuja. Pruebas propias; el banco, idéntico.
+- **Hito 6, MCP**: `vectorizar_imagen` (duodécima), con traducciones, catálogo y pruebas. README y web siguen
+  con «once herramientas» hasta la 1.1.0.
+- **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad; la herramienta con un
+  agente de verdad.
 
 ---
 

@@ -66,6 +66,21 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   más ligero que llega, o el de mejor nota; no con el detalle más bajo) y **con los colores limitados no hay
   degradados** (con dos colores, un cuadrado azul y un círculo rojo acababan en un degradado de azul a rojo).
 
+- **La transparencia** (2026-11-10, antes de la pantalla, a petición del cliente). La imagen conserva su alfa
+  aparte (`Rgba::alfa`) y, si algo es transparente del todo, **lo transparente es un «color» más**, el último
+  índice: va siempre abajo (ninguna capa puede destapar lo que hay debajo) y no se dibuja, así que no hay
+  rectángulo de fondo y los agujeros de una figura quedan agujeros. Los píxeles a medias son mezcla de su color
+  (sin el blanco del aplanado) y el transparente con t = alfa: el contorno sale por debajo del píxel, como
+  entre dos colores. La paleta, el pixel art, el suavizado y la detección de fotos solo miran los píxeles
+  opacos (un blanco de verdad sigue siendo un color). La nota se mide sobre blanco, como siempre.
+
+- **El MCP** (hito 6, 2026-11-10): la duodécima herramienta, **`vectorizar_imagen`**, con los mismos argumentos
+  que la CLI salvo el área mínima (un ajuste fino que un agente no necesita), escribe siempre un fichero nuevo
+  junto a la original o en `salida` (el formato, el de su extensión si es un fichero) y contesta con la nota,
+  las formas, los nodos y los avisos (imagen reducida, foto). Las instrucciones del servidor la nombran. Por
+  defecto, sin nota objetivo (a diferencia de `optimizar_imagen`, que busca un 80): muchos dibujos no pasan de
+  75–85, y el detalle 75 es el equilibrio del banco.
+
 ## Alternativas descartadas
 
 - **SVG como un formato más del Estudio**: el cliente prefirió una pantalla propia, y además tocaba todo el
@@ -117,5 +132,13 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
 - Hito 5: `crates/cli/tests/vectorizar.rs` (al lado sin pisar; formato por extensión, los cuatro; carpetas
   con subcarpetas; colores, paleta, estilo, grosor, color de trazo, pixel art, detalle; por nota; errores de
   opciones con salida 2 y una imagen rota con salida 1; ayuda en inglés). El modo por nota, medido en
-  imágenes del banco (docs/rendimiento.md): de 0,2 a 3 s, 6,9 s si el objetivo no se alcanza. Nada de los
-  hitos 6 a 9 (MCP, pantalla, web).
+  imágenes del banco (docs/rendimiento.md): de 0,2 a 3 s, 6,9 s si el objetivo no se alcanza.
+- Transparencia: `crates/vector/tests/transparencia.rs` (un logo sobre transparente sin fondo ni blancos que no
+  existían; el agujero de un aro y una esquina, transparentes pintados sobre transparente; un círculo blanco de
+  verdad sobre transparente conserva su blanco; pixel art; una imagen opaca sigue con fondo) y en el núcleo,
+  desde un PNG. El banco (opaco) da las 53 notas y pesos idénticos. **No visto** con un logo real con
+  transparencia más allá de las pruebas.
+- Hito 6: `crates/mcp/tests/vectorizar.rs` (al lado sin pisar y sin fondo con transparencia; formato por la
+  extensión y pedido; DXF de bordes en rectas; por nota; errores con código y pista sin escribir nada;
+  cancelada no escribe), las pruebas de 12 herramientas en español e inglés y el catálogo regenerado. **No
+  probado** con un agente de verdad (Claude Desktop o Code). Nada de los hitos 7 a 9 (pantalla, web).

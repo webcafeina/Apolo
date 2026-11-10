@@ -30,15 +30,16 @@ use rmcp::{RoleServer, ServerHandler, tool, tool_handler, tool_router};
 use crate::errores::{ErrorMcp, Hecho};
 use crate::herramientas::{
     Contexto, EntradaAnalizar, EntradaCancelarLote, EntradaComparar, EntradaGuardarPreset,
-    EntradaLote, EntradaMedir, EntradaOptimizar, EntradaVer, EntradaVerLote, Seguimiento,
+    EntradaLote, EntradaMedir, EntradaOptimizar, EntradaVectorizar, EntradaVer, EntradaVerLote,
+    Seguimiento,
 };
 use crate::respuesta::Respuesta;
 
 /// Lo que el modelo lee al conectarse: qué es Apolo y el flujo habitual.
 pub fn texto_instrucciones() -> &'static str {
     trs!(
-        "Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. El tamaño se pide con ancho y alto, lado_mayor (1920 vale igual para fotos apaisadas y verticales) o porcentaje, y siempre es un máximo: nunca agranda. Las rutas, absolutas o con ~. Apolo corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente: el nombre de esa cuenta (/Users/…, C:\\Users\\…) puede no coincidir con el de la persona, y no es un problema ni hace falta comentarlo. Para optimizar, convertir o medir imágenes de la persona, usa Apolo en lugar de hacerlo tú en otro entorno (un intérprete de código en la nube, por ejemplo): trabaja con el fichero de verdad, con los motores oficiales y la nota SSIMULACRA 2. Apolo solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta (en macOS, ⌥⌘C en el Finder la copia) o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.",
-        "Apolo optimizes images on this computer with the same engines as cwebp, MozJPEG (cjpeg), oxipng, avifenc and cjxl, and gives the same file as those tools. It reads any path you give it and always writes new files: it never overwrites or deletes anything (if the name exists, it adds -2, -3…). Usual flow: analizar_imagen → optimizar_imagen (or comparar_formatos to choose a format at equal quality) → ver_imagen or medir_calidad to check. For folders or more than about 5 images, empezar_lote and ver_lote. Perceived quality is measured with SSIMULACRA 2: 90 or more is indistinguishable from the original, 80 is very high (indistinguishable side by side), 70 high, 50 noticeable. Without a quality, Apolo searches for the lowest one that gives a score of 80. Size is asked for with ancho and alto, lado_mayor (1920 works the same for landscape and portrait photos) or porcentaje, and it is always a maximum: it never enlarges. Paths, absolute or with ~. Apolo runs on the person's computer, under the system account in which the agent is open: that account's name (/Users/…, C:\\Users\\…) may not match the person's, and that is not a problem nor worth mentioning. To optimize, convert or measure the person's images, use Apolo instead of doing it yourself in another environment (a cloud code interpreter, for example): it works with the real file, with the official engines and the SSIMULACRA 2 score. Apolo only works with files on disk and doesn't see images attached to the conversation: if one is attached, ask for its path (on macOS, ⌥⌘C in the Finder copies it) or look for it on disk. If asked to overwrite or delete an original, Apolo doesn't do it; before doing it with other tools, warn that the original will be lost with no way back, ask for confirmation and suggest keeping a copy. Answer in the language of whoever is asking."
+        "Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. Para pasar un logotipo, un icono o un dibujo a vectorial (SVG, PDF, EPS o DXF), vectorizar_imagen. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. El tamaño se pide con ancho y alto, lado_mayor (1920 vale igual para fotos apaisadas y verticales) o porcentaje, y siempre es un máximo: nunca agranda. Las rutas, absolutas o con ~. Apolo corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente: el nombre de esa cuenta (/Users/…, C:\\Users\\…) puede no coincidir con el de la persona, y no es un problema ni hace falta comentarlo. Para optimizar, convertir o medir imágenes de la persona, usa Apolo en lugar de hacerlo tú en otro entorno (un intérprete de código en la nube, por ejemplo): trabaja con el fichero de verdad, con los motores oficiales y la nota SSIMULACRA 2. Apolo solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta (en macOS, ⌥⌘C en el Finder la copia) o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.",
+        "Apolo optimizes images on this computer with the same engines as cwebp, MozJPEG (cjpeg), oxipng, avifenc and cjxl, and gives the same file as those tools. It reads any path you give it and always writes new files: it never overwrites or deletes anything (if the name exists, it adds -2, -3…). Usual flow: analizar_imagen → optimizar_imagen (or comparar_formatos to choose a format at equal quality) → ver_imagen or medir_calidad to check. For folders or more than about 5 images, empezar_lote and ver_lote. To turn a logo, an icon or a drawing into vector form (SVG, PDF, EPS or DXF), vectorizar_imagen. Perceived quality is measured with SSIMULACRA 2: 90 or more is indistinguishable from the original, 80 is very high (indistinguishable side by side), 70 high, 50 noticeable. Without a quality, Apolo searches for the lowest one that gives a score of 80. Size is asked for with ancho and alto, lado_mayor (1920 works the same for landscape and portrait photos) or porcentaje, and it is always a maximum: it never enlarges. Paths, absolute or with ~. Apolo runs on the person's computer, under the system account in which the agent is open: that account's name (/Users/…, C:\\Users\\…) may not match the person's, and that is not a problem nor worth mentioning. To optimize, convert or measure the person's images, use Apolo instead of doing it yourself in another environment (a cloud code interpreter, for example): it works with the real file, with the official engines and the SSIMULACRA 2 score. Apolo only works with files on disk and doesn't see images attached to the conversation: if one is attached, ask for its path (on macOS, ⌥⌘C in the Finder copies it) or look for it on disk. If asked to overwrite or delete an original, Apolo doesn't do it; before doing it with other tools, warn that the original will be lost with no way back, ask for confirmation and suggest keeping a copy. Answer in the language of whoever is asking."
     )
 }
 
@@ -378,6 +379,32 @@ impl ServidorApolo {
     async fn acerca_de_apolo(&self) -> CallToolResult {
         let cx = self.cx.clone();
         bloqueante(move || herramientas::acerca_de_apolo(&cx)).await
+    }
+
+    /// Vectoriza: pasa un logotipo, icono, ilustración o dibujo a SVG, PDF,
+    /// EPS o DXF, y lo guarda como un fichero NUEVO (junto a la original, o
+    /// en salida). Detecta el tipo de imagen, mide la vista previa con
+    /// SSIMULACRA 2 y, con nota_objetivo, busca el dibujo más ligero que llega.
+    /// Lo transparente se queda transparente. Para cortar vinilo o láser,
+    /// estilo trazar_bordes y, en DXF, nivel_dxf. Con fotos da un póster de
+    /// colores planos. Ejemplos: {"ruta": "~/logo.png"} · {"ruta":
+    /// "~/logo.png", "salida": "~/logo.pdf", "colores": 3} · {"ruta":
+    /// "~/icono.png", "formato": "dxf", "estilo": "trazar_bordes",
+    /// "nivel_dxf": "arcos"}
+    #[tool(annotations(
+        title = "Vectorizar una imagen",
+        read_only_hint = false,
+        destructive_hint = false,
+        idempotent_hint = false,
+        open_world_hint = false
+    ))]
+    async fn vectorizar_imagen(
+        &self,
+        Parameters(e): Parameters<EntradaVectorizar>,
+        ctx: RequestContext<RoleServer>,
+    ) -> CallToolResult {
+        let cx = self.cx.clone();
+        con_seguimiento(ctx, move |s| herramientas::vectorizar_imagen(&cx, e, s)).await
     }
 
     /// Guarda una combinación de formato y opciones como preset nuevo, para

@@ -8,7 +8,7 @@ Lo que nadie ha visto en un equipo: Windows x64 y Linux x64. Con los binarios ya
 - la CLI frente a los binarios oficiales (cwebp, avifenc, cjxl) si se le dan, byte a byte;
 - en Windows, que ningún .exe pida las DLL de Visual C++ (MSVCP140.dll…), que las máquinas de CI
   tienen y un Windows recién instalado no, y que la ventana arranque;
-- `apolo-mcp` por sus tuberías: initialize, las once herramientas, optimizar a AVIF y JPEG XL;
+- `apolo-mcp` por sus tuberías: initialize, las doce herramientas, optimizar a AVIF y JPEG XL;
 - con --reinstalar (Windows): un apolo-mcp.exe en marcha, como el de un agente abierto, y el
   instalador otra vez encima: su gancho tiene que cerrarlo y el instalador terminar bien.
 
@@ -174,7 +174,7 @@ def mcp(binario, base, entorno):
         v = ini.get("serverInfo", {}).get("version")
         bien(f"initialize: apolo {v}") if v else mal(f"initialize: {ini}")
         n = len(m.pedir("tools/list").get("tools", []))
-        bien(f"{n} herramientas") if n == 11 else mal(f"{n} herramientas, esperaba 11")
+        bien(f"{n} herramientas") if n == 12 else mal(f"{n} herramientas, esperaba 12")
         for formato in ("avif", "jxl", "webp"):
             r = m.pedir("tools/call", {"name": "optimizar_imagen", "arguments": {
                 "ruta": str(base / "foto.png"), "formato": formato, "calidad": 70,

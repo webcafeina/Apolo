@@ -169,6 +169,7 @@ dependencies = [
  "base64 0.22.1",
  "dirs 6.0.0",
  "embed-resource",
+ "png",
  "rmcp",
  "schemars 1.2.3",
  "serde",

@@ -17,8 +17,11 @@
 > detalle, reducción a 2 Mpx, `exportar`) y `crates/servicio/src/vectores.rs` (último dibujo, generación,
 > medir, exportar sin revectorizar; la vista previa por `apolo://vector/<id>` y el servidor de desarrollo).
 > Hito 5, **CLI**: `apolo vectorizar` (`crates/cli/src/vectorizar.rs`, `docs/cobertura-vectorizar.md`); el modo
-> por nota, de 0,2 a 3 s (docs/rendimiento.md). **Lo siguiente**: la **transparencia** (deuda; el cliente la
-> quiere antes de la pantalla), el hito 6 (MCP, `vectorizar_imagen`) y el 7 (la pantalla). El DXF, validado con ezdxf (sin errores en 240 ficheros; también en la CI).
+> por nota, de 0,2 a 3 s (docs/rendimiento.md). La **transparencia**, hecha (lo transparente no se dibuja: sin fondo, agujeros
+> transparentes). Hito 6, **MCP**: `vectorizar_imagen`, la duodécima
+> (catálogo regenerado; humo espera 12). **Lo siguiente**: el hito 7, la pantalla «Vectorizar» (con fondo de
+> cuadros para que se vea la transparencia). README y web cuentan aún once herramientas: se cambian con la
+> web (hito 8) y la versión (hito 9), para no anunciar nada antes de la 1.1.0. El DXF, validado con ezdxf (sin errores en 240 ficheros; también en la CI).
 > **Pendiente del cliente**, antes de la 1.1.0: abrir SVG/PDF/EPS en Illustrator o Inkscape y el DXF en su programa
 > de corte o CAD (deuda.md). El EPS se comprueba en la CI frente al PDF, los dos pintados por Ghostscript (aquí no hay). Fotos: deuda (notas
 > bajas y SVG de 6 a 9 MB).

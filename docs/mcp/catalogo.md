@@ -5,7 +5,7 @@
 
 ## Lo que lee el agente al conectarse
 
-Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. El tamaño se pide con ancho y alto, lado_mayor (1920 vale igual para fotos apaisadas y verticales) o porcentaje, y siempre es un máximo: nunca agranda. Las rutas, absolutas o con ~. Apolo corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente: el nombre de esa cuenta (/Users/…, C:\Users\…) puede no coincidir con el de la persona, y no es un problema ni hace falta comentarlo. Para optimizar, convertir o medir imágenes de la persona, usa Apolo en lugar de hacerlo tú en otro entorno (un intérprete de código en la nube, por ejemplo): trabaja con el fichero de verdad, con los motores oficiales y la nota SSIMULACRA 2. Apolo solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta (en macOS, ⌥⌘C en el Finder la copia) o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.
+Apolo optimiza imágenes en este ordenador con los mismos motores que cwebp, MozJPEG (cjpeg), oxipng, avifenc y cjxl, y da el mismo fichero que esas herramientas. Lee cualquier ruta que le des y siempre escribe ficheros nuevos: nunca sobrescribe ni borra (si el nombre existe, añade -2, -3…). Flujo habitual: analizar_imagen → optimizar_imagen (o comparar_formatos para elegir formato a igual calidad) → ver_imagen o medir_calidad para comprobar. Para carpetas o más de unas 5 imágenes, empezar_lote y ver_lote. Para pasar un logotipo, un icono o un dibujo a vectorial (SVG, PDF, EPS o DXF), vectorizar_imagen. La calidad percibida se mide con SSIMULACRA 2: 90 o más no se distingue del original, 80 es muy alta (no se distingue lado a lado), 70 alta, 50 se nota. Sin decir calidad, Apolo busca la más baja que da una nota de 80. El tamaño se pide con ancho y alto, lado_mayor (1920 vale igual para fotos apaisadas y verticales) o porcentaje, y siempre es un máximo: nunca agranda. Las rutas, absolutas o con ~. Apolo corre en el ordenador de la persona, con la cuenta del sistema en la que está abierto el agente: el nombre de esa cuenta (/Users/…, C:\Users\…) puede no coincidir con el de la persona, y no es un problema ni hace falta comentarlo. Para optimizar, convertir o medir imágenes de la persona, usa Apolo en lugar de hacerlo tú en otro entorno (un intérprete de código en la nube, por ejemplo): trabaja con el fichero de verdad, con los motores oficiales y la nota SSIMULACRA 2. Apolo solo trabaja con ficheros del disco y no ve las imágenes adjuntas en la conversación: si te adjuntan una, pide su ruta (en macOS, ⌥⌘C en el Finder la copia) o búscala en el disco. Si piden sobrescribir o borrar un original, Apolo no lo hace; antes de hacerlo con otras herramientas, avisa de que el original se perderá sin vuelta atrás, pide confirmación y propón guardarlo aparte. Responde en el idioma de quien pregunta.
 
 ## `acerca_de_apolo` — Acerca de Apolo
 
@@ -147,6 +147,28 @@ Optimiza una imagen y la guarda como un fichero NUEVO (junto a la original, o en
 | `recorte` | {alto, ancho, x, y} | Quedarse con este rectángulo, antes de redimensionar (en píxeles de la imagen ya enderezada; lo que se salga del borde se ajusta). |
 | `salida` | texto | Dónde dejarla: una carpeta, o un fichero con la extensión del formato. Por defecto, junto a la original. Nunca se sobrescribe nada. |
 | `sin_perdida` | sí/no | Sin pérdida (WebP, AVIF, JPEG XL). PNG y QOI siempre lo son. |
+
+## `vectorizar_imagen` — Vectorizar una imagen
+
+*hace cambios · no destruye · todo en este ordenador*
+
+Vectoriza: pasa un logotipo, icono, ilustración o dibujo a SVG, PDF, EPS o DXF, y lo guarda como un fichero NUEVO (junto a la original, o en salida). Detecta el tipo de imagen, mide la vista previa con SSIMULACRA 2 y, con nota_objetivo, busca el dibujo más ligero que llega. Lo transparente se queda transparente. Para cortar vinilo o láser, estilo trazar_bordes y, en DXF, nivel_dxf. Con fotos da un póster de colores planos. Ejemplos: {"ruta": "~/logo.png"} · {"ruta": "~/logo.png", "salida": "~/logo.pdf", "colores": 3} · {"ruta": "~/icono.png", "formato": "dxf", "estilo": "trazar_bordes", "nivel_dxf": "arcos"}
+
+| Argumento | Tipo | Qué es |
+|---|---|---|
+| `ruta` | texto | **Obligatorio.** Ruta absoluta de la imagen (se admite ~). |
+| `color_trazo` | texto | Color del trazo en #rrggbb (por defecto, el de cada forma; en trazar_bordes, negro). |
+| `colores` | entero | Colores como mucho, de 2 a 256, todos planos (sin degradados). |
+| `degradados` | sí/no | false: solo colores planos (por defecto, degradados donde el color cambia suave). |
+| `detalle` | entero (0–255) | Detalle de 0 a 100 (75): más, más fiel y más pesado. Con nota_objetivo, el mínimo. |
+| `estilo` | rellenar \| trazar_formas \| trazar_bordes | rellenar (por defecto), trazar_formas (el contorno de cada forma) o trazar_bordes (cada borde una vez, para cortar vinilo o láser). |
+| `formato` | svg \| pdf \| eps \| dxf | svg (por defecto), pdf, eps o dxf. Si salida es un fichero, el de su extensión. |
+| `grosor` | número | Grosor del trazo en píxeles (1), en los estilos de trazar. |
+| `nivel_dxf` | rectas \| arcos \| splines | Para DXF: rectas (solo), arcos (rectas y arcos) o splines (por defecto: también curvas libres y elipses). Hay programas de corte que no leen splines. |
+| `nota_objetivo` | número | Buscar el dibujo más ligero que da esta nota SSIMULACRA 2 (hasta 9 pruebas). Muchos dibujos no pasan de 75–85. |
+| `paleta` | lista de texto | Paleta fija en #rrggbb: cada píxel va al color más cercano (sin degradados). |
+| `salida` | texto | Dónde dejarlo: una carpeta, o un fichero .svg, .pdf, .eps o .dxf. Por defecto, junto a la original. Nunca se sobrescribe nada. |
+| `tipo` | auto \| logotipo \| ilustracion \| byn \| pixel_art \| foto | auto (por defecto: detecta pixel art, foto o ilustración), logotipo, ilustracion, byn (blanco y negro), pixel_art o foto. |
 
 ## `ver_imagen` — Ver una imagen
 

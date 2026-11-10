@@ -56,7 +56,7 @@ fn en_ingles_por_las_tuberias() {
 
     let lista = pedir(2, "tools/list", json!({}));
     let herramientas = lista["tools"].as_array().unwrap();
-    assert_eq!(herramientas.len(), 11);
+    assert_eq!(herramientas.len(), 12);
     let optimizar = herramientas
         .iter()
         .find(|h| h["name"] == "optimizar_imagen")

@@ -92,7 +92,7 @@ fn una_sesion_entera_por_las_tuberias() {
     );
 
     let herramientas = respuestas[&2]["result"]["tools"].as_array().unwrap();
-    assert_eq!(herramientas.len(), 11);
+    assert_eq!(herramientas.len(), 12);
     for h in herramientas {
         let nombre = h["name"].as_str().unwrap();
         assert!(

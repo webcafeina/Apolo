@@ -1,4 +1,4 @@
-//! Las once herramientas (ADR 0023), como funciones que no saben nada del
+//! Las doce herramientas (ADR 0023; la duodécima, vectorizar, ADR 0039), como funciones que no saben nada del
 //! protocolo ni del transporte: reciben lo que pide el agente y devuelven una
 //! `Respuesta` o un `ErrorMcp`. La capa de rmcp (lib.rs) solo las envuelve.
 //!
@@ -22,7 +22,7 @@ use apolo_nucleo::medir::{self, Medidas, TipoMapa};
 use apolo_nucleo::presets::{self, PresetGuardado};
 use apolo_nucleo::proceso::{Medida, Proceso, Redimension};
 use apolo_nucleo::salida::{self, Ajuste, FormatoSalida, Hallada, Motivo};
-use apolo_nucleo::{orientacion, vista};
+use apolo_nucleo::{orientacion, vector, vista};
 use apolo_nucleo::{tr, trs};
 use apolo_servicio::{InfoImagen, Servicio};
 use base64::Engine;
@@ -1687,4 +1687,351 @@ pub fn acerca_de_apolo(cx: &Contexto) -> Hecho<Respuesta> {
             carpeta_presets: crate::rutas::con_casa(cx.servicio.carpeta_presets()),
         },
     ))
+}
+
+// ─── 12. vectorizar_imagen ───────────────────────────────────────────────────
+
+/// Formato del dibujo.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum FormatoVectorMcp {
+    Svg,
+    Pdf,
+    Eps,
+    Dxf,
+}
+
+impl From<FormatoVectorMcp> for vector::FormatoVector {
+    fn from(f: FormatoVectorMcp) -> Self {
+        match f {
+            FormatoVectorMcp::Svg => vector::FormatoVector::Svg,
+            FormatoVectorMcp::Pdf => vector::FormatoVector::Pdf,
+            FormatoVectorMcp::Eps => vector::FormatoVector::Eps,
+            FormatoVectorMcp::Dxf => vector::FormatoVector::Dxf,
+        }
+    }
+}
+
+/// Qué es la imagen.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum TipoVectorMcp {
+    Auto,
+    Logotipo,
+    Ilustracion,
+    Byn,
+    PixelArt,
+    Foto,
+}
+
+/// Cómo se dibuja.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum EstiloMcp {
+    Rellenar,
+    TrazarFormas,
+    TrazarBordes,
+}
+
+/// Qué entidades usa el DXF.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum NivelDxfMcp {
+    Rectas,
+    Arcos,
+    Splines,
+}
+
+#[derive(Debug, Deserialize, JsonSchema)]
+pub struct EntradaVectorizar {
+    /// Ruta absoluta de la imagen (se admite ~).
+    pub ruta: String,
+    /// svg (por defecto), pdf, eps o dxf. Si salida es un fichero, el de su extensión.
+    #[serde(default)]
+    pub formato: Option<FormatoVectorMcp>,
+    /// Dónde dejarlo: una carpeta, o un fichero .svg, .pdf, .eps o .dxf. Por defecto, junto a la original. Nunca se sobrescribe nada.
+    #[serde(default)]
+    pub salida: Option<String>,
+    /// auto (por defecto: detecta pixel art, foto o ilustración), logotipo, ilustracion, byn (blanco y negro), pixel_art o foto.
+    #[serde(default)]
+    pub tipo: Option<TipoVectorMcp>,
+    /// Colores como mucho, de 2 a 256, todos planos (sin degradados).
+    #[serde(default)]
+    pub colores: Option<u32>,
+    /// Paleta fija en #rrggbb: cada píxel va al color más cercano (sin degradados).
+    #[serde(default)]
+    pub paleta: Option<Vec<String>>,
+    /// Detalle de 0 a 100 (75): más, más fiel y más pesado. Con nota_objetivo, el mínimo.
+    #[serde(default)]
+    pub detalle: Option<u8>,
+    /// Buscar el dibujo más ligero que da esta nota SSIMULACRA 2 (hasta 9 pruebas). Muchos dibujos no pasan de 75–85.
+    #[serde(default)]
+    pub nota_objetivo: Option<f32>,
+    /// false: solo colores planos (por defecto, degradados donde el color cambia suave).
+    #[serde(default)]
+    pub degradados: Option<bool>,
+    /// rellenar (por defecto), trazar_formas (el contorno de cada forma) o trazar_bordes (cada borde una vez, para cortar vinilo o láser).
+    #[serde(default)]
+    pub estilo: Option<EstiloMcp>,
+    /// Grosor del trazo en píxeles (1), en los estilos de trazar.
+    #[serde(default)]
+    pub grosor: Option<f64>,
+    /// Color del trazo en #rrggbb (por defecto, el de cada forma; en trazar_bordes, negro).
+    #[serde(default)]
+    pub color_trazo: Option<String>,
+    /// Para DXF: rectas (solo), arcos (rectas y arcos) o splines (por defecto: también curvas libres y elipses). Hay programas de corte que no leen splines.
+    #[serde(default)]
+    pub nivel_dxf: Option<NivelDxfMcp>,
+}
+
+#[derive(Serialize)]
+struct DatosVectorizar {
+    entrada: String,
+    salida: String,
+    formato: vector::FormatoVector,
+    bytes_entrada: u64,
+    bytes_salida: u64,
+    ancho: u32,
+    alto: u32,
+    reducida_desde: Option<(u32, u32)>,
+    tipo: vector::TipoImagen,
+    detalle: u8,
+    nota: Option<f64>,
+    hallado: Option<vector::HalladoVector>,
+    formas: usize,
+    nodos: usize,
+    colores: usize,
+    milisegundos: u64,
+}
+
+impl EntradaVectorizar {
+    fn ajuste(&self) -> Hecho<vector::AjusteVector> {
+        let mut a = vector::AjusteVector::default();
+        if let Some(t) = self.tipo {
+            a.tipo = match t {
+                TipoVectorMcp::Auto => vector::TipoImagen::Auto,
+                TipoVectorMcp::Logotipo => vector::TipoImagen::Logotipo,
+                TipoVectorMcp::Ilustracion => vector::TipoImagen::Ilustracion,
+                TipoVectorMcp::Byn => vector::TipoImagen::ByN,
+                TipoVectorMcp::PixelArt => vector::TipoImagen::PixelArt,
+                TipoVectorMcp::Foto => vector::TipoImagen::Foto,
+            };
+        }
+        if let Some(c) = self.colores {
+            if !(2..=256).contains(&c) {
+                return Err(ErrorMcp::nuevo(
+                    "colores_fuera",
+                    trs!("colores va de 2 a 256.", "colores goes from 2 to 256."),
+                ));
+            }
+            a.colores = Some(c);
+        }
+        a.paleta = self.paleta.clone().unwrap_or_default();
+        if let Some(d) = self.detalle {
+            a.detalle = d.min(100);
+        }
+        if let Some(n) = self.nota_objetivo {
+            if !(0.0..=100.0).contains(&n) {
+                return Err(ErrorMcp::nuevo(
+                    "nota_fuera",
+                    trs!(
+                        "nota_objetivo va de 0 a 100.",
+                        "nota_objetivo goes from 0 to 100."
+                    ),
+                ));
+            }
+            a.objetivo = Some(n);
+        }
+        if let Some(d) = self.degradados {
+            a.degradados = d;
+        }
+        if let Some(e) = self.estilo {
+            a.estilo = match e {
+                EstiloMcp::Rellenar => vector::Estilo::Rellenar,
+                EstiloMcp::TrazarFormas => vector::Estilo::TrazarFormas,
+                EstiloMcp::TrazarBordes => vector::Estilo::TrazarBordes,
+            };
+        }
+        if let Some(g) = self.grosor {
+            if g.is_nan() || g <= 0.0 {
+                return Err(ErrorMcp::nuevo(
+                    "grosor_fuera",
+                    trs!(
+                        "grosor tiene que ser mayor que 0.",
+                        "grosor must be greater than 0."
+                    ),
+                ));
+            }
+            a.grosor = g;
+        }
+        a.color_trazo = self.color_trazo.clone();
+        if let Some(n) = self.nivel_dxf {
+            a.nivel_dxf = match n {
+                NivelDxfMcp::Rectas => vector::NivelDxf::Rectas,
+                NivelDxfMcp::Arcos => vector::NivelDxf::Arcos,
+                NivelDxfMcp::Splines => vector::NivelDxf::Splines,
+            };
+        }
+        // Los colores, comprobados antes de abrir nada.
+        for c in a.paleta.iter().chain(a.color_trazo.iter()) {
+            vector::color(c).map_err(|e| {
+                ErrorMcp::nuevo("color_no_valido", e.to_string()).con_pista(trs!(
+                    "Los colores se escriben #rrggbb, por ejemplo #1e46c8.",
+                    "Colors are written #rrggbb, for example #1e46c8."
+                ))
+            })?;
+        }
+        Ok(a)
+    }
+}
+
+/// El formato y dónde escribir: junto a la original, en una carpeta, o en el fichero dado (y entonces el
+/// formato es el de su extensión, si no se ha dicho otro).
+fn destino_vector(
+    a: &Abierta,
+    salida: Option<&str>,
+    pedido: Option<FormatoVectorMcp>,
+) -> Hecho<(vector::FormatoVector, PathBuf)> {
+    let pedido: Option<vector::FormatoVector> = pedido.map(Into::into);
+    let junto = |f: vector::FormatoVector| -> Hecho<PathBuf> {
+        Ok(a.ruta
+            .with_file_name(a.cx.servicio.nombre_salida_vector(a.info.id, f)?))
+    };
+    let Some(s) = salida else {
+        let f = pedido.unwrap_or(vector::FormatoVector::Svg);
+        return Ok((f, junto(f)?));
+    };
+    let p = resolver(s)?;
+    if p.is_dir() || s.ends_with('/') || s.ends_with('\\') || p.extension().is_none() {
+        let f = pedido.unwrap_or(vector::FormatoVector::Svg);
+        let nombre = a.cx.servicio.nombre_salida_vector(a.info.id, f)?;
+        return Ok((f, p.join(nombre)));
+    }
+    let de_extension = vector::FormatoVector::desde_extension(&p.to_string_lossy());
+    match (pedido, de_extension) {
+        (Some(f), Some(e)) if f != e => Err(ErrorMcp::nuevo(
+            "extension_no_cuadra",
+            tr!(
+                "«{}» no tiene la extensión de {} (.{}).",
+                "“{}” doesn't have the {} extension (.{}).",
+                p.display(),
+                f.extension().to_uppercase(),
+                f.extension()
+            ),
+        )
+        .con_pista(trs!(
+            "Cambia la extensión, o pasa solo la carpeta en salida.",
+            "Change the extension, or pass only the folder in salida."
+        ))),
+        (_, Some(e)) => Ok((e, p)),
+        (_, None) => Err(ErrorMcp::nuevo(
+            "extension_no_cuadra",
+            tr!(
+                "«{}» no es .svg, .pdf, .eps ni .dxf.",
+                "“{}” isn't .svg, .pdf, .eps or .dxf.",
+                p.display()
+            ),
+        )
+        .con_pista(trs!(
+            "Pon una de esas extensiones, o pasa solo la carpeta en salida.",
+            "Use one of those extensions, or pass only the folder in salida."
+        ))),
+    }
+}
+
+pub fn vectorizar_imagen(cx: &Contexto, e: EntradaVectorizar, s: &Seguimiento) -> Hecho<Respuesta> {
+    let ajuste = e.ajuste()?;
+    let a = abrir(cx, &e.ruta)?;
+    let id = a.info.id;
+    let (formato, destino) = destino_vector(&a, e.salida.as_deref(), e.formato)?;
+    let _turno = cx.turno();
+    let avisar = |p: i32| {
+        (s.avisar)(p);
+        if s.cancelado.load(Ordering::SeqCst) {
+            cx.servicio.cancelar_vector(id);
+        }
+    };
+    let v = cx.servicio.vectorizar_con(id, &ajuste, 1, &avisar)?;
+    let bytes = cx.servicio.bytes_vector(id, formato, &ajuste)?;
+    let escrita = escribir_sin_pisar(&destino, &bytes)?;
+    let nombre = a
+        .ruta
+        .file_name()
+        .map(|n| n.to_string_lossy())
+        .unwrap_or_default();
+    let e2 = v.estadisticas;
+    let mut texto = tr!(
+        "{nombre} → {} · {} {} · {}×{} · {} formas, {} nodos, {} colores · {}",
+        "{nombre} → {} · {} {} · {}×{} · {} shapes, {} nodes, {} colors · {}",
+        escrita.display(),
+        formato.extension().to_uppercase(),
+        peso(bytes.len() as u64),
+        v.ancho,
+        v.alto,
+        e2.formas,
+        e2.nodos,
+        e2.colores,
+        segundos(v.milisegundos)
+    );
+    if let Some(n) = v.nota {
+        texto.push_str(&tr!(
+            "\nVista previa frente al original: SSIMULACRA 2 {} ({}), con el detalle {}.",
+            "\nPreview against the original: SSIMULACRA 2 {} ({}), at detail {}.",
+            coma(n, 1),
+            banda(n),
+            v.detalle
+        ));
+    }
+    if let (Some(h), Some(o)) = (v.hallado, ajuste.objetivo) {
+        texto.push_str(&if h.alcanzada {
+            tr!(
+                "\nNota {} alcanzada: el dibujo más ligero que llega es el del detalle {} ({} pruebas).",
+                "\nScore {} reached: the lightest drawing that gets there is detail {} ({} trials).",
+                coma(o as f64, 0),
+                h.detalle,
+                h.pruebas
+            )
+        } else {
+            tr!(
+                "\nNo llega a la nota {}: se queda el de mejor nota ({}, detalle {}). Esta imagen no da más como dibujo; con menos exigencia, o colores o tipo distintos, puede cambiar.",
+                "\nIt doesn't reach score {}: the best-scoring one is kept ({}, detail {}). This image can't do better as a drawing; with a lower target, or other colors or type, it may change.",
+                coma(o as f64, 0),
+                coma(h.nota, 1),
+                h.detalle
+            )
+        });
+    }
+    if let Some((w, h)) = v.reducida_desde {
+        texto.push_str(&tr!(
+            "\nLa imagen ({w}×{h}) pasaba de 2 megapíxeles: se redujo a {}×{} antes de vectorizar.",
+            "\nThe image ({w}×{h}) was over 2 megapixels: it was shrunk to {}×{} before vectorizing.",
+            v.ancho,
+            v.alto
+        ));
+    }
+    if v.tipo == vector::TipoImagen::Foto {
+        texto.push_str(trs!(
+            "\nEs una foto: el resultado es un póster de colores planos y suele pesar más que la foto. Vectorizar sirve para logotipos, iconos, ilustraciones y dibujos.",
+            "\nIt's a photo: the result is a poster of flat colors and usually weighs more than the photo. Vectorizing is for logos, icons, illustrations and drawings."
+        ));
+    }
+    let datos = DatosVectorizar {
+        entrada: a.ruta.display().to_string(),
+        salida: escrita.display().to_string(),
+        formato,
+        bytes_entrada: a.info.bytes,
+        bytes_salida: bytes.len() as u64,
+        ancho: v.ancho,
+        alto: v.alto,
+        reducida_desde: v.reducida_desde,
+        tipo: v.tipo,
+        detalle: v.detalle,
+        nota: v.nota,
+        hallado: v.hallado,
+        formas: e2.formas,
+        nodos: e2.nodos,
+        colores: e2.colores,
+        milisegundos: v.milisegundos,
+    };
+    Ok(Respuesta::nueva(texto, &datos))
 }

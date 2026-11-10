@@ -56,6 +56,11 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   deuda. El cliente decide que la prueba en sus máquinas y la web vayan con la 1.1.0 (rama `web-1.1.0`), y
   para la web, «un ejemplo que no dé problemas»: el sol en colores planos (`pruebas/vector/apolo-plano`, 80,3
   sobre blanco, 71,3 con transparencia; también en el banco).
+- **Hito 8, la web**, en la rama `web-1.1.0` (subida; no se publica hasta fusionarla en `main`): guía, portada,
+  CLI, preguntas, `llms.txt`, doce herramientas y las 80 capturas de nuevo más la de Vectorizar. Vista en el
+  navegador. Las cifras de siempre, idénticas al volver a medir.
+- **Disco**: otra vez al 96 % por las compilaciones del día; las copias viejas de `target/debug` (1.096) y
+  `incremental`: al 91 %. Propuesto al cliente un `make limpiar`.
 - **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad; la herramienta con un
   agente de verdad; la pantalla en la ventana de verdad.
 

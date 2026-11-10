@@ -12,3 +12,5 @@ authors.workspace = true
 imagequant = "4.4.1"
 # La vista previa y elegir entre candidatos: el SVG rasterizado (Apache-2.0 o MIT).
 resvg = "0.49"
+# Las formas de cada capa y los dos órdenes de capas, en paralelo (MIT o Apache-2.0; ya venía con imagequant).
+rayon = "1.12"

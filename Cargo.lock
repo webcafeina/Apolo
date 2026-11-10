@@ -229,6 +229,7 @@ name = "apolo-vector"
 version = "1.0.2"
 dependencies = [
  "imagequant",
+ "rayon",
  "resvg",
 ]
 

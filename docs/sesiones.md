@@ -4,6 +4,25 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-10 · Vectorizar, fase 2: el crate subido y la rapidez
+
+- Al empezar: Security sin nada nuevo (los 7 avisos de Scorecard de siempre); disco al 90 %. @claude ya no
+  sale en Contributors ni en la API, pero sí en el recuadro de la portada del repositorio (caché de GitHub).
+  Se espera a la subida; si sigue, este mensaje a soporte (support.github.com → Contact support):
+  «Stale contributors sidebar on webcafeina/Apolo… the sidebar of the repository home page still shows
+  "claude", from commits whose history we have since rewritten. Could you please refresh the cached
+  contributors data for this repository?»
+- **Hito 1 subido** (`2e11240`), con `make comprobar` entero.
+- **Hito 2, rapidez**: medido con cronómetros (en el VPS no se puede usar `perf`), la síntesis era el 97 %
+  (19,3 de 20 s en la bandera de EE. UU.). Barrido por filas de submuestras, rejilla con el error de cada
+  píxel y rayon en capas, formas y órdenes: **20 s → 1,1 s**; fotos de 1.024 px, ≤ 3,9 s. Una primera versión
+  cambiaba la nota en centésimas por el redondeo de la posición de las submuestras: corregido, ahora igual
+  bit a bit (prueba `barrido_igual_que_submuestras`). docs/rendimiento.md.
+- **Visto de paso**: las fotos vectorizadas pesan 6–9 MB y dan notas muy bajas: a deuda.md.
+- **No verificado**: los tiempos en un Mac.
+
+---
+
 ## 2026-11-09 · Vectorizar: investigación y banco de pruebas
 
 - Al empezar: CI del viernes en verde, Security sin nada nuevo; las publicaciones de Álvaro, subidas;

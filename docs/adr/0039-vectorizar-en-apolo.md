@@ -39,9 +39,11 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
 - El banco usa ya el crate (motor `apolo-crate`) y da **lo mismo que el laboratorio**: 81,9 en las 18, y
   por grupos 84,8 / 73,0 / 81,3 / 100 (logotipos, ilustraciones, blanco y negro, pixel art). Las fotos, de
   23 minutos a unos 7 s.
-- **Lo lento es pintar las capas** (hito 2): en la bandera de EE. UU., unos 10 s por cada uno de los dos
-  órdenes de capas; paleta, mezcla, degradados y elegir candidato suman milisegundos. Objetivo: menos de 2 s
-  para 512 px.
+- ~~**Lo lento es pintar las capas** (hito 2)~~: en la bandera de EE. UU., unos 10 s por cada uno de los dos
+  órdenes de capas, y casi todo era la síntesis (19,3 de 20 s). **Hecho el 2026-11-10**: la síntesis cuenta
+  las submuestras por filas y guarda el error de cada píxel, y las capas, sus formas y los dos órdenes van en
+  paralelo con rayon. La bandera, de 20 s a 1,1 s; la foto más lenta, 3,9 s (docs/rendimiento.md). El
+  resultado es el mismo bit a bit.
 
 ## Verificación
 
@@ -49,4 +51,9 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   exacto, cuadrado con sus cuatro esquinas y pixel art con hueco. Clippy sin avisos.
 - El banco entero con `APOLO_MOTORES=apolo-crate` (31 s): mismas notas que el motor del laboratorio.
 - `APOLO_TIPOS=1` en el banco: las 53 imágenes, con el tipo bien detectado.
-- **No verificado aún**: nada de los hitos 2 a 9 (rapidez, formatos, núcleo, CLI, MCP, pantalla, web).
+- Hito 2 (2026-11-10): el corpus entero con `apolo-poli` y `apolo-crate` a la vez da las mismas notas en
+  todo menos en dos fotos, que ya diferían antes (las fotos no pasan por la síntesis). El SVG de la bandera
+  de EE. UU., byte a byte igual que antes del cambio. Prueba `barrido_igual_que_submuestras`: el barrido por
+  filas cuenta lo mismo que la prueba de punto en polígono, píxel a píxel. Tiempos solo en el VPS (4
+  núcleos), no en un Mac.
+- **No verificado aún**: nada de los hitos 3 a 9 (formatos, núcleo, CLI, MCP, pantalla, web).

@@ -4,6 +4,7 @@ use crate::geometria::{P, area};
 use crate::imagen::Rgba;
 use crate::modelo::{Capa, Documento, Forma, Relleno};
 use crate::{degradado, paleta, pixelart, poli, subpixel};
+use rayon::prelude::*;
 
 /// Qué tipo de imagen es. `Auto` lo detecta: pixel art si tiene pocos colores sin suavizar y en bloques;
 /// foto si casi no tiene zonas de color plano; si no, ilustración.
@@ -182,18 +183,21 @@ pub fn vectorizar(im: &Rgba, o: &OpcionesVector) -> Result<Documento, String> {
         vec![por_area, por_islas]
     };
     let varios = candidatos.len() > 1;
-    let mut mejor: Option<(f64, Documento)> = None;
-    for orden in &candidatos {
-        let doc = pintar(im, o, foto, duro, &pal, &mezcla, orden, &rellenos);
-        let e = if varios {
-            error_cuadratico(im, &doc)
-        } else {
-            0.0
-        };
-        if mejor.as_ref().map(|m| e < m.0).unwrap_or(true) {
-            mejor = Some((e, doc));
-        }
-    }
+    let mejor = candidatos
+        .par_iter()
+        .map(|orden| {
+            let doc = pintar(im, o, foto, duro, &pal, &mezcla, orden, &rellenos);
+            let e = if varios {
+                error_cuadratico(im, &doc)
+            } else {
+                0.0
+            };
+            (e, doc)
+        })
+        .collect::<Vec<_>>()
+        .into_iter()
+        // El primero gana los empates, como antes.
+        .reduce(|a, b| if b.0 < a.0 { b } else { a });
     mejor
         .map(|m| m.1)
         .ok_or_else(|| "La imagen no tiene colores que vectorizar.".to_string())
@@ -220,47 +224,52 @@ fn pintar(
     let (tol_poli, tol_curva) = (if duro { 0.5 } else { 0.3 } * f, 0.15 * f);
     let minima = if foto { 6.0 } else { o.area_minima } * f.max(1.0);
     let relleno = |k: usize| rellenos[k].clone().unwrap_or(Relleno::Color(pal[k]));
-    let mut doc = Documento {
+    // Cada capa es independiente (su cobertura incluye las de encima): se calculan en paralelo y se
+    // apilan en orden.
+    let capas: Vec<Capa> = (1..orden.len())
+        .into_par_iter()
+        .filter_map(|r| {
+            let k = orden[r];
+            let mut dentro = vec![false; pal.len()];
+            for &q in &orden[r..] {
+                dentro[q] = true;
+            }
+            let cob = subpixel::cobertura(mezcla, &dentro);
+            let muestra = |x: f64, y: f64| -> f32 {
+                // Bilineal sobre los centros de los píxeles; fuera de la imagen, 0.
+                let (fx, fy) = (x - 0.5, y - 0.5);
+                let (x0, y0) = (fx.floor(), fy.floor());
+                let (tx, ty) = ((fx - x0) as f32, (fy - y0) as f32);
+                let v = |i: f64, j: f64| -> f32 {
+                    if i < 0.0 || j < 0.0 || i >= w as f64 || j >= h as f64 {
+                        0.0
+                    } else {
+                        cob[j as usize * w as usize + i as usize]
+                    }
+                };
+                let a = v(x0, y0) * (1.0 - tx) + v(x0 + 1.0, y0) * tx;
+                let b = v(x0, y0 + 1.0) * (1.0 - tx) + v(x0 + 1.0, y0 + 1.0) * tx;
+                a * (1.0 - ty) + b * ty
+            };
+            let formas: Vec<Forma> = subpixel::contornos(&cob, w as usize, h as usize)
+                .into_par_iter()
+                .filter(|lazo: &Vec<P>| area(lazo).abs() >= minima)
+                .filter_map(|lazo| {
+                    poli::ajustar(&lazo, tol_poli, tol_curva, &muestra, (w, h), !foto)
+                })
+                .collect();
+            (!formas.is_empty()).then(|| Capa {
+                relleno: relleno(k),
+                formas,
+            })
+        })
+        .collect();
+    Documento {
         ancho: w,
         alto: h,
         fondo: orden.first().map(|&k| relleno(k)),
-        capas: Vec::new(),
-    };
-    for (r, &k) in orden.iter().enumerate().skip(1) {
-        let mut dentro = vec![false; pal.len()];
-        for &q in &orden[r..] {
-            dentro[q] = true;
-        }
-        let cob = subpixel::cobertura(mezcla, &dentro);
-        let muestra = |x: f64, y: f64| -> f32 {
-            // Bilineal sobre los centros de los píxeles; fuera de la imagen, 0.
-            let (fx, fy) = (x - 0.5, y - 0.5);
-            let (x0, y0) = (fx.floor(), fy.floor());
-            let (tx, ty) = ((fx - x0) as f32, (fy - y0) as f32);
-            let v = |i: f64, j: f64| -> f32 {
-                if i < 0.0 || j < 0.0 || i >= w as f64 || j >= h as f64 {
-                    0.0
-                } else {
-                    cob[j as usize * w as usize + i as usize]
-                }
-            };
-            let a = v(x0, y0) * (1.0 - tx) + v(x0 + 1.0, y0) * tx;
-            let b = v(x0, y0 + 1.0) * (1.0 - tx) + v(x0 + 1.0, y0 + 1.0) * tx;
-            a * (1.0 - ty) + b * ty
-        };
-        let formas: Vec<Forma> = subpixel::contornos(&cob, w as usize, h as usize)
-            .into_iter()
-            .filter(|lazo: &Vec<P>| area(lazo).abs() >= minima)
-            .filter_map(|lazo| poli::ajustar(&lazo, tol_poli, tol_curva, &muestra, (w, h), !foto))
-            .collect();
-        if !formas.is_empty() {
-            doc.capas.push(Capa {
-                relleno: relleno(k),
-                formas,
-            });
-        }
+        capas,
     }
-    doc
 }
 
 /// Error cuadrático medio entre el original y el documento rasterizado.

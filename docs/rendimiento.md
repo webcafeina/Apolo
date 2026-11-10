@@ -68,3 +68,27 @@ herramienta oficial (56 de 56).
 - **oxipng con 24 MP tarda unos 30 s**: es lo que tarda el oficial con sus opciones por defecto.
 - **No se ha medido en un Mac** ni en Windows: solo aquí. La memoria debería ser parecida o menor
   (no tienen el problema de glibc); los tiempos, otros.
+
+## Vectorizar (hito 2, 2026-11-10, ADR 0039)
+
+Medido en el banco de `laboratorio/vectorizar/` (`APOLO_MOTORES=apolo-crate`), **de una imagen en una**:
+el banco procesa ocho a la vez y en cuatro núcleos se pisan (las fotos salen a unos 14 s). Mismo VPS.
+
+| Imagen | Antes | Después |
+|---|---|---|
+| Bandera de EE. UU., 512 × 384 (50 estrellas) | 20 s | **1,1 s** |
+| Bandera de EE. UU., 128 px | 1 s | 0,08 s |
+| La más lenta sin fotos, con el banco cargado (ocho a la vez) | 27,9 s | 1,7 s (media 0,35 s) |
+| Foto de 1.024 × 970 (la pera) | 6,5 s | **3,9 s** |
+
+Objetivos del plan: menos de 2 s para 512 px y menos de 10 s para una foto de 1.024 px. Se cumplen.
+
+- **La síntesis** (`crates/vector/src/sintesis.rs`) era el 97 % del tiempo: para cada prueba de mover un
+  vértice preguntaba, submuestra a submuestra (36 por píxel), si estaba dentro del polígono recorriendo
+  todos sus lados, y recalculaba también el error de antes del movimiento. Ahora corta los lados una vez
+  por fila de submuestras y cuenta (de 19,3 s a 3,3 s), y guarda el error de cada píxel en una rejilla
+  alrededor de la figura (a 1,9 s). Las submuestras están en las mismas posiciones y se cuentan como
+  enteros: el resultado es el mismo bit a bit.
+- **En paralelo con rayon**: las capas, las formas de cada capa y los dos órdenes de capas que se comparan.
+  Las fotos ganan sobre todo por las capas (24, y en cada una los contornos son lo caro).
+

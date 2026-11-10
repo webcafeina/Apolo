@@ -75,6 +75,8 @@ Tres caras sobre el mismo núcleo: lo que hace la ventana lo hace la CLI, y lo h
 - `make equivalencia`: el mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl (`make
   referencias` las prepara: cjpeg y libpng se compilan desde la fuente).
 - `make cli`: el binario `apolo`.
+- `make limpiar`: libera disco en `target/` (las copias viejas de `deps/` y la caché incremental). Con el disco
+  del VPS por encima del 85 %, antes de lo largo.
 - `make mcp`: el servidor `apolo-mcp`. `make catalogo-mcp` regenera `docs/mcp/catalogo.md`.
 - `make tokens`: regenera `frontend/src/tokens.css` y `web/src/estilos/tokens.css` desde `crates/tema`.
   **No se editan a mano.**

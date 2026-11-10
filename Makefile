@@ -8,7 +8,7 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda comprobar rust interfaz web plugin seguridad web-e2e capturas-web video-web contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda limpiar comprobar rust interfaz web plugin seguridad web-e2e capturas-web video-web contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste, interfaz y web (la puerta de CI)"
@@ -22,6 +22,7 @@ ayuda:
 	@echo "make contraste  solo la prueba de contraste"
 	@echo "make equivalencia  mismo fichero que cwebp, cjpeg, oxipng, qoiconv, avifenc y cjxl, y la misma nota que ssimulacra2"
 	@echo "make cli        compila el binario apolo (target/release/apolo)"
+	@echo "make limpiar    libera disco en target/: las copias viejas de deps/ y la caché incremental"
 	@echo "make mcp        compila el servidor MCP para agentes (target/release/apolo-mcp)"
 	@echo "make catalogo-mcp  regenera docs/mcp/catalogo.md desde crates/mcp"
 	@echo "make mcpb       el paquete .mcpb de Claude Desktop para este sistema (target/mcpb/)"
@@ -33,6 +34,11 @@ ayuda:
 	@echo "make capturas   capturas del Estudio en claro y oscuro (frontend/capturas/)"
 	@echo "make iconos     rasteriza el icono y el fondo del .dmg y regenera src-tauri/icons"
 	@echo "make ventana-dmg  simula la ventana del .dmg sin un Mac (target/ventana-dmg.png)"
+
+# Las copias viejas que cargo deja en target/*/deps y la caché incremental (docs/deuda.md): con el disco del VPS
+# por encima del 85 %. `python3 scripts/limpiar.py --ver` dice cuánto liberaría sin borrar.
+limpiar:
+	python3 scripts/limpiar.py
 
 comprobar: interfaz rust web plugin seguridad
 

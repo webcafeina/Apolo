@@ -12,8 +12,8 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   `draw_shape` (solo existen a 20 px: `Icono` usa el de 20 escalado si falta el de 16), Yaru
   `x-office-drawing-symbolic` (Contornos sigue con el propio) y Breeze `draw-bezier-curves` y `snap-nodes-path`.
   Visto a 3× y 4×: el de Yaru salía como un rectángulo vacío porque, al juntar sus tres trazos, tras `z` una `m`
-  minúscula es relativa (y tras una `M` mayúscula, los pares siguientes también son absolutos). En Ubuntu se
-  parece al del Estudio (deuda.md, en la fila tachada).
+  minúscula es relativa (y tras una `M` mayúscula, los pares siguientes también son absolutos). En la barra se
+  parecía al del Estudio (los dos, un paisaje): el cliente lo cambió por el G3, `graphics-symbolic` (un cubo).
 - **Fondo de cuadros**: con transparencia, el servicio da el original con su alfa (`Rgba::con_alfa`, que deshace
   el aplanado) y el dibujo pintado sobre transparente (`vista::rasterizar_transparente`); el comparador ya
   ponía su damero. La nota, el mapa y las diferencias siguen sobre blanco. Pruebas en el servicio y en

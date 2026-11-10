@@ -55,6 +55,8 @@
   Breeze en KDE. En español y en inglés.
 - **Privada y ligera**: tus imágenes no salen de tu ordenador, y con fotos de 24 megapíxeles no pasa
   de unos 2 GB de memoria.
+- **Vectoriza**: pasa un logotipo, un icono o un dibujo a SVG, PDF, EPS o DXF, con su nota, sin perder la
+  transparencia. También para cortar vinilo o láser.
 - **Con tu agente de IA**: Claude, Cursor o VS Code optimizan por ti con su servidor MCP.
 
 <table>
@@ -145,6 +147,7 @@ apolo avif -q 60 foto.png foto.avif                          # como avifenc
 apolo lote fotos/ --formato webp,avif --objetivo 80          # carpetas enteras, por nota
 apolo lote fotos/ --mas-ligero --formato webp,avif,jpeg --lado-mayor 1920
 apolo medir foto.png foto.webp                               # SSIMULACRA 2, PSNR y SSIM
+apolo vectorizar logo.png -o logo.svg                        # a SVG, PDF, EPS o DXF
 ```
 
 Más ejemplos en [la página de la línea de comandos](https://apolo.webcafeina.com/linea-de-comandos/).
@@ -153,7 +156,7 @@ Más ejemplos en [la página de la línea de comandos](https://apolo.webcafeina.
 
 Apolo se usa desde **Claude, Cursor, VS Code** y cualquier agente que hable
 [MCP](https://modelcontextprotocol.io): analiza, optimiza, compara formatos a la misma calidad
-percibida, mide la pérdida y convierte carpetas, en tu ordenador. **Nunca sobrescribe ni borra.**
+percibida, mide la pérdida, convierte carpetas y vectoriza, en tu ordenador. **Nunca sobrescribe ni borra.**
 
 El servidor, `apolo-mcp`, va dentro de la aplicación y se actualiza con ella. En Apolo, la fila
 **MCP** de la barra lateral tiene lo que hay que copiar para cada agente y la extensión de Claude
@@ -175,7 +178,7 @@ claude mcp add --scope user apolo -- /usr/bin/apolo-mcp                         
 
 Cómo conectarlo en cada agente, en [la página de agentes](https://apolo.webcafeina.com/agentes/); qué
 pedirle, en [la guía](https://apolo.webcafeina.com/guias/optimizar-imagenes-con-un-agente-de-ia/); y
-las once herramientas, en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que el agente pide (rutas,
+las doce herramientas, en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que el agente pide (rutas,
 nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo: todo, en
 [la página de privacidad](https://apolo.webcafeina.com/privacidad/).
 
@@ -191,6 +194,7 @@ Con cifras medidas por Apolo sobre 24 fotos de uso libre:
 - [Optimizar imágenes para la web](https://apolo.webcafeina.com/guias/optimizar-imagenes-para-la-web/)
 - [Optimizar imágenes con un agente de IA](https://apolo.webcafeina.com/guias/optimizar-imagenes-con-un-agente-de-ia/)
 - [Convertir HEIC a JPG](https://apolo.webcafeina.com/guias/heic-a-jpg/)
+- [Vectorizar una imagen](https://apolo.webcafeina.com/guias/vectorizar-una-imagen/)
 
 Y Apolo frente a otras herramientas, en [las comparativas](https://apolo.webcafeina.com/comparativas/).
 

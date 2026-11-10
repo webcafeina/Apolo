@@ -54,6 +54,8 @@
   Breeze on KDE. In English and Spanish.
 - **Private and light**: your images never leave your computer, and with 24-megapixel photos it
   stays around 2 GB of memory.
+- **Vectorizes**: turns a logo, an icon or a drawing into SVG, PDF, EPS or DXF, with its score, keeping the
+  transparency. Also for cutting vinyl or laser.
 - **With your AI agent**: Claude, Cursor or VS Code optimize for you through its MCP server.
 
 <table>
@@ -144,6 +146,7 @@ apolo avif -q 60 photo.png photo.avif                        # like avifenc
 apolo lote photos/ --formato webp,avif --objetivo 80         # whole folders, by score
 apolo lote photos/ --mas-ligero --formato webp,avif,jpeg --lado-mayor 1920
 apolo medir photo.png photo.webp                             # SSIMULACRA 2, PSNR and SSIM
+apolo vectorizar logo.png -o logo.svg                        # to SVG, PDF, EPS or DXF
 ```
 
 More examples on [the command-line page](https://apolo.webcafeina.com/en/cli/).
@@ -152,7 +155,7 @@ More examples on [the command-line page](https://apolo.webcafeina.com/en/cli/).
 
 Apolo works from **Claude, Cursor, VS Code** and any agent that speaks
 [MCP](https://modelcontextprotocol.io): it analyzes, optimizes, compares formats at the same
-perceived quality, measures the loss and converts folders, on your computer. **It never overwrites or
+perceived quality, measures the loss, converts folders and vectorizes, on your computer. **It never overwrites or
 deletes.**
 
 The server, `apolo-mcp`, lives inside the app and updates with it. In Apolo, the **MCP** row in the
@@ -175,7 +178,7 @@ claude mcp add --scope user apolo -- /usr/bin/apolo-mcp                         
 
 How to connect it to each agent, on [the agents page](https://apolo.webcafeina.com/en/agents/); what
 to ask it, in [the guide](https://apolo.webcafeina.com/en/guides/optimize-images-with-an-ai-agent/); and
-the eleven tools, in [docs/mcp/catalogo.md](docs/mcp/catalogo.md) (in Spanish). What the agent asks for
+the twelve tools, in [docs/mcp/catalogo.md](docs/mcp/catalogo.md) (in Spanish). What the agent asks for
 (paths, names, thumbnails) goes into its conversation, and the model provider sees it: all of it, on
 [the privacy page](https://apolo.webcafeina.com/en/privacy/).
 
@@ -191,6 +194,7 @@ With figures measured by Apolo on 24 freely usable photos:
 - [Optimize images for the web](https://apolo.webcafeina.com/en/guides/optimize-images-for-the-web/)
 - [Optimize images with an AI agent](https://apolo.webcafeina.com/en/guides/optimize-images-with-an-ai-agent/)
 - [Convert HEIC to JPG](https://apolo.webcafeina.com/en/guides/heic-to-jpg/)
+- [Vectorize an image](https://apolo.webcafeina.com/en/guides/vectorize-an-image/)
 
 And Apolo against other tools, in [the comparisons](https://apolo.webcafeina.com/en/compare/).
 

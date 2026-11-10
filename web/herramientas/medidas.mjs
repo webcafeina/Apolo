@@ -7,7 +7,8 @@
 // JPEG XL, WebP y JPEG buscando, foto a foto, la calidad más baja que da la
 // nota 80 de SSIMULACRA 2 («no se distingue puesta al lado») y la 90 («no se
 // distingue ni de cerca»). Capturas, logos y el HEIC del iPhone: los de la
-// carpeta de prueba de Lotes (pruebas/lotes/generar.sh).
+// carpeta de prueba de Lotes (pruebas/lotes/generar.sh). Vectorizar: el sol de Apolo en colores planos
+// (pruebas/vector/apolo-plano.png).
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -78,7 +79,35 @@ for (const [nombre, formato, extra] of [
 }
 graficos.original = suma(bytes(join(v, "capturas"))) + suma(bytes(join(v, "logos")));
 
+// Vectorizar (ADR 0039): el sol de Apolo en colores planos, con las esquinas transparentes
+// (pruebas/vector/apolo-plano.png, nuestro), a los cuatro formatos y con su nota frente al original.
+const VECTOR = join(RAIZ, "pruebas/vector/apolo-plano.png");
+const vectorSalida = join(CACHE, "vector");
+rmSync(vectorSalida, { recursive: true, force: true });
+mkdirSync(vectorSalida, { recursive: true });
+const vectorizar = (salida, ...extra) => {
+  const r = spawnSync(APOLO, ["vectorizar", VECTOR, "-o", join(vectorSalida, salida), "--idioma", "es", ...extra], { encoding: "utf8" });
+  if (r.status !== 0) throw new Error(`apolo vectorizar ${salida}\n${r.stderr}`);
+  return r.stdout;
+};
+const linea = vectorizar("sol.svg");
+const numero = (re) => Number(linea.match(re)[1].replace(",", "."));
+const vector = {
+  original: statSync(VECTOR).size,
+  lado: 512,
+  nota: numero(/nota ([\d,]+)/),
+  formas: numero(/(\d+) formas/),
+  nodos: numero(/(\d+) nodos/),
+  colores: numero(/(\d+) colores/),
+  svg: statSync(join(vectorSalida, "sol.svg")).size,
+};
+for (const f of ["pdf", "eps", "dxf"]) {
+  vectorizar(`sol.${f}`);
+  vector[f] = statSync(join(vectorSalida, `sol.${f}`)).size;
+}
+console.log("vectorizar:", vector);
+
 const version = spawnSync(APOLO, ["--version"], { encoding: "utf8" }).stdout.split("\n")[0];
 const fecha = new Date().toISOString().slice(0, 10);
-writeFileSync(join(SITIO, "src/datos/medidas.json"), JSON.stringify({ version, fecha, fotos, heic, graficos }, null, 2) + "\n");
+writeFileSync(join(SITIO, "src/datos/medidas.json"), JSON.stringify({ version, fecha, fotos, heic, graficos, vector }, null, 2) + "\n");
 console.log("src/datos/medidas.json");

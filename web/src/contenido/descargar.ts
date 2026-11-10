@@ -16,7 +16,7 @@ export interface Seccion {
   /** Un gráfico de barras: cada fila con su valor (la barra) y su texto; la de `destacar`, en oro. */
   barras?: { filas: { etiqueta: string; valor: number; texto: string }[]; destacar?: number; nota?: string };
   /** Una captura de Apolo en el sistema de quien visita (como «En tu sistema»). */
-  captura?: "estudio" | "diferencias" | "lotes" | "agentes";
+  captura?: "estudio" | "diferencias" | "lotes" | "agentes" | "vectorizar";
   /** Tarjetas lado a lado (lo que hace mejor cada uno, cuál elegir…); la `destacada`, con el oro. */
   columnas?: { titulo: string; lista: string[]; destacada?: boolean }[];
   /** Lo que se le pide a un agente, como mensajes de una conversación. */

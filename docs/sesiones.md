@@ -29,7 +29,13 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   de la cara salía blanco sobre blanco y se trazaba el marco de la imagen: ahora negro y sin marco.
 - **ezdxf** (bloqueado al principio por el control de permisos; el cliente lo autorizó): los 240 DXF del banco,
   sin un error ni un arreglo; queda como prueba (`dxf_valido_para_ezdxf`, con `uvx`, también en la CI).
-- **No verificado**: los tiempos en un Mac; el EPS aquí; el DXF y los demás en programas de verdad.
+- **EPS en la CI**: frente al SVG daba hasta 3,1 (suavizado de Ghostscript); ahora se compara con el PDF
+  pintado también por Ghostscript (`b847666`), y pasa.
+- **Hito 4, núcleo y servicio**: `apolo_nucleo::vector` (modo por nota sobre el detalle, reducción a 2 Mpx,
+  enderezar) y el servicio (último dibujo, cancelar, medir, exportar sin revectorizar, `apolo://vector`).
+  Deuda nueva: la transparencia se pierde (fondo blanco).
+- **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad; la ruta `apolo://` de la
+  ventana (solo la CI la compila); lo que tarda el modo por nota con imágenes reales.
 
 ---
 

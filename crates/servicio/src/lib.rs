@@ -24,8 +24,10 @@ use serde::{Deserialize, Serialize};
 pub mod agentes;
 mod ajustes;
 mod lotes;
+mod vectores;
 pub use ajustes::{Ajustes, PreferenciaIdioma};
 pub use lotes::{EstadoLote, Fila, FilaSalida, LoteEmpezado, Recogida, recoger_lote};
+pub use vectores::{VistaVector, nombre_vector};
 
 /// Un error para la interfaz: el texto que hay que enseñar, y si fue una
 /// cancelación (que no se enseña).
@@ -141,6 +143,10 @@ pub struct Servicio {
     carpeta_presets: PathBuf,
     ajustes: ajustes::Almacen,
     lotes: Mutex<HashMap<u64, Arc<lotes::Lote>>>,
+    /// El último dibujo de cada imagen (vectorizar, ADR 0039).
+    vectores: Mutex<HashMap<u64, Arc<Mutex<vectores::UltimoVector>>>>,
+    /// La generación más reciente de vectorizar, por imagen.
+    generaciones_vector: Mutex<HashMap<u64, Arc<AtomicU64>>>,
 }
 
 impl Servicio {
@@ -157,6 +163,8 @@ impl Servicio {
             carpeta_presets: carpeta.join("presets"),
             ajustes: ajustes::Almacen::abrir(carpeta.join("ajustes.json")),
             lotes: Mutex::default(),
+            vectores: Mutex::default(),
+            generaciones_vector: Mutex::default(),
         }
     }
 
@@ -295,6 +303,8 @@ impl Servicio {
             .lock()
             .unwrap()
             .retain(|(i, _), _| *i != id);
+        self.vectores.lock().unwrap().remove(&id);
+        self.generaciones_vector.lock().unwrap().remove(&id);
     }
 
     /// Los píxeles del original, enderezados o no.

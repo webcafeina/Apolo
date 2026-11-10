@@ -12,3 +12,7 @@ apolo-nucleo.workspace = true
 libwebp-sys = "=0.14.4"
 serde.workspace = true
 serde_json.workspace = true
+
+[dev-dependencies]
+# Las imágenes de las pruebas de vectorizar.
+png = "0.18"

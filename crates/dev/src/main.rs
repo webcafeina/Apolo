@@ -83,6 +83,12 @@ struct PeticionMapa {
     tipo: apolo_nucleo::medir::TipoMapa,
 }
 
+/// El mapa de diferencias del dibujo (vectorizar, ADR 0039).
+#[derive(Deserialize)]
+struct PeticionMapaVector {
+    tipo: apolo_nucleo::medir::TipoMapa,
+}
+
 #[derive(Deserialize)]
 struct PeticionCodificar {
     id: u64,
@@ -406,6 +412,35 @@ fn rutas(s: Arc<Servicio>) -> Router {
                     s.pixeles_resultado(id, q.lado)
                         .map(|p| binario(empaquetar_pixeles(p)))
                         .map_err(Error)
+                },
+            ),
+        )
+        // Vectorizar (ADR 0039): la vista previa del dibujo, lo que recibió el motor y el mapa.
+        .route(
+            "/pixeles/vector/{id}",
+            get(|State(s): Estado, Path(id): Path<u64>| async move {
+                s.pixeles_vector(id)
+                    .map(|p| binario(empaquetar_pixeles(p)))
+                    .map_err(Error)
+            }),
+        )
+        .route(
+            "/pixeles/vector-referencia/{id}",
+            get(|State(s): Estado, Path(id): Path<u64>| async move {
+                s.pixeles_referencia_vector(id)
+                    .map(|p| binario(empaquetar_pixeles(p)))
+                    .map_err(Error)
+            }),
+        )
+        .route(
+            "/pixeles/vector-mapa/{id}",
+            get(
+                |State(s): Estado, Path(id): Path<u64>, Query(q): Query<PeticionMapaVector>| async move {
+                    let r: R<_> = bloqueante(move || s.pixeles_mapa_vector(id, q.tipo))
+                        .await
+                        .map(|p| binario(empaquetar_pixeles(p)))
+                        .map_err(Error);
+                    r
                 },
             ),
         )

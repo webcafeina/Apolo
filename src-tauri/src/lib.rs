@@ -345,8 +345,11 @@ async fn crear_mcpb() -> Result<String, Fallo> {
     .await
 }
 
-/// `apolo://localhost/original/<id>?enderezar=1`, `…/resultado/<id>?lado=1` y
-/// `…/mapa/<id>?lado=1&tipo=estructura` (ADR 0022): ancho
+/// `apolo://localhost/original/<id>?enderezar=1`, `…/resultado/<id>?lado=1`,
+/// `…/mapa/<id>?lado=1&tipo=estructura` (ADR 0022), y los de vectorizar
+/// (ADR 0039): `…/vector/<id>` (la vista previa del dibujo),
+/// `…/vector-referencia/<id>` (lo que recibió el motor, del mismo tamaño) y
+/// `…/vector-mapa/<id>?tipo=estructura`: ancho
 /// y alto en u32 little-endian y el RGBA detrás. En Windows llega como
 /// `http://apolo.localhost/…`; la ruta es la misma.
 fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, Fallo> {
@@ -378,6 +381,17 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
             };
             s.pixeles_mapa(id()?, tiene("lado=1") as u8, tipo)
                 .map(empaquetar_pixeles)
+        }
+        Some(&"vector") => s.pixeles_vector(id()?).map(empaquetar_pixeles),
+        Some(&"vector-referencia") => s.pixeles_referencia_vector(id()?).map(empaquetar_pixeles),
+        Some(&"vector-mapa") => {
+            let estructura = consulta.is_some_and(|q| q.split('&').any(|p| p == "tipo=estructura"));
+            let tipo = if estructura {
+                apolo_nucleo::medir::TipoMapa::Estructura
+            } else {
+                apolo_nucleo::medir::TipoMapa::Diferencia
+            };
+            s.pixeles_mapa_vector(id()?, tipo).map(empaquetar_pixeles)
         }
         _ => Err(Fallo {
             mensaje: apolo_nucleo::trs!("Ruta no válida", "Invalid path").into(),

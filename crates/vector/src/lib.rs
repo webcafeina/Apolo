@@ -36,5 +36,5 @@ pub mod vista;
 
 pub use exportar::{Estilo, FormatoVector, NivelDxf, OpcionesExportar, exportar};
 pub use imagen::Rgba;
-pub use modelo::{Capa, Documento, Forma, Relleno, Tramo};
+pub use modelo::{Capa, Documento, Estadisticas, Forma, Relleno, Tramo};
 pub use motor::{OpcionesVector, TipoImagen, tipo_efectivo, vectorizar};

@@ -8,15 +8,19 @@
 > portada, menús Descargar, Usar y Aprender, menú del móvil con el idioma dentro y pie por columnas
 > (`web/src/i18n/navegacion.ts`). Detalle en `docs/sesiones.md`. Solo la web, sin versión de Apolo.
 >
-> **PARADA AQUÍ (2026-11-10): vectorizar, fase 2, hitos 1 a 3 de 9 hechos (ADR 0039).** Hito 1 (el motor como
+> **PARADA AQUÍ (2026-11-10): vectorizar, fase 2, hitos 1 a 4 de 9 hechos (ADR 0039).** Hito 1 (el motor como
 > crate) en `2e11240`; hito 2 (rapidez: 20 s → 1,1 s, igual bit a bit; docs/rendimiento.md) en `e25ec92`; hito
 > 3, **SVG, PDF, EPS y DXF** (tres niveles) con tres estilos (rellenar, trazar formas, trazar bordes) en
 > `crates/vector/src/` (`exportar`, `pintura`, `pdf`, `eps`, `dxf`, `trazado`), comprobados rasterizando cada
 > uno frente al SVG (`tests/formatos.rs`). Plan aprobado: `~/.claude/plans/buenos-d-as-vamos-a-vivid-whale.md`.
-> **Lo siguiente, el hito 4**: núcleo y servicio (`apolo_nucleo::vector`, modo por nota sobre «detalle», vista
-> previa por `apolo://`). El DXF, validado con ezdxf (sin errores en 240 ficheros; también en la CI).
+> Hito 4, **núcleo y servicio**: `apolo_nucleo::vector` (`AjusteVector`, `vectorizar` con modo por nota sobre el
+> detalle, reducción a 2 Mpx, `exportar`) y `crates/servicio/src/vectores.rs` (último dibujo, generación,
+> medir, exportar sin revectorizar; la vista previa por `apolo://vector/<id>` y el servidor de desarrollo).
+> **Lo siguiente, el hito 5**: `apolo vectorizar` en la CLI y `docs/cobertura-vectorizar.md`; medir ahí lo que
+> tarda el modo por nota. Deuda nueva: **no conserva la transparencia** (un logo con fondo transparente sale
+> con fondo blanco). El DXF, validado con ezdxf (sin errores en 240 ficheros; también en la CI).
 > **Pendiente del cliente**, antes de la 1.1.0: abrir SVG/PDF/EPS en Illustrator o Inkscape y el DXF en su programa
-> de corte o CAD (deuda.md). El EPS solo se comprueba en la CI (aquí no hay Ghostscript). Fotos: deuda (notas
+> de corte o CAD (deuda.md). El EPS se comprueba en la CI frente al PDF, los dos pintados por Ghostscript (aquí no hay). Fotos: deuda (notas
 > bajas y SVG de 6 a 9 MB).
 >
 > **@claude en la portada, resuelto (2026-11-10).** Ya no salía en Contributors ni en la API, pero sí en el

@@ -8,7 +8,8 @@ use rayon::prelude::*;
 
 /// Qué tipo de imagen es. `Auto` lo detecta: pixel art si tiene pocos colores sin suavizar y en bloques;
 /// foto si casi no tiene zonas de color plano; si no, ilustración.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum TipoImagen {
     #[default]
     Auto,

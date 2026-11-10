@@ -2,7 +2,8 @@
 
 use crate::modelo::Documento;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum FormatoVector {
     Svg,
     Pdf,
@@ -42,7 +43,8 @@ impl FormatoVector {
 }
 
 /// Cómo se dibuja.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Estilo {
     /// Formas rellenas de su color: el dibujo tal cual.
     #[default]
@@ -54,7 +56,8 @@ pub enum Estilo {
 }
 
 /// Qué entidades usa el DXF: hay programas de corte y de CAD que no leen splines, o ni siquiera arcos.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum NivelDxf {
     /// Solo polilíneas de rectas: las curvas, aplanadas.
     Rectas,

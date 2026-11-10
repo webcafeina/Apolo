@@ -46,6 +46,19 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
     otro ya dibujado (de arriba abajo). También los tramos del marco de la imagen (sería cortar el borde de
     la hoja). En negro por defecto: el color de la capa de encima puede ser el del fondo y no se vería.
 
+- **Núcleo y servicio** (hito 4, 2026-11-10): `apolo_nucleo::vector` con `AjusteVector` (tipo, colores,
+  paleta, detalle, objetivo, degradados, área mínima y las opciones de exportar; en JSON, para la ventana, la
+  CLI y el MCP), `vectorizar(imagen, ajuste, progreso) -> Vectorizado` y `exportar`. Antes de vectorizar, la
+  imagen **se endereza** según su EXIF, **se reduce si pasa de 2 Mpx** (como Vectorizer.ai; el dibujo sale
+  del tamaño reducido) y se aplana sobre blanco: esa es la referencia de la nota. **Modo por nota**: el
+  detalle más bajo (el dibujo más ligero) cuya vista previa llega a la nota, partiendo en dos de `detalle`
+  (el mínimo) a 100; como mucho ocho pruebas. En el servicio, el último dibujo de cada imagen, con su
+  generación para cancelar; exportar con otras opciones de dibujo (estilo, grosor, nivel de DXF) **no vuelve
+  a vectorizar** (`AjusteVector::mismo_dibujo`). La vista previa, lo que recibió el motor y el mapa de
+  diferencias, por `apolo://` (`vector`, `vector-referencia`, `vector-mapa`) y por el servidor de desarrollo.
+  El «detalle» mueve las tolerancias y el área mínima, **no el número de colores** (el plan lo preveía): la
+  paleta cambia el dibujo entero y se deja como opción aparte.
+
 ## Alternativas descartadas
 
 - **SVG como un formato más del Estudio**: el cliente prefirió una pantalla propia, y además tocaba todo el
@@ -81,9 +94,18 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   mayor que todos; la tabla xref del PDF, a byte. En el banco (`APOLO_FORMATOS=1`), el PDF de las 53 imágenes
   frente al SVG: de 0,05 a 1,8, salvo el pixel art pequeño (unos 5: Poppler pinta gris donde dos cuadrados
   se tocan por la esquina, trampas.md). «Trazar bordes», mirado a ojo en tres imágenes.
-- **No verificado**: el **EPS**, porque aquí no hay Ghostscript (la prueba lo hace en la CI, con
-  `APOLO_FORMATOS_ESTRICTO=1`); el **DXF en un programa de CAD o de corte de verdad** (sí con ezdxf 1.4.2, con
+- **El EPS, en la CI** (aquí no hay Ghostscript; `APOLO_FORMATOS_ESTRICTO=1`): frente al SVG de resvg daba de
+  1,5 a 3,1 de media, por el suavizado de Ghostscript en los trazos finos, así que se compara con el **PDF
+  pintado también por Ghostscript** (mismos operadores: menos de 0,3 de media) y frente al SVG con margen
+  (menos de 4,5). Pasa desde `b847666`.
+- **No verificado**: el **DXF en un programa de CAD o de corte de verdad** (sí con ezdxf 1.4.2, con
   permiso del cliente: lectura, auditoría y recuperación sin un error ni un arreglo en los 240 DXF del banco
   —tres niveles y dos estilos— y en la prueba `dxf_valido_para_ezdxf`, que la CI pasa con `uvx`; falta
   abrirlo en AutoCAD, LibreCAD o el programa de corte del cliente); los cuatro
-  formatos en **Illustrator e Inkscape**. Y nada de los hitos 4 a 9 (núcleo, CLI, MCP, pantalla, web).
+  formatos en **Illustrator e Inkscape**.
+- Hito 4: pruebas del núcleo (un círculo; por nota, que llega con nueve pruebas como mucho; una imagen de
+  1.600 × 1.600 se reduce a menos de 2 Mpx; cancelar; colores; el ajuste en JSON) y del servicio (vectorizar,
+  medir, exportar a los cuatro formatos, reexportar con otro estilo sin vectorizar, una generación vieja se
+  cancela, nombres). La ruta `apolo://` de la ventana solo la compila la CI (aquí falta webkit). **No
+  medido**: lo que tarda el modo por nota con imágenes de verdad (llegará con la CLI). Nada de los hitos 5 a
+  9 (CLI, MCP, pantalla, web).

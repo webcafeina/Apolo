@@ -112,7 +112,7 @@ impl Documento {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, serde::Serialize)]
 pub struct Estadisticas {
     pub formas: usize,
     pub nodos: usize,

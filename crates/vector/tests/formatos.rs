@@ -158,13 +158,17 @@ fn diferencia(a: &[u8], b: &[u8]) -> (f64, f64) {
 }
 
 fn comprobar(nombre: &str, referencia: &[u8], otro: &[u8]) {
+    comprobar_con(nombre, referencia, otro, 2.5, 0.01);
+}
+
+fn comprobar_con(nombre: &str, referencia: &[u8], otro: &[u8], max_media: f64, max_malos: f64) {
     let (media, malos) = diferencia(referencia, otro);
     eprintln!(
         "{nombre}: diferencia media {media:.2}, píxeles muy distintos {:.2} %",
         malos * 100.0
     );
     assert!(
-        media < 2.5 && malos < 0.01,
+        media < max_media && malos < max_malos,
         "{nombre}: media {media:.2}, muy distintos {:.2} %",
         malos * 100.0
     );
@@ -192,25 +196,30 @@ fn pdf_a_png(doc: &Documento, o: &OpcionesExportar, d: &Path) -> Vec<u8> {
     png(&d.join("pdf.png"))
 }
 
-fn eps_a_png(doc: &Documento, o: &OpcionesExportar, d: &Path) -> Vec<u8> {
-    std::fs::write(d.join("a.eps"), exportar(doc, FormatoVector::Eps, o)).unwrap();
+/// Ghostscript: el EPS (recortado a su caja) o el PDF, a 72 ppp.
+fn gs_a_png(entrada: &Path, salida: &Path) -> Vec<u8> {
     let st = Command::new("gs")
         .args([
             "-q",
             "-dSAFER",
             "-dBATCH",
             "-dNOPAUSE",
-            "-dEPSCrop",
             "-sDEVICE=png16m",
             "-r72",
         ])
         .args(["-dGraphicsAlphaBits=4", "-dTextAlphaBits=4"])
-        .arg(format!("-sOutputFile={}", d.join("eps.png").display()))
-        .arg(d.join("a.eps"))
+        .args(
+            entrada
+                .extension()
+                .is_some_and(|e| e == "eps")
+                .then_some("-dEPSCrop"),
+        )
+        .arg(format!("-sOutputFile={}", salida.display()))
+        .arg(entrada)
         .status()
         .unwrap();
-    assert!(st.success(), "gs");
-    png(&d.join("eps.png"))
+    assert!(st.success(), "gs {}", entrada.display());
+    png(salida)
 }
 
 fn vectorizado() -> Documento {
@@ -242,8 +251,11 @@ fn pdf_igual_que_svg() {
     }
 }
 
+/// El EPS sale del mismo contenido que el PDF: pintados los dos por Ghostscript tienen que coincidir casi al
+/// píxel. Frente al SVG de resvg, con más margen: el suavizado de Ghostscript es otro (sobre todo en trazos
+/// finos; en la CI, «trazar bordes» da 3,1 de media).
 #[test]
-fn eps_igual_que_svg() {
+fn eps_igual_que_pdf_y_svg() {
     if !hay("gs") {
         return;
     }
@@ -258,19 +270,32 @@ fn eps_igual_que_svg() {
                 grosor: 1.5,
                 ..Default::default()
             };
-            comprobar(
-                &format!("EPS {nombre} {estilo:?}"),
+            std::fs::write(d.join("a.eps"), exportar(&doc, FormatoVector::Eps, &o)).unwrap();
+            std::fs::write(d.join("a.pdf"), exportar(&doc, FormatoVector::Pdf, &o)).unwrap();
+            let eps = gs_a_png(&d.join("a.eps"), &d.join("eps.png"));
+            let pdf = gs_a_png(&d.join("a.pdf"), &d.join("pdf-gs.png"));
+            comprobar_con(
+                &format!("EPS frente a PDF, {nombre} {estilo:?}"),
+                &pdf,
+                &eps,
+                0.3,
+                0.001,
+            );
+            comprobar_con(
+                &format!("EPS frente a SVG, {nombre} {estilo:?}"),
                 &referencia(&doc, &o),
-                &eps_a_png(&doc, &o, &d),
+                &eps,
+                4.5,
+                0.015,
             );
         }
     }
 }
 
-/// Las entidades de la sección ENTITIES como (capa, polígono con el eje Y hacia arriba).
 /// Una entidad leída: su capa, sus puntos y si es cerrada.
 type Leida = (String, Vec<(f64, f64)>, bool);
 
+/// Las entidades de la sección ENTITIES como (capa, polígono con el eje Y hacia arriba).
 fn leer_dxf(txt: &str) -> Vec<Leida> {
     let lineas: Vec<&str> = txt.lines().collect();
     let pares: Vec<(i32, &str)> = lineas

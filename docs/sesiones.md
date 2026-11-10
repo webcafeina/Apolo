@@ -43,8 +43,15 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   se dibuja. Pruebas propias; el banco, idéntico.
 - **Hito 6, MCP**: `vectorizar_imagen` (duodécima), con traducciones, catálogo y pruebas. README y web siguen
   con «once herramientas» hasta la 1.1.0.
+- **Hito 7, la pantalla «Vectorizar»**: sección propia con el comparador, el modo «Contornos» (trazados y nodos
+  pintados en Rust), el panel en tres grupos y la exportación a los cuatro formatos; órdenes de la ventana y de
+  `apolo-dev`; `pruebas/corpus/logo.png` hecho a mano; e2e en claro y oscuro. Mirando las capturas: la
+  cabecera no cabía con cuatro modos (ahora, iconos) y dos `id` repetidos rompían etiquetas. El cliente
+  preguntó por «Abrir otra…» en macOS: su margen es el del Estudio (falsa alarma mía), pero a 900 px la barra
+  de estado no cabía y las consultas `@container` de macOS no se cumplían nunca, también en el Estudio
+  (trampas.md). El logo de pruebas, en `pruebas/vector/` (en `corpus/` cambiaba la cuenta de Lotes).
 - **No verificado**: los tiempos en un Mac; el DXF y los demás en programas de verdad; la herramienta con un
-  agente de verdad.
+  agente de verdad; la pantalla en la ventana de verdad.
 
 ---
 

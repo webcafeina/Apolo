@@ -284,6 +284,23 @@ input[type="range"] { accent-color: var(--relleno); }
 
 .mensaje { padding: var(--espacio-2) var(--espacio-5); }
 
+/* Vectorizar (ADR 0039): cuatro modos de comparar en vez de tres. Sin sitio, solo sus iconos (el nombre sale
+   al dejar el puntero), y el antetítulo en una línea, para que el nombre de la imagen no se quede en «lo…». */
+.vectorizar .antetitulo { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@container (max-width: 860px) {
+  .vectorizar .segmentado.con-iconos .etiqueta { display: none; }
+}
+/* La barra de estado: la línea de lo que tiene el dibujo es larga («Ilustración · 8 formas · 54 nodos…»). En una
+   ventana estrecha (900 px, el mínimo) se parte entre grupos y el botón de exportar baja de línea, en vez de
+   salirse por debajo del panel. */
+.vectorizar .derecha-estado { min-width: 0; flex-wrap: wrap; justify-content: flex-end; row-gap: var(--espacio-2); }
+.vectorizar .medicion { flex-shrink: 1; min-width: 0; }
+/* En macOS la cabecera ocupa todo el ancho (el contenedor es la sección entera): con los rótulos, «Abrir
+   otra…» se quedaba pegado al borde de la ventana. */
+@container (max-width: 1100px) {
+  :root[data-sistema="macos"] .vectorizar .segmentado.con-iconos .etiqueta { display: none; }
+}
+
 /* Bienvenida y zona para soltar */
 
 .bienvenida { display: flex; flex-direction: column; gap: var(--espacio-5); }

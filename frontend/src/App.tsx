@@ -10,11 +10,12 @@ import i18n, { lengua } from "./i18n";
 import { Lotes } from "./lotes/Lotes";
 import { BandaNovedad } from "./Novedad";
 import { Presets } from "./presets/Presets";
+import { Vectorizar } from "./vectorizar/Vectorizar";
 import * as puente from "./puente";
 
 // «mcp» no es una sección: es una puerta a Ajustes por el bloque de los
 // agentes, como la fila «MCP» de Esfinge (lo pidió el cliente, ADR 0023).
-type Seccion = "estudio" | "lotes" | "presets" | "mcp" | "ajustes";
+type Seccion = "estudio" | "lotes" | "vectorizar" | "presets" | "mcp" | "ajustes";
 
 // La ventana, con la anatomía de la de Esfinge: la barra lateral de 225 px con
 // el hueco de los semáforos, el sello y las secciones (Ajustes abajo del todo),
@@ -166,7 +167,7 @@ export function App() {
             </div>
           </>
         )}
-        <nav aria-label={t("app.nombre")}>{(["estudio", "lotes", "presets"] as const).map(fila)}</nav>
+        <nav aria-label={t("app.nombre")}>{(["estudio", "lotes", "vectorizar", "presets"] as const).map(fila)}</nav>
         <nav className="abajo" aria-label={t("nav.ajustes")}>
           {fila("mcp")}
           {fila("ajustes")}
@@ -193,6 +194,10 @@ export function App() {
         {/* Lotes tampoco: un lote largo sigue contando mientras se mira otra cosa. */}
         <div hidden={seccion !== "lotes"} className="seccion">
           {inicio && <Lotes inicio={inicio} activo={seccion === "lotes"} />}
+        </div>
+        {/* Vectorizar (ADR 0039): como el Estudio, no se desmonta al cambiar de sección. */}
+        <div hidden={seccion !== "vectorizar"} className="seccion">
+          {inicio && <Vectorizar activo={seccion === "vectorizar"} />}
         </div>
         {seccion === "presets" && <Presets carpeta={inicio?.carpeta_presets ?? null} irAlEstudio={() => setSeccion("estudio")} />}
         {(seccion === "ajustes" || seccion === "mcp") && (

@@ -11,6 +11,7 @@ use apolo_nucleo::Motor;
 use apolo_nucleo::idioma::Idioma;
 use apolo_nucleo::presets::PresetGuardado;
 use apolo_nucleo::salida::{Ajuste, FormatoSalida};
+use apolo_nucleo::vector::{AjusteVector, FormatoVector};
 use apolo_nucleo::webp::{OpcionesWebp, Preset};
 use apolo_servicio::{
     Ajustes, EstadoLote, Fallo, InfoImagen, Inicio, LoteEmpezado, PreferenciaIdioma, Recogida,
@@ -231,6 +232,41 @@ fn nombre_salida(s: Estado, id: u64, formato: FormatoSalida) -> Result<String, F
     s.nombre_salida(id, formato)
 }
 
+/// Vectoriza una imagen abierta (ADR 0039): la vista previa, con su nota.
+#[tauri::command]
+async fn vectorizar(
+    s: Estado<'_>,
+    id: u64,
+    ajuste: AjusteVector,
+    generacion: u64,
+) -> Result<apolo_servicio::VistaVector, Fallo> {
+    let s = s.inner().clone();
+    bloqueante(move || s.vectorizar(id, &ajuste, generacion)).await
+}
+
+#[tauri::command]
+async fn medir_vector(s: Estado<'_>, id: u64) -> Result<apolo_nucleo::medir::Medidas, Fallo> {
+    let s = s.inner().clone();
+    bloqueante(move || s.medir_vector(id)).await
+}
+
+#[tauri::command]
+async fn exportar_vector(
+    s: Estado<'_>,
+    id: u64,
+    formato: FormatoVector,
+    ajuste: AjusteVector,
+    ruta: PathBuf,
+) -> Result<usize, Fallo> {
+    let s = s.inner().clone();
+    bloqueante(move || s.exportar_vector(id, formato, &ajuste, &ruta)).await
+}
+
+#[tauri::command]
+fn nombre_salida_vector(s: Estado, id: u64, formato: FormatoVector) -> Result<String, Fallo> {
+    s.nombre_salida_vector(id, formato)
+}
+
 #[tauri::command]
 fn aplicar_preset(opciones: OpcionesWebp, preset: Preset) -> OpcionesWebp {
     apolo_servicio::aplicar_preset_cwebp(&opciones, preset)
@@ -348,7 +384,8 @@ async fn crear_mcpb() -> Result<String, Fallo> {
 /// `apolo://localhost/original/<id>?enderezar=1`, `…/resultado/<id>?lado=1`,
 /// `…/mapa/<id>?lado=1&tipo=estructura` (ADR 0022), y los de vectorizar
 /// (ADR 0039): `…/vector/<id>` (la vista previa del dibujo),
-/// `…/vector-referencia/<id>` (lo que recibió el motor, del mismo tamaño) y
+/// `…/vector-referencia/<id>` (lo que recibió el motor, del mismo tamaño),
+/// `…/vector-contornos/<id>` (trazados y nodos) y
 /// `…/vector-mapa/<id>?tipo=estructura`: ancho
 /// y alto en u32 little-endian y el RGBA detrás. En Windows llega como
 /// `http://apolo.localhost/…`; la ruta es la misma.
@@ -384,6 +421,7 @@ fn pixeles(s: &Servicio, ruta: &str, consulta: Option<&str>) -> Result<Vec<u8>, 
         }
         Some(&"vector") => s.pixeles_vector(id()?).map(empaquetar_pixeles),
         Some(&"vector-referencia") => s.pixeles_referencia_vector(id()?).map(empaquetar_pixeles),
+        Some(&"vector-contornos") => s.pixeles_contornos_vector(id()?).map(empaquetar_pixeles),
         Some(&"vector-mapa") => {
             let estructura = consulta.is_some_and(|q| q.split('&').any(|p| p == "tipo=estructura"));
             let tipo = if estructura {
@@ -464,6 +502,10 @@ pub fn arrancar() {
             medir,
             exportar,
             nombre_salida,
+            vectorizar,
+            medir_vector,
+            exportar_vector,
+            nombre_salida_vector,
             aplicar_preset,
             nivel_sin_perdida,
             leer_orden,

@@ -208,3 +208,30 @@ pub fn escribir_con(doc: &Documento, o: &OpcionesExportar) -> String {
         r#"<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{w}" height="{h}" viewBox="0 0 {w} {h}">{defs}{cuerpo}</svg>"#
     )
 }
+
+/// El SVG para ver los contornos (el modo «Contornos» del comparador): el dibujo relleno y apagado, cada forma
+/// trazada encima y un punto en cada nodo (donde empieza cada tramo; en círculos y elipses, sus cuatro
+/// cuartos). Tamaño, el del documento.
+pub fn contornos(doc: &Documento) -> String {
+    let (w, h) = (doc.ancho, doc.alto);
+    let relleno = escribir(doc);
+    // El dibujo, sin la etiqueta <svg> de fuera, dentro de un grupo apagado.
+    let dentro = relleno
+        .split_once('>')
+        .map(|(_, r)| r.trim_end_matches("</svg>"))
+        .unwrap_or("");
+    let mut trazos = String::new();
+    let mut nodos = String::new();
+    for c in &doc.capas {
+        for f in &c.formas {
+            d(f, &mut trazos);
+            for t in crate::trazado::tramos(f) {
+                let p = t.ini();
+                let _ = write!(nodos, "M{} {}h0", r2(p.0), r2(p.1));
+            }
+        }
+    }
+    format!(
+        r##"<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{w}" height="{h}" viewBox="0 0 {w} {h}"><rect width="{w}" height="{h}" fill="#ffffff"/><g opacity="0.35">{dentro}</g><path d="{trazos}" fill="none" stroke="#d6006f" stroke-width="0.8" stroke-linejoin="round"/><path d="{nodos}" fill="none" stroke="#1a57d6" stroke-width="2.4" stroke-linecap="round"/></svg>"##
+    )
+}

@@ -136,6 +136,13 @@ impl Servicio {
         Ok((h.documento.ancho, h.documento.alto, h.referencia.clone()))
     }
 
+    /// Los contornos y los nodos del último dibujo, sobre el dibujo apagado (el modo «Contornos»).
+    pub fn pixeles_contornos_vector(&self, id: u64) -> R<(u32, u32, Vec<u8>)> {
+        let h = self.hecho(id)?;
+        let px = apolo_nucleo::vector::contornos(&h.documento)?;
+        Ok((h.documento.ancho, h.documento.alto, px))
+    }
+
     /// Las tres medidas del último dibujo frente a lo que recibió el motor.
     pub fn medir_vector(&self, id: u64) -> R<Medidas> {
         let h = self.hecho(id)?;
@@ -263,6 +270,7 @@ mod pruebas {
         assert_eq!(px.len(), (w * h * 4) as usize);
         assert_eq!(s.pixeles_referencia_vector(id).unwrap().2.len(), px.len());
         assert!(s.medir_vector(id).unwrap().ssim > 0.9);
+        assert_eq!(s.pixeles_contornos_vector(id).unwrap().2.len(), px.len());
         for f in FormatoVector::TODOS {
             let b = s.bytes_vector(id, f, &AjusteVector::default()).unwrap();
             assert!(!b.is_empty(), "{f:?}");

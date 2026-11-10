@@ -13,6 +13,7 @@ use std::sync::Arc;
 
 use apolo_nucleo::presets::PresetGuardado;
 use apolo_nucleo::salida::{Ajuste, FormatoSalida};
+use apolo_nucleo::vector::{AjusteVector, FormatoVector};
 use apolo_nucleo::webp::{OpcionesWebp, Preset};
 use apolo_servicio::{Fallo, PreferenciaIdioma, Servicio, empaquetar_pixeles};
 use axum::Json;
@@ -87,6 +88,31 @@ struct PeticionMapa {
 #[derive(Deserialize)]
 struct PeticionMapaVector {
     tipo: apolo_nucleo::medir::TipoMapa,
+}
+
+#[derive(Deserialize)]
+struct PeticionVectorizar {
+    id: u64,
+    ajuste: AjusteVector,
+    generacion: u64,
+}
+
+#[derive(Deserialize)]
+struct PeticionId {
+    id: u64,
+}
+
+#[derive(Deserialize)]
+struct PeticionExportarVector {
+    id: u64,
+    formato: FormatoVector,
+    ajuste: AjusteVector,
+}
+
+#[derive(Deserialize)]
+struct PeticionNombreVector {
+    id: u64,
+    formato: FormatoVector,
 }
 
 #[derive(Deserialize)]
@@ -415,7 +441,60 @@ fn rutas(s: Arc<Servicio>) -> Router {
                 },
             ),
         )
-        // Vectorizar (ADR 0039): la vista previa del dibujo, lo que recibió el motor y el mapa.
+        // Vectorizar (ADR 0039): las órdenes, y la vista previa del dibujo, lo que recibió el motor, los
+        // contornos y el mapa.
+        .route(
+            "/api/vectorizar",
+            post(
+                |State(s): Estado, Json(p): Json<PeticionVectorizar>| async move {
+                    let r: R<_> = bloqueante(move || s.vectorizar(p.id, &p.ajuste, p.generacion))
+                        .await
+                        .map(Json)
+                        .map_err(Error);
+                    r
+                },
+            ),
+        )
+        .route(
+            "/api/medir_vector",
+            post(|State(s): Estado, Json(p): Json<PeticionId>| async move {
+                let r: R<_> = bloqueante(move || s.medir_vector(p.id))
+                    .await
+                    .map(Json)
+                    .map_err(Error);
+                r
+            }),
+        )
+        .route(
+            "/api/exportar_vector",
+            post(
+                |State(s): Estado, Json(p): Json<PeticionExportarVector>| async move {
+                    let r: R<_> = bloqueante(move || s.bytes_vector(p.id, p.formato, &p.ajuste))
+                        .await
+                        .map(binario)
+                        .map_err(Error);
+                    r
+                },
+            ),
+        )
+        .route(
+            "/api/nombre_salida_vector",
+            post(
+                |State(s): Estado, Json(p): Json<PeticionNombreVector>| async move {
+                    s.nombre_salida_vector(p.id, p.formato)
+                        .map(Json)
+                        .map_err(Error)
+                },
+            ),
+        )
+        .route(
+            "/pixeles/vector-contornos/{id}",
+            get(|State(s): Estado, Path(id): Path<u64>| async move {
+                s.pixeles_contornos_vector(id)
+                    .map(|p| binario(empaquetar_pixeles(p)))
+                    .map_err(Error)
+            }),
+        )
         .route(
             "/pixeles/vector/{id}",
             get(|State(s): Estado, Path(id): Path<u64>| async move {

@@ -8,6 +8,7 @@
 
 import { invoke } from "@tauri-apps/api/core";
 import type { Ajuste, FormatoSalida, OpcionesWebp, Preset } from "./estudio/opciones";
+import type { AjusteVector, FormatoVector, TipoImagen } from "./vectorizar/opciones";
 import i18n, { type Idioma } from "./i18n";
 
 export interface Motor {
@@ -498,3 +499,68 @@ export async function alCambiarEsquinas(f: (redondas: boolean) => void): Promise
   const { listen } = await import("@tauri-apps/api/event");
   return listen<boolean>("ventana:esquinas", (e) => f(e.payload));
 }
+
+// ─── Vectorizar (ADR 0039) ───
+
+/** Lo que encontró la búsqueda de una nota al vectorizar. */
+export interface HalladoVector {
+  detalle: number;
+  nota: number;
+  alcanzada: boolean;
+  pruebas: number;
+}
+
+/** Lo que se sabe del dibujo de una imagen. */
+export interface VistaVector {
+  generacion: number;
+  ancho: number;
+  alto: number;
+  /** Si la imagen se redujo antes de vectorizar (más de 2 Mpx), su tamaño de antes. */
+  reducida_desde: [number, number] | null;
+  /** El tipo que se usó (resuelto si era automático). */
+  tipo: TipoImagen;
+  detalle: number;
+  nota: number | null;
+  hallado: HalladoVector | null;
+  estadisticas: { formas: number; nodos: number; colores: number };
+  /** Lo que pesa en SVG relleno. */
+  bytes_svg: number;
+  milisegundos: number;
+}
+
+export const vectorizar = (id: number, ajuste: AjusteVector, generacion: number) =>
+  orden<VistaVector>("vectorizar", { id, ajuste, generacion });
+export const medirVector = (id: number) => orden<Medidas>("medir_vector", { id });
+/** La vista previa del dibujo, lo que recibió el motor (del mismo tamaño), los contornos y el mapa. */
+export const pixelesVector = (id: number) => pixeles(`vector/${id}`);
+export const pixelesReferenciaVector = (id: number) => pixeles(`vector-referencia/${id}`);
+export const pixelesContornosVector = (id: number) => pixeles(`vector-contornos/${id}`);
+export const pixelesMapaVector = (id: number, tipo: TipoMapa) => pixeles(`vector-mapa/${id}?tipo=${tipo}`);
+
+const NOMBRE_VECTOR: Record<FormatoVector, string> = { svg: "SVG", pdf: "PDF", eps: "EPS", dxf: "DXF" };
+
+/** Guarda el dibujo: con el diálogo del sistema en la aplicación, como descarga en el navegador. */
+export async function exportarVector(id: number, formato: FormatoVector, ajuste: AjusteVector): Promise<string | null> {
+  const nombre = await orden<string>("nombre_salida_vector", { id, formato });
+  if (enTauri()) {
+    const { save } = await import("@tauri-apps/plugin-dialog");
+    const ruta = await save({ defaultPath: nombre, filters: [{ name: NOMBRE_VECTOR[formato], extensions: [formato] }] });
+    if (!ruta) return null;
+    await orden<number>("exportar_vector", { id, formato, ajuste, ruta });
+    return ruta;
+  }
+  const r = await fetch("/api/exportar_vector", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ id, formato, ajuste }),
+  });
+  if (!r.ok) throw comoFallo(await r.json());
+  const url = URL.createObjectURL(await r.blob());
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = nombre;
+  a.click();
+  URL.revokeObjectURL(url);
+  return nombre;
+}
+

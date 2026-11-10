@@ -768,3 +768,13 @@ Al comparar el PDF de vectorizar con el SVG, el pixel art pequeño daba una dife
 2): Poppler (Splash) engorda un poco los rellenos para que no queden rendijas, y en el píxel de al lado de una
 esquina compartida pinta gris. No es el PDF: el resto de la imagen coincide píxel a píxel. Para comparar formatos,
 mejor dibujos sin esquinas tocándose (`crates/vector/tests/formatos.rs`). (2026-11-10)
+
+## En macOS, las consultas `@container` del Estudio no se cumplían nunca
+
+`.lienzo-y-barra` es contenedor (`container-type: inline-size`, en estilos.css), pero en macOS va con
+`display: contents` para que sus hijos caigan en la rejilla de `.estudio`. Un elemento sin caja no puede tener
+tamaño, y siendo el contenedor más cercano, **ninguna consulta de tamaño se cumple**: los rótulos de los modos del
+comparador no se escondían nunca con la ventana estrecha (900 px es el mínimo), en el Estudio y en Vectorizar.
+Arreglo: `container-type: normal` en macOS, y el contenedor pasa a ser `.estudio`. Se ve con
+`getComputedStyle(e).containerType` subiendo por los padres. Lo vigila `frontend/e2e/vectorizar.spec.ts` («macOS a
+900 px»). (2026-11-10)

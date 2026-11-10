@@ -47,6 +47,27 @@ const DIBUJOS: Record<string, ReactNode> = {
       <path d="M8 9l2-2.4 1.6 1.8 1-1 1.4 1.6" />
     </>
   ),
+  // Una curva de Bézier con sus nodos y un tirador: dibujo vectorial (ADR 0039).
+  vectorizar: (
+    <>
+      <path d="M3 13.5C4.5 6 8 4.5 15 4.5" />
+      <rect x="1.5" y="12" width="3" height="3" rx="0.6" />
+      <rect x="13.5" y="3" width="3" height="3" rx="0.6" />
+      <path d="M3 13.5L6 7.5" />
+      <circle cx="6" cy="7.5" r="1" />
+    </>
+  ),
+  // Los contornos: una forma solo con su trazado y los nodos.
+  contornos: (
+    <>
+      <path d="M4 14L2.5 6.5 9 2.5l6.5 5L13 14z" />
+      <circle cx="4" cy="14" r="1.1" />
+      <circle cx="2.5" cy="6.5" r="1.1" />
+      <circle cx="9" cy="2.5" r="1.1" />
+      <circle cx="15.5" cy="7.5" r="1.1" />
+      <circle cx="13" cy="14" r="1.1" />
+    </>
+  ),
   // Una cinta de marcapáginas: lo guardado para volver a usarlo.
   presets: <path d="M5 2.5h8a1 1 0 0 1 1 1v12l-5-3.2-5 3.2v-12a1 1 0 0 1 1-1zM7 6.5h4" />,
   ajustes: (

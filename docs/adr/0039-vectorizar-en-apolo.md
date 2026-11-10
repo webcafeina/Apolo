@@ -81,6 +81,18 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   defecto, sin nota objetivo (a diferencia de `optimizar_imagen`, que busca un 80): muchos dibujos no pasan de
   75–85, y el detalle 75 es el equilibrio del banco.
 
+- **La pantalla «Vectorizar»** (hito 7, 2026-11-10; `frontend/src/vectorizar/`): una sección propia en la barra
+  lateral, entre Lotes y Presets, que no se desmonta al cambiar de sección (como el Estudio). Abrir o soltar
+  una imagen; el comparador de siempre con **lo que recibió el motor** a la izquierda (enderezado, reducido y
+  sobre blanco: así los dos lados miden lo mismo) y el dibujo pintado a la derecha, en deslizador, lado a lado,
+  diferencias y un modo nuevo, **«Contornos»**: los trazados en magenta y los nodos en azul sobre el dibujo
+  apagado, pintado en Rust (`svg::contornos`), así que el zoom y el arrastre son los del comparador. Panel en
+  tres grupos plegables (Dibujo, Avanzado, Exportar); cambiar algo de exportar no vuelve a vectorizar.
+  Barra de estado con los pesos (el SVG frente al original), la nota y lo que tiene el dibujo; avisos de foto
+  y de imagen reducida. Con cuatro modos, sin sitio los modos se quedan en icono (con su nombre al pasar).
+  Las órdenes de la ventana (`vectorizar`, `medir_vector`, `exportar_vector`, `nombre_salida_vector`) y sus
+  iguales en `apolo-dev`.
+
 ## Alternativas descartadas
 
 - **SVG como un formato más del Estudio**: el cliente prefirió una pantalla propia, y además tocaba todo el
@@ -141,4 +153,14 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
 - Hito 6: `crates/mcp/tests/vectorizar.rs` (al lado sin pisar y sin fondo con transparencia; formato por la
   extensión y pedido; DXF de bordes en rectas; por nota; errores con código y pista sin escribir nada;
   cancelada no escribe), las pruebas de 12 herramientas en español e inglés y el catálogo regenerado. **No
-  probado** con un agente de verdad (Claude Desktop o Code). Nada de los hitos 7 a 9 (pantalla, web).
+  probado** con un agente de verdad (Claude Desktop o Code).
+- Hito 7: `frontend/e2e/vectorizar.spec.ts` en claro y oscuro (abrir un logotipo con transparencia y ver nota,
+  formas y nodos; limitar los colores apaga los degradados; buscar una nota; contornos y diferencias pintan;
+  exportar SVG sin fondo, PDF y DXF de bordes en rectas) y la batería e2e entera; capturas mirada a ojo con el
+  aspecto de la web, Windows, macOS y Linux (de ahí salieron la cabecera apretada y dos `id` repetidos, que
+  rompían la etiqueta del interruptor y del deslizador). En macOS, a petición del cliente, a 1.280, 1.024 y 900
+  px con y sin barra lateral: el margen de «Abrir otra…» es el del Estudio (8 px, el de la barra de herramientas),
+  y a 900 px salieron dos fallos, ya arreglados y con prueba: la barra de estado no cabía, y los rótulos de los
+  modos no se escondían nunca en macOS, tampoco en el Estudio (trampas.md). **No visto en la ventana de verdad** (solo en el
+  navegador): el diálogo de guardar, soltar desde el Finder y el protocolo `apolo://` de los píxeles nuevos.
+  Nada de los hitos 8 y 9 (web, publicación).

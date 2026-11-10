@@ -8,6 +8,7 @@
   "nav": {
     "estudio": "Estudio",
     "lotes": "Lotes",
+    "vectorizar": "Vectorizar",
     "ajustes": "Ajustes",
     "presets": "Presets",
     "mcp": "MCP"
@@ -725,5 +726,79 @@
     "privacidad": "Privacidad",
     "privacidadTexto": "Apolo trabaja en este ordenador y no manda nada a ningún sitio. Pero lo que el agente pide —rutas, nombres de fichero, las miniaturas que mira— entra en su conversación, y eso lo ve el proveedor del modelo.",
     "permiso": "No hay nada que activar: añadirlo a un agente es darle permiso, y quitarlo del agente es quitárselo."
+  },
+  "vectorizar": {
+    "bienvenida": "Pasa una imagen a vectorial",
+    "lema": "Un logotipo, un icono o un dibujo, a SVG, PDF, EPS o DXF: se amplía sin perder nitidez y se edita en Illustrator, Inkscape o un programa de corte.",
+    "soltarDetalle": "PNG, JPEG, WebP, HEIC… Mejor un logotipo, un icono o una ilustración que una foto.",
+    "dibujo": "Dibujo",
+    "contornos": "Contornos",
+    "panel": "Opciones del dibujo",
+    "tipo": "Tipo de imagen",
+    "tipos": {
+      "auto": "Automático",
+      "logotipo": "Logotipo",
+      "ilustracion": "Ilustración",
+      "by_n": "Blanco y negro",
+      "pixel_art": "Pixel art",
+      "foto": "Foto"
+    },
+    "grupoDibujo": "Dibujo",
+    "objetivo": "Buscar una nota",
+    "objetivoAyuda": "Apolo busca el dibujo más ligero que llega a esta nota SSIMULACRA 2. Muchos dibujos no pasan de 75–85.",
+    "detalle": "Detalle",
+    "detalleAyuda": "Cuánto se ciñe al original: más, más fiel y con más nodos; menos, más ligero.",
+    "detalleMinimo": "Detalle mínimo",
+    "detalleMinimoAyuda": "La búsqueda no baja de aquí.",
+    "colores": "Limitar los colores",
+    "coloresAyuda": "Como mucho estos colores, todos planos (sin degradados).",
+    "coloresTodos": "Los colores que tenga la imagen.",
+    "degradados": "Degradados",
+    "degradadosAyuda": "Lineales y radiales donde el color cambia suavemente.",
+    "degradadosNo": "Con los colores limitados o una paleta, todo es plano.",
+    "grupoAvanzado": "Avanzado",
+    "paleta": "Paleta fija",
+    "paletaAyuda": "Colores en #rrggbb, separados por comas: cada píxel va al más cercano.",
+    "paletaMala": "No son colores: {{malos}}. Se escriben #rrggbb.",
+    "areaMinima": "Área mínima",
+    "areaMinimaAyuda": "Las formas más pequeñas que esto (en píxeles cuadrados) se descartan.",
+    "grupoExportar": "Exportar",
+    "formato": "Formato",
+    "formatos": {
+      "svg": "SVG",
+      "pdf": "PDF",
+      "eps": "EPS",
+      "dxf": "DXF"
+    },
+    "formatoAyuda": "SVG para la web, PDF y EPS para imprenta, DXF para CAD y máquinas de corte.",
+    "estilo": "Estilo",
+    "estilos": {
+      "rellenar": "Rellenar",
+      "trazar_formas": "Trazar formas",
+      "trazar_bordes": "Trazar bordes"
+    },
+    "estiloAyuda": "Trazar bordes deja cada borde una sola vez: para cortar vinilo o láser.",
+    "grosor": "Grosor del trazo",
+    "grosorAyuda": "En píxeles.",
+    "colorTrazo": "Color propio del trazo",
+    "colorTrazoAyuda": "Todos los trazos de este color.",
+    "colorTrazoCapa": "El de cada forma; al trazar bordes, negro.",
+    "nivelDxf": "Qué usa el DXF",
+    "niveles": {
+      "rectas": "Solo rectas",
+      "arcos": "Rectas y arcos",
+      "splines": "Rectas, arcos y curvas"
+    },
+    "nivelDxfAyuda": "Hay programas de corte que no leen curvas, o ni siquiera arcos.",
+    "exportar": "Exportar {{formato}}…",
+    "trabajando": "Vectorizando…",
+    "buscando": "Buscando el dibujo más ligero que da {{nota}}…",
+    "hallado": "Detalle {{detalle}}: el más ligero que llega ({{pruebas}} pruebas)",
+    "noAlcanzado": "No llega a la nota: se queda el de mejor nota (detalle {{detalle}})",
+    "formas": "{{n}} formas",
+    "nodos": "{{n}} nodos",
+    "colores_n": "{{n}} colores",
+    "avisoFoto": "Es una foto: el resultado es un póster de colores planos y suele pesar más que la foto. Vectorizar es para logotipos, iconos, ilustraciones y dibujos.",
+    "avisoReducida": "La imagen ({{ancho}} × {{alto}}) pasa de 2 megapíxeles: se ha reducido a {{w}} × {{h}} antes de vectorizar."
   }
 }

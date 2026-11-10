@@ -311,6 +311,11 @@ pub fn vectorizar_rgba(
     Ok(v)
 }
 
+/// Los contornos y los nodos sobre el dibujo apagado, RGBA del tamaño del documento.
+pub fn contornos(doc: &Documento) -> Resultado<Vec<u8>> {
+    apolo_vector::vista::rasterizar_contornos(doc).map_err(Error::Configuracion)
+}
+
 /// El fichero, en el formato pedido.
 pub fn exportar(doc: &Documento, formato: FormatoVector, a: &AjusteVector) -> Resultado<Vec<u8>> {
     Ok(apolo_vector::exportar(doc, formato, &a.exportar()?))

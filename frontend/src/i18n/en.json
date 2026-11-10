@@ -8,6 +8,7 @@
   "nav": {
     "estudio": "Studio",
     "lotes": "Batches",
+    "vectorizar": "Vectorize",
     "ajustes": "Settings",
     "presets": "Presets",
     "mcp": "MCP"
@@ -725,5 +726,79 @@
     "privacidad": "Privacy",
     "privacidadTexto": "Apolo works on this computer and doesn't send anything anywhere. But what the agent asks for —paths, file names, the thumbnails it looks at— goes into its conversation, and the model provider sees that.",
     "permiso": "There's nothing to turn on: adding it to an agent gives it permission, and removing it from the agent takes it away."
+  },
+  "vectorizar": {
+    "bienvenida": "Turn an image into vector graphics",
+    "lema": "A logo, an icon or a drawing, to SVG, PDF, EPS or DXF: it scales without losing sharpness and can be edited in Illustrator, Inkscape or a cutting program.",
+    "soltarDetalle": "PNG, JPEG, WebP, HEIC… A logo, an icon or an illustration works better than a photo.",
+    "dibujo": "Drawing",
+    "contornos": "Outlines",
+    "panel": "Drawing options",
+    "tipo": "Kind of image",
+    "tipos": {
+      "auto": "Automatic",
+      "logotipo": "Logo",
+      "ilustracion": "Illustration",
+      "by_n": "Black and white",
+      "pixel_art": "Pixel art",
+      "foto": "Photo"
+    },
+    "grupoDibujo": "Drawing",
+    "objetivo": "Aim for a score",
+    "objetivoAyuda": "Apolo searches for the lightest drawing that reaches this SSIMULACRA 2 score. Many drawings don't go beyond 75–85.",
+    "detalle": "Detail",
+    "detalleAyuda": "How closely it follows the original: more is more faithful and has more nodes; less is lighter.",
+    "detalleMinimo": "Minimum detail",
+    "detalleMinimoAyuda": "The search doesn't go below this.",
+    "colores": "Limit the colors",
+    "coloresAyuda": "At most these colors, all flat (no gradients).",
+    "coloresTodos": "The colors the image has.",
+    "degradados": "Gradients",
+    "degradadosAyuda": "Linear and radial where the color changes smoothly.",
+    "degradadosNo": "With limited colors or a palette, everything is flat.",
+    "grupoAvanzado": "Advanced",
+    "paleta": "Fixed palette",
+    "paletaAyuda": "Colors as #rrggbb, separated by commas: each pixel goes to the closest one.",
+    "paletaMala": "These aren't colors: {{malos}}. Write them as #rrggbb.",
+    "areaMinima": "Minimum area",
+    "areaMinimaAyuda": "Shapes smaller than this (in square pixels) are dropped.",
+    "grupoExportar": "Export",
+    "formato": "Format",
+    "formatos": {
+      "svg": "SVG",
+      "pdf": "PDF",
+      "eps": "EPS",
+      "dxf": "DXF"
+    },
+    "formatoAyuda": "SVG for the web, PDF and EPS for print, DXF for CAD and cutting machines.",
+    "estilo": "Style",
+    "estilos": {
+      "rellenar": "Fill",
+      "trazar_formas": "Stroke shapes",
+      "trazar_bordes": "Stroke edges"
+    },
+    "estiloAyuda": "Stroke edges leaves each edge only once: for cutting vinyl or laser.",
+    "grosor": "Stroke width",
+    "grosorAyuda": "In pixels.",
+    "colorTrazo": "Custom stroke color",
+    "colorTrazoAyuda": "Every stroke in this color.",
+    "colorTrazoCapa": "Each shape's own; when stroking edges, black.",
+    "nivelDxf": "What the DXF uses",
+    "niveles": {
+      "rectas": "Lines only",
+      "arcos": "Lines and arcs",
+      "splines": "Lines, arcs and curves"
+    },
+    "nivelDxfAyuda": "Some cutting programs don't read curves, or even arcs.",
+    "exportar": "Export {{formato}}…",
+    "trabajando": "Vectorizing…",
+    "buscando": "Searching for the lightest drawing that gives {{nota}}…",
+    "hallado": "Detail {{detalle}}: the lightest that gets there ({{pruebas}} tries)",
+    "noAlcanzado": "It doesn't reach the score: the best-scoring one is kept (detail {{detalle}})",
+    "formas": "{{n}} shapes",
+    "nodos": "{{n}} nodes",
+    "colores_n": "{{n}} colors",
+    "avisoFoto": "It's a photo: the result is a poster of flat colors and usually weighs more than the photo. Vectorizing is for logos, icons, illustrations and drawings.",
+    "avisoReducida": "The image ({{ancho}} × {{alto}}) is over 2 megapixels: it has been shrunk to {{w}} × {{h}} before vectorizing."
   }
 }

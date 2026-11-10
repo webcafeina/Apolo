@@ -1,6 +1,6 @@
 # Lo siguiente
 
-Última actualización: **2026-10-30**
+Última actualización: **2026-11-10**
 
 El plan entero salió de la sesión del 2026-10-06, decidido con el cliente en cuatro rondas de
 preguntas (ver [decisiones.md](decisiones.md)). Va **por entregas**; cada una se cierra con sus
@@ -159,6 +159,17 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 - ~~**Montar la equivalencia con cwebp en CI para Windows y Linux arm64**~~ (deuda): en `humo.yml`, 8/8 en los dos (2026-10-19). En un Mac con
   Apple Silicon ya la comprobó a mano el cliente: 25 de 25.
+
+## Vectorizar, fuera de la 1.1.0 (ADR 0039)
+
+Lo que el plan de la fase 2 dejó para después (2026-11-09) y lo visto al hacerla:
+
+- **Lotes de vectorizar en la ventana** (la CLI y el MCP ya aceptan varias imágenes o carpetas).
+- **Presets de vectorizar**.
+- **Simetrías** para las estrellas pequeñas, y probar **IA** en el motor (ADR 0038).
+- **Fotos**: notas bajas y SVG de 6 a 9 MB (deuda.md).
+- El icono en cada juego de iconos, los contornos nítidos al acercar y la transparencia con fondo de cuadros
+  (deuda.md).
 
 ## Media
 

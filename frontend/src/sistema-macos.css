@@ -254,6 +254,10 @@
   grid-template-rows: var(--alto-barra) auto auto minmax(0, 1fr) auto;
 }
 :root[data-sistema="macos"] .lienzo-y-barra { display: contents; }
+/* Sin caja no puede ser contenedor, y siéndolo (estilos.css) ninguna consulta de tamaño se cumplía: los rótulos de
+   los modos no se escondían nunca en una ventana estrecha (en el Estudio y en Vectorizar). El contenedor es la
+   sección entera (`.estudio`, más abajo). Visto el 2026-11-10. */
+:root[data-sistema="macos"] .lienzo-y-barra { container-type: normal; }
 :root[data-sistema="macos"] .estudio > .lienzo-y-barra > .herramientas { grid-column: 1 / -1; grid-row: 1; }
 :root[data-sistema="macos"] .estudio .barra-imagen { grid-column: 1; grid-row: 2; }
 :root[data-sistema="macos"] .estudio .aviso { grid-column: 1; grid-row: 3; margin-top: 12px; }

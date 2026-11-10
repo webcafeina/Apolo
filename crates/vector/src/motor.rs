@@ -152,33 +152,49 @@ pub fn vectorizar(im: &Rgba, o: &OpcionesVector) -> Result<Documento, String> {
         let p = paleta_de(im, tipo, o)?;
         return Ok(pixelart::trazar(&paleta::aplicar(im, &p), &p));
     }
+    // Lo transparente, si lo hay, es un color más (el último índice) que va siempre abajo y no se dibuja.
+    let transparente = im.con_transparencia();
     let foto = tipo == TipoImagen::Foto;
     let duro = paleta::sin_suavizado(im);
     let pal = paleta_de(im, tipo, o)?;
     let mut mezcla = subpixel::mezclas(im, &pal, 2);
+    let t_idx = pal.len();
+    if transparente {
+        subpixel::transparencia(im, &pal, &mut mezcla, t_idx as u16);
+    }
+    // Todos los «colores»: los de la paleta y, si lo hay, el transparente.
+    let n = pal.len() + transparente as usize;
     // Con los colores limitados (un máximo o una paleta fija) no hay degradados: quien los limita quiere
     // colores planos (imprimir, vinilo), y un degradado se saltaría el límite (con dos colores, el azul de un
     // cuadrado y el rojo de un círculo acababan en un degradado de azul a rojo).
     let limitados = o.colores.is_some() || !o.paleta.is_empty();
     let rellenos: Vec<Option<Relleno>> = if o.degradados && !foto && !limitados {
-        degradado::fusionar(im, &mut mezcla, pal.len())
+        degradado::fusionar(im, &mut mezcla, n, transparente.then_some(t_idx))
     } else {
-        (0..pal.len()).map(|_| None).collect()
+        (0..n).map(|_| None).collect()
     };
-    let mut area_color = vec![0f64; pal.len()];
+    let mut area_color = vec![0f64; n];
     for m in &mezcla {
         area_color[m.a as usize] += m.t as f64;
         area_color[m.b as usize] += 1.0 - m.t as f64;
     }
-    let mut por_area: Vec<usize> = (0..pal.len()).filter(|&k| area_color[k] > 0.5).collect();
-    por_area.sort_by(|a, b| area_color[*b].total_cmp(&area_color[*a]).then(a.cmp(b)));
+    // Lo transparente, siempre lo primero (abajo): ninguna capa puede destapar lo que hay debajo.
+    let abajo = |k: usize| !(transparente && k == t_idx);
+    let mut por_area: Vec<usize> = (0..n).filter(|&k| area_color[k] > 0.5).collect();
+    por_area.sort_by(|a, b| {
+        abajo(*a)
+            .cmp(&abajo(*b))
+            .then(area_color[*b].total_cmp(&area_color[*a]))
+            .then(a.cmp(b))
+    });
     // La otra opción: arriba los colores que forman islas cerradas dentro de otros (estrellas, ojos,
     // letras). Ninguna gana siempre: se pintan las dos y se queda la que más se parece al original.
-    let islas = islas_por_color(&mezcla, im.ancho as usize, im.alto as usize, pal.len());
+    let islas = islas_por_color(&mezcla, im.ancho as usize, im.alto as usize, n);
     let mut por_islas = por_area.clone();
     por_islas.sort_by(|a, b| {
-        islas[*a]
-            .cmp(&islas[*b])
+        abajo(*a)
+            .cmp(&abajo(*b))
+            .then(islas[*a].cmp(&islas[*b]))
             .then(area_color[*b].total_cmp(&area_color[*a]))
             .then(a.cmp(b))
     });
@@ -191,7 +207,7 @@ pub fn vectorizar(im: &Rgba, o: &OpcionesVector) -> Result<Documento, String> {
     let mejor = candidatos
         .par_iter()
         .map(|orden| {
-            let doc = pintar(im, o, foto, duro, &pal, &mezcla, orden, &rellenos);
+            let doc = pintar(im, o, foto, duro, &pal, n, &mezcla, orden, &rellenos);
             let e = if varios {
                 error_cuadratico(im, &doc)
             } else {
@@ -220,6 +236,7 @@ fn pintar(
     foto: bool,
     duro: bool,
     pal: &[[u8; 3]],
+    n: usize,
     mezcla: &[subpixel::Mezcla],
     orden: &[usize],
     rellenos: &[Option<Relleno>],
@@ -228,6 +245,7 @@ fn pintar(
     let f = factor_detalle(o.detalle);
     let (tol_poli, tol_curva) = (if duro { 0.5 } else { 0.3 } * f, 0.15 * f);
     let minima = if foto { 6.0 } else { o.area_minima } * f.max(1.0);
+    // El índice `pal.len()` es lo transparente: va siempre el primero y no tiene relleno (sin fondo).
     let relleno = |k: usize| rellenos[k].clone().unwrap_or(Relleno::Color(pal[k]));
     // Cada capa es independiente (su cobertura incluye las de encima): se calculan en paralelo y se
     // apilan en orden.
@@ -235,7 +253,7 @@ fn pintar(
         .into_par_iter()
         .filter_map(|r| {
             let k = orden[r];
-            let mut dentro = vec![false; pal.len()];
+            let mut dentro = vec![false; n];
             for &q in &orden[r..] {
                 dentro[q] = true;
             }
@@ -272,7 +290,10 @@ fn pintar(
     Documento {
         ancho: w,
         alto: h,
-        fondo: orden.first().map(|&k| relleno(k)),
+        fondo: orden
+            .first()
+            .filter(|&&k| k < pal.len())
+            .map(|&k| relleno(k)),
         capas,
     }
 }

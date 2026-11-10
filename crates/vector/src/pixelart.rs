@@ -9,28 +9,44 @@ use crate::imagen::Rgba;
 use crate::modelo::{Capa, Documento, Forma, Relleno, Tramo};
 use std::collections::HashMap;
 
-/// `im` ya lleva los colores de `pal` exactos.
+/// `im` ya lleva los colores de `pal` exactos. Los píxeles de alfa menor de 128 son transparentes: un
+/// «color» más (el índice `pal.len()`) que va abajo del todo y no se dibuja.
 pub fn trazar(im: &Rgba, pal: &[[u8; 3]]) -> Documento {
     let (w, h) = (im.ancho as i64, im.alto as i64);
+    let t = pal.len();
     let indice: HashMap<[u8; 3], usize> = pal.iter().enumerate().map(|(i, c)| (*c, i)).collect();
     let etiqueta: Vec<usize> = (0..h)
         .flat_map(|y| (0..w).map(move |x| (x, y)))
-        .map(|(x, y)| *indice.get(&im.color(x as u32, y as u32)).unwrap_or(&0))
+        .map(|(x, y)| {
+            if im.alfa((y * w + x) as usize) < 128 {
+                t
+            } else {
+                *indice.get(&im.color(x as u32, y as u32)).unwrap_or(&0)
+            }
+        })
         .collect();
-    let mut area = vec![0usize; pal.len()];
+    let mut area = vec![0usize; t + 1];
     for &k in &etiqueta {
         area[k] += 1;
     }
-    let mut orden: Vec<usize> = (0..pal.len()).filter(|&k| area[k] > 0).collect();
-    orden.sort_by(|a, b| area[*b].cmp(&area[*a]).then(a.cmp(b)));
-    let mut rango = vec![0usize; pal.len()];
+    let mut orden: Vec<usize> = (0..=t).filter(|&k| area[k] > 0).collect();
+    orden.sort_by(|a, b| {
+        (*a != t)
+            .cmp(&(*b != t))
+            .then(area[*b].cmp(&area[*a]))
+            .then(a.cmp(b))
+    });
+    let mut rango = vec![0usize; t + 1];
     for (r, &k) in orden.iter().enumerate() {
         rango[k] = r;
     }
     let mut doc = Documento {
         ancho: im.ancho,
         alto: im.alto,
-        fondo: orden.first().map(|&k| Relleno::Color(pal[k])),
+        fondo: orden
+            .first()
+            .filter(|&&k| k < t)
+            .map(|&k| Relleno::Color(pal[k])),
         capas: Vec::new(),
     };
     for (r, &k) in orden.iter().enumerate().skip(1) {

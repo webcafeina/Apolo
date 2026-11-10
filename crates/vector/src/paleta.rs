@@ -17,8 +17,14 @@ pub fn detectar(im: &Rgba, maximo: usize) -> Vec<[u8; 3]> {
     let (w, h) = (im.ancho as i64, im.alto as i64);
     let mut cuenta: HashMap<[u8; 3], u32> = HashMap::new();
     let mut planos = 0u32;
+    let mut opacos = 0u32;
     for y in 0..h {
         for x in 0..w {
+            // Lo que no es opaco no cuenta: su color, aplanado sobre blanco, no es suyo.
+            if im.alfa((y * w + x) as usize) < 255 {
+                continue;
+            }
+            opacos += 1;
             let c = im.color(x as u32, y as u32);
             let mut plano = true;
             'v: for dy in -1..=1 {
@@ -28,7 +34,9 @@ pub fn detectar(im: &Rgba, maximo: usize) -> Vec<[u8; 3]> {
                         continue;
                     }
                     let n = im.color(nx as u32, ny as u32);
-                    if (0..3).any(|i| (n[i] as i32 - c[i] as i32).abs() > 10) {
+                    if im.alfa((ny * w + nx) as usize) < 255
+                        || (0..3).any(|i| (n[i] as i32 - c[i] as i32).abs() > 10)
+                    {
                         plano = false;
                         break 'v;
                     }
@@ -40,8 +48,7 @@ pub fn detectar(im: &Rgba, maximo: usize) -> Vec<[u8; 3]> {
             }
         }
     }
-    let total = (w * h) as u32;
-    if planos < total / 5 {
+    if planos < opacos / 5 {
         return Vec::new();
     }
     let mut colores: Vec<([u8; 3], u32)> = cuenta.into_iter().collect();
@@ -77,6 +84,7 @@ pub fn aplicar(im: &Rgba, paleta: &[[u8; 3]]) -> Rgba {
         ancho: im.ancho,
         alto: im.alto,
         px,
+        alfa: im.alfa.clone(),
     }
 }
 
@@ -89,7 +97,8 @@ pub fn cuantizar(im: &Rgba, n: u32) -> Result<(Rgba, Vec<[u8; 3]>), String> {
         .as_chunks::<4>()
         .0
         .iter()
-        .map(|p| imagequant::RGBA::new(p[0], p[1], p[2], p[3]))
+        .enumerate()
+        .map(|(i, p)| imagequant::RGBA::new(p[0], p[1], p[2], im.alfa(i)))
         .collect();
     let mut img = liq
         .new_image(px, im.ancho as usize, im.alto as usize, 0.0)
@@ -107,16 +116,23 @@ pub fn cuantizar(im: &Rgba, n: u32) -> Result<(Rgba, Vec<[u8; 3]>), String> {
             ancho: im.ancho,
             alto: im.alto,
             px: out,
+            alfa: im.alfa.clone(),
         },
-        pal.iter().map(|c| [c.r, c.g, c.b]).collect(),
+        // Los colores transparentes de la paleta, fuera: lo transparente va aparte.
+        pal.iter()
+            .filter(|c| c.a >= 128)
+            .map(|c| [c.r, c.g, c.b])
+            .collect(),
     ))
 }
 
 /// Todos los colores distintos (pixel art).
 pub fn exactos(im: &Rgba) -> Vec<[u8; 3]> {
     let mut cuenta: HashMap<[u8; 3], u32> = HashMap::new();
-    for p in im.px.as_chunks::<4>().0 {
-        *cuenta.entry([p[0], p[1], p[2]]).or_default() += 1;
+    for (i, p) in im.px.as_chunks::<4>().0.iter().enumerate() {
+        if im.alfa(i) >= 128 {
+            *cuenta.entry([p[0], p[1], p[2]]).or_default() += 1;
+        }
     }
     let mut v: Vec<_> = cuenta.into_iter().collect();
     v.sort_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
@@ -130,24 +146,30 @@ pub fn sin_suavizado(im: &Rgba) -> bool {
     if p.is_empty() {
         return false;
     }
-    let intermedios = im
-        .px
-        .as_chunks::<4>()
-        .0
-        .iter()
-        .filter(|q| {
-            let c = [q[0], q[1], q[2]];
-            p.iter().all(|k| dist2(*k, c) > 20 * 20)
-        })
-        .count();
-    (intermedios as f64) < 0.003 * (im.ancho * im.alto) as f64
+    // Solo los opacos: el borde de una figura sobre transparente tiene alfa intermedio, no color.
+    let (mut opacos, mut intermedios) = (0usize, 0usize);
+    for (i, q) in im.px.as_chunks::<4>().0.iter().enumerate() {
+        if im.alfa(i) < 255 {
+            continue;
+        }
+        opacos += 1;
+        let c = [q[0], q[1], q[2]];
+        if p.iter().all(|k| dist2(*k, c) > 20 * 20) {
+            intermedios += 1;
+        }
+    }
+    (intermedios as f64) < 0.003 * opacos.max(1) as f64
 }
 
 /// Colores distintos por píxel: en una foto, cada píxel casi tiene el suyo.
 pub fn colores_por_pixel(im: &Rgba) -> f64 {
     let mut distintos = std::collections::HashSet::new();
-    for q in im.px.as_chunks::<4>().0 {
-        distintos.insert([q[0], q[1], q[2]]);
+    let mut opacos = 0usize;
+    for (i, q) in im.px.as_chunks::<4>().0.iter().enumerate() {
+        if im.alfa(i) == 255 {
+            distintos.insert([q[0], q[1], q[2]]);
+            opacos += 1;
+        }
     }
-    distintos.len() as f64 / (im.ancho * im.alto).max(1) as f64
+    distintos.len() as f64 / opacos.max(1) as f64
 }

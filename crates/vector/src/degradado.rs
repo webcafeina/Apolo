@@ -268,12 +268,13 @@ pub fn fusionar(
     im: &Rgba,
     mezcla: &mut [crate::subpixel::Mezcla],
     n: usize,
+    transparente: Option<usize>,
 ) -> Vec<Option<Relleno>> {
     let w = im.ancho;
     let interiores = |m: &[crate::subpixel::Mezcla]| -> Vec<Vec<(u32, u32)>> {
         let mut pix = vec![Vec::new(); n];
         for (i, x) in m.iter().enumerate() {
-            if x.a == x.b && x.t >= 0.999 {
+            if x.a == x.b && x.t >= 0.999 && Some(x.a as usize) != transparente {
                 pix[x.a as usize].push(((i as u32) % w, (i as u32) / w));
             }
         }
@@ -285,7 +286,7 @@ pub fn fusionar(
     orden.sort_by(|a, b| pix[*b].len().cmp(&pix[*a].len()));
     let mut fusionado = vec![false; n];
     for &k in &orden {
-        if fusionado[k] {
+        if fusionado[k] || Some(k) == transparente {
             continue;
         }
         let Some(mut r) = ajustar(im, &pix[k]) else {
@@ -294,7 +295,12 @@ pub fn fusionar(
         loop {
             let mut uno = false;
             for j in 0..n {
-                if j == k || fusionado[j] || pix[j].len() < 20 || rell[j].is_some() {
+                if j == k
+                    || fusionado[j]
+                    || Some(j) == transparente
+                    || pix[j].len() < 20
+                    || rell[j].is_some()
+                {
                     continue;
                 }
                 let paso = (pix[j].len() / 500).max(1);

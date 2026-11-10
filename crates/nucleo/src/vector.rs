@@ -344,6 +344,40 @@ mod pruebas {
         out
     }
 
+    /// Un PNG con un círculo rojo sobre transparente.
+    fn png_transparente(lado: u32) -> Vec<u8> {
+        let mut px = Vec::new();
+        for y in 0..lado {
+            for x in 0..lado {
+                let d = ((x as f64 + 0.5 - lado as f64 / 2.0).powi(2)
+                    + (y as f64 + 0.5 - lado as f64 / 2.0).powi(2))
+                .sqrt();
+                let a = ((lado as f64 / 3.0 - d + 0.5).clamp(0.0, 1.0) * 255.0).round() as u8;
+                px.extend([220, 30, 30, a]);
+            }
+        }
+        let mut out = Vec::new();
+        {
+            let mut e = png::Encoder::new(&mut out, lado, lado);
+            e.set_color(png::ColorType::Rgba);
+            e.set_depth(png::BitDepth::Eight);
+            e.write_header().unwrap().write_image_data(&px).unwrap();
+        }
+        out
+    }
+
+    #[test]
+    fn transparente_sin_fondo() {
+        let v = vectorizar(&leer(&png_transparente(96)), &AjusteVector::default(), None).unwrap();
+        assert!(v.documento.fondo.is_none());
+        let svg = String::from_utf8(
+            exportar(&v.documento, FormatoVector::Svg, &AjusteVector::default()).unwrap(),
+        )
+        .unwrap();
+        assert!(!svg.contains("<rect"), "{svg}");
+        assert!(v.nota.unwrap() > 80.0, "{:?}", v.nota);
+    }
+
     fn leer(datos: &[u8]) -> Imagen {
         entrada::leer(datos, Lectura::default()).unwrap()
     }

@@ -38,16 +38,18 @@ pub fn mezclas(im: &Rgba, paleta: &[[u8; 3]], radio: i64) -> Vec<Mezcla> {
     for y in 0..h {
         for x in 0..w {
             let c = im.color(x as u32, y as u32);
-            let ok = (-1..=1).all(|dy| {
-                (-1..=1).all(|dx| {
-                    let (nx, ny) = (x + dx, y + dy);
-                    if nx < 0 || ny < 0 || nx >= w || ny >= h {
-                        return true;
-                    }
-                    let n = im.color(nx as u32, ny as u32);
-                    (0..3).all(|i| (n[i] as i32 - c[i] as i32).abs() <= 10)
-                })
-            });
+            let ok = im.alfa((y * w + x) as usize) == 255
+                && (-1..=1).all(|dy| {
+                    (-1..=1).all(|dx| {
+                        let (nx, ny) = (x + dx, y + dy);
+                        if nx < 0 || ny < 0 || nx >= w || ny >= h {
+                            return true;
+                        }
+                        let n = im.color(nx as u32, ny as u32);
+                        im.alfa((ny * w + nx) as usize) == 255
+                            && (0..3).all(|i| (n[i] as i32 - c[i] as i32).abs() <= 10)
+                    })
+                });
             if ok {
                 plano[(y * w + x) as usize] = Some(cercano(f3(c)));
             }
@@ -121,6 +123,39 @@ pub fn mezclas(im: &Rgba, paleta: &[[u8; 3]], radio: i64) -> Vec<Mezcla> {
         }
     }
     out
+}
+
+/// Lo transparente como un color más, el `transparente` (que no se dibuja): un píxel transparente del todo
+/// es solo eso, y uno a medias, mezcla de su color y el transparente con t = alfa, así que el contorno de una
+/// figura sobre transparente sale por debajo del píxel como entre dos colores. Su color es el que tendría
+/// opaco (se quita el blanco del aplanado).
+pub fn transparencia(im: &Rgba, paleta: &[[u8; 3]], m: &mut [Mezcla], transparente: u16) {
+    let pal: Vec<[f32; 3]> = paleta.iter().map(|c| f3(*c)).collect();
+    for (i, x) in m.iter_mut().enumerate() {
+        let a = im.alfa(i);
+        if a == 255 {
+            continue;
+        }
+        if a == 0 || pal.is_empty() {
+            *x = Mezcla {
+                a: transparente,
+                b: transparente,
+                t: 1.0,
+            };
+            continue;
+        }
+        let t = a as f32 / 255.0;
+        let plano = f3(im.color(i as u32 % im.ancho, i as u32 / im.ancho));
+        let c = plano.map(|v| ((v - 255.0 * (1.0 - t)) / t).clamp(0.0, 255.0));
+        let k = (0..pal.len())
+            .min_by(|&p, &q| dist2(pal[p], c).total_cmp(&dist2(pal[q], c)))
+            .unwrap_or(0) as u16;
+        *x = Mezcla {
+            a: k,
+            b: transparente,
+            t,
+        };
+    }
 }
 
 /// Cobertura de la capa `dentro` en cada píxel.

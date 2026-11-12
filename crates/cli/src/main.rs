@@ -539,6 +539,13 @@ fn idioma_de_los_argumentos(
 }
 
 fn main() -> ExitCode {
+    // Rust ignora SIGPIPE, y entonces `apolo medir a b | head -1` acaba con un pánico al escribir en una
+    // tubería que `head` ya cerró. Como en `cat` o `cwebp`, la señal termina el programa en silencio.
+    #[cfg(unix)]
+    // SAFETY: al principio de main, con un solo hilo y sin ningún otro manejador puesto.
+    unsafe {
+        libc::signal(libc::SIGPIPE, libc::SIG_DFL);
+    }
     apolo_nucleo::memoria::preparar();
     // El idioma, antes que clap: la ayuda sale en él (ADR 0025).
     idioma::poner(idioma::del_sistema());

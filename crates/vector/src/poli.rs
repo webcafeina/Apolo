@@ -14,6 +14,8 @@ use crate::modelo::{Forma, Tramo};
 
 const LARGO: f64 = 4.0;
 const ESQUINA: f64 = 20.0;
+/// Un lado que mide esto por el más largo de sus vecinos es recta aunque no acabe en esquina.
+const DESTACA: f64 = 4.0;
 /// Pasadas del suavizado de Taubin sobre el contorno (ADR 0038).
 const SUAVIZADO: usize = 5;
 
@@ -56,7 +58,8 @@ pub fn ajustar(
     sintesis: bool,
 ) -> Option<Forma> {
     let suave = crate::subpixel::suavizar(lazo, SUAVIZADO);
-    let f = ajustar_sin_sintesis(&suave, tol_poli, tol_curva, cob)?;
+    let mut f = ajustar_sin_sintesis(&suave, tol_poli, tol_curva, cob)?;
+    al_marco(&mut f, tam);
     if !sintesis {
         return Some(f);
     }
@@ -80,6 +83,44 @@ pub fn ajustar(
         }
     }
     Some(f)
+}
+
+/// Una recta que va por el borde de la imagen (sus dos extremos a menos de esto de él), pegada a él.
+const PEGAR_AL_MARCO: f64 = 0.35;
+
+/// Las rectas que van por el borde de la imagen, exactamente en él: el ajuste las dejaba un pelo torcidas (de
+/// x = 0 a x = 0,17 en los 300 px del lado de una placa), y eso pinta una franja a medias a lo largo de todo el
+/// borde. Las vecinas se mueven con ellas, para que la forma siga cerrada.
+fn al_marco(f: &mut Forma, (w, h): (u32, u32)) {
+    let Forma::Tramos(t) = f else { return };
+    let n = t.len();
+    for i in 0..n {
+        let Tramo::Linea(a, b) = t[i] else { continue };
+        if dist(a, b) < LARGO {
+            continue;
+        }
+        let (mut a2, mut b2) = (a, b);
+        for (x, borde) in [
+            (true, 0.0),
+            (false, 0.0),
+            (true, w as f64),
+            (false, h as f64),
+        ] {
+            let c = |q: P| if x { q.0 } else { q.1 };
+            if (c(a) - borde).abs() <= PEGAR_AL_MARCO && (c(b) - borde).abs() <= PEGAR_AL_MARCO {
+                if x {
+                    (a2.0, b2.0) = (borde, borde);
+                } else {
+                    (a2.1, b2.1) = (borde, borde);
+                }
+            }
+        }
+        if (a2, b2) != (a, b) {
+            t[i] = Tramo::Linea(a2, b2);
+            mover_fin(&mut t[(i + n - 1) % n], a2);
+            mover_ini(&mut t[(i + 1) % n], b2);
+        }
+    }
 }
 
 fn ajustar_sin_sintesis(
@@ -154,11 +195,18 @@ fn ajustar_sin_sintesis(
         .collect();
     // Un lado es recta si es largo y al menos uno de sus extremos es una esquina de verdad. Los lados
     // largos de una curva grande (una circunferencia de radio 200 da lados de 18 px) giran poco en
-    // ambos extremos: son curva.
+    // ambos extremos: son curva. También es recta si es mucho más largo que los dos de al lado: el lado de
+    // un rectángulo redondeado entra en la curva de la esquina sin girar (sobre transparente no hay ni el
+    // escalón de un píxel junto al marco), y sin esto la forma entera era una sola curva que no se podía
+    // ajustar y acababa en rectas cortas. En una curva, los lados seguidos miden parecido.
+    let lado = |k: usize| dist(p[v[k % m]], p[v[(k + 1) % m]]);
     let largo: Vec<bool> = (0..m)
         .map(|k| {
-            dist(p[v[k]], p[v[(k + 1) % m]]) >= LARGO
-                && (giro[k] >= ESQUINA || giro[(k + 1) % m] >= ESQUINA)
+            let l = lado(k);
+            l >= LARGO
+                && (giro[k] >= ESQUINA
+                    || giro[(k + 1) % m] >= ESQUINA
+                    || l >= DESTACA * lado(k + m - 1).max(lado(k + 1)))
         })
         .collect();
     // Partes: cada lado largo es una recta; los cortos seguidos, una curva. Se empieza tras un lado largo.

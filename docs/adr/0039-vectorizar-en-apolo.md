@@ -199,3 +199,8 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   imagen del tamaño del dibujo que se pixelaba con zoom). E2e: con el zoom a 1.139 %, la mediana del grosor del
   trazo no pasa de 3 px de pantalla. Visto en una captura de navegador a 109 % y 1.239 %; **no en la ventana de
   verdad** (Path2D con un `d` de SVG está en WebKit, WebView2 y Chromium).
+- **Lados que entran en una curva sin girar (2026-11-12)**: un lado cuatro veces más largo que sus vecinos es
+  recta aunque no acabe en esquina, y las rectas que van por el marco se pegan a él (`poli.rs`). El sol sobre
+  transparente, de 71,3 a 80,7; el banco entero (`APOLO_MOTORES=apolo-crate`, antes y después en el mismo VPS),
+  media de 75,90 a 76,04, 32 de 55 cambian, ninguna baja más de 0,09. **Las cifras del sol en la web**
+  (`web/src/datos/medidas.json`) cambian: se regeneran con la 1.1.1.

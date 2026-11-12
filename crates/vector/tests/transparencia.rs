@@ -151,3 +151,44 @@ fn opaca_como_siempre() {
     let doc = vectorizar(&im, &OpcionesVector::default()).unwrap();
     assert!(doc.fondo.is_some());
 }
+
+/// El error cuadrático del dibujo (sobre blanco) frente a la imagen aplanada sobre blanco.
+fn error(im: &Rgba) -> f64 {
+    let doc = vectorizar(im, &OpcionesVector::default()).unwrap();
+    let r = vista::rasterizar(&doc).unwrap();
+    im.px
+        .iter()
+        .zip(&r)
+        .map(|(a, b)| (*a as f64 - *b as f64).powi(2))
+        .sum::<f64>()
+}
+
+#[test]
+fn el_borde_sobre_transparente_sale_como_sobre_blanco() {
+    // El sol de la web, con las esquinas transparentes, frente al mismo aplanado sobre blanco. Daba un 35 % más
+    // de error (nota 71 frente a 80): los lados de la placa entran en las esquinas sin girar, y sin el escalón
+    // que deja el blanco junto al marco la forma entera era una curva sin ajustar, hecha de rectas cortas y con
+    // los lados un pelo torcidos a lo largo del borde (ADR 0039).
+    let p = resvg::tiny_skia::Pixmap::load_png(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../pruebas/vector/apolo-plano.png"
+    ))
+    .unwrap();
+    let mut px = p.data().to_vec();
+    for c in px.as_chunks_mut::<4>().0 {
+        let a = c[3] as u32;
+        if a > 0 && a < 255 {
+            for v in &mut c[..3] {
+                *v = ((*v as u32 * 255 + a / 2) / a).min(255) as u8;
+            }
+        }
+    }
+    let transparente = Rgba::nueva(p.width(), p.height(), px);
+    assert!(transparente.con_transparencia());
+    let blanco = Rgba::nueva(p.width(), p.height(), transparente.px.clone());
+    let (t, b) = (error(&transparente), error(&blanco));
+    assert!(
+        t <= 1.1 * b,
+        "sobre transparente {t:.0}, sobre blanco {b:.0}"
+    );
+}

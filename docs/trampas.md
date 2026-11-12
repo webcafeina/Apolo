@@ -778,3 +778,16 @@ comparador no se escondían nunca con la ventana estrecha (900 px es el mínimo)
 Arreglo: `container-type: normal` en macOS, y el contenedor pasa a ser `.estudio`. Se ve con
 `getComputedStyle(e).containerType` subiendo por los padres. Lo vigila `frontend/e2e/vectorizar.spec.ts` («macOS a
 900 px»). (2026-11-10)
+
+## Vectorizar: un logo sobre transparente salía peor que el mismo sobre blanco, y no por el borde
+
+El sol de la web daba 80 sobre blanco y 71 con las esquinas transparentes. Lo evidente era el borde contra la
+transparencia (el color de esos píxeles se deduce quitando el blanco del aplanado), y **no era eso**: medido por
+categorías, el error del borde era incluso menor con transparencia, y todo el de más estaba en las casillas del
+marco. Los lados de la placa entran en las esquinas redondeadas **sin girar**, y el ajuste solo llama «recta» a
+un lado largo que acaba en una esquina. Sobre blanco, el contorno hace un escalón de un píxel junto al marco que
+cuenta como esquina; sobre transparente el contorno es el de verdad, sin escalón, así que la forma entera era
+una sola curva que no se podía ajustar y caía a rectas cortas, con los lados un pelo torcidos (de x = 0 a 0,17)
+y una franja a medias a lo largo de todo el borde. Arreglo en `crates/vector/src/poli.rs`: un lado cuatro veces
+más largo que sus vecinos es recta aunque no acabe en esquina, y las rectas que van por el marco se pegan a él.
+Para buscar algo así: el error por casillas de 64 px y por tipo de píxel (alfa 0, a medias, opaco). (2026-11-12)

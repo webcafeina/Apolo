@@ -47,7 +47,7 @@ interfaz, MCP y prueba).
 
 | Opción | Qué hace | Núcleo | CLI | Interfaz | MCP | Prueba |
 |---|---|---|---|---|---|---|
-| Estilo | rellenar, trazar formas, trazar bordes (cada borde una vez) | `estilo` | `-e`, `--estilo` | ✓ Exportar | `estilo` | cli, formatos, mcp, e2e |
+| Estilo | rellenar, trazar formas, trazar bordes (cada borde una vez) | `estilo` | `-e`, `--estilo` | ✓ Exportar | `estilo` | cli, formatos, mcp, e2e, `trazado` (cada borde una vez, sin huecos) |
 | Grosor | Del trazo, en píxeles (1) | `grosor` | `-g`, `--grosor` | ✓ Exportar | `grosor` | cli, formatos, mcp, e2e |
 | Color del trazo | `#rrggbb`; por defecto, el de la capa (en bordes, negro) | `color_trazo` | `--color-trazo` | ✓ Exportar | `color_trazo` | cli, mcp, e2e |
 | Nivel de DXF | rectas, arcos, splines | `nivel_dxf` | `--dxf` | ✓ Exportar (con DXF) | `nivel_dxf` | cli, formatos, mcp, e2e |

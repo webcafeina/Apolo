@@ -4,6 +4,18 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-12, tarde): v1.1.1 PUBLICADA (17:14 UTC).** Con el sí que dio el cliente por la mañana.
+> `publicar.yml` (43226672206) en verde entero (10 compilaciones, adjuntar, 6 humos). Borrador revisado: 50
+> ficheros, 49/49 sumas, 19 copias con nombre fijo idénticas, `latest.json` 1.1.1 con 16 plataformas y **16/16
+> firmas válidas**, procedencia 50/50, `apolo` y `apolo-mcp` 1.1.1, y el sol con la CLI de la Release da los mismos
+> bytes que la web (7.429 / 3.750 / 9.268 / 44.420, nota 80,7). Después: `Web`, `Homebrew` y `Registro MCP` en
+> verde; la web en 1.1.1 con la guía en 80,7; APT, PKGBUILD, cask, registro MCP, enlaces fijos y `latest.json`, en
+> 1.1.1. Security, sin nada nuevo. **Chocolatey 1.1.1 empaquetada y sin subir**
+> (`~/.cache/apolo-revision/choco111/paquete/apolo.1.1.1.nupkg`): la 1.1.0 sigue en «Ready for review» y hasta que la
+> aprueben da 403; subirla entonces con el `choco push` de `docs/lanzamiento.md`. winget, a la espera de #463314.
+> **Lo siguiente**: la comprobación del cliente («comprobamos luego»): que su Apolo se actualice a la 1.1.1 y ver
+> los contornos con zoom en su Mac. Luego, lo que diga (deuda que queda en Vectorizar: los degradados en anillos).
+
 > **PARADA AQUÍ (2026-11-12, ~14:30): la 1.1.1, ETIQUETADA y compilándose; sin revisar ni publicar.** Commit de la
 > versión `79bd9f1` (notas `.github/notas/v1.1.1.md`, Cargo.toml y plugin a 1.1.1, medidas con el sol a 80,7,
 > capturas de la web y del README de nuevo, guía de vectorizar revisada el 2026-11-12), `make comprobar` entero y

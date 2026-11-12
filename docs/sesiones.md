@@ -32,6 +32,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   `79bd9f1`, CI en verde, run `Web` cancelado, etiqueta `v1.1.1` y `publicar.yml` (43226672206) corriendo. El cliente
   preguntó si la versión de Mac es Universal: sí (lipo de arm64 y x86_64), nativa en Apple Silicon, sin Rosetta.
 - Se fue con la compilación en marcha; se sigue por la tarde (PARADA de estado.md).
+- **Por la tarde**: Security igual; `publicar.yml` en verde; borrador revisado entero (sumas, copias, firmas,
+  procedencia, binarios y el sol con los bytes de la web) y **v1.1.1 publicada** a las 17:14 UTC. Web, repos,
+  Homebrew, registro MCP y enlaces fijos al día. Chocolatey 1.1.1 empaquetada, sin subir hasta que aprueben la 1.1.0.
 
 ---
 

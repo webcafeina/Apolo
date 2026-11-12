@@ -121,6 +121,15 @@ fn correr(formato: FormatoSalida, args: &[String]) -> Result<(), String> {
             )
         );
     }
+    if salida::jxl_no_lo_reconoce(&datos, &ajuste) {
+        eprintln!(
+            "{}",
+            tr!(
+                "Aviso: «{entrada}» es un JPEG que empieza con un comentario; cjxl no lo abriría con pérdida: Apolo le pasa un PNG con sus píxeles.",
+                "Warning: “{entrada}” is a JPEG that starts with a comment; cjxl wouldn't open it lossily: Apolo passes it a PNG with its pixels."
+            )
+        );
+    }
     ajuste.objetivo = objetivo;
     let r = salida::codificar(&datos, &img, &ajuste, None).map_err(|e| e.to_string())?;
     comun::informar_hallada(r.hallada, objetivo);

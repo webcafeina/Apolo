@@ -43,7 +43,7 @@ Con avifenc y cjxl la regla de [cobertura-cwebp.md](cobertura-cwebp.md) se cumpl
 | `-q`, `--quality` | Calidad (90 ≈ `-d 1`, lo de cjxl) | `calidad` | ✓ B | eq, ida |
 | `-d`, `--distance` | Distancia visual; excluye `-q` | `distancia` | (la calidad la quita) | eq, ida |
 | `-e`, `--effort` | Esfuerzo 1–10 (7) | `esfuerzo` | ✓ B | eq, ida |
-| `-j`, `--lossless_jpeg` | Recomprimir el JPEG sin pérdida (1) | `jpeg_sin_perdida` | ✓ B, solo con JPEG | eq, ida |
+| `-j`, `--lossless_jpeg` | Recomprimir el JPEG sin pérdida (1). Con 0 y un JPEG que empieza con un comentario (`FF D8 FF FE`), que cjxl no reconoce, Apolo le pasa los píxeles en PNG (`apolo jxl` lo avisa) | `jpeg_sin_perdida` | ✓ B, solo con JPEG | eq, ida, `un_jpeg_que_empieza_con_un_comentario_a_jxl_con_perdida` |
 | `-a`, `--alpha_distance` | Distancia del alfa | `distancia_alfa` | ✓ A | eq |
 | `-p`, `--progressive` | Progresivo | `progresivo` | ✓ A | eq, ida |
 | `-m`, `--modular` | VarDCT o modular | `modular` | ✓ A | eq |

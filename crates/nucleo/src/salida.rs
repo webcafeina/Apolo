@@ -491,7 +491,7 @@ fn codificar_tal_cual(
             // y el perfil.
             let (fichero, ext, w, h) = match rgba_si_hace_falta(img, procesada, enderezar)? {
                 None if img.formato == Formato::Png => (datos.to_vec(), "png", img.ancho, img.alto),
-                None if img.formato == Formato::Jpeg => {
+                None if img.formato == Formato::Jpeg && !jxl_no_lo_reconoce(datos, a) => {
                     (datos.to_vec(), "jpg", img.ancho, img.alto)
                 }
                 None => {
@@ -523,6 +523,17 @@ fn codificar_tal_cual(
             })
         }
     }
+}
+
+/// libjxl reconoce un JPEG por sus cuatro primeros bytes y no admite que empiece con un comentario (`FF D8 FF
+/// FE`, como los que escribe ffmpeg): recomprimirlo sin pérdida funciona, pero con pérdida cjxl no saca los
+/// píxeles («Getting pixel data failed», y Apolo solo podía decir que terminó con el código 1). El `cjxl`
+/// oficial falla igual. En ese caso se le pasa un PNG con los píxeles, que es lo que habría hecho él (la CLI lo
+/// avisa, como cuando la herramienta no abriría la entrada).
+pub fn jxl_no_lo_reconoce(datos: &[u8], a: &Ajuste) -> bool {
+    a.formato == FormatoSalida::Jxl
+        && !a.jxl.jpeg_sin_perdida
+        && datos.starts_with(&[0xFF, 0xD8, 0xFF, 0xFE])
 }
 
 /// Para todos menos WebP: los píxeles procesados, o los enderezados, o nada
@@ -569,6 +580,38 @@ mod pruebas {
             assert_eq!((w, h), (img.ancho, img.alto), "{f:?}");
             assert_eq!(motivo(Formato::Png, &a), None, "{f:?}");
         }
+    }
+
+    #[test]
+    fn un_jpeg_que_empieza_con_un_comentario_a_jxl_con_perdida() {
+        // Un JPEG con un comentario justo detrás del inicio, como los de ffmpeg.
+        let jpeg = jpeg::cjpeg::ejecutar(
+            &jpeg::leer(&foto_png()).unwrap(),
+            &["-quality".to_string(), "85".to_string()],
+            &Default::default(),
+        )
+        .unwrap();
+        let comentario = b"Lavc61.19.100";
+        let largo = (comentario.len() + 2) as u16;
+        let mut datos = vec![0xFF, 0xD8, 0xFF, 0xFE];
+        datos.extend(largo.to_be_bytes());
+        datos.extend(comentario);
+        datos.extend(&jpeg[2..]);
+        let img = entrada::leer(&datos, Lectura::default()).unwrap();
+        assert_eq!(img.formato, Formato::Jpeg);
+        let mut a = Ajuste {
+            formato: FormatoSalida::Jxl,
+            ..Default::default()
+        };
+        a.jxl.jpeg_sin_perdida = false;
+        a.jxl.distancia = Some(1.0);
+        let r = codificar(&datos, &img, &a, None).unwrap();
+        let (w, h, _) = vista::decodificar(&r.datos).unwrap();
+        assert_eq!((w, h), (img.ancho, img.alto));
+        // Sin pérdida sigue siendo el camino de cjxl con el JPEG tal cual (sí lo admite).
+        a.jxl.jpeg_sin_perdida = true;
+        a.jxl.distancia = None;
+        assert!(codificar(&datos, &img, &a, None).is_ok());
     }
 
     #[test]

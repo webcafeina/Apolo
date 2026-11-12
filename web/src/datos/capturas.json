@@ -12,12 +12,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "estudio-claro-1280.avif": 104251,
-            "estudio-claro-1280.webp": 169534,
-            "estudio-claro-2560.avif": 311241,
-            "estudio-oscuro-1280.avif": 113493,
-            "estudio-oscuro-1280.webp": 184882,
-            "estudio-oscuro-2560.avif": 194353
+            "estudio-claro-1280.avif": 104221,
+            "estudio-claro-1280.webp": 169530,
+            "estudio-claro-2560.avif": 311277,
+            "estudio-oscuro-1280.avif": 113504,
+            "estudio-oscuro-1280.webp": 184896,
+            "estudio-oscuro-2560.avif": 194480
           }
         },
         "en": {
@@ -25,12 +25,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "estudio-claro-1280.avif": 103808,
-            "estudio-claro-1280.webp": 168506,
-            "estudio-claro-2560.avif": 309757,
-            "estudio-oscuro-1280.avif": 113180,
-            "estudio-oscuro-1280.webp": 183572,
-            "estudio-oscuro-2560.avif": 193775
+            "estudio-claro-1280.avif": 103847,
+            "estudio-claro-1280.webp": 168538,
+            "estudio-claro-2560.avif": 309925,
+            "estudio-oscuro-1280.avif": 113181,
+            "estudio-oscuro-1280.webp": 183584,
+            "estudio-oscuro-2560.avif": 193852
           }
         }
       },
@@ -40,12 +40,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "diferencias-claro-1280.avif": 158653,
+            "diferencias-claro-1280.avif": 158649,
             "diferencias-claro-1280.webp": 200672,
-            "diferencias-claro-2560.avif": 397076,
-            "diferencias-oscuro-1280.avif": 164509,
-            "diferencias-oscuro-1280.webp": 215602,
-            "diferencias-oscuro-2560.avif": 240368
+            "diferencias-claro-2560.avif": 397011,
+            "diferencias-oscuro-1280.avif": 64884,
+            "diferencias-oscuro-1280.webp": 131826,
+            "diferencias-oscuro-2560.avif": 73094
           }
         },
         "en": {
@@ -53,12 +53,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "diferencias-claro-1280.avif": 157735,
-            "diferencias-claro-1280.webp": 199108,
-            "diferencias-claro-2560.avif": 339048,
-            "diferencias-oscuro-1280.avif": 163849,
-            "diferencias-oscuro-1280.webp": 213560,
-            "diferencias-oscuro-2560.avif": 238533
+            "diferencias-claro-1280.avif": 157730,
+            "diferencias-claro-1280.webp": 199138,
+            "diferencias-claro-2560.avif": 339179,
+            "diferencias-oscuro-1280.avif": 163861,
+            "diferencias-oscuro-1280.webp": 213566,
+            "diferencias-oscuro-2560.avif": 238611
           }
         }
       },
@@ -68,12 +68,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "lotes-claro-1280.avif": 29212,
-            "lotes-claro-1280.webp": 59586,
-            "lotes-claro-2560.avif": 52049,
-            "lotes-oscuro-1280.avif": 30779,
-            "lotes-oscuro-1280.webp": 70214,
-            "lotes-oscuro-2560.avif": 37419
+            "lotes-claro-1280.avif": 29158,
+            "lotes-claro-1280.webp": 59550,
+            "lotes-claro-2560.avif": 52002,
+            "lotes-oscuro-1280.avif": 29956,
+            "lotes-oscuro-1280.webp": 68662,
+            "lotes-oscuro-2560.avif": 35704
           }
         },
         "en": {
@@ -81,12 +81,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "lotes-claro-1280.avif": 31519,
-            "lotes-claro-1280.webp": 61290,
-            "lotes-claro-2560.avif": 58235,
-            "lotes-oscuro-1280.avif": 29812,
-            "lotes-oscuro-1280.webp": 70604,
-            "lotes-oscuro-2560.avif": 36658
+            "lotes-claro-1280.avif": 31195,
+            "lotes-claro-1280.webp": 61218,
+            "lotes-claro-2560.avif": 53506,
+            "lotes-oscuro-1280.avif": 29850,
+            "lotes-oscuro-1280.webp": 70706,
+            "lotes-oscuro-2560.avif": 36787
           }
         }
       },
@@ -96,12 +96,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "agentes-claro-1280.avif": 51680,
-            "agentes-claro-1280.webp": 85652,
-            "agentes-claro-2560.avif": 112495,
-            "agentes-oscuro-1280.avif": 56937,
-            "agentes-oscuro-1280.webp": 98100,
-            "agentes-oscuro-2560.avif": 74050
+            "agentes-claro-1280.avif": 51658,
+            "agentes-claro-1280.webp": 85592,
+            "agentes-claro-2560.avif": 112385,
+            "agentes-oscuro-1280.avif": 56914,
+            "agentes-oscuro-1280.webp": 98072,
+            "agentes-oscuro-2560.avif": 73999
           }
         },
         "en": {
@@ -109,12 +109,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "agentes-claro-1280.avif": 52548,
-            "agentes-claro-1280.webp": 82610,
-            "agentes-claro-2560.avif": 111715,
-            "agentes-oscuro-1280.avif": 55190,
+            "agentes-claro-1280.avif": 51046,
+            "agentes-claro-1280.webp": 82588,
+            "agentes-claro-2560.avif": 107724,
+            "agentes-oscuro-1280.avif": 55173,
             "agentes-oscuro-1280.webp": 94200,
-            "agentes-oscuro-2560.avif": 68001
+            "agentes-oscuro-2560.avif": 67947
           }
         }
       },
@@ -124,12 +124,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "vectorizar-claro-1280.avif": 57455,
-            "vectorizar-claro-1280.webp": 96452,
-            "vectorizar-claro-2560.avif": 107068,
-            "vectorizar-oscuro-1280.avif": 63653,
-            "vectorizar-oscuro-1280.webp": 107792,
-            "vectorizar-oscuro-2560.avif": 74270
+            "vectorizar-claro-1280.avif": 59703,
+            "vectorizar-claro-1280.webp": 96852,
+            "vectorizar-claro-2560.avif": 108038,
+            "vectorizar-oscuro-1280.avif": 63620,
+            "vectorizar-oscuro-1280.webp": 108152,
+            "vectorizar-oscuro-2560.avif": 74718
           }
         },
         "en": {
@@ -137,12 +137,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "vectorizar-claro-1280.avif": 59246,
-            "vectorizar-claro-1280.webp": 96038,
-            "vectorizar-claro-2560.avif": 102229,
-            "vectorizar-oscuro-1280.avif": 63031,
-            "vectorizar-oscuro-1280.webp": 107172,
-            "vectorizar-oscuro-2560.avif": 74662
+            "vectorizar-claro-1280.avif": 59587,
+            "vectorizar-claro-1280.webp": 96402,
+            "vectorizar-claro-2560.avif": 106434,
+            "vectorizar-oscuro-1280.avif": 63210,
+            "vectorizar-oscuro-1280.webp": 107572,
+            "vectorizar-oscuro-2560.avif": 73944
           }
         }
       }
@@ -154,12 +154,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "estudio-claro-1280.avif": 139484,
-            "estudio-claro-1280.webp": 225138,
-            "estudio-claro-2560.avif": 477291,
-            "estudio-oscuro-1280.avif": 154547,
-            "estudio-oscuro-1280.webp": 246158,
-            "estudio-oscuro-2560.avif": 253120
+            "estudio-claro-1280.avif": 139525,
+            "estudio-claro-1280.webp": 225182,
+            "estudio-claro-2560.avif": 477296,
+            "estudio-oscuro-1280.avif": 154477,
+            "estudio-oscuro-1280.webp": 246080,
+            "estudio-oscuro-2560.avif": 252844
           }
         },
         "en": {
@@ -167,12 +167,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "estudio-claro-1280.avif": 138540,
-            "estudio-claro-1280.webp": 223918,
-            "estudio-claro-2560.avif": 478114,
-            "estudio-oscuro-1280.avif": 152990,
-            "estudio-oscuro-1280.webp": 244818,
-            "estudio-oscuro-2560.avif": 252366
+            "estudio-claro-1280.avif": 138616,
+            "estudio-claro-1280.webp": 224020,
+            "estudio-claro-2560.avif": 478478,
+            "estudio-oscuro-1280.avif": 152989,
+            "estudio-oscuro-1280.webp": 244796,
+            "estudio-oscuro-2560.avif": 252302
           }
         }
       },
@@ -182,12 +182,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "diferencias-claro-1280.avif": 194202,
-            "diferencias-claro-1280.webp": 255874,
-            "diferencias-claro-2560.avif": 397694,
-            "diferencias-oscuro-1280.avif": 203641,
-            "diferencias-oscuro-1280.webp": 278298,
-            "diferencias-oscuro-2560.avif": 302330
+            "diferencias-claro-1280.avif": 194185,
+            "diferencias-claro-1280.webp": 255906,
+            "diferencias-claro-2560.avif": 397762,
+            "diferencias-oscuro-1280.avif": 203683,
+            "diferencias-oscuro-1280.webp": 278226,
+            "diferencias-oscuro-2560.avif": 302176
           }
         },
         "en": {
@@ -195,12 +195,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "diferencias-claro-1280.avif": 193344,
-            "diferencias-claro-1280.webp": 254620,
-            "diferencias-claro-2560.avif": 455048,
-            "diferencias-oscuro-1280.avif": 202417,
-            "diferencias-oscuro-1280.webp": 275998,
-            "diferencias-oscuro-2560.avif": 300750
+            "diferencias-claro-1280.avif": 193407,
+            "diferencias-claro-1280.webp": 254726,
+            "diferencias-claro-2560.avif": 455431,
+            "diferencias-oscuro-1280.avif": 202415,
+            "diferencias-oscuro-1280.webp": 275964,
+            "diferencias-oscuro-2560.avif": 300759
           }
         }
       },
@@ -210,12 +210,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "lotes-claro-1280.avif": 29491,
-            "lotes-claro-1280.webp": 51868,
-            "lotes-claro-2560.avif": 60440,
-            "lotes-oscuro-1280.avif": 26717,
-            "lotes-oscuro-1280.webp": 40802,
-            "lotes-oscuro-2560.avif": 33472
+            "lotes-claro-1280.avif": 25715,
+            "lotes-claro-1280.webp": 50738,
+            "lotes-claro-2560.avif": 57585,
+            "lotes-oscuro-1280.avif": 25449,
+            "lotes-oscuro-1280.webp": 39730,
+            "lotes-oscuro-2560.avif": 31890
           }
         },
         "en": {
@@ -223,12 +223,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "lotes-claro-1280.avif": 27692,
-            "lotes-claro-1280.webp": 54034,
-            "lotes-claro-2560.avif": 62091,
-            "lotes-oscuro-1280.avif": 26943,
-            "lotes-oscuro-1280.webp": 41676,
-            "lotes-oscuro-2560.avif": 35734
+            "lotes-claro-1280.avif": 27155,
+            "lotes-claro-1280.webp": 53150,
+            "lotes-claro-2560.avif": 60807,
+            "lotes-oscuro-1280.avif": 27066,
+            "lotes-oscuro-1280.webp": 41696,
+            "lotes-oscuro-2560.avif": 35746
           }
         }
       },
@@ -238,12 +238,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "agentes-claro-1280.avif": 43199,
-            "agentes-claro-1280.webp": 74340,
-            "agentes-claro-2560.avif": 115022,
-            "agentes-oscuro-1280.avif": 46018,
-            "agentes-oscuro-1280.webp": 55260,
-            "agentes-oscuro-2560.avif": 62378
+            "agentes-claro-1280.avif": 44332,
+            "agentes-claro-1280.webp": 74296,
+            "agentes-claro-2560.avif": 111104,
+            "agentes-oscuro-1280.avif": 45973,
+            "agentes-oscuro-1280.webp": 55280,
+            "agentes-oscuro-2560.avif": 62329
           }
         },
         "en": {
@@ -251,12 +251,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "agentes-claro-1280.avif": 42445,
-            "agentes-claro-1280.webp": 71638,
-            "agentes-claro-2560.avif": 104339,
-            "agentes-oscuro-1280.avif": 44062,
-            "agentes-oscuro-1280.webp": 52722,
-            "agentes-oscuro-2560.avif": 59278
+            "agentes-claro-1280.avif": 42433,
+            "agentes-claro-1280.webp": 71592,
+            "agentes-claro-2560.avif": 104183,
+            "agentes-oscuro-1280.avif": 44059,
+            "agentes-oscuro-1280.webp": 52768,
+            "agentes-oscuro-2560.avif": 59203
           }
         }
       },
@@ -266,12 +266,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "vectorizar-claro-1280.avif": 82889,
-            "vectorizar-claro-1280.webp": 136260,
-            "vectorizar-claro-2560.avif": 167893,
-            "vectorizar-oscuro-1280.avif": 90100,
-            "vectorizar-oscuro-1280.webp": 149838,
-            "vectorizar-oscuro-2560.avif": 115804
+            "vectorizar-claro-1280.avif": 83543,
+            "vectorizar-claro-1280.webp": 137098,
+            "vectorizar-claro-2560.avif": 177841,
+            "vectorizar-oscuro-1280.avif": 90778,
+            "vectorizar-oscuro-1280.webp": 150822,
+            "vectorizar-oscuro-2560.avif": 117112
           }
         },
         "en": {
@@ -279,12 +279,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "vectorizar-claro-1280.avif": 81874,
-            "vectorizar-claro-1280.webp": 135248,
-            "vectorizar-claro-2560.avif": 162836,
-            "vectorizar-oscuro-1280.avif": 88761,
-            "vectorizar-oscuro-1280.webp": 148436,
-            "vectorizar-oscuro-2560.avif": 112531
+            "vectorizar-claro-1280.avif": 82644,
+            "vectorizar-claro-1280.webp": 136152,
+            "vectorizar-claro-2560.avif": 173318,
+            "vectorizar-oscuro-1280.avif": 91273,
+            "vectorizar-oscuro-1280.webp": 149874,
+            "vectorizar-oscuro-2560.avif": 113730
           }
         }
       }
@@ -296,12 +296,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "estudio-claro-1280.avif": 123192,
-            "estudio-claro-1280.webp": 181238,
-            "estudio-claro-2560.avif": 450988,
-            "estudio-oscuro-1280.avif": 117374,
-            "estudio-oscuro-1280.webp": 196796,
-            "estudio-oscuro-2560.avif": 197702
+            "estudio-claro-1280.avif": 123242,
+            "estudio-claro-1280.webp": 181274,
+            "estudio-claro-2560.avif": 451233,
+            "estudio-oscuro-1280.avif": 117321,
+            "estudio-oscuro-1280.webp": 196780,
+            "estudio-oscuro-2560.avif": 197575
           }
         },
         "en": {
@@ -309,12 +309,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "estudio-claro-1280.avif": 121767,
-            "estudio-claro-1280.webp": 179080,
-            "estudio-claro-2560.avif": 448850,
-            "estudio-oscuro-1280.avif": 131482,
-            "estudio-oscuro-1280.webp": 211532,
-            "estudio-oscuro-2560.avif": 216950
+            "estudio-claro-1280.avif": 121819,
+            "estudio-claro-1280.webp": 179100,
+            "estudio-claro-2560.avif": 449071,
+            "estudio-oscuro-1280.avif": 116115,
+            "estudio-oscuro-1280.webp": 194206,
+            "estudio-oscuro-2560.avif": 196069
           }
         }
       },
@@ -324,12 +324,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "diferencias-claro-1280.avif": 193682,
-            "diferencias-claro-1280.webp": 214226,
-            "diferencias-claro-2560.avif": 577783,
-            "diferencias-oscuro-1280.avif": 177424,
-            "diferencias-oscuro-1280.webp": 228866,
-            "diferencias-oscuro-2560.avif": 243820
+            "diferencias-claro-1280.avif": 193725,
+            "diferencias-claro-1280.webp": 214268,
+            "diferencias-claro-2560.avif": 577944,
+            "diferencias-oscuro-1280.avif": 177391,
+            "diferencias-oscuro-1280.webp": 228854,
+            "diferencias-oscuro-2560.avif": 243562
           }
         },
         "en": {
@@ -337,12 +337,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "diferencias-claro-1280.avif": 192428,
-            "diferencias-claro-1280.webp": 211838,
-            "diferencias-claro-2560.avif": 578075,
-            "diferencias-oscuro-1280.avif": 175229,
-            "diferencias-oscuro-1280.webp": 225990,
-            "diferencias-oscuro-2560.avif": 242195
+            "diferencias-claro-1280.avif": 192457,
+            "diferencias-claro-1280.webp": 211856,
+            "diferencias-claro-2560.avif": 578217,
+            "diferencias-oscuro-1280.avif": 72298,
+            "diferencias-oscuro-1280.webp": 152974,
+            "diferencias-oscuro-2560.avif": 87586
           }
         }
       },
@@ -352,12 +352,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "lotes-claro-1280.avif": 27904,
-            "lotes-claro-1280.webp": 61678,
-            "lotes-claro-2560.avif": 59202,
-            "lotes-oscuro-1280.avif": 28319,
-            "lotes-oscuro-1280.webp": 59498,
-            "lotes-oscuro-2560.avif": 33999
+            "lotes-claro-1280.avif": 27790,
+            "lotes-claro-1280.webp": 61660,
+            "lotes-claro-2560.avif": 59211,
+            "lotes-oscuro-1280.avif": 28312,
+            "lotes-oscuro-1280.webp": 59516,
+            "lotes-oscuro-2560.avif": 34230
           }
         },
         "en": {
@@ -365,12 +365,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "lotes-claro-1280.avif": 29081,
-            "lotes-claro-1280.webp": 64652,
-            "lotes-claro-2560.avif": 62829,
-            "lotes-oscuro-1280.avif": 29214,
-            "lotes-oscuro-1280.webp": 62396,
-            "lotes-oscuro-2560.avif": 36502
+            "lotes-claro-1280.avif": 28511,
+            "lotes-claro-1280.webp": 63630,
+            "lotes-claro-2560.avif": 64423,
+            "lotes-oscuro-1280.avif": 28566,
+            "lotes-oscuro-1280.webp": 61466,
+            "lotes-oscuro-2560.avif": 35697
           }
         }
       },
@@ -380,12 +380,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "agentes-claro-1280.avif": 48057,
-            "agentes-claro-1280.webp": 76166,
-            "agentes-claro-2560.avif": 100450,
-            "agentes-oscuro-1280.avif": 45945,
-            "agentes-oscuro-1280.webp": 74122,
-            "agentes-oscuro-2560.avif": 56600
+            "agentes-claro-1280.avif": 47999,
+            "agentes-claro-1280.webp": 76116,
+            "agentes-claro-2560.avif": 105517,
+            "agentes-oscuro-1280.avif": 45043,
+            "agentes-oscuro-1280.webp": 74062,
+            "agentes-oscuro-2560.avif": 56574
           }
         },
         "en": {
@@ -393,12 +393,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "agentes-claro-1280.avif": 47093,
-            "agentes-claro-1280.webp": 74502,
-            "agentes-claro-2560.avif": 95400,
-            "agentes-oscuro-1280.avif": 46136,
-            "agentes-oscuro-1280.webp": 72916,
-            "agentes-oscuro-2560.avif": 55589
+            "agentes-claro-1280.avif": 47032,
+            "agentes-claro-1280.webp": 74492,
+            "agentes-claro-2560.avif": 95168,
+            "agentes-oscuro-1280.avif": 46667,
+            "agentes-oscuro-1280.webp": 72798,
+            "agentes-oscuro-2560.avif": 54848
           }
         }
       },
@@ -408,12 +408,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "vectorizar-claro-1280.avif": 75322,
-            "vectorizar-claro-1280.webp": 111200,
-            "vectorizar-claro-2560.avif": 134537,
-            "vectorizar-oscuro-1280.avif": 74940,
-            "vectorizar-oscuro-1280.webp": 121256,
-            "vectorizar-oscuro-2560.avif": 89943
+            "vectorizar-claro-1280.avif": 75744,
+            "vectorizar-claro-1280.webp": 111612,
+            "vectorizar-claro-2560.avif": 136623,
+            "vectorizar-oscuro-1280.avif": 77203,
+            "vectorizar-oscuro-1280.webp": 121788,
+            "vectorizar-oscuro-2560.avif": 90764
           }
         },
         "en": {
@@ -421,12 +421,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "vectorizar-claro-1280.avif": 74099,
-            "vectorizar-claro-1280.webp": 109554,
-            "vectorizar-claro-2560.avif": 139919,
-            "vectorizar-oscuro-1280.avif": 75719,
-            "vectorizar-oscuro-1280.webp": 119756,
-            "vectorizar-oscuro-2560.avif": 89747
+            "vectorizar-claro-1280.avif": 74925,
+            "vectorizar-claro-1280.webp": 109974,
+            "vectorizar-claro-2560.avif": 135623,
+            "vectorizar-oscuro-1280.avif": 76252,
+            "vectorizar-oscuro-1280.webp": 120320,
+            "vectorizar-oscuro-2560.avif": 90747
           }
         }
       }
@@ -438,12 +438,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "estudio-claro-1280.avif": 136216,
-            "estudio-claro-1280.webp": 172824,
-            "estudio-claro-2560.avif": 981432,
-            "estudio-oscuro-1280.avif": 134834,
-            "estudio-oscuro-1280.webp": 191376,
-            "estudio-oscuro-2560.avif": 262238
+            "estudio-claro-1280.avif": 136239,
+            "estudio-claro-1280.webp": 172828,
+            "estudio-claro-2560.avif": 981458,
+            "estudio-oscuro-1280.avif": 134836,
+            "estudio-oscuro-1280.webp": 191370,
+            "estudio-oscuro-2560.avif": 262070
           }
         },
         "en": {
@@ -451,12 +451,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "estudio-claro-1280.avif": 133954,
-            "estudio-claro-1280.webp": 170516,
-            "estudio-claro-2560.avif": 976415,
-            "estudio-oscuro-1280.avif": 133073,
-            "estudio-oscuro-1280.webp": 189246,
-            "estudio-oscuro-2560.avif": 257558
+            "estudio-claro-1280.avif": 133919,
+            "estudio-claro-1280.webp": 170526,
+            "estudio-claro-2560.avif": 976531,
+            "estudio-oscuro-1280.avif": 133037,
+            "estudio-oscuro-1280.webp": 189232,
+            "estudio-oscuro-2560.avif": 257690
           }
         }
       },
@@ -466,12 +466,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "diferencias-claro-1280.avif": 188760,
-            "diferencias-claro-1280.webp": 201946,
-            "diferencias-claro-2560.avif": 1223440,
-            "diferencias-oscuro-1280.avif": 194637,
-            "diferencias-oscuro-1280.webp": 222284,
-            "diferencias-oscuro-2560.avif": 294439
+            "diferencias-claro-1280.avif": 188747,
+            "diferencias-claro-1280.webp": 201960,
+            "diferencias-claro-2560.avif": 1223501,
+            "diferencias-oscuro-1280.avif": 194435,
+            "diferencias-oscuro-1280.webp": 222276,
+            "diferencias-oscuro-2560.avif": 294382
           }
         },
         "en": {
@@ -479,12 +479,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "diferencias-claro-1280.avif": 204294,
-            "diferencias-claro-1280.webp": 199340,
-            "diferencias-claro-2560.avif": 1219664,
-            "diferencias-oscuro-1280.avif": 191995,
-            "diferencias-oscuro-1280.webp": 219340,
-            "diferencias-oscuro-2560.avif": 290487
+            "diferencias-claro-1280.avif": 186339,
+            "diferencias-claro-1280.webp": 199334,
+            "diferencias-claro-2560.avif": 1219647,
+            "diferencias-oscuro-1280.avif": 192049,
+            "diferencias-oscuro-1280.webp": 219318,
+            "diferencias-oscuro-2560.avif": 290417
           }
         }
       },
@@ -494,12 +494,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "lotes-claro-1280.avif": 49563,
-            "lotes-claro-1280.webp": 58308,
-            "lotes-claro-2560.avif": 132851,
-            "lotes-oscuro-1280.avif": 31955,
-            "lotes-oscuro-1280.webp": 73324,
-            "lotes-oscuro-2560.avif": 38893
+            "lotes-claro-1280.avif": 71901,
+            "lotes-claro-1280.webp": 58514,
+            "lotes-claro-2560.avif": 132676,
+            "lotes-oscuro-1280.avif": 30810,
+            "lotes-oscuro-1280.webp": 71684,
+            "lotes-oscuro-2560.avif": 37712
           }
         },
         "en": {
@@ -507,12 +507,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "lotes-claro-1280.avif": 76654,
-            "lotes-claro-1280.webp": 61342,
-            "lotes-claro-2560.avif": 142166,
-            "lotes-oscuro-1280.avif": 32110,
-            "lotes-oscuro-1280.webp": 73876,
-            "lotes-oscuro-2560.avif": 39797
+            "lotes-claro-1280.avif": 76967,
+            "lotes-claro-1280.webp": 61360,
+            "lotes-claro-2560.avif": 140794,
+            "lotes-oscuro-1280.avif": 31641,
+            "lotes-oscuro-1280.webp": 74154,
+            "lotes-oscuro-2560.avif": 39984
           }
         }
       },
@@ -522,12 +522,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "agentes-claro-1280.avif": 84010,
-            "agentes-claro-1280.webp": 76010,
-            "agentes-claro-2560.avif": 198832,
-            "agentes-oscuro-1280.avif": 56568,
-            "agentes-oscuro-1280.webp": 94556,
-            "agentes-oscuro-2560.avif": 69649
+            "agentes-claro-1280.avif": 83883,
+            "agentes-claro-1280.webp": 75986,
+            "agentes-claro-2560.avif": 198525,
+            "agentes-oscuro-1280.avif": 56499,
+            "agentes-oscuro-1280.webp": 94544,
+            "agentes-oscuro-2560.avif": 69535
           }
         },
         "en": {
@@ -535,12 +535,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "agentes-claro-1280.avif": 80061,
-            "agentes-claro-1280.webp": 72916,
-            "agentes-claro-2560.avif": 193306,
-            "agentes-oscuro-1280.avif": 54677,
-            "agentes-oscuro-1280.webp": 90916,
-            "agentes-oscuro-2560.avif": 67743
+            "agentes-claro-1280.avif": 106784,
+            "agentes-claro-1280.webp": 72898,
+            "agentes-claro-2560.avif": 192979,
+            "agentes-oscuro-1280.avif": 54649,
+            "agentes-oscuro-1280.webp": 90904,
+            "agentes-oscuro-2560.avif": 67722
           }
         }
       },
@@ -550,12 +550,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "vectorizar-claro-1280.avif": 84503,
-            "vectorizar-claro-1280.webp": 103958,
-            "vectorizar-claro-2560.avif": 297595,
-            "vectorizar-oscuro-1280.avif": 76948,
-            "vectorizar-oscuro-1280.webp": 116288,
-            "vectorizar-oscuro-2560.avif": 110766
+            "vectorizar-claro-1280.avif": 85135,
+            "vectorizar-claro-1280.webp": 104386,
+            "vectorizar-claro-2560.avif": 300311,
+            "vectorizar-oscuro-1280.avif": 76993,
+            "vectorizar-oscuro-1280.webp": 116752,
+            "vectorizar-oscuro-2560.avif": 111775
           }
         },
         "en": {
@@ -563,12 +563,12 @@
           "alto": 1600,
           "propia": true,
           "pesos": {
-            "vectorizar-claro-1280.avif": 84735,
-            "vectorizar-claro-1280.webp": 103624,
-            "vectorizar-claro-2560.avif": 295058,
-            "vectorizar-oscuro-1280.avif": 75778,
-            "vectorizar-oscuro-1280.webp": 114934,
-            "vectorizar-oscuro-2560.avif": 111967
+            "vectorizar-claro-1280.avif": 84909,
+            "vectorizar-claro-1280.webp": 104084,
+            "vectorizar-claro-2560.avif": 297972,
+            "vectorizar-oscuro-1280.avif": 76046,
+            "vectorizar-oscuro-1280.webp": 115408,
+            "vectorizar-oscuro-2560.avif": 110421
           }
         }
       }

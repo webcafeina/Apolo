@@ -14,6 +14,8 @@ const FECHA = "2026-10-27";
 // Vectorizar (ADR 0039): el sol de Apolo en colores planos, medido por medidas.mjs.
 const V = M.vector;
 const FECHA_VECTOR = "2026-11-10";
+// Las cifras cambiaron con la 1.1.1 (el sol sobre transparente, de 71,3 a 80,7).
+const REVISADO_VECTOR = "2026-11-12";
 const decimal = (n: number, idioma: Idioma) => n.toLocaleString(idioma === "es" ? "es-ES" : "en-US", { maximumFractionDigits: 1 });
 
 export const GUIAS: Record<Idioma, Articulo[]> = {
@@ -360,7 +362,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       pagina: "guiaVectorizar",
       destacado: { valor: decimal(V.nota, "es"), texto: "de nota con el sol de Apolo, en un SVG que se amplía sin perder nitidez" },
       publicado: FECHA_VECTOR,
-      revisado: FECHA_VECTOR,
+      revisado: REVISADO_VECTOR,
       titulo: "Vectorizar una imagen: de PNG a SVG, PDF o DXF, gratis · Apolo",
       descripcion:
         "Pasa un logotipo, un icono o un dibujo de PNG o JPG a vectorial (SVG, PDF, EPS o DXF) en tu ordenador, viendo el resultado y su nota. También para cortar vinilo o láser.",
@@ -775,7 +777,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       pagina: "guiaVectorizar",
       destacado: { valor: decimal(V.nota, "en"), texto: "score with the Apolo sun, in an SVG that scales without losing sharpness" },
       publicado: FECHA_VECTOR,
-      revisado: FECHA_VECTOR,
+      revisado: REVISADO_VECTOR,
       titulo: "Vectorize an image: PNG to SVG, PDF or DXF, for free · Apolo",
       descripcion:
         "Turn a logo, an icon or a drawing from PNG or JPG into vector form (SVG, PDF, EPS or DXF) on your computer, seeing the result and its score. Also for cutting vinyl or laser.",

@@ -4,6 +4,19 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-12, tarde): la 1.1.1, HECHA en `main` y sin publicar** (hasta `c799fdf`; `make comprobar`
+> entero). Siete arreglos: los **bordes dobles** de «Trazar bordes» (del 7,3 % al 1,6 %, sin puentes); las **fotos**
+> (la detección ya no depende del tamaño: una de 1.280 px pasaba por dibujo, 75 s; y se suavizan antes: la mitad
+> de peso, de 2 a 4 veces antes); el **pánico de la CLI** con `| head`; **Ctrl+C en un lote** (temporal y enlace:
+> nunca un fichero a medias con el nombre bueno); los **contornos nítidos** con cualquier zoom (en vectorial
+> encima); los **JPEG con un comentario** a JPEG XL con pérdida; y el **borde sobre transparente** (el sol, de 71,3
+> a 80,7; el banco, de 75,90 a 76,04). Detalle en `docs/sesiones.md` y la deuda. **El día de la 1.1.1** (cuando lo
+> diga el cliente), como con la 1.1.0: notas `.github/notas/v1.1.1.md` (es/en); versión a 1.1.1 en `Cargo.toml` y
+> en el plugin, `cargo update -w`; `make cli`, `node web/herramientas/medidas.mjs` (**el sol cambia: 80,7 y otro
+> peso**, y la web lo cita) y, como el modo Contornos cambió, `make capturas-web` y `node web/herramientas/readme.mjs`;
+> `make comprobar`, commit, CI en verde; etiqueta y `publicar.yml`; revisar el borrador; publicar con su sí.
+> Pendiente aparte: que el cliente vea en su Mac los contornos con zoom (solo vistos en el navegador).
+
 > **PARADA AQUÍ (2026-11-12, mediodía): la prueba del cliente de la 1.1.0, HECHA y bien.** Guiada: actualización y
 > pantalla Vectorizar en su Mac, Windows 11 ARM y Ubuntu, «perfecto»; SVG, EPS y PDF en Affinity, Figma (sin EPS) e
 > Inkscape; el DXF de «Trazar bordes» en Inkscape, a escala 1:1 (ADR 0039, Verificación). Falta solo un programa de

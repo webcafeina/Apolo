@@ -17,6 +17,15 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   los ficheros (SVG, EPS y PDF en Affinity, Figma e Inkscape; el DXF en Inkscape, medido a escala 1:1 frente al
   que sale aquí con la CLI). Todo bien. Preguntó por los repositorios oficiales de APT y dnf: se le explicó lo de
   `docs/distribucion.md` (los propios ya existen; los oficiales, descartados a corto plazo).
+- **La 1.1.1**, siete arreglos de la deuda, cada uno con su prueba (comprobada fallando con lo de antes), su
+  commit y `make comprobar`: `apolo` sin pánico con la salida cortada (SIGPIPE); «Trazar bordes» partiendo los
+  tramos donde dejan de coincidir y pegando los extremos (medido en 22 imágenes: repetido del 7,3 % al 1,6 %,
+  extremos sueltos solo en el marco); fotos con la detección por muestra (límite 0,08) y una mediana antes (barrido
+  de siete combinaciones en las cinco fotos; el área mínima mayor, descartada: deja huecos); `escribir_sin_pisar`
+  con temporal y enlace (y reserva y renombra sin enlaces); contornos en vectorial con Path2D (visto a 109 % y
+  1.239 % en el navegador); JPEG con comentario a JXL con pérdida, por PNG y con aviso en la CLI; y el borde sobre
+  transparente, que no era el borde (trampas.md): el banco entero antes y después.
+- El cliente pidió explicación de la 3 y la 4 antes de decidir, y luego las quiso también.
 
 ---
 

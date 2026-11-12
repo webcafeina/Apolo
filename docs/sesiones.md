@@ -26,6 +26,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   1.239 % en el navegador); JPEG con comentario a JXL con pérdida, por PNG y con aviso en la CLI; y el borde sobre
   transparente, que no era el borde (trampas.md): el banco entero antes y después.
 - El cliente pidió explicación de la 3 y la 4 antes de decidir, y luego las quiso también.
+- **«Publicamos y comprobamos luego»**: notas de la 1.1.1 (es/en), versión, `cargo update -w`, `make cli`, medidas
+  (el sol: 80,7, 7.429 B de SVG), `make capturas-web` (80 capturas, bien) y `readme.mjs`, que fotografía la web
+  **compilada**: la primera vez salió de la compilación vieja, hubo que `pnpm -C web build` y repetirlo. Commit
+  `79bd9f1`, CI en verde, run `Web` cancelado, etiqueta `v1.1.1` y `publicar.yml` (43226672206) corriendo. El cliente
+  preguntó si la versión de Mac es Universal: sí (lipo de arm64 y x86_64), nativa en Apple Silicon, sin Rosetta.
+- Se fue con la compilación en marcha; se sigue por la tarde (PARADA de estado.md).
 
 ---
 

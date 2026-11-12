@@ -4,6 +4,24 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-12, ~14:30): la 1.1.1, ETIQUETADA y compilándose; sin revisar ni publicar.** Commit de la
+> versión `79bd9f1` (notas `.github/notas/v1.1.1.md`, Cargo.toml y plugin a 1.1.1, medidas con el sol a 80,7,
+> capturas de la web y del README de nuevo, guía de vectorizar revisada el 2026-11-12), `make comprobar` entero y
+> CI en verde (el run `Web` del push, 43224597586, **cancelado a propósito**: la web en línea sigue en 1.1.0).
+> Etiqueta `v1.1.1` empujada → `publicar.yml`, **run 43226672206**, que se dejó corriendo al irse el cliente.
+> **El cliente ya dio el sí para publicar** («Publicamos y comprobamos luego»): al retomar, 1) `gh run view
+> 43226672206 -R webcafeina/Apolo` (si algo falló, ver qué y relanzar ese trabajo); 2) `scripts/seguridad-github.sh`;
+> 3) **revisar el borrador** como el de la 1.1.0 (en `~/.cache/apolo-revision/`, no en /tmp: 50 ficheros, sumas,
+> copias con nombre fijo con `empaquetado/nombres-fijos.py`, firmas de `latest.json` con la clave pública de
+> `src-tauri/tauri.conf.json` (`~/.cache/apolo-revision/sesion-2026-10-30/verificar.py`), `gh attestation verify`, `--version` de `apolo` y `apolo-mcp`, y `apolo vectorizar`
+> del sol con los bytes de `web/src/datos/medidas.json`: 7.429 / 3.750 / 9.268 / 44.420, nota 80,7); 4) publicar
+> con `gh release edit v1.1.1 -R webcafeina/Apolo --draft=false --latest`; 5) vigilar `Web`, `Homebrew` y
+> `Registro MCP` y mirar web, APT, RPM, PKGBUILD, cask, registro MCP y enlaces fijos; 6) Chocolatey 1.1.1 a mano
+> (cuando aprueben la 1.1.0: si no, 403) con `rellenar.py` y la imagen `chocolatey/choco`, como en
+> `docs/lanzamiento.md`; 7) **luego, la comprobación del cliente** («comprobamos luego»): que se actualice, y los
+> contornos con zoom en su Mac (solo vistos en el navegador). Los documentos de esta parada van en un commit local
+> sin subir (subirlo con lo siguiente, tras `make comprobar`).
+
 > **PARADA AQUÍ (2026-11-12, tarde): la 1.1.1, HECHA en `main` y sin publicar** (hasta `c799fdf`; `make comprobar`
 > entero). Siete arreglos: los **bordes dobles** de «Trazar bordes» (del 7,3 % al 1,6 %, sin puentes); las **fotos**
 > (la detección ya no depende del tamaño: una de 1.280 px pasaba por dibujo, 75 s; y se suavizan antes: la mitad

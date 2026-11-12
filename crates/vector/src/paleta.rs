@@ -161,14 +161,28 @@ pub fn sin_suavizado(im: &Rgba) -> bool {
     (intermedios as f64) < 0.003 * opacos.max(1) as f64
 }
 
-/// Colores distintos por píxel: en una foto, cada píxel casi tiene el suyo.
+/// Cuántos píxeles mira `colores_por_pixel`, como mucho.
+const MUESTRA_COLORES: usize = 65_536;
+
+/// Colores distintos por píxel: en una foto, cada píxel casi tiene el suyo. Se mira una muestra repartida por
+/// la imagen de unos 65.000 píxeles, para que no dependa del tamaño: en una foto grande los colores se repiten
+/// más, y los arándanos del banco a 1.280 px daban 0,047 y pasaban por dibujo (75 s y 10 MB).
 pub fn colores_por_pixel(im: &Rgba) -> f64 {
+    let (w, h) = (im.ancho as usize, im.alto as usize);
+    let paso = ((w * h) as f64 / MUESTRA_COLORES as f64)
+        .sqrt()
+        .ceil()
+        .max(1.0) as usize;
     let mut distintos = std::collections::HashSet::new();
     let mut opacos = 0usize;
-    for (i, q) in im.px.as_chunks::<4>().0.iter().enumerate() {
-        if im.alfa(i) == 255 {
-            distintos.insert([q[0], q[1], q[2]]);
-            opacos += 1;
+    for y in (0..h).step_by(paso) {
+        for x in (0..w).step_by(paso) {
+            let i = y * w + x;
+            if im.alfa(i) == 255 {
+                let q = &im.px[i * 4..i * 4 + 3];
+                distintos.insert([q[0], q[1], q[2]]);
+                opacos += 1;
+            }
         }
     }
     distintos.len() as f64 / opacos.max(1) as f64

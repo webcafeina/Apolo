@@ -92,6 +92,24 @@ Objetivos del plan: menos de 2 s para 512 px y menos de 10 s para una foto de 1.
 - **En paralelo con rayon**: las capas, las formas de cada capa y los dos órdenes de capas que se comparan.
   Las fotos ganan sobre todo por las capas (24, y en cada una los contornos son lo caro).
 
+### Las fotos a su tamaño (2026-11-12, para la 1.1.1)
+
+`apolo vectorizar` en release, de una en una, con las fotos del banco **sin reducir a 1.024 px** (como las
+abriría cualquiera). «Antes», la 1.1.0; «ahora», con la detección por muestra y la foto suavizada (mediana de
+5 × 5) antes de vectorizar:
+
+| Foto | Antes | Ahora |
+|---|---|---|
+| Arándanos, 1.280 × 1.104 | **75,3 s, 10,6 MB**, nota −3,3 (pasaba por dibujo) | **2,5 s, 5,8 MB**, −14,4 |
+| Pera, 1.280 × 1.213 | 8,8 s, 12,6 MB, 9,9 | 2,9 s, 5,6 MB, −1,3 |
+| Retrato, 1.268 × 1.576 | 9,6 s, 16,6 MB, −18,7 | 3,9 s, 6,9 MB, −20,7 |
+| Máscara, 1.600 × 1.149 | 15,9 s, 21,0 MB, −12,8 | 6,7 s, 13,5 MB, −5,8 |
+| libwebp, 128 px | 0,1 s, 117 KB, 26,4 | igual (no se suaviza por debajo de 500 px) |
+
+Probado también, y descartado como valor por defecto: un área mínima de 50 px² (la mitad de peso, pero deja
+huecos que destapan la capa de debajo: notas de −40 a −53), y 16 colores o menos detalle (pesan menos y bajan
+la nota; están en las opciones para quien los quiera: con suavizado, 16 colores y detalle 60, de 1,8 a 2,6 MB).
+
 ### El modo por nota (hito 5, 2026-11-10)
 
 `apolo vectorizar --objetivo N --detalle 0`, con la CLI en release, de una en una, en el mismo VPS. Parte en dos

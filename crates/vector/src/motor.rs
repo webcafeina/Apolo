@@ -97,9 +97,10 @@ pub(crate) fn es_pixel_art(im: &Rgba) -> bool {
     g >= 2
 }
 
-/// Más colores distintos por píxel que esto: foto. En el banco, las fotos dan de 0,13 a 0,25 y los
-/// dibujos (también los suavizados y con degradados) 0,007 como mucho (ADR 0039).
-const LIMITE_FOTO: f64 = 0.05;
+/// Más colores distintos por píxel que esto (en la muestra de `paleta::colores_por_pixel`): foto. Las fotos del
+/// banco, a su tamaño, dan de 0,25 a 0,62, y los dibujos (también con degradados, de 256 a 1.400 px) 0,031 como
+/// mucho: el límite deja un margen de unas tres veces a cada lado (ADR 0039).
+const LIMITE_FOTO: f64 = 0.08;
 
 /// El tipo efectivo, resolviendo `Auto`.
 pub fn tipo_efectivo(im: &Rgba, tipo: TipoImagen) -> TipoImagen {
@@ -148,6 +149,15 @@ fn paleta_de(im: &Rgba, tipo: TipoImagen, o: &OpcionesVector) -> Result<Vec<[u8;
 /// Vectoriza una imagen.
 pub fn vectorizar(im: &Rgba, o: &OpcionesVector) -> Result<Documento, String> {
     let tipo = tipo_efectivo(im, o.tipo);
+    // Una foto, antes, suavizada: sin el grano, cada mancha de color sale en menos formas y con menos nodos.
+    let suave;
+    let im = match radio_suavizado(im) {
+        r if tipo == TipoImagen::Foto && r > 0 => {
+            suave = mediana(im, r);
+            &suave
+        }
+        _ => im,
+    };
     if tipo == TipoImagen::PixelArt && o.paleta.is_empty() {
         let p = paleta_de(im, tipo, o)?;
         return Ok(pixelart::trazar(&paleta::aplicar(im, &p), &p));
@@ -360,4 +370,76 @@ fn islas_por_color(m: &[subpixel::Mezcla], w: usize, h: usize, n: usize) -> Vec<
         }
     }
     islas
+}
+
+/// El radio con que se suaviza una foto antes de vectorizarla: nada por debajo de 500 px de lado corto, 1 px
+/// hasta 1.000 y 2 px por encima (con la entrada reducida a 2 Mpx, no pasa de ahí). En las fotos del banco, a
+/// su tamaño, el SVG pesa la mitad (de 13–21 MB a 6–13), sale de 2 a 4 veces antes y la nota es parecida (unas
+/// suben, otras bajan); en una de 128 px, suavizar la hundía (de 26 a −6).
+fn radio_suavizado(im: &Rgba) -> usize {
+    (im.ancho.min(im.alto) / 500).min(2) as usize
+}
+
+/// Mediana por canal en una ventana de (2r+1)²: quita el grano y respeta los bordes.
+fn mediana(im: &Rgba, r: usize) -> Rgba {
+    let (w, h) = (im.ancho as usize, im.alto as usize);
+    let mut out = im.px.clone();
+    out.par_chunks_mut(w * 4).enumerate().for_each(|(y, fila)| {
+        let mut v = Vec::with_capacity((2 * r + 1).pow(2));
+        for x in 0..w {
+            for c in 0..3 {
+                v.clear();
+                for j in y.saturating_sub(r)..=(y + r).min(h - 1) {
+                    for i in x.saturating_sub(r)..=(x + r).min(w - 1) {
+                        v.push(im.px[(j * w + i) * 4 + c]);
+                    }
+                }
+                let m = v.len() / 2;
+                fila[x * 4 + c] = *v.select_nth_unstable(m).1;
+            }
+        }
+    });
+    Rgba {
+        ancho: im.ancho,
+        alto: im.alto,
+        px: out,
+        alfa: im.alfa.clone(),
+    }
+}
+
+#[cfg(test)]
+mod pruebas {
+    use super::*;
+
+    #[test]
+    fn la_mediana_quita_el_grano_y_respeta_los_bordes() {
+        // Mitad negra y mitad blanca, con un píxel rojo suelto en la negra.
+        let (w, h) = (20u32, 10u32);
+        let mut px = Vec::new();
+        for y in 0..h {
+            for x in 0..w {
+                let c = if x < 10 { 0 } else { 255 };
+                if (x, y) == (4, 5) {
+                    px.extend([255, 0, 0, 255]);
+                } else {
+                    px.extend([c, c, c, 255]);
+                }
+            }
+        }
+        let m = mediana(&Rgba::nueva(w, h, px), 2);
+        assert_eq!(m.color(4, 5), [0, 0, 0], "el píxel suelto se va");
+        for y in 0..h {
+            assert_eq!(m.color(9, y), [0, 0, 0], "el borde se queda donde estaba");
+            assert_eq!(m.color(10, y), [255, 255, 255]);
+        }
+    }
+
+    #[test]
+    fn radio_segun_el_tamano() {
+        let im = |w, h| Rgba::nueva(w, h, vec![255; (w * h * 4) as usize]);
+        assert_eq!(radio_suavizado(&im(128, 128)), 0);
+        assert_eq!(radio_suavizado(&im(800, 600)), 1);
+        assert_eq!(radio_suavizado(&im(1280, 1104)), 2);
+        assert_eq!(radio_suavizado(&im(1414, 1414)), 2);
+    }
 }

@@ -4,6 +4,13 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-12, mediodía): la prueba del cliente de la 1.1.0, HECHA y bien.** Guiada: actualización y
+> pantalla Vectorizar en su Mac, Windows 11 ARM y Ubuntu, «perfecto»; SVG, EPS y PDF en Affinity, Figma (sin EPS) e
+> Inkscape; el DXF de «Trazar bordes» en Inkscape, a escala 1:1 (ADR 0039, Verificación). Falta solo un programa de
+> corte de verdad (deuda). **Lo siguiente** (recomendado al cliente, pendiente de su sí): una **1.1.1** con los
+> bordes dobles de «Trazar bordes», las fotos que pesan más que el JPEG y el pánico de la CLI con `| head`; los
+> degradados en anillos, después y aparte, en el banco.
+
 > **PARADA AQUÍ (2026-11-12, mañana): v1.1.0 PUBLICADA (08:14 UTC), la de vectorizar.** Con el sí del cliente.
 > Salieron solos y en verde `Web`, `Homebrew` y `Registro MCP`. Comprobado: la web dice 1.1.0 y sirve las guías
 > `/guias/vectorizar-una-imagen/` y `/en/guides/vectorize-an-image/`; APT, RPM, PKGBUILD, el cask de Homebrew y el

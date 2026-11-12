@@ -13,6 +13,10 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **Chocolatey 1.1.0** rellenada con `rellenar.py`, empaquetada y subida con `chocolatey/choco` (en
   `~/.cache/apolo-revision/choco110/`); la 1.0.2 se había aprobado el 9-nov. winget, a la espera de #463314.
 - Security tras la publicación, igual.
+- **La prueba del cliente**, guiada en cuatro partes: actualizar y la pantalla en el Mac; Windows 11 ARM; Ubuntu; y
+  los ficheros (SVG, EPS y PDF en Affinity, Figma e Inkscape; el DXF en Inkscape, medido a escala 1:1 frente al
+  que sale aquí con la CLI). Todo bien. Preguntó por los repositorios oficiales de APT y dnf: se le explicó lo de
+  `docs/distribucion.md` (los propios ya existen; los oficiales, descartados a corto plazo).
 
 ---
 

@@ -182,3 +182,12 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   cuadrado con su color en los dos lados; opaca, todo con alfa 255) y e2e (píxeles del damero a los dos lados
   del deslizador; con el dibujo sobre blanco da 0 y falla). Visto en capturas con cada aspecto. **No visto en la
   ventana de verdad**.
+- **La prueba del cliente con la 1.1.0 publicada (2026-11-12)**, guiada: la actualización desde la 1.0.2 y la
+  pantalla Vectorizar en su **Mac**, en **Windows 11 ARM** y en **Ubuntu** (VM), con el sol plano y el logo de
+  `pruebas/vector/`: los cuadros detrás de lo transparente a los dos lados, la nota (cerca de 71), Contornos,
+  buscar una nota, exportar los cuatro formatos (el diálogo de guardar y soltar desde el Finder, en la ventana de
+  verdad) y los iconos de cada sistema. **SVG y EPS** abiertos en **Affinity, Figma** (el SVG; Figma no abre EPS)
+  **e Inkscape**; el **PDF**, como formas editables; el **DXF** de «Trazar bordes» del logo, en **Inkscape**: los
+  contornos bien y a escala 1:1 (162,8 × 156,6 allí; 162,5 × 156,1 de geometría aquí, la diferencia es el trazo).
+  **Sigue sin verse**: el DXF en un programa de corte o CAD de verdad, el MCP con un agente y un logo propio del
+  cliente.

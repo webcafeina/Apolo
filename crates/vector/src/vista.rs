@@ -47,7 +47,8 @@ pub fn rasterizar_svg(svg: &[u8], ancho: u32, alto: u32) -> Result<Vec<u8>, Stri
     Ok(lienzo.take())
 }
 
-/// Los contornos y los nodos sobre el dibujo apagado ([`crate::svg::contornos`]), del tamaño del documento.
-pub fn rasterizar_contornos(doc: &Documento) -> Result<Vec<u8>, String> {
-    rasterizar_svg(crate::svg::contornos(doc).as_bytes(), doc.ancho, doc.alto)
+/// El dibujo apagado sobre blanco ([`crate::svg::apagado`]), del tamaño del documento: el fondo del modo
+/// «Contornos», que pinta los trazados encima.
+pub fn rasterizar_apagado(doc: &Documento) -> Result<Vec<u8>, String> {
+    rasterizar_svg(crate::svg::apagado(doc).as_bytes(), doc.ancho, doc.alto)
 }

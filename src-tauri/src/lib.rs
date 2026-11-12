@@ -263,6 +263,15 @@ async fn exportar_vector(
 }
 
 #[tauri::command]
+async fn contornos_vector(
+    s: Estado<'_>,
+    id: u64,
+) -> Result<apolo_nucleo::vector::Contornos, Fallo> {
+    let s = s.inner().clone();
+    bloqueante(move || s.contornos_vector(id)).await
+}
+
+#[tauri::command]
 fn nombre_salida_vector(s: Estado, id: u64, formato: FormatoVector) -> Result<String, Fallo> {
     s.nombre_salida_vector(id, formato)
 }
@@ -504,6 +513,7 @@ pub fn arrancar() {
             nombre_salida,
             vectorizar,
             medir_vector,
+            contornos_vector,
             exportar_vector,
             nombre_salida_vector,
             aplicar_preset,

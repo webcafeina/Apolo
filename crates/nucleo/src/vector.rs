@@ -320,9 +320,16 @@ pub fn vista_transparente(doc: &Documento) -> Resultado<Vec<u8>> {
     apolo_vector::vista::rasterizar_transparente(doc).map_err(Error::Configuracion)
 }
 
-/// Los contornos y los nodos sobre el dibujo apagado, RGBA del tamaño del documento.
-pub fn contornos(doc: &Documento) -> Resultado<Vec<u8>> {
-    apolo_vector::vista::rasterizar_contornos(doc).map_err(Error::Configuracion)
+/// El dibujo apagado sobre blanco, RGBA del tamaño del documento: el fondo del modo «Contornos».
+pub fn apagado(doc: &Documento) -> Resultado<Vec<u8>> {
+    apolo_vector::vista::rasterizar_apagado(doc).map_err(Error::Configuracion)
+}
+
+pub use apolo_vector::svg::Contornos;
+
+/// Los trazados y los nodos, que la pantalla pinta en vectorial encima del dibujo apagado.
+pub fn contornos(doc: &Documento) -> Contornos {
+    apolo_vector::svg::contornos(doc)
 }
 
 /// El fichero, en el formato pedido.

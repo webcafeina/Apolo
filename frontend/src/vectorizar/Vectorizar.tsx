@@ -12,7 +12,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Cabecera, Icono, IconoApp, Interruptor, lleno, Marca } from "../componentes";
-import { Comparador } from "../estudio/Comparador";
+import { Comparador, type Trazados } from "../estudio/Comparador";
 import { formatoBytes } from "../estudio/Estudio";
 import { banda } from "../estudio/Panel";
 import { lengua } from "../i18n";
@@ -45,6 +45,7 @@ export function Vectorizar({ activo }: { activo: boolean }) {
   const [dibujo, setDibujo] = useState<ImageData | null>(null);
   const [referencia, setReferencia] = useState<ImageData | null>(null);
   const [extra, setExtra] = useState<ImageData | null>(null);
+  const [trazados, setTrazados] = useState<Trazados | null>(null);
   const [ocupado, setOcupado] = useState(false);
   const [modo, setModo] = useState<ModoVector>("deslizador");
   const [tipoMapa, setTipoMapa] = useState<puente.TipoMapa>("diferencia");
@@ -114,15 +115,23 @@ export function Vectorizar({ activo }: { activo: boolean }) {
   useEffect(() => {
     if (!info || !vista || (modo !== "diferencias" && modo !== "contornos")) {
       setExtra(null);
+      setTrazados(null);
       return;
     }
     let vivo = true;
     setExtra(null);
-    const pedir = modo === "contornos" ? puente.pixelesContornosVector(info.id) : puente.pixelesMapaVector(info.id, tipoMapa);
-    pedir.then(
-      (p) => vivo && setExtra(p),
-      (e: puente.Fallo) => vivo && !e.cancelado && setError(e.mensaje),
-    );
+    setTrazados(null);
+    const fallo = (e: puente.Fallo) => vivo && !e.cancelado && setError(e.mensaje);
+    if (modo === "contornos") {
+      // El dibujo apagado, en píxeles; los trazados y los nodos, en vectorial encima (nítidos con zoom).
+      Promise.all([puente.pixelesContornosVector(info.id), puente.contornosVector(info.id)]).then(([p, c]) => {
+        if (!vivo) return;
+        setTrazados({ trazos: new Path2D(c.trazos), nodos: c.nodos });
+        setExtra(p);
+      }, fallo);
+    } else {
+      puente.pixelesMapaVector(info.id, tipoMapa).then((p) => vivo && setExtra(p), fallo);
+    }
     return () => {
       vivo = false;
     };
@@ -256,6 +265,7 @@ export function Vectorizar({ activo }: { activo: boolean }) {
               : [false, ocupado]
           }
           modo={modo === "contornos" ? "diferencias" : modo}
+          encima={modo === "contornos" ? trazados : null}
           extra={
             modo === "diferencias" ? (
               <select

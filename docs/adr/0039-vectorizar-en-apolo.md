@@ -195,3 +195,7 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   contornos bien y a escala 1:1 (162,8 × 156,6 allí; 162,5 × 156,1 de geometría aquí, la diferencia es el trazo).
   **Sigue sin verse**: el DXF en un programa de corte o CAD de verdad, el MCP con un agente y un logo propio del
   cliente.
+- **Contornos nítidos (2026-11-12)**: los trazados y los nodos, en vectorial encima del dibujo apagado (antes, una
+  imagen del tamaño del dibujo que se pixelaba con zoom). E2e: con el zoom a 1.139 %, la mediana del grosor del
+  trazo no pasa de 3 px de pantalla. Visto en una captura de navegador a 109 % y 1.239 %; **no en la ventana de
+  verdad** (Path2D con un `d` de SVG está en WebKit, WebView2 y Chromium).

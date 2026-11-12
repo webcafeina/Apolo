@@ -535,6 +535,12 @@ export const medirVector = (id: number) => orden<Medidas>("medir_vector", { id }
 export const pixelesVector = (id: number) => pixeles(`vector/${id}`);
 export const pixelesReferenciaVector = (id: number) => pixeles(`vector-referencia/${id}`);
 export const pixelesContornosVector = (id: number) => pixeles(`vector-contornos/${id}`);
+/** Los trazados (un `d` de SVG) y los nodos (x e y seguidas) del último dibujo, en píxeles de la imagen. */
+export interface ContornosVector {
+  trazos: string;
+  nodos: number[];
+}
+export const contornosVector = (id: number) => orden<ContornosVector>("contornos_vector", { id });
 export const pixelesMapaVector = (id: number, tipo: TipoMapa) => pixeles(`vector-mapa/${id}?tipo=${tipo}`);
 
 const NOMBRE_VECTOR: Record<FormatoVector, string> = { svg: "SVG", pdf: "PDF", eps: "EPS", dxf: "DXF" };

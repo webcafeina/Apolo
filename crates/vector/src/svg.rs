@@ -209,10 +209,9 @@ pub fn escribir_con(doc: &Documento, o: &OpcionesExportar) -> String {
     )
 }
 
-/// El SVG para ver los contornos (el modo «Contornos» del comparador): el dibujo relleno y apagado, cada forma
-/// trazada encima y un punto en cada nodo (donde empieza cada tramo; en círculos y elipses, sus cuatro
-/// cuartos). Tamaño, el del documento.
-pub fn contornos(doc: &Documento) -> String {
+/// El dibujo relleno y apagado sobre blanco: el fondo del modo «Contornos» del comparador, que pinta encima
+/// los trazados y los nodos de `contornos` en vectorial (nítidos con cualquier zoom). Tamaño, el del documento.
+pub fn apagado(doc: &Documento) -> String {
     let (w, h) = (doc.ancho, doc.alto);
     let relleno = escribir(doc);
     // El dibujo, sin la etiqueta <svg> de fuera, dentro de un grupo apagado.
@@ -220,18 +219,32 @@ pub fn contornos(doc: &Documento) -> String {
         .split_once('>')
         .map(|(_, r)| r.trim_end_matches("</svg>"))
         .unwrap_or("");
+    format!(
+        r##"<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{w}" height="{h}" viewBox="0 0 {w} {h}"><rect width="{w}" height="{h}" fill="#ffffff"/><g opacity="0.35">{dentro}</g></svg>"##
+    )
+}
+
+/// Los trazados de todas las formas y sus nodos, para pintarlos encima del dibujo (el modo «Contornos»).
+#[derive(Clone, Debug, PartialEq, serde::Serialize)]
+pub struct Contornos {
+    /// Todas las formas en un solo trazado de SVG (`d`), en píxeles de la imagen.
+    pub trazos: String,
+    /// Dónde empieza cada tramo, x e y seguidas (en círculos y elipses, sus cuatro cuartos).
+    pub nodos: Vec<f32>,
+}
+
+/// Los trazados y los nodos del documento.
+pub fn contornos(doc: &Documento) -> Contornos {
     let mut trazos = String::new();
-    let mut nodos = String::new();
+    let mut nodos = Vec::new();
     for c in &doc.capas {
         for f in &c.formas {
             d(f, &mut trazos);
             for t in crate::trazado::tramos(f) {
                 let p = t.ini();
-                let _ = write!(nodos, "M{} {}h0", r2(p.0), r2(p.1));
+                nodos.extend([p.0 as f32, p.1 as f32]);
             }
         }
     }
-    format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{w}" height="{h}" viewBox="0 0 {w} {h}"><rect width="{w}" height="{h}" fill="#ffffff"/><g opacity="0.35">{dentro}</g><path d="{trazos}" fill="none" stroke="#d6006f" stroke-width="0.8" stroke-linejoin="round"/><path d="{nodos}" fill="none" stroke="#1a57d6" stroke-width="2.4" stroke-linecap="round"/></svg>"##
-    )
+    Contornos { trazos, nodos }
 }

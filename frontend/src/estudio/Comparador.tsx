@@ -37,7 +37,20 @@ interface Props {
   /** Va donde el rótulo izquierdo en el modo diferencias (el tipo de mapa). */
   extra?: React.ReactNode;
   recorte?: EdicionRecorte | null;
+  /** Trazados y nodos que se pintan encima de la imagen en vectorial, nítidos con cualquier zoom (el modo
+   *  «Contornos» de Vectorizar). Solo con una imagen (el modo diferencias). */
+  encima?: Trazados | null;
 }
+
+export interface Trazados {
+  /** En píxeles de la imagen. */
+  trazos: Path2D;
+  /** x e y seguidas, en píxeles de la imagen. */
+  nodos: ArrayLike<number>;
+}
+
+/** Más nodos que estos a la vista no se distinguen: no se pintan (en una foto vectorizada hay cientos de miles). */
+const MAX_NODOS = 20_000;
 
 interface Vista {
   /** Píxeles de pantalla (CSS) por píxel de imagen. */
@@ -55,7 +68,7 @@ function color(nombre: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(nombre).trim() || "#ccc";
 }
 
-export function Comparador({ izquierda: original, derecha: resultado, rotulos, ocupados, modo, extra, recorte }: Props) {
+export function Comparador({ izquierda: original, derecha: resultado, rotulos, ocupados, modo, extra, recorte, encima }: Props) {
   const { t } = useTranslation();
   const caja = useRef<HTMLDivElement>(null);
   const lienzo = useRef<HTMLCanvasElement>(null);
@@ -210,6 +223,34 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
       g.restore();
     } else if (modoReal === "diferencias") {
       pintar(b, 0, tamano.w, 0, tamano.w);
+      if (encima && mismaProporcion) {
+        // Los trazados, a 1 px de pantalla con cualquier zoom; los nodos, puntos de 4 px, solo los que se ven.
+        const e = vista.escala;
+        g.save();
+        g.translate(vista.x, vista.y);
+        g.scale(e, e);
+        g.lineWidth = 1 / e;
+        g.lineJoin = "round";
+        g.strokeStyle = "#d6006f";
+        g.stroke(encima.trazos);
+        g.restore();
+        const n = encima.nodos;
+        const r = 2;
+        const puntos = new Path2D();
+        let cuenta = 0;
+        for (let i = 0; i + 1 < n.length && cuenta <= MAX_NODOS; i += 2) {
+          const x = vista.x + n[i] * e;
+          const y = vista.y + n[i + 1] * e;
+          if (x < -r || y < -r || x > tamano.w + r || y > tamano.h + r) continue;
+          cuenta++;
+          puntos.moveTo(x + r, y);
+          puntos.arc(x, y, r, 0, Math.PI * 2);
+        }
+        if (cuenta <= MAX_NODOS) {
+          g.fillStyle = "#1a57d6";
+          g.fill(puntos);
+        }
+      }
     } else if (modoReal === "deslizador") {
       const xc = corte * tamano.w;
       pintar(a, 0, tamano.w, 0, xc);
@@ -235,7 +276,7 @@ export function Comparador({ izquierda: original, derecha: resultado, rotulos, o
       g.fillStyle = color("--filete");
       g.fillRect(p1.x0 - 0.5, 0, 1, tamano.h);
     }
-  }, [bitmaps, vista, corte, tamano, modoReal, ref, panel, mismaProporcion, ajustar, recorte]);
+  }, [bitmaps, vista, corte, tamano, modoReal, ref, panel, mismaProporcion, ajustar, recorte, encima]);
 
   /** El asa (o el marco entero) bajo el puntero, mientras se recorta. */
   const asaEn = (p: { x: number; y: number }): Asa | null => {

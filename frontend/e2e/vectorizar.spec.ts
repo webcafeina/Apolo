@@ -88,6 +88,38 @@ test("contornos y diferencias pintan algo", async ({ page }) => {
   await expect.poll(() => colores(page), { timeout: 15_000 }).toBeGreaterThan(1);
 });
 
+test("los contornos siguen finos con mucho zoom", async ({ page }) => {
+  await abrir(page);
+  await page.getByRole("radio", { name: "Contornos" }).click();
+  await expect.poll(() => colores(page), { timeout: 15_000 }).toBeGreaterThan(5);
+  for (let i = 0; i < 6; i++) await page.getByRole("button", { name: "Acercar" }).click();
+  await page.waitForTimeout(300);
+  // El grosor de cada píxel de trazo (magenta): lo menor entre su tramo seguido en horizontal y en vertical. Una
+  // línea pintada en vectorial mide lo mismo con cualquier zoom (1 px, por la densidad de la pantalla); la imagen
+  // de antes, ampliada once veces, daba trazos de unos 9 px.
+  const grosor = await page.getByTestId("lienzo").locator("visible=true").first().evaluate((c: HTMLCanvasElement) => {
+    const { width: w, height: h } = c;
+    const d = c.getContext("2d")!.getImageData(0, 0, w, h).data;
+    const es = (x: number, y: number) => {
+      const i = (y * w + x) * 4;
+      return d[i] > 150 && d[i + 1] < 90 && d[i + 2] > 60 && d[i + 2] < 170;
+    };
+    const tramo = (x: number, y: number, dx: number, dy: number) => {
+      let n = 1;
+      for (let k = 1; es(x + dx * k, y + dy * k) && k < 60; k++) n++;
+      for (let k = 1; es(x - dx * k, y - dy * k) && k < 60; k++) n++;
+      return n;
+    };
+    const grosores: number[] = [];
+    for (let y = 60; y < h - 60; y += 3)
+      for (let x = 60; x < w - 60; x += 3) if (es(x, y)) grosores.push(Math.min(tramo(x, y, 1, 0), tramo(x, y, 0, 1)));
+    grosores.sort((a, b) => a - b);
+    return { cuantos: grosores.length, mediana: grosores[Math.floor(grosores.length / 2)] / devicePixelRatio };
+  });
+  expect(grosor.cuantos).toBeGreaterThan(20);
+  expect(grosor.mediana).toBeLessThanOrEqual(3);
+});
+
 test("exportar a SVG, a PDF y a DXF de bordes", async ({ page }) => {
   await abrir(page);
   for (const [formato, cabecera] of [

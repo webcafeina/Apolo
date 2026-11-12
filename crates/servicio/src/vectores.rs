@@ -146,11 +146,17 @@ impl Servicio {
         Ok((h.documento.ancho, h.documento.alto, px))
     }
 
-    /// Los contornos y los nodos del último dibujo, sobre el dibujo apagado (el modo «Contornos»).
+    /// El último dibujo, apagado sobre blanco: el fondo del modo «Contornos».
     pub fn pixeles_contornos_vector(&self, id: u64) -> R<(u32, u32, Vec<u8>)> {
         let h = self.hecho(id)?;
-        let px = apolo_nucleo::vector::contornos(&h.documento)?;
+        let px = apolo_nucleo::vector::apagado(&h.documento)?;
         Ok((h.documento.ancho, h.documento.alto, px))
+    }
+
+    /// Los trazados y los nodos del último dibujo, que la pantalla pinta encima en vectorial (nítidos con
+    /// cualquier zoom).
+    pub fn contornos_vector(&self, id: u64) -> R<apolo_nucleo::vector::Contornos> {
+        Ok(apolo_nucleo::vector::contornos(&self.hecho(id)?.documento))
     }
 
     /// Las tres medidas del último dibujo frente a lo que recibió el motor.
@@ -282,6 +288,12 @@ mod pruebas {
         assert_eq!(s.pixeles_referencia_vector(id).unwrap().2.len(), px.len());
         assert!(s.medir_vector(id).unwrap().ssim > 0.9);
         assert_eq!(s.pixeles_contornos_vector(id).unwrap().2.len(), px.len());
+        let c = s.contornos_vector(id).unwrap();
+        assert!(
+            c.trazos.starts_with('M') && !c.nodos.is_empty() && c.nodos.len() % 2 == 0,
+            "{c:?}"
+        );
+        assert!(c.nodos.iter().all(|v| (0.0..=64.0).contains(v)), "{c:?}");
         for f in FormatoVector::TODOS {
             let b = s.bytes_vector(id, f, &AjusteVector::default()).unwrap();
             assert!(!b.is_empty(), "{f:?}");

@@ -466,6 +466,16 @@ fn rutas(s: Arc<Servicio>) -> Router {
             }),
         )
         .route(
+            "/api/contornos_vector",
+            post(|State(s): Estado, Json(p): Json<PeticionId>| async move {
+                let r: R<_> = bloqueante(move || s.contornos_vector(p.id))
+                    .await
+                    .map(Json)
+                    .map_err(Error);
+                r
+            }),
+        )
+        .route(
             "/api/exportar_vector",
             post(
                 |State(s): Estado, Json(p): Json<PeticionExportarVector>| async move {

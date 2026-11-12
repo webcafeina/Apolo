@@ -35,6 +35,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - **Por la tarde**: Security igual; `publicar.yml` en verde; borrador revisado entero (sumas, copias, firmas,
   procedencia, binarios y el sol con los bytes de la web) y **v1.1.1 publicada** a las 17:14 UTC. Web, repos,
   Homebrew, registro MCP y enlaces fijos al día. Chocolatey 1.1.1 empaquetada, sin subir hasta que aprueben la 1.1.0.
+- Al cerrar: CI de los documentos y Security en verde. El cliente comprueba la 1.1.1 en su Mac el 2026-11-13.
 
 ---
 

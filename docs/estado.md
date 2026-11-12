@@ -13,8 +13,13 @@
 > 1.1.1. Security, sin nada nuevo. **Chocolatey 1.1.1 empaquetada y sin subir**
 > (`~/.cache/apolo-revision/choco111/paquete/apolo.1.1.1.nupkg`): la 1.1.0 sigue en «Ready for review» y hasta que la
 > aprueben da 403; subirla entonces con el `choco push` de `docs/lanzamiento.md`. winget, a la espera de #463314.
-> **Lo siguiente**: la comprobación del cliente («comprobamos luego»): que su Apolo se actualice a la 1.1.1 y ver
-> los contornos con zoom en su Mac. Luego, lo que diga (deuda que queda en Vectorizar: los degradados en anillos).
+> **Lo siguiente (el cliente lo deja para el 2026-11-13)**: al empezar, `scripts/seguridad-github.sh` y mirar si
+> Chocolatey aprobó la 1.1.0 (si sí, subir la 1.1.1 ya empaquetada). Después, **la comprobación guiada del cliente**
+> en su Mac: 1) que Apolo se actualice solo a la 1.1.1 (Ajustes dice 1.1.1); 2) en Vectorizar, el sol
+> (`pruebas/vector/apolo-plano.png`) da **80,7** (antes 71,3); 3) Contornos con mucho zoom: líneas finas y nodos
+> limpios, no a cuadros. Apuntarlo en la ADR 0039 (Verificación: los contornos solo estaban vistos en el navegador).
+> Luego, lo que diga (deuda que queda en Vectorizar: los degradados en anillos). La CI de los documentos (`392321b`)
+> y Security, en verde y sin nada nuevo al cerrar.
 
 > **PARADA AQUÍ (2026-11-12, ~14:30): la 1.1.1, ETIQUETADA y compilándose; sin revisar ni publicar.** Commit de la
 > versión `79bd9f1` (notas `.github/notas/v1.1.1.md`, Cargo.toml y plugin a 1.1.1, medidas con el sol a 80,7,

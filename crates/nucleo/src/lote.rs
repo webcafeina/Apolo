@@ -179,12 +179,52 @@ pub fn salida_base(entradas: &[PathBuf]) -> Option<SalidaBase> {
 }
 
 /// Escribe `datos` en `ruta` o, si ya existe, en `nombre-2.ext`, `nombre-3.ext`…
-/// Devuelve dónde quedó. El nombre se reserva al crear el fichero, sin mirar
-/// antes si existe: así no hay hueco entre mirar y escribir.
+/// Devuelve dónde quedó. Nunca pisa un fichero, y nunca deja uno a medias con el nombre bueno: se escribe
+/// entero en un temporal oculto de la misma carpeta y solo entonces toma su nombre, con un enlace que falla si
+/// el nombre ya existe (así no hay hueco entre mirar y escribir). Si el proceso muere antes (Ctrl+C a mitad de
+/// un lote), lo único que puede quedar es el temporal, `.nombre.ext.<pid>.apolo-tmp`.
 pub fn escribir_sin_pisar(ruta: &Path, datos: &[u8]) -> std::io::Result<PathBuf> {
+    escribir_sin_pisar_con(ruta, datos, |a, b| std::fs::hard_link(a, b))
+}
+
+/// `escribir_sin_pisar` con el enlace aparte, para probar el camino de los discos que no los admiten.
+fn escribir_sin_pisar_con(
+    ruta: &Path,
+    datos: &[u8],
+    enlazar: impl Fn(&Path, &Path) -> std::io::Result<()>,
+) -> std::io::Result<PathBuf> {
     if let Some(d) = ruta.parent() {
         std::fs::create_dir_all(d)?;
     }
+    let nombre = ruta
+        .file_name()
+        .map(|s| s.to_string_lossy().into_owned())
+        .unwrap_or_default();
+    let temporal = ruta.with_file_name(format!(".{nombre}.{}.apolo-tmp", std::process::id()));
+    let escrito = (|| {
+        let mut f = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(&temporal)?;
+        f.write_all(datos)?;
+        f.sync_all()
+    })();
+    if let Err(e) = escrito {
+        let _ = std::fs::remove_file(&temporal);
+        return Err(e);
+    }
+    let r = poner_nombre(ruta, &temporal, enlazar);
+    let _ = std::fs::remove_file(&temporal);
+    r
+}
+
+/// Da al temporal ya escrito el primer nombre libre de `ruta`, `nombre-2.ext`…
+fn poner_nombre(
+    ruta: &Path,
+    temporal: &Path,
+    enlazar: impl Fn(&Path, &Path) -> std::io::Result<()>,
+) -> std::io::Result<PathBuf> {
     let tronco = ruta
         .file_stem()
         .map(|s| s.to_string_lossy().into_owned())
@@ -193,21 +233,29 @@ pub fn escribir_sin_pisar(ruta: &Path, datos: &[u8]) -> std::io::Result<PathBuf>
         .extension()
         .map(|e| format!(".{}", e.to_string_lossy()))
         .unwrap_or_default();
+    // Sin enlaces (FAT, exFAT, algunas unidades de red): se reserva el nombre creándolo vacío y se renombra el
+    // temporal encima. Ahí, un corte justo entre las dos cosas dejaría el reservado vacío, nunca a medias.
+    let mut sin_enlaces = false;
     for n in 1u32.. {
         let candidata = if n == 1 {
             ruta.to_path_buf()
         } else {
             ruta.with_file_name(format!("{tronco}-{n}{ext}"))
         };
+        if !sin_enlaces {
+            match enlazar(temporal, &candidata) {
+                Ok(()) => return Ok(candidata),
+                Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => continue,
+                Err(_) => sin_enlaces = true,
+            }
+        }
         match OpenOptions::new()
             .write(true)
             .create_new(true)
             .open(&candidata)
         {
-            Ok(mut f) => {
-                if let Err(e) = f.write_all(datos) {
-                    // Un fichero a medias no se deja: parecería bueno.
-                    drop(f);
+            Ok(_) => {
+                if let Err(e) = std::fs::rename(temporal, &candidata) {
                     let _ = std::fs::remove_file(&candidata);
                     return Err(e);
                 }
@@ -625,6 +673,53 @@ mod pruebas {
             d.join("sub/foto-3.webp")
         );
         assert_eq!(std::fs::read(&r).unwrap(), b"1");
+    }
+
+    /// Lo que hay en la carpeta, sin los temporales: tienen que haberse ido.
+    fn sin_temporales(d: &Path) -> Vec<String> {
+        let mut v: Vec<String> = std::fs::read_dir(d)
+            .unwrap()
+            .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
+            .collect();
+        v.sort();
+        assert!(v.iter().all(|n| !n.ends_with(".apolo-tmp")), "{v:?}");
+        v
+    }
+
+    #[test]
+    fn sin_enlaces_tampoco_pisa_ni_deja_temporales() {
+        // Como en un disco FAT: el enlace falla siempre, y se reserva el nombre y se renombra encima.
+        let d = carpeta("sin-enlaces");
+        let r = d.join("foto.webp");
+        let falla = |_: &Path, _: &Path| Err(std::io::Error::other("sin enlaces"));
+        assert_eq!(escribir_sin_pisar_con(&r, b"1", falla).unwrap(), r);
+        assert_eq!(
+            escribir_sin_pisar_con(&r, b"2", falla).unwrap(),
+            d.join("foto-2.webp")
+        );
+        assert_eq!(std::fs::read(&r).unwrap(), b"1");
+        assert_eq!(std::fs::read(d.join("foto-2.webp")).unwrap(), b"2");
+        assert_eq!(sin_temporales(&d), ["foto-2.webp", "foto.webp"]);
+    }
+
+    #[test]
+    fn mientras_se_escribe_el_nombre_bueno_no_existe() {
+        // El enlace es lo último: cuando se llama, el temporal ya tiene todo y el nombre bueno aún no existe.
+        let d = carpeta("a-medias");
+        let r = d.join("foto.webp");
+        let datos = vec![7u8; 100_000];
+        let comprobar = |t: &Path, c: &Path| {
+            assert!(!c.exists(), "el nombre bueno ya estaba antes de acabar");
+            assert_eq!(
+                std::fs::read(t).unwrap().len(),
+                100_000,
+                "el temporal, entero"
+            );
+            std::fs::hard_link(t, c)
+        };
+        assert_eq!(escribir_sin_pisar_con(&r, &datos, comprobar).unwrap(), r);
+        assert_eq!(std::fs::read(&r).unwrap(), datos);
+        assert_eq!(sin_temporales(&d), ["foto.webp"]);
     }
 
     #[test]

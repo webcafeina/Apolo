@@ -4,6 +4,18 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-12 · La 1.1.0, publicada
+
+- Al empezar: Security sin nada nuevo; `cargo deny check advisories`, bien (el borrador era de hacía dos días).
+- **v1.1.0 publicada** con el sí del cliente (`gh release edit --draft=false --latest`, 08:14 UTC). Web, Homebrew y
+  Registro MCP en verde; comprobados la web (1.1.0 y las dos guías de vectorizar), APT, RPM, PKGBUILD, el cask, el
+  registro de MCP, los enlaces fijos y `latest.json`.
+- **Chocolatey 1.1.0** rellenada con `rellenar.py`, empaquetada y subida con `chocolatey/choco` (en
+  `~/.cache/apolo-revision/choco110/`); la 1.0.2 se había aprobado el 9-nov. winget, a la espera de #463314.
+- Security tras la publicación, igual.
+
+---
+
 ## 2026-11-10 (noche) · La 1.1.0, en borrador
 
 - El cliente preguntó si los cuadros merecían ir también en el Estudio: ya los tenía (el comparador es el mismo).

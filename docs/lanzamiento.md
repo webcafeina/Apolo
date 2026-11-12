@@ -228,7 +228,8 @@ La cuenta es `webcafeina` (info@webcafeina.com) y la clave de API está en
 `~/.config/apolo/chocolatey.key` (600; la guardó el cliente por SSH, **no se escribe en ningún
 sitio**). La 1.0.0 se subió el 2026-10-30: https://community.chocolatey.org/packages/apolo/1.0.0,
 en moderación, y se aprobó el 31. La 1.0.1 se subió el 2026-11-03 (con la 1.0.0 aún sin aprobar,
-`choco push` daba 403: hay que esperar a que aprueben una para subir la siguiente). Revisan cada
+`choco push` daba 403: hay que esperar a que aprueben una para subir la siguiente). La 1.0.2 se aprobó el 2026-11-09 y la **1.1.0 se subió el
+2026-11-12**. Revisan cada
 versión a mano (días o semanas). Sin probar en un Windows antes de
 subirla: lo prueba su verificador en x64; la rama de ARM64, sin ver.
 

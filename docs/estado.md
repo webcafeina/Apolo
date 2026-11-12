@@ -1,8 +1,18 @@
 # Estado
 
-Última actualización: **2026-11-10**
+Última actualización: **2026-11-12**
 
 ## Dónde se paró, y por dónde se sigue
+
+> **PARADA AQUÍ (2026-11-12, mañana): v1.1.0 PUBLICADA (08:14 UTC), la de vectorizar.** Con el sí del cliente.
+> Salieron solos y en verde `Web`, `Homebrew` y `Registro MCP`. Comprobado: la web dice 1.1.0 y sirve las guías
+> `/guias/vectorizar-una-imagen/` y `/en/guides/vectorize-an-image/`; APT, RPM, PKGBUILD, el cask de Homebrew y el
+> registro oficial de MCP, en 1.1.0; los enlaces fijos y `latest.json` (16 plataformas), en 1.1.0. **Chocolatey
+> 1.1.0 subida** (la 1.0.2 se aprobó el 9-nov): en moderación. **winget**: nada que hacer hasta que fusionen
+> #463314 (la 1.0.0; validado, sin moderador). Security, sin nada nuevo. **Lo siguiente**: el paso 6, **la prueba
+> del cliente** (que su Apolo se actualice; la pantalla Vectorizar en su Mac y en una VM; el SVG, el PDF y el EPS en
+> Illustrator o Inkscape y el DXF en su programa de corte), y vigilar Chocolatey. Después, la deuda de la 1.1.x (sol
+> en anillos, fotos pesadas, borde sobre transparente, contornos nítidos, bordes dobles).
 
 > **PARADA AQUÍ (2026-11-10, noche): la 1.1.0, en BORRADOR y revisada; falta publicarla con el sí del cliente.**
 > Hechos los pasos 1 a 5 de «El día de la 1.1.0» (más abajo): `web-1.1.0` fusionada (`bf71a19`), versión y capturas

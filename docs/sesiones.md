@@ -10,6 +10,12 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   permisos paró el primer intento; el cliente confirmó que se suba como siempre).
 - **Comprobación del cliente en su Mac**: la 1.1.1 se actualizó sola, el sol da 80,7 y los contornos con zoom se
   ven nítidos en la ventana de verdad. Apuntado en la ADR 0039.
+- **Aldea** (logo del cliente con letras en degradado y texto pequeño): se vectorizaba como foto. La detección pide
+  ahora textura además de colores (fotos 0,41–0,66, Aldea 0,056): de nota 18 a 47,7. Limpiar manchas pequeñas,
+  probado y descartado (rompía el texto). `afinar` los bordes mal explicados tras los degradados: el banco sube de
+  82,55 a 83,50 (varias rutas probadas antes, en la ADR). Añadir los colores que faltan (el gris del texto) no
+  casaba con `afinar`: a la deuda, con Aldea (47 frente a 55,4 de Vectorizer.ai, cuyo SVG dejó el cliente).
+- **Envíos repasados** (`docs/lanzamiento.md`); el cliente los deja para otro día, mirando antes si han cambiado.
 
 ---
 

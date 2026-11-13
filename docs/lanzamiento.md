@@ -347,6 +347,26 @@ and convert images to WebP, AVIF, JPEG XL, JPEG and PNG». Sin firma de Microsof
 validación de winget pasa los instaladores por Defender: puede tardar. Después, cada versión con
 `komac update` (o un workflow, cuando la 1.0 esté dentro).
 
+### Repaso de los envíos (2026-11-13)
+
+Mirado desde el VPS (GitHub con `gh`, el correo de info@ y las fichas públicas):
+
+| Envío | Estado |
+|---|---|
+| Chocolatey | 1.1.0 aprobada el 12-nov; 1.1.1 subida el 13-nov, en revisión automática |
+| Glama | Al día solo (publicó la 1.1.1 el 12-nov) |
+| awesome-mac#4070 | Fusionado el 30-oct |
+| mcp.so (chatmcp/mcpso#6439) | Cerrado el 7-nov como duplicado: «ya está en mcp.so/servers/apolo»; esa URL da 404 desde el VPS (quizá solo con JavaScript): **mirarla en un navegador** |
+| winget-pkgs#463314 | Todas las comprobaciones en verde y la CLA firmada (30-oct); esperando a un moderador voluntario desde el 27-oct. Sin él, no se pueden subir versiones con komac |
+| awesome-mcp-servers#17812 | Abierto desde el 30-oct, `has-glama`, esperando al mantenedor |
+| open-source-mac-os-apps#1878 | Abierto desde el 30-oct, sin respuesta |
+| AlternativeTo, SaaSHub, Softpedia, MacUpdate, MajorGeeks, Uptodown | Sin correos desde el 5-nov; sus webs dan 403 a las peticiones del VPS (protección contra robots): **mirar las fichas en un navegador** |
+| Directorio de Anthropic | Sin respuesta a la pregunta a directory@ del 9-nov |
+
+Propuesto al cliente y **aplazado por él** (2026-11-13): un recordatorio breve en winget#463314 y en
+awesome-mcp-servers#17812. **La próxima vez, antes de nada, volver a mirar el estado** (puede haber cambiado) y
+decidir entonces. Un correo de PeerPush (servicio de pago para «aparecer en asistentes de IA»): sin interés.
+
 ## Con la cuenta del cliente
 
 ### Directorio de extensiones de Claude Desktop

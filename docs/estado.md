@@ -4,6 +4,16 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **2026-11-13, mediodía**: el cliente trajo un logo real (Aldea, `capturas/cliente/`, fuera de git) que se
+> vectorizaba como foto. Hecho y subido: la detección pide además **textura** (`054a184`: Aldea de nota 18 a 47,7)
+> y **`afinar`** los bordes mal explicados tras los degradados (`b4e8a0f`: banco de 82,55 a 83,50, el sol 81,7).
+> Probado y descartado: limpiar manchas pequeñas (ADR 0039). Aldea sigue por debajo de Vectorizer.ai (47 frente a
+> 55,4): a la deuda, con lo probado. **Sin versión**: lo publicado sigue siendo la 1.1.1; esto iría en una 1.1.2
+> cuando diga el cliente (regenerar entonces medidas y capturas: el sol cambia a 81,7). Después, los envíos
+> repasados (`docs/lanzamiento.md`): el cliente lo deja para otro día, **volviendo a mirar el estado primero**.
+> **Lo siguiente**: el SEO (primera revisión con Search Console y Bing, indexación de las páginas) y `tauri-action`
+> 1.0 (una versión para ella, con compilación de prueba).
+
 > **2026-11-13, mañana**: Security sin nada nuevo. Chocolatey aprobó la 1.1.0 el 12 y **la 1.1.1 se subió** (en
 > moderación; la primera vez el clasificador de permisos la paró y el cliente confirmó que se suba como siempre).
 > **La 1.1.1, comprobada por el cliente en su Mac**: se actualizó sola, el sol da 80,7 y los contornos con zoom

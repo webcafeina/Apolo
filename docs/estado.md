@@ -11,8 +11,13 @@
 > 55,4): a la deuda, con lo probado. **Sin versión**: lo publicado sigue siendo la 1.1.1; esto iría en una 1.1.2
 > cuando diga el cliente (regenerar entonces medidas y capturas: el sol cambia a 81,7). Después, los envíos
 > repasados (`docs/lanzamiento.md`): el cliente lo deja para otro día, **volviendo a mirar el estado primero**.
-> **Lo siguiente**: el SEO (primera revisión con Search Console y Bing, indexación de las páginas) y `tauri-action`
-> 1.0 (una versión para ella, con compilación de prueba).
+> **Por la tarde**: el SEO, revisado (`docs/seo.md`: Google 37 de 47 páginas, Bing una sola aunque IndexNow le
+> avisa; las descripciones largas, a la deuda). **Rust 1.100** salió el 12-nov y la CI lo estrenó: su clippy marcaba
+> un bucle de `cjpeg.rs`, arreglado (`460cffa`, CI en verde); el VPS, ya con la 1.100. **Disco**: con la
+> recompilación llegó al 98 %; limpiadas la caché de compilación de Docker y la de npm (89 %). Quedan **54 GB en
+> volúmenes de Docker sin usar** (552, de todos los proyectos de la máquina): no tocarlos sin el sí del cliente;
+> si los quiere revisar, listarlos antes con nombre, tamaño y fecha. **Lo siguiente**: `tauri-action` 1.0 (una
+> versión para ella, con compilación de prueba).
 
 > **2026-11-13, mañana**: Security sin nada nuevo. Chocolatey aprobó la 1.1.0 el 12 y **la 1.1.1 se subió** (en
 > moderación; la primera vez el clasificador de permisos la paró y el cliente confirmó que se suba como siempre).

@@ -16,6 +16,13 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   82,55 a 83,50 (varias rutas probadas antes, en la ADR). Añadir los colores que faltan (el gris del texto) no
   casaba con `afinar`: a la deuda, con Aldea (47 frente a 55,4 de Vectorizer.ai, cuyo SVG dejó el cliente).
 - **Envíos repasados** (`docs/lanzamiento.md`); el cliente los deja para otro día, mirando antes si han cambiado.
+- **SEO**, primera revisión con las capturas del cliente (`docs/seo.md`). Propuse añadir IndexNow y ya estaba en
+  `web.yml` desde la ADR 0034 (responde 200): Bing conoce las 46 URL y solo indexa una. Descripciones largas, a la deuda.
+- **Rust 1.100** (12-nov) rompió la CI por una regla nueva de clippy en `cjpeg.rs`: arreglado. Disco al 98 % por la
+  recompilación: limpiadas las cachés de Docker (compilación) y npm, y los ejemplos viejos de `target/debug`
+  (`make limpiar` ya los quita); quedan 54 GB de volúmenes de Docker de toda la máquina, sin tocar.
+- **`tauri-action` 1.0** en una rama, compilación de prueba en verde, fusionada; **la 1.1.2** preparada y etiquetada
+  (la primera con la acción nueva). El cliente se fue con `publicar.yml` corriendo: revisar y publicar al volver.
 
 ---
 

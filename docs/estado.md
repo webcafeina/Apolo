@@ -4,15 +4,25 @@
 
 ## Dónde se paró, y por dónde se sigue
 
-> **PARADA AQUÍ (2026-11-13, tarde): preparando la 1.1.2, con el sí del cliente.** `tauri-action` 1.0 en `main`
-> (`1bbbab0`, fijada a `1deb371b`): compilación de prueba 43411734805 en verde (10 compilaciones y 6 humos); el
-> nombre nuevo del `.app.tar.gz` (con la versión) y `latest.json` solo se ven con una Release: **revisar el borrador
-> de la 1.1.2 con cuidado** (que `adjuntar` deje las 16 URL de descarga y el nombre nuevo) y, ya publicada, que un
-> Apolo 1.1.1 del cliente se actualice. La 1.1.2 lleva además la detección de fotos con textura, `afinar` y el
-> arreglo para Rust 1.100. Notas en `.github/notas/v1.1.2.md`; versión a 1.1.2 en Cargo.toml y el plugin; la fecha de
-> revisión de la guía de vectorizar, al 13. Pendiente al escribir esto: `cargo update -w`, `make cli`, medidas (el
-> sol a 81,7), `make capturas-web`, `pnpm -C web build` y `readme.mjs` (que fotografía la web compilada), `make
-> comprobar`, commit «Versión 1.1.2», subir (cancelar el run `Web`), CI, etiqueta, revisar y publicar.
+> **PARADA AQUÍ (2026-11-13, ~14:30): la 1.1.2, ETIQUETADA y compilándose; sin revisar ni publicar.** Con el sí
+> del cliente («Sí, adelante» a preparar la 1.1.2). Commit `b9ea326` (notas `.github/notas/v1.1.2.md`, versión a
+> 1.1.2, medidas con el sol a **81,7** —SVG 6.886, PDF 3.515, EPS 8.653, DXF 42.527 bytes—, capturas de la web y
+> del README, la guía de vectorizar revisada el 13, `make limpiar` con `examples/`); `make comprobar` y CI en verde;
+> el run `Web` del push (43430470570) **cancelado a propósito** (la web sigue en 1.1.1). Etiqueta `v1.1.2` →
+> `publicar.yml` **run 43432352652**, que es **el primero con `tauri-action` 1.0**. Al retomar:
+> 1. `gh run view 43432352652 -R webcafeina/Apolo` y `scripts/seguridad-github.sh`. Si `adjuntar` falló, mirar su
+>    paso «El latest.json del actualizador» (puede que la 1.0 cambie algo de las URL o de los nombres).
+> 2. **Revisar el borrador** como el de la 1.1.1 (en `~/.cache/apolo-revision/`): sumas, copias con nombre fijo
+>    (`empaquetado/nombres-fijos.py`; ahora **el `.app.tar.gz` lleva versión**, `Apolo_1.1.2_universal.app.tar.gz`,
+>    y tendrá copia fija `Apolo_universal.app.tar.gz`: 20 copias, no 19), las 16 firmas de `latest.json` con
+>    `~/.cache/apolo-revision/sesion-2026-10-30/verificar.py`, **que las 16 URL de `latest.json` sean
+>    `https://github.com/webcafeina/Apolo/releases/download/v1.1.2/…`** (no de la API ni `untagged-`), procedencia,
+>    `--version` de `apolo` y `apolo-mcp`, el sol con la CLI de la Release (los bytes de arriba), y que las notas
+>    del borrador sean las de `v1.1.2.md` (la 1.0 reescribe el cuerpo de la Release; «adjuntar» lo pone después).
+> 3. Publicar **con el sí del cliente** (`gh release edit v1.1.2 -R webcafeina/Apolo --draft=false --latest`), mirar
+>    web, repos, Homebrew, registro MCP y enlaces fijos, y Chocolatey 1.1.2 a mano (si la 1.1.1 ya está aprobada).
+> 4. **La prueba de `tauri-action` 1.0**: que un Apolo 1.1.1 del cliente (su Mac, y a poder ser Windows) se
+>    actualice solo a la 1.1.2. Apuntarlo en `docs/decisiones` o la deuda de `siguiente.md` («tauri-action 1.0», hecho).
 
 > **2026-11-13, mediodía**: el cliente trajo un logo real (Aldea, `capturas/cliente/`, fuera de git) que se
 > vectorizaba como foto. Hecho y subido: la detección pide además **textura** (`054a184`: Aldea de nota 18 a 47,7)

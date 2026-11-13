@@ -1,8 +1,14 @@
 # Estado
 
-Última actualización: **2026-11-12**
+Última actualización: **2026-11-13**
 
 ## Dónde se paró, y por dónde se sigue
+
+> **2026-11-13, mañana**: Security sin nada nuevo. Chocolatey aprobó la 1.1.0 el 12 y **la 1.1.1 se subió** (en
+> moderación; la primera vez el clasificador de permisos la paró y el cliente confirmó que se suba como siempre).
+> **La 1.1.1, comprobada por el cliente en su Mac**: se actualizó sola, el sol da 80,7 y los contornos con zoom
+> se ven nítidos (ADR 0039). La 1.1.1 queda cerrada. **Lo siguiente**: lo que diga el cliente (en Vectorizar queda
+> en la deuda, sobre todo, el degradado en anillos).
 
 > **PARADA AQUÍ (2026-11-12, tarde): v1.1.1 PUBLICADA (17:14 UTC).** Con el sí que dio el cliente por la mañana.
 > `publicar.yml` (43226672206) en verde entero (10 compilaciones, adjuntar, 6 humos). Borrador revisado: 50

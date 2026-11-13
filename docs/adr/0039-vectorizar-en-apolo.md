@@ -204,3 +204,6 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   transparente, de 71,3 a 80,7; el banco entero (`APOLO_MOTORES=apolo-crate`, antes y después en el mismo VPS),
   media de 75,90 a 76,04, 32 de 55 cambian, ninguna baja más de 0,09. **Las cifras del sol en la web**
   (`web/src/datos/medidas.json`) cambian: se regeneran con la 1.1.1.
+- **La 1.1.1, comprobada por el cliente en su Mac (2026-11-13)**: se actualizó sola desde la 1.1.0; el sol con las
+  esquinas transparentes da 80,7; y los contornos con mucho zoom se ven finos y con los nodos limpios **en la
+  ventana de verdad** (antes, solo en el navegador).

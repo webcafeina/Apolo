@@ -4,6 +4,15 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-13 · La 1.1.1, comprobada
+
+- Al empezar: Security sin nada nuevo. Chocolatey aprobó la 1.1.0 el 12: **subida la 1.1.1** (el clasificador de
+  permisos paró el primer intento; el cliente confirmó que se suba como siempre).
+- **Comprobación del cliente en su Mac**: la 1.1.1 se actualizó sola, el sol da 80,7 y los contornos con zoom se
+  ven nítidos en la ventana de verdad. Apuntado en la ADR 0039.
+
+---
+
 ## 2026-11-12 · La 1.1.0, publicada
 
 - Al empezar: Security sin nada nuevo; `cargo deny check advisories`, bien (el borrador era de hacía dos días).

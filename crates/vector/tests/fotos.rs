@@ -3,9 +3,9 @@
 use apolo_vector::{Rgba, TipoImagen, tipo_efectivo};
 use std::path::Path;
 
-/// Una «foto» suave de `w` × `h`: dos degradados lentos y un grano de ±1 en el azul. A su tamaño repite mucho
-/// los colores (0,03 colores distintos por píxel, como los arándanos del banco a 1.280 px, que pasaban por
-/// dibujo), pero en cualquier trozo cada píxel casi tiene el suyo.
+/// Una «foto» de `w` × `h`: dos degradados lentos y un grano de tres niveles en el azul (0, 12 o 24), que da
+/// textura como el de una foto. A su tamaño repite mucho los colores (0,03 colores distintos por píxel, como los
+/// arándanos del banco a 1.280 px, que pasaban por dibujo), pero en cualquier trozo cada píxel casi tiene el suyo.
 fn foto_suave(w: u32, h: u32) -> Rgba {
     let mut px = Vec::with_capacity((w * h * 4) as usize);
     let mut s: u32 = 12345;
@@ -13,7 +13,7 @@ fn foto_suave(w: u32, h: u32) -> Rgba {
         for x in 0..w {
             s = s.wrapping_mul(1_103_515_245).wrapping_add(12345);
             let grano = (s >> 16) % 3;
-            px.extend([(x / 10) as u8, (y / 10) as u8, 120 + grano as u8, 255]);
+            px.extend([(x / 10) as u8, (y / 10) as u8, 100 + 12 * grano as u8, 255]);
         }
     }
     Rgba::nueva(w, h, px)
@@ -40,6 +40,26 @@ fn un_dibujo_no_es_foto() {
             tipo_efectivo(&im, TipoImagen::Auto),
             TipoImagen::Foto,
             "{f}"
+        );
+    }
+}
+
+#[test]
+fn un_logo_con_degradados_no_es_foto() {
+    // Dos degradados lentos y nada de grano: casi cada píxel tiene su color (como una foto), pero todo es liso.
+    // Así son las letras del logo de Aldea del cliente, que se vectorizaba como foto (nota 18, 479 KB).
+    for lado in [256u32, 1024] {
+        let mut px = Vec::new();
+        for y in 0..lado {
+            for x in 0..lado {
+                px.extend([(x * 255 / lado) as u8, (y * 255 / lado) as u8, 128, 255]);
+            }
+        }
+        let im = Rgba::nueva(lado, lado, px);
+        assert_ne!(
+            tipo_efectivo(&im, TipoImagen::Auto),
+            TipoImagen::Foto,
+            "{lado}"
         );
     }
 }

@@ -26,7 +26,11 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   1.280 px, 0,047: pasaban por dibujo, 75 s y 10 MB); ahora se mide en una muestra de unos 65.000 píxeles
   repartidos, con el límite en **0,08** (fotos a su tamaño, de 0,25 a 0,62; dibujos con degradados de 256 a
   1.400 px, 0,031 como mucho). Y **la foto se suaviza antes** (mediana de 5 × 5 desde 1.000 px de lado corto,
-  de 3 × 3 desde 500): el SVG pesa la mitad y sale de 2 a 4 veces antes (docs/rendimiento.md). Mirar si había zonas planas no servía: una foto de producto sobre fondo
+  de 3 × 3 desde 500): el SVG pesa la mitad y sale de 2 a 4 veces antes (docs/rendimiento.md). **Y el 2026-11-13**: un
+  logo real del cliente (Aldea, letras con degradado) pasaba por foto: tantos colores como una foto, pero liso.
+  Ahora además hace falta **textura** (`paleta::textura`: píxeles que se apartan de su vecino entre 7 y 40) por
+  encima de 0,25: las fotos del banco dan de 0,41 a 0,66; Aldea, 0,056 (0,14 guardada en JPEG); los dibujos,
+  0,033 como mucho. Mirar si había zonas planas no servía: una foto de producto sobre fondo
   blanco las tiene y se trataba como ilustración (23 minutos y peor nota).
 - **Pixel art con un trazado propio** sobre la cuadrícula, en vez de VTracer. **Sin Potrace ni VTracer en la
   aplicación**: solo el banco los usa. La elipse, con un 3 × 3 propio en vez de nalgebra.

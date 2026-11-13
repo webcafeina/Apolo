@@ -102,11 +102,21 @@ pub(crate) fn es_pixel_art(im: &Rgba) -> bool {
 /// mucho: el límite deja un margen de unas tres veces a cada lado (ADR 0039).
 const LIMITE_FOTO: f64 = 0.08;
 
+/// Y, además, más píxeles con textura que esto (`paleta::textura`): un logo con degradados tiene tantos colores
+/// distintos como una foto, pero es liso. Las fotos del banco dan de 0,41 a 0,66; un logo real con degradados en
+/// las letras (Aldea, del cliente), 0,056, y guardado en JPEG de calidad 85, 0,14; los dibujos, 0,033 como mucho.
+const LIMITE_TEXTURA: f64 = 0.25;
+
 /// El tipo efectivo, resolviendo `Auto`.
 pub fn tipo_efectivo(im: &Rgba, tipo: TipoImagen) -> TipoImagen {
     match tipo {
         TipoImagen::Auto if es_pixel_art(im) => TipoImagen::PixelArt,
-        TipoImagen::Auto if paleta::colores_por_pixel(im) > LIMITE_FOTO => TipoImagen::Foto,
+        TipoImagen::Auto
+            if paleta::colores_por_pixel(im) > LIMITE_FOTO
+                && paleta::textura(im) > LIMITE_TEXTURA =>
+        {
+            TipoImagen::Foto
+        }
         TipoImagen::Auto => TipoImagen::Ilustracion,
         t => t,
     }

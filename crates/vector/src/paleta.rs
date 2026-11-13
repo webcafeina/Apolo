@@ -161,6 +161,41 @@ pub fn sin_suavizado(im: &Rgba) -> bool {
     (intermedios as f64) < 0.003 * opacos.max(1) as f64
 }
 
+/// La parte de los píxeles con textura: los que se apartan de su vecino de la derecha o de abajo más de lo que
+/// cambia un degradado (6 en algún canal) y menos que un borde (40). En una foto hay textura en casi todas partes
+/// (grano, piel, hojas); en un dibujo, aunque tenga degradados, casi todo es liso o borde. Se mira la misma
+/// muestra que `colores_por_pixel`, y solo donde los tres píxeles son opacos.
+pub fn textura(im: &Rgba) -> f64 {
+    let (w, h) = (im.ancho as usize, im.alto as usize);
+    if w < 2 || h < 2 {
+        return 0.0;
+    }
+    let paso = ((w * h) as f64 / MUESTRA_COLORES as f64)
+        .sqrt()
+        .ceil()
+        .max(1.0) as usize;
+    let (mut con, mut total) = (0usize, 0usize);
+    for y in (0..h - 1).step_by(paso) {
+        for x in (0..w - 1).step_by(paso) {
+            let i = y * w + x;
+            if im.alfa(i) < 255 || im.alfa(i + 1) < 255 || im.alfa(i + w) < 255 {
+                continue;
+            }
+            let c = |j: usize| &im.px[j * 4..j * 4 + 3];
+            let (a, b, d) = (c(i), c(i + 1), c(i + w));
+            let m = (0..3)
+                .map(|k| a[k].abs_diff(b[k]).max(a[k].abs_diff(d[k])))
+                .max()
+                .unwrap_or(0);
+            total += 1;
+            if (7..=40).contains(&m) {
+                con += 1;
+            }
+        }
+    }
+    con as f64 / total.max(1) as f64
+}
+
 /// Cuántos píxeles mira `colores_por_pixel`, como mucho.
 const MUESTRA_COLORES: usize = 65_536;
 

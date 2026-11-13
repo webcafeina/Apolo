@@ -193,6 +193,8 @@ pub fn vectorizar(im: &Rgba, o: &OpcionesVector) -> Result<Documento, String> {
     } else {
         (0..n).map(|_| None).collect()
     };
+    // Los bordes mal explicados, con los colores de los trazos finos de alrededor (subpixel::afinar).
+    subpixel::afinar(im, &pal, &mut mezcla, 2, &rellenos);
     let mut area_color = vec![0f64; n];
     for m in &mezcla {
         area_color[m.a as usize] += m.t as f64;

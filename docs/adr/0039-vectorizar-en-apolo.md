@@ -217,3 +217,13 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
 - **La 1.1.1, comprobada por el cliente en su Mac (2026-11-13)**: se actualizó sola desde la 1.1.0; el sol con las
   esquinas transparentes da 80,7; y los contornos con mucho zoom se ven finos y con los nodos limpios **en la
   ventana de verdad** (antes, solo en el navegador).
+- **Afinar los bordes mal explicados (2026-11-13)**: tras decidir los degradados, cada píxel que su mezcla
+  explica con un error de más de 25 se prueba también con los colores de los vecinos que son muestra pura de un
+  color plano (`subpixel::afinar`), y se cambia si lo explica el doble de bien. Banco entero, antes y después en
+  el mismo VPS: media de los dibujos de 82,55 a 83,50, algo menos de peso, un 8 % más de tiempo; la bandera de
+  EE. UU. +12,8 con menos de la mitad de peso, el león +6,2, las siluetas hasta +4,7, el cohete +3,3, el sol
+  +1,4; lo peor, Brasil y Turquía −2. Probado y descartado por el camino: hacerlo dentro de `mezclas` (antes de
+  los degradados) deshacía el brillo del sol (−14); buscar en toda la paleta, parejas por casualidad; medir los
+  píxeles de un degradado con su color en ese punto, otra vez el sol. Y **añadir a la paleta los colores que
+  ningún color ni mezcla explican** (el texto pequeño de Aldea): solo, Aldea 47,7 → 50,1 con el doble de formas;
+  con lo anterior, 44,9. Fuera por ahora (deuda).

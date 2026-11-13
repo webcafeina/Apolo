@@ -55,6 +55,7 @@ pub fn mezclas(im: &Rgba, paleta: &[[u8; 3]], radio: i64) -> Vec<Mezcla> {
             }
         }
     }
+    // El color de la paleta más parecido a cada píxel.
     let mut out = Vec::with_capacity((w * h) as usize);
     for y in 0..h {
         for x in 0..w {
@@ -86,43 +87,130 @@ pub fn mezclas(im: &Rgba, paleta: &[[u8; 3]], radio: i64) -> Vec<Mezcla> {
                 cand.push(propio);
             }
             // El par (o el color solo) que mejor explica el píxel como mezcla.
-            let mut mejor = Mezcla {
-                a: cand[0],
-                b: cand[0],
-                t: 1.0,
-            };
-            let mut err = dist2(pal[cand[0] as usize], c);
-            for &k in &cand {
-                let e = dist2(pal[k as usize], c);
-                if e < err {
-                    err = e;
-                    mejor = Mezcla { a: k, b: k, t: 1.0 };
-                }
-            }
-            for (ia, &ka) in cand.iter().enumerate() {
-                for &kb in &cand[ia + 1..] {
-                    let (pa, pb) = (pal[ka as usize], pal[kb as usize]);
-                    let d = [pa[0] - pb[0], pa[1] - pb[1], pa[2] - pb[2]];
-                    let n = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
-                    if n < 1.0 {
-                        continue;
-                    }
-                    let t =
-                        (((c[0] - pb[0]) * d[0] + (c[1] - pb[1]) * d[1] + (c[2] - pb[2]) * d[2])
-                            / n)
-                            .clamp(0.0, 1.0);
-                    let m = [pb[0] + t * d[0], pb[1] + t * d[1], pb[2] + t * d[2]];
-                    let e = dist2(m, c);
-                    if e < err {
-                        err = e;
-                        mejor = Mezcla { a: ka, b: kb, t };
-                    }
-                }
-            }
+            let (mejor, _) = elegir(&pal, &cand, c);
             out.push(mejor);
         }
     }
     out
+}
+
+/// El par de colores de `cand` (o el color solo) que mejor explica `c` como mezcla, y su error cuadrático.
+fn elegir(pal: &[[f32; 3]], cand: &[u16], c: [f32; 3]) -> (Mezcla, f32) {
+    let mut mejor = Mezcla {
+        a: cand[0],
+        b: cand[0],
+        t: 1.0,
+    };
+    let mut err = dist2(pal[cand[0] as usize], c);
+    for &k in cand {
+        let e = dist2(pal[k as usize], c);
+        if e < err {
+            err = e;
+            mejor = Mezcla { a: k, b: k, t: 1.0 };
+        }
+    }
+    for (ia, &ka) in cand.iter().enumerate() {
+        for &kb in &cand[ia + 1..] {
+            let (pa, pb) = (pal[ka as usize], pal[kb as usize]);
+            let d = [pa[0] - pb[0], pa[1] - pb[1], pa[2] - pb[2]];
+            let n = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
+            if n < 1.0 {
+                continue;
+            }
+            let t = (((c[0] - pb[0]) * d[0] + (c[1] - pb[1]) * d[1] + (c[2] - pb[2]) * d[2]) / n)
+                .clamp(0.0, 1.0);
+            let m = [pb[0] + t * d[0], pb[1] + t * d[1], pb[2] + t * d[2]];
+            let e = dist2(m, c);
+            if e < err {
+                err = e;
+                mejor = Mezcla { a: ka, b: kb, t };
+            }
+        }
+    }
+    (mejor, err)
+}
+
+/// Lo mal que puede quedar explicado un píxel (distancia RGB) antes de buscarle otra mezcla en `afinar`.
+const MAL_EXPLICADO: f32 = 25.0;
+
+/// Lo cerca (distancia RGB) que tiene que estar un píxel de un color de la paleta para contar como muestra pura.
+const PURO: f32 = 12.0;
+
+/// Una segunda pasada sobre los píxeles mal explicados, ya decididos los degradados: se prueba también con el
+/// color de cada vecino que es muestra pura de un color plano de la paleta (a menos de 12), aunque no sea plano
+/// él mismo. El centro de un trazo fino (la punta de un rayo, un trazo de una silueta, una estrella pequeña) no
+/// tiene píxeles planos, y el gris de su borde es mezcla de su color y el fondo; antes se explicaba con el color
+/// plano más cercano, con un error de 40 o más. Solo se cambia si la mezcla nueva lo explica al menos el doble de
+/// bien, y no se tocan los píxeles ni los colores de un degradado (`rellenos`): cambiar los bordes antes de
+/// decidir los degradados alteraba qué colores se unían y deshacía el brillo del sol, y medir un píxel contra el
+/// color de su degradado en ese punto reasignaba mal los bordes del brillo.
+pub fn afinar(
+    im: &Rgba,
+    paleta: &[[u8; 3]],
+    m: &mut [Mezcla],
+    radio: i64,
+    rellenos: &[Option<crate::modelo::Relleno>],
+) -> usize {
+    let (w, h) = (im.ancho as i64, im.alto as i64);
+    let pal: Vec<[f32; 3]> = paleta.iter().map(|c| f3(*c)).collect();
+    let libre =
+        |k: u16| (k as usize) < pal.len() && rellenos.get(k as usize).is_none_or(|r| r.is_none());
+    let puros: Vec<Option<u16>> = (0..h)
+        .flat_map(|y| (0..w).map(move |x| (x, y)))
+        .map(|(x, y)| {
+            if im.alfa((y * w + x) as usize) < 255 {
+                return None;
+            }
+            let c = f3(im.color(x as u32, y as u32));
+            let k = (0..pal.len())
+                .filter(|&k| libre(k as u16))
+                .min_by(|&i, &j| dist2(pal[i], c).total_cmp(&dist2(pal[j], c)))?;
+            (dist2(pal[k], c) <= PURO * PURO).then_some(k as u16)
+        })
+        .collect();
+    let mut cambiados = 0;
+    for y in 0..h {
+        for x in 0..w {
+            let i = (y * w + x) as usize;
+            let actual = m[i];
+            if im.alfa(i) < 255 || !libre(actual.a) || !libre(actual.b) {
+                continue;
+            }
+            let c = f3(im.color(x as u32, y as u32));
+            let mut cand = vec![actual.a];
+            if actual.b != actual.a {
+                cand.push(actual.b);
+            }
+            let (_, err) = elegir(&pal, &cand, c);
+            if err <= MAL_EXPLICADO * MAL_EXPLICADO {
+                continue;
+            }
+            let antes = cand.len();
+            for dy in -radio..=radio {
+                for dx in -radio..=radio {
+                    let (nx, ny) = (x + dx, y + dy);
+                    if nx >= 0
+                        && ny >= 0
+                        && nx < w
+                        && ny < h
+                        && let Some(k) = puros[(ny * w + nx) as usize]
+                        && !cand.contains(&k)
+                    {
+                        cand.push(k);
+                    }
+                }
+            }
+            if cand.len() == antes {
+                continue;
+            }
+            let (nueva, e2) = elegir(&pal, &cand, c);
+            if e2 < 0.5 * err {
+                m[i] = nueva;
+                cambiados += 1;
+            }
+        }
+    }
+    cambiados
 }
 
 /// Lo transparente como un color más, el `transparente` (que no se dibuja): un píxel transparente del todo
@@ -354,4 +442,52 @@ pub fn suavizar(p: &[Pt], pasadas: usize) -> Vec<Pt> {
         }
     }
     q
+}
+
+#[cfg(test)]
+mod pruebas {
+    use super::*;
+
+    #[test]
+    fn el_borde_de_un_trazo_fino_es_mezcla_con_su_color() {
+        // Un trazo negro de un píxel sobre blanco, con su borde gris arriba y abajo. La paleta tiene el negro (de
+        // otra parte del dibujo) y un naranja; el gris se explicaba con el blanco y el naranja, que es el color
+        // más parecido, y no con el negro del centro del trazo, que no es plano.
+        let (w, h) = (9u32, 5u32);
+        let mut px = Vec::new();
+        for y in 0..h {
+            for _ in 0..w {
+                let v = match y {
+                    2 => 0,
+                    1 | 3 => 128,
+                    _ => 255,
+                };
+                px.extend([v, v, v, 255]);
+            }
+        }
+        let im = Rgba::nueva(w, h, px);
+        let pal = [[255, 255, 255], [0, 0, 0], [200, 120, 60]];
+        let mut m = vec![Mezcla { a: 0, b: 0, t: 1.0 }; (w * h) as usize];
+        for x in 0..w as usize {
+            m[2 * w as usize + x] = Mezcla { a: 1, b: 1, t: 1.0 };
+            for y in [1, 3] {
+                m[y * w as usize + x] = Mezcla { a: 2, b: 0, t: 0.6 };
+            }
+        }
+        let cambiados = afinar(&im, &pal, &mut m, 2, &[None, None, None]);
+        assert_eq!(cambiados, 2 * w as usize);
+        let g = m[w as usize + 4];
+        assert!(
+            (g.a, g.b) == (1, 0) || (g.a, g.b) == (0, 1),
+            "el gris, de blanco y negro: {}-{}",
+            g.a,
+            g.b
+        );
+        // Con el color de un degradado, el píxel no se toca.
+        let mut m2 = m.clone();
+        m2[w as usize + 4] = Mezcla { a: 2, b: 0, t: 0.6 };
+        let degradado = Some(crate::modelo::Relleno::Color([200, 120, 60]));
+        afinar(&im, &pal, &mut m2, 2, &[None, None, degradado]);
+        assert_eq!(m2[w as usize + 4].a, 2);
+    }
 }

@@ -16,7 +16,6 @@ apolo-nucleo = { path = "crates/nucleo" }
 apolo-vector = { path = "crates/vector" }
 apolo-heic = { path = "crates/heic" }
 apolo-avifjxl = { path = "crates/avifjxl" }
-apolo-tema = { path = "crates/tema" }
 apolo-servicio = { path = "crates/servicio" }
 apolo-mcp = { path = "crates/mcp" }
 apolo-mcpb = { path = "crates/mcpb" }

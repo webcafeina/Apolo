@@ -131,7 +131,7 @@ unsafe fn calidad(
 ) -> Resultado<()> {
     let mut val: f32 = 75.0;
     let partes = trozos(arg);
-    for tblno in 0..NUM_QUANT_TBLS {
+    for (tblno, escala) in l.escala.iter_mut().enumerate().take(NUM_QUANT_TBLS) {
         if let Some(p) = partes.get(tblno) {
             // sscanf("%f%c") con la coma como única terminación válida: un
             // trozo que no empiece por número es un error.
@@ -158,7 +158,7 @@ unsafe fn calidad(
             val = atof(t) as f32;
         }
         // q_scale_factor es int: la conversión de C trunca.
-        l.escala[tblno] = unsafe { j::jpeg_float_quality_scaling(val) } as c_int;
+        *escala = unsafe { j::jpeg_float_quality_scaling(val) } as c_int;
     }
     unsafe { tablas_por_defecto(c, l, force_baseline) };
     if val >= 90.0 {

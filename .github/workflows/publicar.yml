@@ -134,7 +134,12 @@ jobs:
       - name: La interfaz, sin secretos
         run: pnpm -C frontend build
 
-      - uses: tauri-apps/tauri-action@84b9d35b5fc46c1e45415bdb6144030364f7ebc5 # v0.6.2
+      # La 1.0 (2026-11-13): el .app.tar.gz del actualizador de macOS lleva ya
+      # la versión en el nombre (Apolo_1.1.2_universal.app.tar.gz), como todos
+      # los demás; si la Release existe, le pone su nombre y sus notas (las de
+      # verdad se ponen al final, en «adjuntar»); y latest.json sigue con las
+      # URL de la API, que «adjuntar» cambia por las de descarga.
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1.0.0
         id: tauri
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

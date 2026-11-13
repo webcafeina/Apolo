@@ -14,8 +14,8 @@ const FECHA = "2026-10-27";
 // Vectorizar (ADR 0039): el sol de Apolo en colores planos, medido por medidas.mjs.
 const V = M.vector;
 const FECHA_VECTOR = "2026-11-10";
-// Las cifras cambiaron con la 1.1.1 (el sol sobre transparente, de 71,3 a 80,7).
-const REVISADO_VECTOR = "2026-11-12";
+// Las cifras cambiaron con la 1.1.1 (el sol sobre transparente, de 71,3 a 80,7) y la 1.1.2 (81,7).
+const REVISADO_VECTOR = "2026-11-13";
 const decimal = (n: number, idioma: Idioma) => n.toLocaleString(idioma === "es" ? "es-ES" : "en-US", { maximumFractionDigits: 1 });
 
 export const GUIAS: Record<Idioma, Articulo[]> = {

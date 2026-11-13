@@ -1,6 +1,6 @@
 {
-  "version": "apolo 1.1.1",
-  "fecha": "2026-11-12",
+  "version": "apolo 1.1.2",
+  "fecha": "2026-11-13",
   "fotos": {
     "imagenes": 24,
     "ancho": 768,
@@ -35,13 +35,13 @@
   "vector": {
     "original": 20025,
     "lado": 512,
-    "nota": 80.7,
+    "nota": 81.7,
     "formas": 17,
-    "nodos": 408,
+    "nodos": 372,
     "colores": 4,
-    "svg": 7429,
-    "pdf": 3750,
-    "eps": 9268,
-    "dxf": 44420
+    "svg": 6886,
+    "pdf": 3515,
+    "eps": 8653,
+    "dxf": 42527
   }
 }

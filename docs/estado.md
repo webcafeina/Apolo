@@ -4,6 +4,16 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-13, tarde): preparando la 1.1.2, con el sí del cliente.** `tauri-action` 1.0 en `main`
+> (`1bbbab0`, fijada a `1deb371b`): compilación de prueba 43411734805 en verde (10 compilaciones y 6 humos); el
+> nombre nuevo del `.app.tar.gz` (con la versión) y `latest.json` solo se ven con una Release: **revisar el borrador
+> de la 1.1.2 con cuidado** (que `adjuntar` deje las 16 URL de descarga y el nombre nuevo) y, ya publicada, que un
+> Apolo 1.1.1 del cliente se actualice. La 1.1.2 lleva además la detección de fotos con textura, `afinar` y el
+> arreglo para Rust 1.100. Notas en `.github/notas/v1.1.2.md`; versión a 1.1.2 en Cargo.toml y el plugin; la fecha de
+> revisión de la guía de vectorizar, al 13. Pendiente al escribir esto: `cargo update -w`, `make cli`, medidas (el
+> sol a 81,7), `make capturas-web`, `pnpm -C web build` y `readme.mjs` (que fotografía la web compilada), `make
+> comprobar`, commit «Versión 1.1.2», subir (cancelar el run `Web`), CI, etiqueta, revisar y publicar.
+
 > **2026-11-13, mediodía**: el cliente trajo un logo real (Aldea, `capturas/cliente/`, fuera de git) que se
 > vectorizaba como foto. Hecho y subido: la detección pide además **textura** (`054a184`: Aldea de nota 18 a 47,7)
 > y **`afinar`** los bordes mal explicados tras los degradados (`b4e8a0f`: banco de 82,55 a 83,50, el sol 81,7).

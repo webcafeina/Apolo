@@ -120,6 +120,12 @@ está en la sesión del 2026-11-09 (`docs/sesiones.md`).
   mismo naranja es un anillo del sol y un trozo de cada rayo del icono). Probado el 2026-11-10: el sol se veía
   más continuo, pero la nota bajaba (el icono, de 55,7 a 51,5; el cohete de los emojis, de 61,2 a 51,0), y con
   solo las zonas grandes no cambiaba nada. Descartado; los anillos del sol, a la deuda.
+- **Limpiar las manchas pequeñas antes de trazar** (2026-11-13, para el logo de Aldea): cada mancha conexa de
+  un color con pocos píxeles toma el color que la rodea, en la mezcla de cada píxel. A secas rompía el texto
+  pequeño (sus trazos son manchitas); solo con las manchas cuyo color es mezcla de los dos que las rodean, Aldea
+  pasaba de 951 a 851 formas con la misma nota, y en el banco la media bajaba (76,04 → 75,85; libwebp −7,8) y
+  las fotos pesaban un 10 % menos con notas a un lado y a otro. Las formas de más de Aldea son trocitos de menos
+  de 4 px en las capas de los degradados, no motas: es el problema del degradado repartido en franjas (deuda).
 
 ## Consecuencias
 

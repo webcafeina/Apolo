@@ -1,6 +1,6 @@
 # ADR 0040 — El .deb y el .rpm descargados dan de alta el repositorio
 
-**Fecha:** 2026-11-27 · **Estado:** aceptada · sale con la 1.1.3
+**Fecha:** 2026-11-27 · **Estado:** hecha · publicada en la 1.1.3 y comprobada por el cliente
 
 ## Contexto
 
@@ -68,6 +68,7 @@ Al instalarse, el `.deb` y el `.rpm` dan de alta el repositorio de Apolo, como h
   con `$1 = 2` (actualización) se probó suelto, no con un paquete renumerado.
 - **Lo vigila la CI** (`humo.yml`): tras instalar el `.deb` en Ubuntu, el `.sources` existe y `apt-get update` lee
   el repositorio; tras instalar el `.rpm` en Fedora, existe `apolo.repo`.
-- **No comprobado**: openSUSE (`zypper`) más allá de la ruta, y el paso de verdad en una máquina del cliente,
-  que espera a la 1.1.3: instalar el `.deb` descargado en su Ubuntu y ver que `sudo apt update && sudo apt
-  upgrade` le ofrece la versión siguiente.
+- **Comprobado por el cliente el 2026-11-27 con la 1.1.3 publicada**: en su Ubuntu y en su Fedora, actualizando
+  desde la ventana, aparece la fuente (`apolo.sources`, `apolo.repo`) y `apt update` y `dnf check-update` leen el
+  repositorio. Mac y Windows se actualizaron solos a la 1.1.3.
+- **No comprobado**: openSUSE (`zypper`) más allá de la ruta, y que `apt upgrade` ofrezca de verdad una versión siguiente (se verá con la 1.1.4).

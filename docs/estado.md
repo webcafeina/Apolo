@@ -10,10 +10,10 @@
 > las seis pruebas de humo en verde. **Al publicar, todo solo y en verde**: web (con la frase del repositorio), APT,
 > RPM (`dnf` ve la 1.1.3), PKGBUILD, cask y fórmula, registro MCP, `latest.json` y plugin en 1.1.3. **Primera vez de
 > `canales.yml` de verdad**: Chocolatey aceptó la 1.1.3 (con la 1.1.2 aún en moderación) y winget abrió el
-> [#491138](https://github.com/microsoft/winget-pkgs/pull/491138), cerró el #491053 y firmó el CLA solo. Falta
-> **probar en las máquinas del cliente**: actualizar desde la ventana en Mac, Windows y Ubuntu; en Ubuntu, que tras
-> actualizar `sudo apt update` lea el repositorio; en Windows, `choco install apolo` cuando Chocolatey la apruebe
-> (el marcador del gestor). Aldea, aplazado.
+> [#491138](https://github.com/microsoft/winget-pkgs/pull/491138), cerró el #491053 y firmó el CLA solo. **Comprobada por
+> el cliente**: Mac y Windows se actualizan solos, y en Ubuntu y Fedora, tras actualizar desde la ventana, aparece el
+> repositorio y `apt`/`dnf` lo leen. Falta: `choco install apolo` en la VM de Windows cuando Chocolatey apruebe la
+> 1.1.3 (el marcador del gestor; la 1.1.2 está lista para revisión humana y la 1.1.3 en sus pruebas automáticas). Aldea, aplazado.
 
 > **PARADA AQUÍ (2026-11-27): la 1.1.3, preparada para etiquetar** («Vamos con la 1.1.3», el cliente). Versión a
 > 1.1.3, notas en `.github/notas/v1.1.3.md` (Linux con el repositorio, Chocolatey sin actualizarse sola, cookie y

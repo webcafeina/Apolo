@@ -8,10 +8,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
-- **Para las notas de la 1.1.3 y la web** (ADR 0040): el `.deb` y el `.rpm` descargados dan de alta el
-  repositorio al instalarse, así que se actualizan también con `apt upgrade` o `dnf upgrade`. Al publicar,
-  añadir una frase en `web/src/contenido/descargar.ts` (Linux, es y en) y probarlo en la VM de Ubuntu: instalar
-  el `.deb` de la 1.1.3 y ver que `sudo apt update` lee el repositorio.
+- ~~**Para las notas de la 1.1.3 y la web** (ADR 0040)~~: hecho el 2026-11-27. Publicada la 1.1.3 con la frase en
+  `descargar.ts`, y comprobado por el cliente en Ubuntu y Fedora. **Queda**: `choco install apolo` en la VM de
+  Windows cuando Chocolatey apruebe la 1.1.3 (el marcador del gestor), y Aldea (deuda).
 - **Hecho el 2026-11-27** lo de la nota de abajo, comprobado antes punto por punto: pruebas de los cuatro
   `rellenar.py` (`make empaquetado`), Homebrew carga las recetas en un Mac antes de empujarlas y «sin cambios»
   solo vale si el tap dice la versión, el marcador del gestor en Windows (Chocolatey; **sin ver en Windows**:

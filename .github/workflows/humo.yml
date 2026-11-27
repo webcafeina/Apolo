@@ -99,6 +99,9 @@ jobs:
           sudo apt-get update > /dev/null
           sudo apt-get install -y "$(find "$PWD/paquete" -name '*.deb' | head -1)"
           ls -la /usr/bin/apolo-app /usr/bin/apolo-mcp
+          # El .deb da de alta el repositorio APT (deb-postinst.sh), y apt lo lee con su firma.
+          grep -q "apolo.webcafeina.com/apt" /etc/apt/sources.list.d/apolo.sources
+          sudo apt-get update 2>&1 | grep -q "apolo.webcafeina.com/apt"
           app=$(find "$PWD/paquete" -name '*.AppImage' | head -1)
           chmod +x "$app" && mkdir appimage && (cd appimage && "$app" --appimage-extract > /dev/null)
           ls appimage/squashfs-root/usr/bin/
@@ -182,6 +185,8 @@ jobs:
           test -x /usr/bin/apolo-app
           if ldd /usr/bin/apolo-app | grep "not found"; then exit 1; fi
           test -f /usr/share/metainfo/com.webcafeina.apolo.metainfo.xml
+          # El .rpm da de alta el repositorio RPM (rpm-post.sh).
+          grep -q "apolo.webcafeina.com/rpm" /etc/yum.repos.d/apolo.repo
 
   # Arch (ADR 0030): el PKGBUILD del AUR, rellenado con el .deb de esta ejecución, se construye con
   # makepkg y se instala con pacman. La imagen de Arch solo existe para x86_64.

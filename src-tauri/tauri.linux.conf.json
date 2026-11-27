@@ -20,8 +20,11 @@
       "deb": {
         "desktopTemplate": "../empaquetado/linux/apolo.desktop",
         "files": {
-          "/usr/share/metainfo/com.webcafeina.apolo.metainfo.xml": "../empaquetado/linux/com.webcafeina.apolo.metainfo.xml"
-        }
+          "/usr/share/metainfo/com.webcafeina.apolo.metainfo.xml": "../empaquetado/linux/com.webcafeina.apolo.metainfo.xml",
+          "/usr/share/apolo/apolo.asc": "../empaquetado/linux/apolo.asc"
+        },
+        "postInstallScript": "../empaquetado/linux/deb-postinst.sh",
+        "postRemoveScript": "../empaquetado/linux/deb-postrm.sh"
       },
       "rpm": {
         "release": "1",
@@ -29,7 +32,9 @@
         "desktopTemplate": "../empaquetado/linux/apolo.desktop",
         "files": {
           "/usr/share/metainfo/com.webcafeina.apolo.metainfo.xml": "../empaquetado/linux/com.webcafeina.apolo.metainfo.xml"
-        }
+        },
+        "postInstallScript": "../empaquetado/linux/rpm-post.sh",
+        "postRemoveScript": "../empaquetado/linux/rpm-postun.sh"
       }
     }
   }

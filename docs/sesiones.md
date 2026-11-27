@@ -17,6 +17,7 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   tres avisos nuevos: `cookie` y `url` subidos, `chrono` a las excepciones y a la deuda.
 - El despliegue de la web de esos commits falló en `deploy-pages` («No artifacts named github-pages»): con una
   ejecución nueva (`gh workflow run web.yml --ref main`, trampas.md), bien.
+- **El cliente comprobó la 1.1.2**: un Apolo 1.1.1 se actualiza solo en macOS y en Windows (`tauri-action` 1.0, bien).
 
 ---
 

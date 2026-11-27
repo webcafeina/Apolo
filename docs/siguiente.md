@@ -135,7 +135,9 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
     `checkout` v7, `upload-artifact` v7, `tauri-action` 1.0…), TypeScript 7 y `@types/node` 26 en
     npm, y zlib 1.3.2 con la próxima libjxl (deuda).~~ **Hecha en la 1.0.2 (2026-11-05)**, salvo:
     `tauri-action` 1.0 (renombra el `.app.tar.gz` del actualizador, cambia las URL de
-    `latest.json` y reescribe las notas: **una versión para ella, con su compilación de prueba**);
+    `latest.json` y reescribe las notas: **una versión para ella, con su compilación de prueba**;
+    **hecho en la 1.1.2**, 2026-11-27: borrador revisado y el cliente vio un Apolo 1.1.1 actualizarse solo en
+    macOS y Windows);
     `upload-pages-artifact` en la v3 a propósito; TypeScript 7 y `@types/node` 26, no
     (@astrojs/check solo admite TS 6; Node 22); zlib 1.3.2, cuando salga una libjxl nueva (la
     0.12.0 sigue siendo la última).

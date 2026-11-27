@@ -14,9 +14,9 @@
 > APT, PKGBUILD, cask, registro MCP, enlaces fijos y `latest.json` en 1.1.2. **Chocolatey 1.1.2 subida** (la 1.1.1 se
 > aprobó el 18-nov). Después: `astro` 7.4.7 (el PR #15 de Dependabot, con el sí del cliente, como commit propio);
 > `cookie` 0.18.3 y `url` 2.5.9 por tres avisos nuevos de RustSec, y `chrono` (sin mantenimiento, vía el SDK de
-> MCP) a las excepciones de `deny.toml`; y la nota de Esfinge sobre los canales, en `siguiente.md`. **Pendiente del
-> cliente**: que un Apolo 1.1.1 se actualice solo a la 1.1.2 (su Mac y, si puede, Windows): es la prueba de verdad
-> de `tauri-action` 1.0. Lo siguiente, lo que diga: la lista de Esfinge (`siguiente.md`, Alta), Aldea (deuda) o
+> MCP) a las excepciones de `deny.toml`; y la nota de Esfinge sobre los canales, en `siguiente.md`. **Comprobado por
+> el cliente**: un Apolo 1.1.1 se actualiza solo a la 1.1.2 en su Mac y en Windows, así que `tauri-action` 1.0 va
+> bien de punta a punta. Lo siguiente, lo que diga: la lista de Esfinge (`siguiente.md`, Alta), Aldea (deuda) o
 > los envíos aplazados (volver a mirarlos antes).
 
 > **PARADA AQUÍ (2026-11-13, ~14:30): la 1.1.2, ETIQUETADA y compilándose; sin revisar ni publicar.** Con el sí

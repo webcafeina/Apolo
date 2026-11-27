@@ -8,13 +8,14 @@ export APOLO_CLANG := $(HOME)/.local/llvm18/bin
 export LD_LIBRARY_PATH := $(HOME)/.local/llvm18/compat$(if $(LD_LIBRARY_PATH),:$(LD_LIBRARY_PATH))
 endif
 
-.PHONY: referencias cjpeg-oficial ayuda limpiar comprobar rust interfaz web plugin seguridad web-e2e capturas-web video-web contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
+.PHONY: referencias cjpeg-oficial ayuda limpiar comprobar rust interfaz web plugin empaquetado seguridad web-e2e capturas-web video-web contraste tokens cli mcp mcpb sidecar catalogo-mcp evaluar-mcp app dev dev-web e2e capturas capturas-en capturas-windows capturas-macos capturas-linux capturas-kde equivalencia iconos ventana-dmg
 
 ayuda:
 	@echo "make comprobar  formato, clippy, pruebas, contraste, interfaz y web (la puerta de CI)"
 	@echo "make tokens     regenera los tokens.css de la interfaz y de la web desde crates/tema"
 	@echo "make web        la web (web/, ADR 0033): tipos, compilación y pruebas"
 	@echo "make plugin     el plugin de Claude y su lanzador (ADR 0036); con la CLI de Claude, también lo valida"
+	@echo "make empaquetado los rellenar.py del AUR, Chocolatey y Homebrew, por sus plantillas y sin red"
 	@echo "make seguridad  zizmor sobre los workflows y los avisos de seguridad de las dependencias de Rust"
 	@echo "make web-e2e    la web en el navegador: detección, cookies, SEO, accesibilidad"
 	@echo "make capturas-web  las capturas de la web, en sus cuatro vistas y dos idiomas"
@@ -40,7 +41,7 @@ ayuda:
 limpiar:
 	python3 scripts/limpiar.py
 
-comprobar: interfaz rust web plugin seguridad
+comprobar: interfaz rust web plugin empaquetado seguridad
 
 # Sin webkit2gtk (el VPS) no se puede compilar src-tauri: se comprueba el resto.
 # En CI, con webkit, va todo el workspace.
@@ -65,6 +66,9 @@ web:
 
 # El plugin de Claude y su lanzador (ADR 0036). La validación del
 # directorio la hace la CLI de Claude, que no está en CI: si está, se pasa; si no, se avisa.
+empaquetado:
+	python3 -I empaquetado/probar-rellenar.py
+
 plugin:
 	node --test empaquetado/claude/lanzador.test.mjs
 	@if command -v claude > /dev/null; then \

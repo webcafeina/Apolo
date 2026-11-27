@@ -23,21 +23,87 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  tap:
+  # Las dos recetas, rellenas con la versión y sus sumas.
+  recetas:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: La versión y sus sumas
+        id: version
         env:
           GH_TOKEN: ${{ github.token }}
           ETIQUETA: ${{ github.event.release.tag_name }}
           A_MANO: ${{ inputs.version }}
         run: |
           version="${A_MANO:-${ETIQUETA#v}}"
-          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
           gh release download "v$version" --pattern SHA256SUMS.txt --dir "$RUNNER_TEMP"
+          python3 -I empaquetado/homebrew/rellenar.py "$version" "$RUNNER_TEMP/SHA256SUMS.txt" recetas
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: recetas
+          path: recetas
+
+  # Antes de empujar, que Homebrew las cargue en un Mac (lo trajo la nota de Esfinge, docs/siguiente.md):
+  # una receta que no carga se publicaría en el tap y lo descubriría quien instala, y cargar el tap evalúa
+  # las dos, así que un cask ilegible tumba también `brew install` de la fórmula. Falla también con un
+  # aviso de retirada: un «deprecated» de hoy es el error de dentro de unos meses.
+  cargan:
+    needs: recetas
+    runs-on: macos-15
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: recetas
+          path: recetas
+      - name: Cargarlas en un tap de prueba
+        run: |
+          set -euo pipefail
+          # Un tap es un repositorio git; con otro nombre que el de verdad, para que no se confunda con él.
+          tap="$RUNNER_TEMP/puerta"
+          mkdir -p "$tap/Formula" "$tap/Casks"
+          cp recetas/Formula/apolo.rb "$tap/Formula/"
+          cp recetas/Casks/apolo.rb "$tap/Casks/"
+          git -C "$tap" init -q
+          git -C "$tap" add -A
+          git -C "$tap" -c user.email=puerta@local -c user.name=puerta commit -qm puerta
+          brew tap webcafeina/puerta "$tap"
+          # El modelo de confianza de los taps de terceros: sin esto, Homebrew se niega a cargar el cask
+          # y parecería que la receta está mal.
+          brew trust webcafeina/puerta
+          mal=0
+          for que in "--cask webcafeina/puerta/apolo" "--formula webcafeina/puerta/apolo"; do
+            echo "· brew info $que"
+            if ! salida="$(brew info $que 2>&1)"; then
+              echo "$salida"
+              echo "::error::Homebrew no puede cargar «$que»"
+              mal=1
+              continue
+            fi
+            printf '%s\n' "$salida" | sed -n '1,4p'
+            if printf '%s' "$salida" | grep -qiE "deprecat|disabled|unreadable"; then
+              printf '%s\n' "$salida" | grep -iE "deprecat|disabled|unreadable"
+              echo "::error::«$que» usa algo que Homebrew está retirando"
+              mal=1
+            fi
+          done
+          [ "$mal" -eq 0 ]
+          echo "Las dos recetas cargan, sin avisos de retirada"
+
+  tap:
+    needs: [recetas, cargan]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.recetas.outputs.version }}
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: recetas
+          path: recetas
       - name: El tap, con la deploy key
         env:
           CLAVE: ${{ secrets.HOMEBREW_TAP_CLAVE }}
@@ -48,13 +114,21 @@ jobs:
           ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
           GIT_SSH_COMMAND="ssh -i ~/.ssh/tap -o IdentitiesOnly=yes" \
             git clone --depth 1 git@github.com:webcafeina/homebrew-apolo.git "$RUNNER_TEMP/tap"
-      - name: Rellenar y empujar
+      - name: Empujar
         run: |
-          python3 -I empaquetado/homebrew/rellenar.py "$VERSION" "$RUNNER_TEMP/SHA256SUMS.txt" "$RUNNER_TEMP/tap"
+          mkdir -p "$RUNNER_TEMP/tap/Formula" "$RUNNER_TEMP/tap/Casks"
+          cp recetas/Formula/apolo.rb "$RUNNER_TEMP/tap/Formula/apolo.rb"
+          cp recetas/Casks/apolo.rb "$RUNNER_TEMP/tap/Casks/apolo.rb"
           cd "$RUNNER_TEMP/tap"
+          # Sin cambios solo está bien si el tap ya dice esta versión (relanzar la misma versión es
+          # normal); si no, algo no se rellenó.
           if git diff --quiet; then
-            echo "El tap ya estaba en la $VERSION"
-            exit 0
+            if grep -q "version \"$VERSION\"" Formula/apolo.rb && grep -q "version \"$VERSION\"" Casks/apolo.rb; then
+              echo "El tap ya estaba en la $VERSION"
+              exit 0
+            fi
+            echo "::error::Sin cambios, pero el tap no dice la $VERSION"
+            exit 1
           fi
           git -c user.name="Apolo" -c user.email="info@webcafeina.com" \
             commit -qam "Apolo $VERSION"

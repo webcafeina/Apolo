@@ -8,6 +8,90 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
+- **Lo que Esfinge tiene de los canales y Apolo no** (apuntado el 2026-11-17 desde la sesión de
+  Esfinge, a petición del cliente; **se hace aquí, no allí**). Esfinge acaba de terminar su plan de
+  canales y hay cuatro cosas que aquí faltan o están a medias. Lo de abajo está **comprobado en este
+  repositorio y midiendo**, no deducido:
+
+  1. **winget no está automatizado.** Hay un PR abierto a mano desde el 2026-10-27
+     ([winget-pkgs#463314](https://github.com/microsoft/winget-pkgs/pull/463314)) y **pide la
+     1.0.0 cuando ya vamos por la 1.1.1**: aunque lo aprueben, winget serviría una versión vieja.
+     No hay manifiestos en el repositorio ni flujo que los mande ni `WINGET_TOKEN` en los secretos.
+     En Esfinge está resuelto y se puede copiar casi tal cual: `empaquetado/winget/` con los tres
+     manifiestos como plantilla, el trabajo `winget` de `canales.yml`, y `wingetcreate` **fijado y
+     con su suma** (la etiqueta rodante de `aka.ms` ya costó dos publicaciones allí con otra
+     herramienta). Dos cosas a cambiar al traerlo: el `Scope` —el instalador de Apolo es **por
+     usuario** y el de Esfinge de máquina— y el token, que va **por el entorno y nunca como
+     argumento**, que lo avisa el propio `wingetcreate`.
+     **La CLA ya está firmada por la cuenta**, pero el bot **la pide en cada PR**: se contesta
+     comentando `@microsoft-github-policy-service agree company="Webcafeína"` y tarda unos minutos.
+     Y antes de mandar nada, **sincronizar el fork** (`gh repo sync webcafeina/winget-pkgs`): si va
+     atrasado, `wingetcreate` se niega.
+
+  2. **Chocolatey tampoco.** Hay `empaquetado/chocolatey/` con su `.nuspec` y su `rellenar.py`, y
+     **ningún flujo que lo suba**: hoy es a mano. En Esfinge lo sube `canales.yml` y **avisa en vez
+     de fallar** cuando la tienda contesta 403, que es lo que pasa mientras tienen otra versión en
+     moderación — tumbar la publicación por una cola ajena deja en rojo todo lo demás.
+     **Y dos cosas más, del 2026-11-18 y el 19.** Su moderación **devuelve paquetes** y entonces pide
+     volver a empujar **esa misma versión**; en Esfinge eso obligó a añadir un selector de canal
+     suelto, porque relanzar los canales con una versión vieja devolvería el tap, el AUR y winget a
+     ella — y la comprobación final diría que todo va bien, porque mira que los canales sirvan la
+     versión *que se le ha dado*. Si esto se automatiza aquí, el selector viene con ello. Lo otro es
+     que **la ficha de Apolo está en inglés y por eso se aprobó**: a Esfinge le devolvieron el paquete
+     por tenerla sólo en español («the description is only in Spanish… you can keep the Spanish after
+     it»). No hay nada que cambiar aquí; conviene saberlo antes de traducirla.
+
+  3. **No se sabe de qué gestor viene una copia de Windows**, que es la deuda que este repositorio
+     ya tiene apuntada: con Chocolatey (y mañana con winget), Apolo se actualiza sola y el gestor se
+     queda viendo una versión vieja. Esfinge lo cerró con la **ADR 0063**: el instalador acepta
+     `/GESTOR=<nombre>` y escribe ese nombre **al lado del programa** —en Windows no hay sitio
+     compartido como `/usr/share`—, el paquete se lo pasa, y a quien viene de un gestor **no se le
+     ofrece nada**, igual que en Arch. En Linux Apolo ya lo hace con el fichero del AUR.
+
+  4. **La comprobación final de los canales sale con `exit 0`** cuando el tap ya estaba en esa
+     versión. Eso tapa justo el caso que importa —«se quedó atrás y nadie se enteró»—; en Esfinge esa
+     comprobación **falla** si un canal no sirve la versión recién publicada.
+
+  5. **Nada carga las recetas de Homebrew antes de empujarlas** (apuntado el 2026-11-19). Ninguno de
+     los flujos de aquí llama a `brew info`, `brew audit` ni `brew style`: una receta que Homebrew se
+     niegue a cargar se publica en el tap y lo descubre quien intenta instalar. Y el daño no se queda
+     en lo suyo: **cargar el tap evalúa las dos recetas**, así que un cask ilegible tumba también
+     `brew install` de la fórmula, con un error que señala a la que no es. En Esfinge pasó ese mismo
+     día, dos veces seguidas, en la VM de macOS del cliente. **Aquí hoy está bien** —ver abajo—, pero
+     Homebrew retira DSL con el tiempo y eso no avisa a nadie. Lo que lo cierra en Esfinge es el
+     trabajo `cargan` de `canales.yml`: en un `macos-15` monta un tap de mentira con las dos recetas
+     rellenadas, lo confía (`brew trust`, el modelo nuevo de taps de terceros) y hace `brew info` de
+     las dos **antes** de empujar; falla si no cargan **y también si Homebrew sólo avisa**, porque un
+     `deprecated` de hoy es el error de dentro de tres meses. Con una prueba que afirma que el tap
+     depende de esa puerta: quitar la dependencia es una línea que no se nota —la puerta seguiría
+     corriendo, al lado en vez de delante— y sin esa prueba se queda en verde (comprobado mutándolo).
+
+  6. **Tres `rellenar.py`, uno por canal, y ninguno con pruebas.** Están en `empaquetado/aur`,
+     `empaquetado/chocolatey` y `empaquetado/homebrew`, cada uno con su tabla de nombres: es la misma
+     regla en tres listas. En Esfinge es **una** herramienta (`herramientas/rellenar`) cuyos
+     marcadores **son las claves del catálogo**, así que no hay segunda lista que mantener. Y lo que
+     de verdad costó: **tampoco tenía pruebas**, de modo que nadie pasaba las plantillas de verdad por
+     ella sin red; la primera que se escribió (rellenar las ocho en `make comprobar`) cazó un fallo
+     en el acto. Aquí la versión barata es una prueba que pase los tres guiones por sus plantillas
+     reales con unas sumas de mentira y exija que no quede ningún marcador.
+
+  **Y lo que aquí ya está bien, y en Esfinge no lo estaba** (2026-11-19), porque la nota sirve en los
+  dos sentidos: **el cask de Apolo es correcto** —`depends_on :macos`, sin mínimo, y `{{appdir}}` con
+  llaves dobles en `postflight_steps`—, que es exactamente lo que a Esfinge le faltaba; su cask se
+  escribió mal **teniendo este al lado sin mirarlo**. Y **el README y la web de aquí cuentan los
+  canales** (`brew install --cask`, `dnf install`, `makepkg -si`), que es una deuda abierta de
+  Esfinge: allí hay seis canales publicados y ni el README ni la web los nombran. Cuando se escriba
+  la sección de Esfinge, **el modelo es el README de aquí**.
+
+  **Y lo que NO hay que tocar, medido el 2026-11-17**: la AppImage de Apolo **no tiene** el fallo que
+  costó dos publicaciones en Esfinge —WebKit arrancando los procesos auxiliares del sistema en vez de
+  los de dentro—. Se ejecutó la `Apolo_1.1.1_amd64.AppImage` en una Ubuntu 26.04 **sin WebKit
+  instalado** y lanza los suyos (`execve(…) = 0`). Lo que sí conviene saber: eso depende de cómo
+  resuelve esa ruta la libwebkit que se empaqueta, y **el empaquetado de Apolo va fijado a
+  `ubuntu-22.04`**; si algún día sube a 24.04 o más, conviene volver a medirlo, porque la de Esfinge
+  —empaquetada en 24.04— sí lleva la ruta compilada a fuego y no honra `WEBKIT_EXEC_PATH`.
+
+
 - ~~**Tras el carrusel en redes (2026-11-06)**: confirmar que salió y quitar `web/public/redes/`~~: hecho
   el 2026-11-06. Queda ver @claude en la página del repositorio: la API ya no lo lista (`docs/estado.md`).
 

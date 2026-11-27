@@ -12,4 +12,8 @@ ignore = [
     # Sin mantenimiento; lo usan las macros de glib 0.18 (gtk-rs), por Tauri en
     # Linux, solo al compilar.
     { id = "RUSTSEC-2024-0370", reason = "proc-macro-error: macro de compilación de glib 0.18, vía Tauri" },
+    # Sin mantenimiento (2026-11): lo traen rmcp y schemars, el SDK de MCP, para
+    # sus tipos de fecha; Apolo no lo usa. No hay versión segura: se va cuando
+    # rmcp y schemars pasen a jiff o time.
+    { id = "RUSTSEC-2026-0543", reason = "chrono: lo traen rmcp y schemars (el SDK de MCP); sin versión segura todavía" },
 ]

@@ -1,6 +1,8 @@
 # Plantilla: rellenar.py pone la versión. Lo de antes de la primera línea en blanco no llega al
 # manifiesto.
 
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.12.0.schema.json
+
 PackageIdentifier: Webcafeina.Apolo
 PackageVersion: "{{VERSION}}"
 PackageLocale: es-ES

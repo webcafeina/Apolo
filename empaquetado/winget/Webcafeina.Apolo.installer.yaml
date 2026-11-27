@@ -4,6 +4,8 @@
 # Sin marcador del gestor, a diferencia de Chocolatey: winget mira la versión instalada en el registro
 # de Windows, así que si Apolo se actualiza solo, winget lo ve.
 
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.12.0.schema.json
+
 PackageIdentifier: Webcafeina.Apolo
 PackageVersion: "{{VERSION}}"
 InstallerLocale: es-ES
@@ -15,7 +17,6 @@ AppsAndFeaturesEntries:
 - ProductCode: Apolo
 InstallationMetadata:
   DefaultInstallLocation: '%LocalAppData%\Apolo'
-ReleaseNotesUrl: https://github.com/webcafeina/Apolo/releases/tag/v{{VERSION}}
 Installers:
 - Architecture: x64
   InstallerUrl: https://github.com/webcafeina/Apolo/releases/download/v{{VERSION}}/Apolo_{{VERSION}}_x64-setup.exe

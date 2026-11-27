@@ -2,6 +2,8 @@
 # manifiesto. La ficha en inglés, además de la española: a Esfinge, Chocolatey le devolvió el paquete
 # por tenerla solo en español.
 
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.locale.1.12.0.schema.json
+
 PackageIdentifier: Webcafeina.Apolo
 PackageVersion: "{{VERSION}}"
 PackageLocale: en-US
@@ -20,7 +22,6 @@ Description: |-
   engines as cwebp, cjpeg, oxipng, avifenc and cjxl, and shows what you lose before you save. It
   works on whole folders, vectorizes logos to SVG, PDF, EPS or DXF, and comes with a command line
   and an MCP server for AI agents.
-Moniker: apolo
 Tags:
 - avif
 - cli

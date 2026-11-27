@@ -79,6 +79,22 @@ def main() -> None:
             for f in ficheros:
                 if sumas[f] not in texto:
                     malos.append(f"{salida}: sin la suma de {f}")
+        # winget valida más cosas que un marcador sin rellenar (el 2026-11-27 rechazó los primeros):
+        # cada manifiesto empieza por su cabecera de esquema; un campo no puede estar en el del
+        # instalador y en una ficha de idioma a la vez; y Moniker solo va en la ficha principal.
+        claves = {}
+        for f in sorted((d / "winget").glob("*.yaml")):
+            lineas = f.read_text().splitlines()
+            if not lineas or not lineas[0].startswith("# yaml-language-server: $schema=https://aka.ms/winget-manifest."):
+                malos.append(f"winget/{f.name}: sin la cabecera de esquema en la primera línea")
+            claves[f.name] = {l.split(":", 1)[0] for l in lineas if l and not l.startswith((" ", "-", "#"))}
+        comunes = {"PackageIdentifier", "PackageVersion", "PackageLocale", "ManifestType", "ManifestVersion"}
+        inst = claves.get("Webcafeina.Apolo.installer.yaml", set())
+        for nombre, c in claves.items():
+            if ".locale." in nombre and (dobles := (inst & c) - comunes):
+                malos.append(f"winget: {sorted(dobles)} en el instalador y en {nombre}")
+            if "Moniker" in c and not nombre.endswith("es-ES.yaml"):
+                malos.append(f"winget/{nombre}: Moniker solo va en la ficha principal")
         nuspec = d / "chocolatey/apolo.nuspec"
         if not nuspec.exists() or f"<version>{VERSION}</version>" not in nuspec.read_text():
             malos.append("chocolatey/apolo.nuspec: sin la versión")

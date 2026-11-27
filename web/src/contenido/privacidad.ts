@@ -8,7 +8,7 @@ import type { PaginaDescarga as PaginaSecciones } from "./descargar";
 export const PRIVACIDAD: Record<Idioma, PaginaSecciones> = {
   es: {
     titulo: "Privacidad · Apolo",
-    descripcion: "Qué datos usa Apolo: tus imágenes no salen de tu ordenador, la aplicación solo consulta GitHub para buscar actualizaciones y el servidor MCP no se conecta a nada.",
+    descripcion: "Qué datos usa Apolo: tus imágenes no salen de tu ordenador, la aplicación solo consulta GitHub por actualizaciones y el servidor MCP no se conecta a nada.",
     etiqueta: "Privacidad",
     h1: "Tus imágenes no salen de tu ordenador.",
     entrada: "Qué datos usan la aplicación, la línea de comandos, el servidor MCP y el plugin de Claude, y a quién llegan. Actualizada el 3 de noviembre de 2026.",

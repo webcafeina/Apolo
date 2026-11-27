@@ -91,7 +91,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "AVIF, WebP o JPEG XL: cuál usar, con medidas · Apolo",
       descripcion:
-        "AVIF, WebP, JPEG XL y JPEG comparados a la misma calidad percibida con SSIMULACRA 2 en 24 fotos: cuánto pesa cada uno, dónde se abre y cuál conviene para la web o para guardar.",
+        "AVIF, WebP, JPEG XL y JPEG a la misma calidad percibida (SSIMULACRA 2, 24 fotos): cuánto pesa cada uno, dónde se abre y cuál conviene para la web.",
       etiqueta: "Guía",
       h1: "AVIF, WebP o JPEG XL.",
       entrada: "Los tres pesan menos que JPEG, pero no lo mismo ni en todas partes. Los hemos medido a la misma calidad percibida.",
@@ -152,7 +152,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "Comprimir imágenes sin perder calidad (y sin que se note) · Apolo",
       descripcion:
-        "Cómo reducir el peso de una imagen sin perder calidad: compresión sin pérdida, o con pérdida que no se ve, medida con SSIMULACRA 2. Gratis, en tu ordenador y sin subir nada.",
+        "Reduce el peso de una imagen sin perder calidad: sin pérdida, o con una pérdida que no se ve, medida con SSIMULACRA 2. Gratis, en tu ordenador.",
       etiqueta: "Guía",
       h1: "Comprimir sin perder calidad.",
       entrada: "Hay dos maneras: sin perder ni un píxel, o perdiendo lo que el ojo no ve. La segunda ahorra mucho más, y se puede medir.",
@@ -206,7 +206,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "Optimizar imágenes para la web: tamaño, formato y código · Apolo",
       descripcion:
-        "Las imágenes son lo que más pesa en casi cualquier web. Cómo dejarlas en su tamaño, elegir AVIF o WebP con respaldo y servirlas con <picture>, lazy loading y medidas.",
+        "Las imágenes son lo que más pesa en una web. Cómo dejarlas en su tamaño, elegir AVIF o WebP con respaldo y servirlas con <picture> y lazy loading.",
       etiqueta: "Guía",
       h1: "Optimizar imágenes para la web.",
       entrada: "Una web carga rápido si sus imágenes pesan lo justo. Son cuatro decisiones: tamaño, formato, calidad y cómo se sirven.",
@@ -263,9 +263,9 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       destacado: { valor: "11", texto: "herramientas para tu agente, en tu ordenador" },
       publicado: FECHA,
       revisado: FECHA,
-      titulo: "Optimizar imágenes con un agente de IA (Claude, Cursor, VS Code) · Apolo",
+      titulo: "Optimizar imágenes con un agente de IA (Claude, Cursor…) · Apolo",
       descripcion:
-        "Pide a Claude, Cursor o VS Code que optimice, convierta o compare tus imágenes: con el servidor MCP de Apolo, en tu ordenador, sin subir las fotos y sin sobrescribir nada.",
+        "Pide a Claude, Cursor o VS Code que optimice, convierta o compare tus imágenes, con el servidor MCP de Apolo: en tu ordenador y sin subir las fotos.",
       etiqueta: "Guía",
       h1: "Optimizar imágenes con un agente de IA.",
       entrada: "Con el servidor MCP de Apolo, tu agente convierte, compara y mide imágenes en tu ordenador. Tú se lo pides con palabras.",
@@ -314,7 +314,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "Convertir HEIC a JPG (o WebP) gratis, sin subir tus fotos · Apolo",
       descripcion:
-        "Las fotos del iPhone se guardan en HEIC y muchas webs y programas no las abren. Cómo pasarlas a JPG, WebP o AVIF en Mac, Windows o Linux, de una en una o por carpetas.",
+        "Las fotos del iPhone van en HEIC y muchas webs no las abren. Pásalas a JPG, WebP o AVIF en Mac, Windows o Linux, de una en una o por carpetas.",
       etiqueta: "Guía",
       h1: "Convertir HEIC a JPG.",
       entrada: "El iPhone guarda las fotos en HEIC, que pesa poco pero no se abre en todas partes. Apolo las abre y las pasa a JPG, WebP o AVIF.",
@@ -365,7 +365,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: REVISADO_VECTOR,
       titulo: "Vectorizar una imagen: de PNG a SVG, PDF o DXF, gratis · Apolo",
       descripcion:
-        "Pasa un logotipo, un icono o un dibujo de PNG o JPG a vectorial (SVG, PDF, EPS o DXF) en tu ordenador, viendo el resultado y su nota. También para cortar vinilo o láser.",
+        "Pasa un logotipo, un icono o un dibujo de PNG o JPG a SVG, PDF, EPS o DXF en tu ordenador, viendo el resultado y su nota. También para vinilo o láser.",
       etiqueta: "Guía",
       h1: "Vectorizar una imagen.",
       entrada: "Un logotipo que solo tienes en PNG, un icono o un dibujo, convertidos en formas que se amplían sin perder nitidez. En tu ordenador, sin subir nada.",
@@ -506,7 +506,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "AVIF, WebP or JPEG XL: which to use, with measurements · Apolo",
       descripcion:
-        "AVIF, WebP, JPEG XL and JPEG compared at the same perceived quality with SSIMULACRA 2 on 24 photos: how much each weighs, where it opens and which suits the web or archiving.",
+        "AVIF, WebP, JPEG XL and JPEG at the same perceived quality (SSIMULACRA 2, 24 photos): how much each weighs, where it opens and which suits the web.",
       etiqueta: "Guide",
       h1: "AVIF, WebP or JPEG XL.",
       entrada: "All three weigh less than JPEG, but not by the same amount, nor everywhere. We measured them at the same perceived quality.",
@@ -567,7 +567,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "Compress images without losing quality (or without it showing) · Apolo",
       descripcion:
-        "How to reduce an image's size without losing quality: lossless compression, or lossy compression you can't see, measured with SSIMULACRA 2. Free, on your computer, nothing uploaded.",
+        "Reduce an image's size without losing quality: lossless, or a loss you can't see, measured with SSIMULACRA 2. Free, on your computer, nothing uploaded.",
       etiqueta: "Guide",
       h1: "Compress without losing quality.",
       entrada: "There are two ways: without losing a single pixel, or losing what the eye can't see. The second saves far more, and it can be measured.",
@@ -621,7 +621,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "Optimize images for the web: size, format and code · Apolo",
       descripcion:
-        "Images are the heaviest part of almost any website. How to bring them to size, choose AVIF or WebP with a fallback and serve them with <picture>, lazy loading and dimensions.",
+        "Images are the heaviest part of a website. How to bring them to size, choose AVIF or WebP with a fallback and serve them with <picture> and lazy loading.",
       etiqueta: "Guide",
       h1: "Optimize images for the web.",
       entrada: "A website loads fast if its images weigh just what they need. It comes down to four decisions: size, format, quality and how they're served.",
@@ -680,7 +680,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "Optimize images with an AI agent (Claude, Cursor, VS Code) · Apolo",
       descripcion:
-        "Ask Claude, Cursor or VS Code to optimize, convert or compare your images: with Apolo's MCP server, on your computer, without uploading your photos or overwriting anything.",
+        "Ask Claude, Cursor or VS Code to optimize, convert or compare your images with Apolo's MCP server: on your computer, without uploading your photos.",
       etiqueta: "Guide",
       h1: "Optimize images with an AI agent.",
       entrada: "With Apolo's MCP server, your agent converts, compares and measures images on your computer. You just ask in plain words.",
@@ -729,7 +729,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: FECHA,
       titulo: "Convert HEIC to JPG (or WebP) for free, without uploading · Apolo",
       descripcion:
-        "iPhone photos are saved as HEIC and many websites and apps can't open them. How to turn them into JPG, WebP or AVIF on Mac, Windows or Linux, one by one or whole folders.",
+        "iPhone photos are saved as HEIC and many websites can't open them. Turn them into JPG, WebP or AVIF on Mac, Windows or Linux, one by one or by folder.",
       etiqueta: "Guide",
       h1: "Convert HEIC to JPG.",
       entrada: "The iPhone saves photos as HEIC, which is light but doesn't open everywhere. Apolo opens them and turns them into JPG, WebP or AVIF.",
@@ -780,7 +780,7 @@ export const GUIAS: Record<Idioma, Articulo[]> = {
       revisado: REVISADO_VECTOR,
       titulo: "Vectorize an image: PNG to SVG, PDF or DXF, for free · Apolo",
       descripcion:
-        "Turn a logo, an icon or a drawing from PNG or JPG into vector form (SVG, PDF, EPS or DXF) on your computer, seeing the result and its score. Also for cutting vinyl or laser.",
+        "Turn a logo, an icon or a drawing from PNG or JPG into SVG, PDF, EPS or DXF on your computer, seeing the result and its score. Also for vinyl or laser.",
       etiqueta: "Guide",
       h1: "Vectorize an image.",
       entrada: "A logo you only have as a PNG, an icon or a drawing, turned into shapes that scale without losing sharpness. On your computer, without uploading anything.",

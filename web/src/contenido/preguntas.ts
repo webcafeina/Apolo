@@ -90,7 +90,7 @@ export const PREGUNTAS: Record<Idioma, { titulo: string; descripcion: string; et
   },
   en: {
     titulo: "FAQ · Apolo",
-    descripcion: "What people usually ask about Apolo: whether it's free, whether it uploads your images, why your system warns you when you open it, which formats it reads and writes, and how it updates.",
+    descripcion: "What people ask about Apolo: is it free, does it upload your images, why does your system warn you when opening it, which formats it handles, how it updates.",
     etiqueta: "FAQ",
     h1: "Frequently asked questions.",
     entrada: "What people usually ask before installing Apolo, and after.",

@@ -128,7 +128,7 @@ export const CLI: Record<Idioma, PaginaSecciones> = {
 
 export const AGENTES: Record<Idioma, PaginaSecciones> = {
   es: {
-    titulo: "Apolo para agentes de IA · Optimiza imágenes con Claude, Cursor o VS Code",
+    titulo: "Apolo para agentes de IA: optimiza imágenes con Claude o Cursor",
     descripcion:
       "El servidor MCP de Apolo: Claude, Cursor, VS Code y cualquier agente optimizan, comparan y convierten imágenes en tu ordenador, sin sobrescribir nada.",
     etiqueta: "Agentes de IA",

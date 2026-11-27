@@ -11,7 +11,7 @@ export const INDICE: Record<Idioma, { titulo: string; descripcion: string; etiqu
   es: {
     titulo: "Apolo frente a Squoosh, TinyPNG, ImageOptim y Caesium · Apolo",
     descripcion:
-      "Apolo comparado con otras herramientas para comprimir imágenes: Squoosh, TinyPNG, ImageOptim y Caesium. Lo que hace mejor cada una, con datos comprobados y fecha.",
+      "Apolo comparado con Squoosh, TinyPNG, ImageOptim y Caesium: lo que hace mejor cada uno al comprimir imágenes, con datos comprobados y fecha.",
     etiqueta: "Comparativas",
     h1: "Comparativas.",
     entrada: "Apolo frente a otras herramientas para comprimir imágenes, con lo que hace mejor cada una.",
@@ -107,9 +107,9 @@ const RIVALES: Rival[] = [
     },
     texto: {
       es: {
-        titulo: "Apolo frente a Squoosh: lo mismo, en tu escritorio y por carpetas · Apolo",
+        titulo: "Apolo frente a Squoosh: en tu escritorio y por carpetas · Apolo",
         descripcion:
-          "Apolo y Squoosh usan los mismos motores (libwebp, MozJPEG, OxiPNG, AVIF, JPEG XL). Squoosh funciona en el navegador, imagen a imagen; Apolo es una aplicación con lotes, CLI y agentes de IA.",
+          "Apolo y Squoosh usan los mismos motores (libwebp, MozJPEG, AVIF, JPEG XL). Squoosh va en el navegador, de una en una; Apolo añade lotes, CLI y agentes.",
         entrada: "Los dos comprimen con los mismos motores y enseñan el antes y el después. La diferencia está en todo lo demás.",
         resumen: "Los mismos motores; Squoosh en el navegador y de una en una, Apolo en el escritorio, por carpetas y midiendo la pérdida.",
         corto: [
@@ -132,9 +132,9 @@ const RIVALES: Rival[] = [
         ],
       },
       en: {
-        titulo: "Apolo vs Squoosh: the same, on your desktop and for whole folders · Apolo",
+        titulo: "Apolo vs Squoosh: on your desktop and for whole folders · Apolo",
         descripcion:
-          "Apolo and Squoosh use the same engines (libwebp, MozJPEG, OxiPNG, AVIF, JPEG XL). Squoosh runs in the browser, one image at a time; Apolo is an app with batches, a CLI and AI agents.",
+          "Apolo and Squoosh use the same engines (libwebp, MozJPEG, AVIF, JPEG XL). Squoosh runs in the browser, one at a time; Apolo adds batches, a CLI and agents.",
         entrada: "Both compress with the same engines and show the before and after. The difference is in everything else.",
         resumen: "The same engines; Squoosh in the browser and one by one, Apolo on the desktop, by folders and measuring the loss.",
         corto: [
@@ -186,7 +186,7 @@ const RIVALES: Rival[] = [
       es: {
         titulo: "Apolo frente a TinyPNG: comprimir imágenes sin subirlas · Apolo",
         descripcion:
-          "TinyPNG comprime en sus servidores, con límites en la versión gratis. Apolo es gratis y sin límites, trabaja en tu ordenador y escribe también JPEG XL. Lo que hace mejor cada uno.",
+          "TinyPNG comprime en sus servidores y limita la versión gratis. Apolo es gratis, sin límites, trabaja en tu ordenador y escribe también JPEG XL.",
         entrada: "TinyPNG es la web de compresión más conocida. Apolo hace el trabajo en tu ordenador, sin límites y sin subir nada.",
         resumen: "TinyPNG en sus servidores y con límites; Apolo en tu ordenador, gratis y sin límites.",
         corto: [
@@ -211,7 +211,7 @@ const RIVALES: Rival[] = [
       en: {
         titulo: "Apolo vs TinyPNG: compress images without uploading them · Apolo",
         descripcion:
-          "TinyPNG compresses on its servers, with limits on the free version. Apolo is free with no limits, works on your computer and also writes JPEG XL. What each one does better.",
+          "TinyPNG compresses on its servers, with limits on the free plan. Apolo is free with no limits, works on your computer and also writes JPEG XL.",
         entrada: "TinyPNG is the best-known compression website. Apolo does the work on your computer, with no limits and nothing uploaded.",
         resumen: "TinyPNG on its servers and with limits; Apolo on your computer, free and unlimited.",
         corto: [
@@ -261,9 +261,9 @@ const RIVALES: Rival[] = [
     },
     texto: {
       es: {
-        titulo: "Apolo frente a ImageOptim: optimizar o convertir, en Mac y más allá · Apolo",
+        titulo: "Apolo frente a ImageOptim: optimizar o convertir · Apolo",
         descripcion:
-          "ImageOptim aligera JPEG, PNG, GIF y SVG en el Mac sin cambiarlos de formato. Apolo los convierte además a WebP, AVIF o JPEG XL, en macOS, Windows y Linux. Cuándo usar cada uno.",
+          "ImageOptim aligera JPEG, PNG, GIF y SVG en el Mac sin cambiar el formato. Apolo además los pasa a WebP, AVIF o JPEG XL, en Mac, Windows y Linux.",
         entrada: "ImageOptim es un clásico del Mac para aligerar imágenes sin tocarlas. Apolo además las convierte a los formatos nuevos.",
         resumen: "ImageOptim aligera sin cambiar de formato, solo en Mac; Apolo convierte a WebP, AVIF y JPEG XL en los tres sistemas.",
         corto: [
@@ -287,7 +287,7 @@ const RIVALES: Rival[] = [
       en: {
         titulo: "Apolo vs ImageOptim: optimize or convert, on Mac and beyond · Apolo",
         descripcion:
-          "ImageOptim makes JPEG, PNG, GIF and SVG lighter on the Mac without changing their format. Apolo also converts them to WebP, AVIF or JPEG XL, on macOS, Windows and Linux. When to use each.",
+          "ImageOptim makes JPEG, PNG, GIF and SVG lighter on the Mac, same format. Apolo also converts to WebP, AVIF or JPEG XL, on Mac, Windows and Linux.",
         entrada: "ImageOptim is a Mac classic for making images lighter without changing them. Apolo also converts them to the new formats.",
         resumen: "ImageOptim makes images lighter without changing format, on Mac only; Apolo converts to WebP, AVIF and JPEG XL on all three systems.",
         corto: [
@@ -338,7 +338,7 @@ const RIVALES: Rival[] = [
       es: {
         titulo: "Apolo frente a Caesium: dos compresores libres de escritorio · Apolo",
         descripcion:
-          "Caesium y Apolo son compresores de imágenes gratuitos y libres para el escritorio. Caesium trabaja con JPG, PNG, WebP y TIFF; Apolo añade AVIF, JPEG XL, HEIC, ARM y agentes de IA.",
+          "Caesium y Apolo, compresores de imágenes libres y gratuitos. Caesium trabaja con JPG, PNG, WebP y TIFF; Apolo añade AVIF, JPEG XL, HEIC y agentes de IA.",
         entrada: "Los dos son libres, gratuitos y trabajan en tu ordenador. Cambian los formatos, los sistemas y cómo se mide el resultado.",
         resumen: "Dos compresores libres de escritorio: Caesium con JPG, PNG, WebP y TIFF; Apolo con AVIF, JPEG XL y medida de la pérdida.",
         corto: [

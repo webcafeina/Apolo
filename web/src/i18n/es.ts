@@ -5,7 +5,7 @@ export const es = {
   sitio: {
     titulo: "Apolo · Comprime imágenes y conviértelas a WebP y AVIF, gratis",
     descripcion:
-      "Optimizador de imágenes gratis para Mac, Windows y Linux: comprime y convierte a WebP, AVIF, JPEG XL, JPEG y PNG sin subir tus fotos, viendo lo que pierdes antes de guardar.",
+      "Optimizador de imágenes gratis para Mac, Windows y Linux: comprime y convierte a WebP, AVIF, JPEG XL y más sin subir tus fotos, viendo lo que pierdes.",
     saltar: "Ir al contenido",
   },
   nav: { etiqueta: "Secciones", descargar: "Descargar", usar: "Usar", aprender: "Aprender", apolo: "Apolo", menu: "Menú", todas: "Todas las descargas" },
@@ -149,7 +149,7 @@ export const es = {
     guias: {
       titulo: "Guías para optimizar imágenes · Apolo",
       descripcion:
-        "Cómo convertir a WebP, elegir entre AVIF, WebP y JPEG XL, comprimir sin perder calidad, optimizar imágenes para la web, pasar HEIC a JPG y usar un agente de IA. Con medidas.",
+        "Cómo convertir a WebP, elegir entre AVIF, WebP y JPEG XL, comprimir sin perder calidad, pasar HEIC a JPG, vectorizar y usar un agente de IA. Con medidas.",
       etiqueta: "Guías",
       h1: "Guías.",
       entrada: "Lo que conviene saber para que tus imágenes pesen menos sin que se note, con cifras medidas por Apolo.",
@@ -163,7 +163,7 @@ export const es = {
   },
   mapa: {
     titulo: "Mapa del sitio · Apolo",
-    descripcion: "Todas las páginas de la web de Apolo: descargas para Mac, Windows y Linux, guías, comparativas, preguntas frecuentes, línea de comandos, agentes de IA y novedades.",
+    descripcion: "Todas las páginas de la web de Apolo: descargas para Mac, Windows y Linux, guías, comparativas, preguntas, línea de comandos, agentes de IA y novedades.",
     etiqueta: "Mapa del sitio",
     h1: "Todo Apolo, de un vistazo.",
     entrada: "Cada página de la web, agrupada por lo que buscas.",

@@ -5,7 +5,7 @@ export const en: Textos = {
   sitio: {
     titulo: "Apolo · Free image optimizer: compress to WebP, AVIF and JPEG XL",
     descripcion:
-      "Free image optimizer for Mac, Windows and Linux: compress and convert to WebP, AVIF, JPEG XL, JPEG and PNG without uploading your photos, seeing what you lose before you save.",
+      "Free image optimizer for Mac, Windows and Linux: compress and convert to WebP, AVIF, JPEG XL and more without uploading your photos, seeing what you lose.",
     saltar: "Skip to content",
   },
   nav: { etiqueta: "Sections", descargar: "Download", usar: "Use", aprender: "Learn", apolo: "Apolo", menu: "Menu", todas: "All downloads" },
@@ -148,7 +148,7 @@ export const en: Textos = {
     guias: {
       titulo: "Guides to optimize images · Apolo",
       descripcion:
-        "How to convert to WebP, choose between AVIF, WebP and JPEG XL, compress without losing quality, optimize images for the web, turn HEIC into JPG and use an AI agent. With measurements.",
+        "How to convert to WebP, choose between AVIF, WebP and JPEG XL, compress without losing quality, turn HEIC into JPG, vectorize and use an AI agent. Measured.",
       etiqueta: "Guides",
       h1: "Guides.",
       entrada: "What's worth knowing to make your images weigh less without it showing, with figures measured by Apolo.",

@@ -367,6 +367,24 @@ Propuesto al cliente y **aplazado por él** (2026-11-13): un recordatorio breve 
 awesome-mcp-servers#17812. **La próxima vez, antes de nada, volver a mirar el estado** (puede haber cambiado) y
 decidir entonces. Un correo de PeerPush (servicio de pago para «aparecer en asistentes de IA»): sin interés.
 
+### Chocolatey y winget, solos al publicar (2026-11-27)
+
+`.github/workflows/canales.yml` (traído de Esfinge): al publicar una versión, rellena el paquete de
+Chocolatey y los manifiestos de winget (`empaquetado/winget/`, plantillas de los de komac de la 1.0.0) y los
+manda. A mano: `gh workflow run canales.yml -f version=X.Y.Z -f canal=todos|chocolatey|winget` (el canal
+suelto, para reempujar una versión que su tienda ha devuelto).
+
+- **Chocolatey**: con el secreto `CHOCOLATEY_CLAVE` (lo puso el cliente desde `~/.config/apolo/chocolatey.key`).
+  Si Chocolatey contesta 403 por tener otra versión en revisión, avisa y no tumba nada. Ojo: mientras una
+  versión no está aprobada, **se puede reemplazar** subiéndola otra vez (la prueba del 27-nov reemplazó la 1.1.2
+  en moderación por la de los scripts nuevos).
+- **winget**: con el secreto `WINGET_TOKEN` (token clásico de la cuenta webcafeina, `public_repo`, **sin
+  caducidad**, decisión del cliente). Sincroniza el fork, manda con `wingetcreate` 1.28.1.0 fijado y con su suma,
+  cierra los PR anteriores de Apolo y firma el CLA cuando el robot lo pide (en cada PR). **El primer PR, el de la
+  1.1.2 ([#491053](https://github.com/microsoft/winget-pkgs/pull/491053)), espera a un moderador** (paquete
+  nuevo); el de la 1.0.0 (#463314) se cerró. El primer envío falló por los manifiestos (ReleaseNotesUrl doble,
+  Moniker en la ficha inglesa, sin cabecera de esquema): corregidos y vigilados en `make empaquetado`.
+
 ## Con la cuenta del cliente
 
 ### Directorio de extensiones de Claude Desktop

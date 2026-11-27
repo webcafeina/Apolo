@@ -153,14 +153,16 @@ jobs:
           $vista = (Get-FileHash wingetcreate.exe -Algorithm SHA256).Hash.ToLower()
           if ($vista -ne $suma) { Write-Host "::error::La suma de wingetcreate no es la esperada: $vista"; exit 1 }
 
-          .\wingetcreate.exe submit recetas\winget
+          $salida = .\wingetcreate.exe submit recetas\winget 2>&1 | Out-String
+          Write-Host $salida
           # PowerShell no para por el código de salida de un .exe: se mira a mano.
           if ($LASTEXITCODE -ne 0) { Write-Host "::error::wingetcreate no ha podido mandar los manifiestos (arriba, su respuesta)"; exit 1 }
 
-          $mio = gh pr list --repo microsoft/winget-pkgs --author webcafeina --state open `
-            --search "Webcafeina.Apolo version $env:VERSION in:title" --json number --jq '.[0].number'
-          if ($LASTEXITCODE -ne 0 -or -not $mio) {
-            Write-Host "::warning::No encuentro el PR de la $env:VERSION en winget-pkgs"
+          # El número del PR, de la respuesta de wingetcreate: buscarlo justo después no lo encuentra,
+          # porque el buscador de GitHub tarda en verlo (pasó con el primero, el #491053).
+          $mio = if ($salida -match 'winget-pkgs/pull/(\d+)') { $Matches[1] } else { $null }
+          if (-not $mio) {
+            Write-Host "::warning::No encuentro el número del PR de la $env:VERSION en la respuesta de wingetcreate"
             exit 0
           }
           Write-Host "· PR #$mio"

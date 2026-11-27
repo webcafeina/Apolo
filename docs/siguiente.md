@@ -8,6 +8,11 @@ pruebas en verde y su línea en [sesiones.md](sesiones.md).
 
 ## Alta
 
+- **Hecho el 2026-11-27** lo de la nota de abajo, comprobado antes punto por punto: pruebas de los cuatro
+  `rellenar.py` (`make empaquetado`), Homebrew carga las recetas en un Mac antes de empujarlas y «sin cambios»
+  solo vale si el tap dice la versión, el marcador del gestor en Windows (Chocolatey; **sin ver en Windows**:
+  sale con la 1.1.3) y Chocolatey y winget solos al publicar (`canales.yml`, `docs/lanzamiento.md`). Queda: una
+  comprobación final de que cada canal sirve la versión publicada (hoy se mira a mano al publicar).
 - **Lo que Esfinge tiene de los canales y Apolo no** (apuntado el 2026-11-17 desde la sesión de
   Esfinge, a petición del cliente; **se hace aquí, no allí**). Esfinge acaba de terminar su plan de
   canales y hay cuatro cosas que aquí faltan o están a medias. Lo de abajo está **comprobado en este

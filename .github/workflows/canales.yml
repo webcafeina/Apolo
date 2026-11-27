@@ -1,0 +1,198 @@
+# Los canales de Windows: Chocolatey y winget (2026-11-27, traído de Esfinge, docs/siguiente.md). Hasta
+# entonces Chocolatey se subía a mano y winget tenía un PR hecho a mano con la 1.0.0.
+#
+# Al publicar una versión (como Homebrew: Apolo sale en borrador y la publica una persona, así que el
+# evento sí llega) y a mano, con un canal suelto para reempujar una versión que su tienda ha devuelto
+# sin mover el otro. Los repositorios APT y RPM van con la web (web.yml) y el tap, en homebrew.yml.
+name: Canales
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión publicada, sin la v (p. ej. 1.1.2)"
+        required: true
+      canal:
+        description: Un canal suelto, para reempujar una versión que su tienda ha devuelto
+        required: false
+        default: todos
+        type: choice
+        options: [todos, chocolatey, winget]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canales
+  cancel-in-progress: false
+
+jobs:
+  recetas:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      canal: ${{ steps.version.outputs.canal }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: La versión
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ETIQUETA: ${{ github.event.release.tag_name }}
+          A_MANO: ${{ inputs.version }}
+          CANAL: ${{ inputs.canal }}
+        run: |
+          set -euo pipefail
+          version="${A_MANO:-${ETIQUETA#v}}"
+          canal="${CANAL:-todos}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "canal=$canal" >> "$GITHUB_OUTPUT"
+          # Con «todos», solo la última publicada: una versión vieja haría retroceder los dos canales.
+          # Falla solo si hay una más nueva (publicando, GitHub puede tardar en marcarla como la última).
+          if [ "$canal" = todos ]; then
+            ultima="$(gh release list --limit 30 --exclude-drafts --json tagName -q '.[].tagName' | sed 's/^v//' | sort -V | tail -1)"
+            if [ "$ultima" != "$version" ] && [ "$(printf '%s\n%s\n' "$ultima" "$version" | sort -V | tail -1)" = "$ultima" ]; then
+              echo "::error::Se ha pedido la $version con «todos» y ya está la $ultima: los canales retrocederían. Para reempujar una versión devuelta, elige su canal suelto."
+              exit 1
+            fi
+          fi
+          gh release download "v$version" --pattern SHA256SUMS.txt --dir "$RUNNER_TEMP"
+          python3 -I empaquetado/chocolatey/rellenar.py "$version" "$RUNNER_TEMP/SHA256SUMS.txt" recetas/chocolatey
+          python3 -I empaquetado/winget/rellenar.py "$version" "$RUNNER_TEMP/SHA256SUMS.txt" recetas/winget
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: recetas
+          path: recetas
+
+  chocolatey:
+    needs: recetas
+    if: needs.recetas.outputs.canal == 'todos' || needs.recetas.outputs.canal == 'chocolatey'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: recetas
+          path: recetas
+      - name: Armar y subir el paquete
+        shell: pwsh
+        env:
+          CLAVE: ${{ secrets.CHOCOLATEY_CLAVE }}
+          VERSION: ${{ needs.recetas.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not $env:CLAVE) {
+            Write-Host "::error::Falta el secreto CHOCOLATEY_CLAVE"
+            exit 1
+          }
+          Set-Location recetas/chocolatey
+          choco pack apolo.nuspec
+          if ($LASTEXITCODE -ne 0) { Write-Host "::error::choco pack ha fallado"; exit 1 }
+          $nupkg = (Get-ChildItem *.nupkg | Select-Object -First 1).Name
+          Write-Host "· $nupkg"
+          # La clave, guardada con choco apikey y no en la orden de push.
+          choco apikey --source https://push.chocolatey.org/ --key "$env:CLAVE" --limit-output | Out-Null
+          $salida = choco push $nupkg --source https://push.chocolatey.org/ 2>&1 | Out-String
+          Write-Host $salida
+          if ($LASTEXITCODE -ne 0) {
+            if ($salida -match 'already exists|has already') {
+              Write-Host "· la $env:VERSION ya estaba subida; nada que hacer"
+              exit 0
+            }
+            # Chocolatey no acepta otra versión mientras tiene una en revisión (403), y eso no es
+            # nuestro: se avisa y no se tumba nada. El .nupkg queda como artefacto.
+            Write-Host "::warning::Chocolatey no ha aceptado la $env:VERSION (arriba, su respuesta). Lo normal es que tenga otra en revisión: https://community.chocolatey.org/packages/apolo"
+            Write-Host "· cuando la aprueben o la devuelvan: gh workflow run canales.yml -f version=$env:VERSION -f canal=chocolatey"
+            exit 0
+          }
+          Write-Host "Subida; la aprueba su moderación, y puede tardar días"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: chocolatey-nupkg
+          path: recetas/chocolatey/*.nupkg
+
+  # Un PR a microsoft/winget-pkgs desde el fork webcafeina/winget-pkgs, con wingetcreate. La primera
+  # versión la tiene que aceptar un moderador (paquete nuevo); las siguientes, su validación.
+  winget:
+    needs: recetas
+    if: needs.recetas.outputs.canal == 'todos' || needs.recetas.outputs.canal == 'winget'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: recetas
+          path: recetas
+      - name: Mandar los manifiestos
+        shell: pwsh
+        env:
+          TOKEN: ${{ secrets.WINGET_TOKEN }}
+          VERSION: ${{ needs.recetas.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not $env:TOKEN) {
+            # Sin token no se falla: los manifiestos quedan como artefacto.
+            Write-Host "::warning::Falta el secreto WINGET_TOKEN: no se manda nada; los manifiestos quedan como artefacto"
+            exit 0
+          }
+          # El token, por el entorno y nunca como argumento (lo avisa el propio wingetcreate).
+          $env:WINGET_CREATE_GITHUB_TOKEN = $env:TOKEN
+          $env:GH_TOKEN = $env:TOKEN
+
+          # Con el fork atrasado, wingetcreate se niega.
+          gh repo sync webcafeina/winget-pkgs
+          if ($LASTEXITCODE -ne 0) { Write-Host "::error::No se ha podido sincronizar el fork webcafeina/winget-pkgs"; exit 1 }
+
+          # wingetcreate, de su versión y con su suma (aka.ms/wingetcreate/latest es una etiqueta
+          # rodante): los mismos que usa Esfinge.
+          $version = "1.28.1.0"
+          $suma = "63d980ba79e97042395bd6eb5992c2db9e01e9e7a8a22958a95c288f27310413"
+          curl.exe -fsSL --retry 5 --retry-all-errors -o wingetcreate.exe "https://github.com/microsoft/winget-create/releases/download/v$version/wingetcreate.exe"
+          $vista = (Get-FileHash wingetcreate.exe -Algorithm SHA256).Hash.ToLower()
+          if ($vista -ne $suma) { Write-Host "::error::La suma de wingetcreate no es la esperada: $vista"; exit 1 }
+
+          .\wingetcreate.exe submit recetas\winget
+          # PowerShell no para por el código de salida de un .exe: se mira a mano.
+          if ($LASTEXITCODE -ne 0) { Write-Host "::error::wingetcreate no ha podido mandar los manifiestos (arriba, su respuesta)"; exit 1 }
+
+          $mio = gh pr list --repo microsoft/winget-pkgs --author webcafeina --state open `
+            --search "Webcafeina.Apolo version $env:VERSION in:title" --json number --jq '.[0].number'
+          if ($LASTEXITCODE -ne 0 -or -not $mio) {
+            Write-Host "::warning::No encuentro el PR de la $env:VERSION en winget-pkgs"
+            exit 0
+          }
+          Write-Host "· PR #$mio"
+
+          # Los PR anteriores de Apolo, cerrados: que solo quede uno abierto para el moderador.
+          $viejos = gh pr list --repo microsoft/winget-pkgs --author webcafeina --state open `
+            --search "Webcafeina.Apolo in:title" --json number --jq '.[].number'
+          foreach ($n in $viejos) {
+            if ($n -and $n -ne $mio) {
+              gh pr close $n --repo microsoft/winget-pkgs --comment "Superseded by #$mio, which adds version $env:VERSION of this package. Closing the older pull request so that only one remains open for Webcafeina.Apolo."
+              Write-Host "· cerrado el #$n"
+            }
+          }
+
+          # El CLA de Microsoft: su robot lo pide en cada PR nuevo (Needs-CLA) y hasta contestarle no
+          # se fusiona. Se espera a que lo pida (una firma anterior no le vale), se firma a secas (sin
+          # company=, que no se quedaba) y se comprueba que la etiqueta se cae. Como en Esfinge.
+          $pide = $false
+          foreach ($i in 1..20) {
+            $etiquetas = gh pr view $mio --repo microsoft/winget-pkgs --json labels --jq '[.labels[].name] | join(",")'
+            if ($etiquetas -match 'Needs-CLA') { $pide = $true; break }
+            Start-Sleep -Seconds 30
+          }
+          if (-not $pide) { Write-Host "· el robot no ha pedido el CLA en diez minutos"; exit 0 }
+          gh pr comment $mio --repo microsoft/winget-pkgs --body '@microsoft-github-policy-service agree'
+          foreach ($i in 1..10) {
+            Start-Sleep -Seconds 30
+            $etiquetas = gh pr view $mio --repo microsoft/winget-pkgs --json labels --jq '[.labels[].name] | join(",")'
+            if ($etiquetas -notmatch 'Needs-CLA') { Write-Host "CLA firmado en el #$mio"; exit 0 }
+          }
+          Write-Host "::warning::Firmado el CLA en el #$mio pero Needs-CLA sigue: https://github.com/microsoft/winget-pkgs/pull/$mio"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: winget-manifiestos
+          path: recetas/winget/*.yaml

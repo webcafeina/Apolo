@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pasa los tres rellenar.py (AUR, Chocolatey y Homebrew) por sus plantillas de verdad, sin red.
+"""Pasa los cuatro rellenar.py (AUR, Chocolatey, Homebrew y winget) por sus plantillas de verdad, sin red.
 
 Con una versión inventada y un SHA256SUMS.txt con los nombres que tendría una Release de esa versión y una suma
 distinta para cada fichero, cada guion tiene que dejar su salida sin ningún marcador {{…}} (salvo {{appdir}}, que
@@ -34,6 +34,10 @@ ESPERADO = {
     "aur/PKGBUILD": [f"Apolo_{VERSION}_amd64.deb", f"Apolo_{VERSION}_arm64.deb"],
     "chocolatey/tools/chocolateyinstall.ps1": [f"Apolo_{VERSION}_x64-setup.exe", f"Apolo_{VERSION}_arm64-setup.exe"],
     "homebrew/Casks/apolo.rb": [f"Apolo_{VERSION}_universal.dmg"],
+    "winget/Webcafeina.Apolo.installer.yaml": [f"Apolo_{VERSION}_x64-setup.exe", f"Apolo_{VERSION}_arm64-setup.exe"],
+    "winget/Webcafeina.Apolo.yaml": [],
+    "winget/Webcafeina.Apolo.locale.es-ES.yaml": [],
+    "winget/Webcafeina.Apolo.locale.en-US.yaml": [],
     "homebrew/Formula/apolo.rb": [
         f"apolo-cli-{VERSION}-macos-universal.tar.gz",
         f"apolo-cli-{VERSION}-linux-amd64.tar.gz",
@@ -52,6 +56,7 @@ def main() -> None:
             ["aur/rellenar.py", VERSION, d / "SHA256SUMS.txt", d / "aur/PKGBUILD"],
             ["chocolatey/rellenar.py", VERSION, d / "SHA256SUMS.txt", d / "chocolatey"],
             ["homebrew/rellenar.py", VERSION, d / "SHA256SUMS.txt", d / "homebrew"],
+            ["winget/rellenar.py", VERSION, d / "SHA256SUMS.txt", d / "winget"],
         ]
         (d / "aur").mkdir()
         for guion, *args in ordenes:
@@ -79,7 +84,7 @@ def main() -> None:
             malos.append("chocolatey/apolo.nuspec: sin la versión")
     if malos:
         sys.exit("Los rellenar.py fallan:\n  " + "\n  ".join(malos))
-    print(f"rellenar.py: AUR, Chocolatey y Homebrew, bien con la {VERSION}")
+    print(f"rellenar.py: AUR, Chocolatey, Homebrew y winget, bien con la {VERSION}")
 
 
 if __name__ == "__main__":

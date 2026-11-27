@@ -1,0 +1,27 @@
+# Plantilla: rellenar.py pone la versión y las sumas de los dos instaladores NSIS. Lo de antes de la
+# primera línea en blanco no llega al manifiesto. Los datos, los del primer manifiesto que hizo komac
+# (winget-pkgs#463314, que pasó toda la validación): instalador por usuario, en %LocalAppData%\Apolo.
+# Sin marcador del gestor, a diferencia de Chocolatey: winget mira la versión instalada en el registro
+# de Windows, así que si Apolo se actualiza solo, winget lo ve.
+
+PackageIdentifier: Webcafeina.Apolo
+PackageVersion: "{{VERSION}}"
+InstallerLocale: es-ES
+InstallerType: nullsoft
+Scope: user
+UpgradeBehavior: install
+ProductCode: Apolo
+AppsAndFeaturesEntries:
+- ProductCode: Apolo
+InstallationMetadata:
+  DefaultInstallLocation: '%LocalAppData%\Apolo'
+ReleaseNotesUrl: https://github.com/webcafeina/Apolo/releases/tag/v{{VERSION}}
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/webcafeina/Apolo/releases/download/v{{VERSION}}/Apolo_{{VERSION}}_x64-setup.exe
+  InstallerSha256: {{SHA_X64}}
+- Architecture: arm64
+  InstallerUrl: https://github.com/webcafeina/Apolo/releases/download/v{{VERSION}}/Apolo_{{VERSION}}_arm64-setup.exe
+  InstallerSha256: {{SHA_ARM64}}
+ManifestType: installer
+ManifestVersion: 1.12.0

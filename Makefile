@@ -15,7 +15,7 @@ ayuda:
 	@echo "make tokens     regenera los tokens.css de la interfaz y de la web desde crates/tema"
 	@echo "make web        la web (web/, ADR 0033): tipos, compilación y pruebas"
 	@echo "make plugin     el plugin de Claude y su lanzador (ADR 0036); con la CLI de Claude, también lo valida"
-	@echo "make empaquetado los rellenar.py del AUR, Chocolatey y Homebrew, por sus plantillas y sin red"
+	@echo "make empaquetado los rellenar.py del AUR, Chocolatey, Homebrew y winget, por sus plantillas y sin red"
 	@echo "make seguridad  zizmor sobre los workflows y los avisos de seguridad de las dependencias de Rust"
 	@echo "make web-e2e    la web en el navegador: detección, cookies, SEO, accesibilidad"
 	@echo "make capturas-web  las capturas de la web, en sus cuatro vistas y dos idiomas"

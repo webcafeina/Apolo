@@ -182,7 +182,7 @@ las doce herramientas, en [docs/mcp/catalogo.md](docs/mcp/catalogo.md). Lo que e
 nombres, miniaturas) entra en su conversación, y lo ve el proveedor del modelo: todo, en
 [la página de privacidad](https://apolo.webcafeina.com/privacidad/).
 
-[![Apolo MCP on mcprush](https://mcprush.com/badge/apolo-mcp/score.svg)](https://mcprush.com/to/apolo-mcp?ref=badge)
+[![Apolo MCP on mcprush](https://mcprush.com/badge/apolo-mcp/score.svg)](https://mcprush.com/to/apolo-mcp?ref=badge) [![webcafeina/Apolo MCP server](https://glama.ai/mcp/servers/webcafeina/Apolo/badges/score.svg)](https://glama.ai/mcp/servers/webcafeina/Apolo)
 
 ## Guías
 

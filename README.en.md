@@ -182,7 +182,7 @@ the twelve tools, in [docs/mcp/catalogo.md](docs/mcp/catalogo.md) (in Spanish). 
 (paths, names, thumbnails) goes into its conversation, and the model provider sees it: all of it, on
 [the privacy page](https://apolo.webcafeina.com/en/privacy/).
 
-[![Apolo MCP on mcprush](https://mcprush.com/badge/apolo-mcp/score.svg)](https://mcprush.com/to/apolo-mcp?ref=badge)
+[![Apolo MCP on mcprush](https://mcprush.com/badge/apolo-mcp/score.svg)](https://mcprush.com/to/apolo-mcp?ref=badge) [![webcafeina/Apolo MCP server](https://glama.ai/mcp/servers/webcafeina/Apolo/badges/score.svg)](https://glama.ai/mcp/servers/webcafeina/Apolo)
 
 ## Guides
 

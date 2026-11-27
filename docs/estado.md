@@ -1,8 +1,23 @@
 # Estado
 
-Última actualización: **2026-11-13**
+Última actualización: **2026-11-27**
 
 ## Dónde se paró, y por dónde se sigue
+
+> **PARADA AQUÍ (2026-11-27): v1.1.2 PUBLICADA (08:47 UTC).** Retomado tras el reinicio del VPS del 24-nov
+> (Claude Code nativo; limpieza de disco: se fueron los navegadores de Playwright de la versión actual, vueltos a
+> instalar con `pnpm -C web exec playwright install chromium`). `publicar.yml` (43432352652, el primero con
+> `tauri-action` 1.0) había acabado en verde. **Borrador revisado**: 50/50 sumas, 20 copias con nombre fijo (una
+> más: el `.app.tar.gz` lleva ya versión, `Apolo_1.1.2_universal.app.tar.gz`), `latest.json` con **18** plataformas
+> (las 16 de siempre más `darwin-universal` y `darwin-universal-app`, que la 1.0 añade siempre) y 18/18 firmas, todas
+> con URL de descarga de la v1.1.2; procedencia 51/51; binarios 1.1.2; el sol con los bytes de la web (81,7). Web,
+> APT, PKGBUILD, cask, registro MCP, enlaces fijos y `latest.json` en 1.1.2. **Chocolatey 1.1.2 subida** (la 1.1.1 se
+> aprobó el 18-nov). Después: `astro` 7.4.7 (el PR #15 de Dependabot, con el sí del cliente, como commit propio);
+> `cookie` 0.18.3 y `url` 2.5.9 por tres avisos nuevos de RustSec, y `chrono` (sin mantenimiento, vía el SDK de
+> MCP) a las excepciones de `deny.toml`; y la nota de Esfinge sobre los canales, en `siguiente.md`. **Pendiente del
+> cliente**: que un Apolo 1.1.1 se actualice solo a la 1.1.2 (su Mac y, si puede, Windows): es la prueba de verdad
+> de `tauri-action` 1.0. Lo siguiente, lo que diga: la lista de Esfinge (`siguiente.md`, Alta), Aldea (deuda) o
+> los envíos aplazados (volver a mirarlos antes).
 
 > **PARADA AQUÍ (2026-11-13, ~14:30): la 1.1.2, ETIQUETADA y compilándose; sin revisar ni publicar.** Con el sí
 > del cliente («Sí, adelante» a preparar la 1.1.2). Commit `b9ea326` (notas `.github/notas/v1.1.2.md`, versión a

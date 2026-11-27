@@ -4,6 +4,22 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 
 ---
 
+## 2026-11-27 · La 1.1.2, publicada
+
+- Al empezar (Álvaro): el VPS se reinició el 24-nov y Claude Code pasó a la instalación nativa; nada perdido. Apolo
+  no tiene contenedores; la copia semanal a R2 (cron, domingos 04:00) salió bien el 22-nov y está en la lista del
+  vigía. Security: dos alertas nuevas de `astro` y su PR #15. Un cambio sin commit en `siguiente.md`: la nota de
+  Esfinge del 17-nov, a petición del cliente.
+- **Borrador de la 1.1.2 revisado** (el primero con `tauri-action` 1.0: nombre con versión del `.app.tar.gz`, 18
+  entradas en `latest.json`) y **publicado** con el sí del cliente; todo al día; Chocolatey 1.1.2 subida.
+- `astro` 7.4.7 como commit propio: el PR de Dependabot fallaba por la antigüedad mínima de pnpm (ya no). Las
+  pruebas de la web fallaban porque la limpieza del VPS se llevó Chrome de Playwright: reinstalado. `cargo deny`,
+  tres avisos nuevos: `cookie` y `url` subidos, `chrono` a las excepciones y a la deuda.
+- El despliegue de la web de esos commits falló en `deploy-pages` («No artifacts named github-pages»): con una
+  ejecución nueva (`gh workflow run web.yml --ref main`, trampas.md), bien.
+
+---
+
 ## 2026-11-13 · La 1.1.1, comprobada
 
 - Al empezar: Security sin nada nuevo. Chocolatey aprobó la 1.1.0 el 12: **subida la 1.1.1** (el clasificador de

@@ -34,6 +34,9 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
   `.deb`/`.rpm` descargado, que `apt`/`dnf` no veían. Ahora dan de alta el repositorio (ADR 0040), probado con los
   paquetes compilados en Ubuntu y Fedora y actualizando desde la 1.1.2 oficial. El `.dmg` con Homebrew se
   descartó (decisión del cliente). Aldea, aplazado.
+- **La 1.1.3, publicada** (12:49 UTC, con el sí del cliente): versión, notas y la frase de la web; borrador
+  revisado sin nada que corregir. `canales.yml`, en su primer uso real, subió Chocolatey y abrió el PR de winget
+  (#491138) cerrando el anterior y firmando el CLA sin ayuda.
 
 ---
 

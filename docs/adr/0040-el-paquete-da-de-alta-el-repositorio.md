@@ -59,6 +59,13 @@ Al instalarse, el `.deb` y el `.rpm` dan de alta el repositorio de Apolo, como h
   repositorio con la firma y ve la 1.1.2 como candidata. En Fedora 43, alta, actualización (`post 2` y
   `postun 1`: se queda), desinstalación (lo quita) y repositorio a mano (no lo toca), y `dnf info apolo` ve la
   1.1.2 con la clave de la web.
+- **Con los paquetes compilados** (Publicar 45984107578, en verde con sus seis pruebas de humo): el `.deb`
+  instalado con `apt` en Ubuntu 24.04 escribe la fuente y la clave, `apt update` lee el repositorio y
+  `apt purge` lo deja todo como estaba; el `.rpm` con `dnf` en Fedora 43, igual, y `dnf remove` lo quita.
+- **Actualizando desde la 1.1.2**, que es el caso de quien ya tiene Apolo: la 1.1.2 oficial de la Release (sin
+  repositorio) actualizada con `apt-get install` a ese mismo `.deb` renumerado como 1.1.3 —lo que hace la
+  ventana al actualizarse— deja la fuente puesta y `apt update` lee el repositorio. En el `.rpm`, el script
+  con `$1 = 2` (actualización) se probó suelto, no con un paquete renumerado.
 - **Lo vigila la CI** (`humo.yml`): tras instalar el `.deb` en Ubuntu, el `.sources` existe y `apt-get update` lee
   el repositorio; tras instalar el `.rpm` en Fedora, existe `apolo.repo`.
 - **No comprobado**: openSUSE (`zypper`) más allá de la ruta, y el paso de verdad en una máquina del cliente,

@@ -18,6 +18,22 @@ Bitácora: qué se hizo en cada sesión, la más reciente arriba. La plantilla e
 - El despliegue de la web de esos commits falló en `deploy-pages` («No artifacts named github-pages»): con una
   ejecución nueva (`gh workflow run web.yml --ref main`, trampas.md), bien.
 - **El cliente comprobó la 1.1.2**: un Apolo 1.1.1 se actualiza solo en macOS y en Windows (`tauri-action` 1.0, bien).
+- **La lista de Esfinge**, comprobada punto por punto antes de tocar nada (el cliente: «compruébalo tú antes»):
+  pruebas de los cuatro `rellenar.py`, Homebrew que carga cask y fórmula en un Mac antes de empujar (y «sin cambios»
+  solo vale si el tap dice la versión), y el marcador del gestor en Windows para Chocolatey (instalador NSIS que lo
+  borra al desinstalar; sin ver en Windows hasta la 1.1.3).
+- **Descripciones de la web**: las 48 páginas, a ≤160 caracteres; insignia de Glama en el README; envíos repasados
+  (open-source-mac-os-apps pide 5 estrellas).
+- **Chocolatey y winget solos al publicar** (`canales.yml`). El cliente guardó `CHOCOLATEY_CLAVE` y creó
+  `WINGET_TOKEN` (clásico, `public_repo`, sin caducidad: decisión suya). El primer envío a winget falló en la
+  validación (ReleaseNotesUrl doble, Moniker en la ficha inglesa, sin cabecera de esquema): corregido y vigilado
+  en `make empaquetado`. El segundo abrió el **#491053** (1.1.2); el número no salía del buscador de GitHub
+  (tarda), así que el CLA y cerrar el #463314 se hicieron a mano esta vez y el flujo lo saca ya de la respuesta
+  de wingetcreate.
+- **Actualizar «de forma cruzada»**, como Esfinge (pregunta del cliente): casi todo ya lo cumplía; el hueco era el
+  `.deb`/`.rpm` descargado, que `apt`/`dnf` no veían. Ahora dan de alta el repositorio (ADR 0040), probado con los
+  paquetes compilados en Ubuntu y Fedora y actualizando desde la 1.1.2 oficial. El `.dmg` con Homebrew se
+  descartó (decisión del cliente). Aldea, aplazado.
 
 ---
 

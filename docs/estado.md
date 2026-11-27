@@ -4,6 +4,17 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-27, tarde): los canales y Linux, hechos; nada pendiente de publicar.** En `main`, para la
+> 1.1.3 cuando el cliente la pida: la **lista de Esfinge** entera (pruebas de los `rellenar.py` en `make
+> empaquetado`, Homebrew que carga las recetas en un Mac antes de empujar, el marcador del gestor en Windows para
+> Chocolatey), **Chocolatey y winget solos al publicar** (`canales.yml`; secretos `CHOCOLATEY_CLAVE` y `WINGET_TOKEN`,
+> puestos por el cliente) y **el `.deb` y el `.rpm` descargados dan de alta el repositorio** (ADR 0040; probado con
+> los paquetes compilados y actualizando desde la 1.1.2). **winget**: el PR de la 1.1.2
+> ([#491053](https://github.com/microsoft/winget-pkgs/pull/491053)) pasó su validación, CLA firmado, espera
+> moderador; el de la 1.0.0 cerrado. **Chocolatey**: la 1.1.2 en moderación. Al publicar la 1.1.3: la frase de la web
+> y la prueba en la VM de Ubuntu (`siguiente.md`), y el marcador de `choco install` en la VM de Windows. **Aldea**,
+> aplazado a otra sesión (deuda). Web: las 48 descripciones ya caben en Google.
+
 > **PARADA AQUÍ (2026-11-27): v1.1.2 PUBLICADA (08:47 UTC).** Retomado tras el reinicio del VPS del 24-nov
 > (Claude Code nativo; limpieza de disco: se fueron los navegadores de Playwright de la versión actual, vueltos a
 > instalar con `pnpm -C web exec playwright install chromium`). `publicar.yml` (43432352652, el primero con

@@ -80,10 +80,12 @@ struct Plataforma {
     /// esquinas (hay marco de GTK y la ventana está suelta). Cambia con el
     /// evento `ventana:esquinas`.
     esquinas: bool,
-    /// En Linux, el gestor de paquetes que lleva Apolo, si no es el suyo: el
-    /// paquete del AUR deja `pacman` en `/usr/share/apolo/gestor` (ADR 0030).
-    /// Entonces no se actualiza sola: el binario es el del .deb, y su
-    /// actualizador haría `dpkg -i` en un Arch.
+    /// El gestor de paquetes que lleva Apolo, si no es el suyo: en Linux, el
+    /// paquete del AUR deja `pacman` en `/usr/share/apolo/gestor` (ADR 0030); en
+    /// Windows, el de Chocolatey deja `chocolatey` en un fichero `gestor` junto
+    /// a `apolo-app.exe` (2026-11-27, como Esfinge). Entonces no se actualiza
+    /// sola: en Arch, su actualizador haría `dpkg -i`; en Windows, el gestor se
+    /// quedaría viendo una versión vieja.
     gestor: Option<String>,
     /// En Linux, el escritorio: `gnome`, `kde` u `otro` (ventana_linux.rs, ADR
     /// 0031). La interfaz lo pone en `<html data-escritorio>`.
@@ -121,10 +123,14 @@ fn escritorio() -> &'static str {
 }
 
 fn gestor() -> Option<String> {
-    if !cfg!(target_os = "linux") {
+    let ruta = if cfg!(target_os = "linux") {
+        std::path::PathBuf::from("/usr/share/apolo/gestor")
+    } else if cfg!(windows) {
+        std::env::current_exe().ok()?.parent()?.join("gestor")
+    } else {
         return None;
-    }
-    std::fs::read_to_string("/usr/share/apolo/gestor")
+    };
+    std::fs::read_to_string(ruta)
         .ok()
         .map(|g| g.trim().to_string())
         .filter(|g| !g.is_empty())

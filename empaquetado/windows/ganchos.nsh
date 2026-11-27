@@ -11,7 +11,12 @@
   Pop $0
 !macroend
 
+; Y el marcador del gestor (lo deja el paquete de Chocolatey junto a apolo-app.exe),
+; fuera antes de desinstalar, también si se desinstala sin Chocolatey: si quedara, la
+; carpeta no se borraría, y una instalación posterior desde la web lo encontraría y
+; Apolo no se actualizaría por su cuenta.
 !macro NSIS_HOOK_PREUNINSTALL
   nsExec::Exec 'taskkill /F /T /IM apolo-mcp.exe'
   Pop $0
+  Delete "$INSTDIR\gestor"
 !macroend

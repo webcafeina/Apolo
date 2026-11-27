@@ -7,6 +7,10 @@ $claves = @(Get-UninstallRegistryKey -SoftwareName 'Apolo*')
 
 if ($claves.Count -eq 1) {
   $desinstalador = $claves[0].UninstallString -replace '"', ''
+  # El marcador del gestor (lo deja chocolateyinstall.ps1): fuera antes de desinstalar.
+  if ($claves[0].InstallLocation) {
+    Remove-Item -Path (Join-Path ($claves[0].InstallLocation -replace '"', '') 'gestor') -ErrorAction SilentlyContinue
+  }
   Uninstall-ChocolateyPackage -PackageName $env:ChocolateyPackageName -FileType 'exe' `
     -SilentArgs '/S' -File $desinstalador -ValidExitCodes @(0)
 } elseif ($claves.Count -eq 0) {

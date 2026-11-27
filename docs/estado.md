@@ -4,6 +4,13 @@
 
 ## Dónde se paró, y por dónde se sigue
 
+> **PARADA AQUÍ (2026-11-27): la 1.1.3, preparada para etiquetar** («Vamos con la 1.1.3», el cliente). Versión a
+> 1.1.3, notas en `.github/notas/v1.1.3.md` (Linux con el repositorio, Chocolatey sin actualizarse sola, cookie y
+> url), la frase de la web en `descargar.ts`. Sin capturas ni medidas nuevas: ni la interfaz ni el motor cambian
+> (las cifras de la web dicen «medido con apolo 1.1.2», y es verdad). El run `Web` del push se cancela a propósito:
+> la web sale con la Release. Al etiquetar: revisar el borrador como el de la 1.1.2 y publicar; luego `canales.yml`
+> sube Chocolatey (avisará: la 1.1.2 sigue en moderación) y winget (sustituye al #491053).
+
 > **PARADA AQUÍ (2026-11-27, tarde): los canales y Linux, hechos; nada pendiente de publicar.** En `main`, para la
 > 1.1.3 cuando el cliente la pida: la **lista de Esfinge** entera (pruebas de los `rellenar.py` en `make
 > empaquetado`, Homebrew que carga las recetas en un Mac antes de empujar, el marcador del gestor en Windows para

@@ -150,7 +150,7 @@ export const DESCARGAR: Record<Idioma, Record<Sistema, PaginaDescarga>> = {
           titulo: "Actualizar",
           lista: [
             "Con el repositorio, con el resto del sistema (apt, dnf o zypper).",
-            "Con el .deb o el .rpm sueltos, Apolo avisa de cada versión nueva y se instala con un clic.",
+            "Con el .deb o el .rpm sueltos, Apolo avisa de cada versión nueva y se instala con un clic. Además, al instalarse dan de alta el repositorio, así que también se actualiza con el resto del sistema.",
             "Con Arch, volviendo a construir el PKGBUILD.",
           ],
         },
@@ -273,7 +273,7 @@ export const DESCARGAR: Record<Idioma, Record<Sistema, PaginaDescarga>> = {
           titulo: "Updates",
           lista: [
             "With the repository, along with the rest of your system (apt, dnf or zypper).",
-            "With a standalone .deb or .rpm, Apolo tells you about each new version and installs it with one click.",
+            "With a standalone .deb or .rpm, Apolo tells you about each new version and installs it with one click. They also add the repository when installed, so it updates with the rest of your system too.",
             "On Arch, by building the PKGBUILD again.",
           ],
         },
